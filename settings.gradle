@@ -1,0 +1,2 @@
+rootProject.name = "PTUT2021"
+include ':app'
