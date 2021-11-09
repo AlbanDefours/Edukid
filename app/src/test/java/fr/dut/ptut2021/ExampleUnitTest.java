@@ -1,4 +1,4 @@
-package fr.wileaxal.ptut2021;
+package fr.dut.ptut2021;
 
 import org.junit.Test;
 
