@@ -10,10 +10,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PTUT2021">
         <activity
+            android:name=".application.ModificationProfils"
+            android:exported="false" />
+        <activity
+            android:name=".application.PageStatistiques"
+            android:exported="false" />
+        <activity
             android:name=".application.PageChargement"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
