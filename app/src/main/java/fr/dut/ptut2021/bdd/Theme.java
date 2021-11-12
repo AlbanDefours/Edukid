@@ -7,6 +7,12 @@ public class Theme {
     private String nomTheme;
     private Drawable imageTheme;
 
+    //Constructor
+    public Theme(int idTheme, String nomTheme, Drawable imageTheme) {
+        this.idTheme = idTheme;
+        this.nomTheme = nomTheme;
+        this.imageTheme = imageTheme;
+    }
 
     //Getter
     public int getIdTheme() {

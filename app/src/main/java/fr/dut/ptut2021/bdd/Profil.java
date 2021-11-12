@@ -7,6 +7,12 @@ public class Profil {
     private String nomProfil;
     private Drawable imageProfil;
 
+    //Constructor
+    public Profil(int idProfil, String nomProfil, Drawable imageProfil) {
+        this.idProfil = idProfil;
+        this.nomProfil = nomProfil;
+        this.imageProfil = imageProfil;
+    }
 
     //Getter
     public int getIdProfil() {

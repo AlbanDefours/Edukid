@@ -2,11 +2,19 @@ package fr.dut.ptut2021.bdd;
 
 import android.graphics.drawable.Drawable;
 
-public class Jeu extends Theme{
+public class Jeu {
     private int idJeu;
     private String nomJeu;
     private Drawable imageJeu;
+    private Theme theme;
 
+    //Constructor
+    public Jeu(int idJeu, String nomJeu, Drawable imageJeu, Theme theme) {
+        this.idJeu = idJeu;
+        this.nomJeu = nomJeu;
+        this.imageJeu = imageJeu;
+        this.theme = theme;
+    }
 
     //Getter
     public int getIdJeu() {
