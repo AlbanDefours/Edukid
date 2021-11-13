@@ -2,6 +2,7 @@ package fr.dut.ptut2021.game;
 
 import fr.dut.ptut2021.models.Card;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 public class Memory {
@@ -14,12 +15,22 @@ public class Memory {
             this.listCard.add(card);
             this.listCard.add( new Card(card));
         }
-        affiche();
+        shuffle();
+        display();
+    }
+
+    private void shuffle(){
+        Collections.shuffle(listCard);
+        Collections.shuffle(listCard);
+        Collections.shuffle(listCard);
+        Collections.shuffle(listCard);
+        Collections.shuffle(listCard);
+        Collections.shuffle(listCard);
     }
 
     public void returnCard(int idCard) throws InterruptedException {
         listCard.get(idCard).setHidden(false);
-        affiche();
+        display();
         TimeUnit.SECONDS.sleep(1);
 
         if(idLastCardReturn == -1){
@@ -32,13 +43,13 @@ public class Memory {
             }else{
                 listCard.get(idCard).setHidden(true);
                 listCard.get(idLastCardReturn).setHidden(true);
-                affiche();
+                display();
                 idLastCardReturn=-1;
             }
         }
     }
 
-    public void affiche(){
+    public void display(){
         int compteur=1;
         for (Card card : listCard){
             if(!card.isHidden())
