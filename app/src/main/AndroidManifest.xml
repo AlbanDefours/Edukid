@@ -10,9 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PTUT2021">
         <activity
-            android:name=".game.Memory"
-            android:exported="false" />
-        <activity
             android:name=".activities.UserEdit"
             android:exported="false" />
         <activity
