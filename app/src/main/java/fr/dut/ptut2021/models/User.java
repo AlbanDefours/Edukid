@@ -2,13 +2,19 @@ package fr.dut.ptut2021.models;
 
 import android.graphics.drawable.Drawable;
 
-public class Profile {
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity
+public class User {
+
+    @PrimaryKey
     private int id;
     private String name;
     private Drawable image;
 
     //Constructor
-    public Profile(int id, String name, Drawable image) {
+    public User(int id, String name, Drawable image) {
         this.id = id;
         this.name = name;
         this.image = image;
