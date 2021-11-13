@@ -1,7 +1,5 @@
 package fr.dut.ptut2021.models;
 
-import android.graphics.drawable.Drawable;
-
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -11,10 +9,10 @@ public class User {
     @PrimaryKey
     private int id;
     private String name;
-    private Drawable image;
+    private int image;
 
     //Constructor
-    public User(int id, String name, Drawable image) {
+    public User(int id, String name, int image) {
         this.id = id;
         this.name = name;
         this.image = image;
@@ -27,7 +25,7 @@ public class User {
     public String getName() {
         return name;
     }
-    public Drawable getImage() {
+    public int getImage() {
         return image;
     }
 
@@ -38,7 +36,7 @@ public class User {
     public void setName(String Name) {
         this.name = Name;
     }
-    public void setImageProfile(Drawable image) {
+    public void setImageProfile(int image) {
         this.image = image;
     }
 
