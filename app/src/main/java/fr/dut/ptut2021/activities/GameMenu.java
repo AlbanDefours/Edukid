@@ -6,11 +6,11 @@ import android.os.Bundle;
 
 import fr.dut.ptut2021.R;
 
-public class PageChargement extends AppCompatActivity {
+public class GameMenu extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_page_chargement);
+        setContentView(R.layout.activity_game_menu);
     }
 }

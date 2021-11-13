@@ -6,11 +6,11 @@ import android.os.Bundle;
 
 import fr.dut.ptut2021.R;
 
-public class MenuThemes extends AppCompatActivity {
+public class UserEdit extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu_themes);
+        setContentView(R.layout.activity_user_edit);
     }
 }

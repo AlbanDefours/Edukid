@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 public class Memory {
+
     private ArrayList<Card> listCard;
     private int idLastCardReturn=-1;
 

@@ -6,11 +6,11 @@ import android.os.Bundle;
 
 import fr.dut.ptut2021.R;
 
-public class PageStatistiques extends AppCompatActivity {
+public class StatisticPage extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_page_statistiques);
+        setContentView(R.layout.activity_statistic_page);
     }
 }
