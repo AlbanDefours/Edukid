@@ -10,13 +10,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PTUT2021">
         <activity
-            android:name=".application.ModificationProfils"
+            android:name=".activities.ModificationProfils"
             android:exported="false" />
         <activity
-            android:name=".application.PageStatistiques"
+            android:name=".activities.PageStatistiques"
             android:exported="false" />
         <activity
-            android:name=".application.PageChargement"
+            android:name=".activities.PageChargement"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,19 +25,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".game.chiffres.Memory"
+            android:name=".game.number.Memory"
             android:exported="false" />
         <activity
-            android:name=".game.lettres.Memory"
+            android:name=".game.letter.Memory"
             android:exported="false" />
         <activity
-            android:name=".application.MenuProfils"
+            android:name=".activities.MenuProfils"
             android:exported="false" />
         <activity
-            android:name=".application.MenuThemes"
+            android:name=".activities.MenuThemes"
             android:exported="false" />
         <activity
-            android:name=".application.MenuJeux"
+            android:name=".activities.MenuJeux"
             android:exported="false" />
     </application>
 

@@ -1,4 +1,4 @@
-package fr.dut.ptut2021.application;
+package fr.dut.ptut2021.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 

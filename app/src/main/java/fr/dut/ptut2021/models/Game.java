@@ -1,4 +1,4 @@
-package fr.dut.ptut2021.bdd;
+package fr.dut.ptut2021.models;
 
 import android.graphics.drawable.Drawable;
 

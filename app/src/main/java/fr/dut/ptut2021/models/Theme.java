@@ -1,14 +1,14 @@
-package fr.dut.ptut2021.bdd;
+package fr.dut.ptut2021.models;
 
 import android.graphics.drawable.Drawable;
 
-public class Profile {
+public class Theme {
     private int id;
     private String name;
     private Drawable image;
 
     //Constructor
-    public Profile(int id, String name, Drawable image) {
+    public Theme(int id, String name, Drawable image) {
         this.id = id;
         this.name = name;
         this.image = image;
@@ -29,10 +29,10 @@ public class Profile {
     public void setId(int id) {
         this.id = id;
     }
-    public void setName(String Name) {
-        this.name = Name;
+    public void setName(String name) {
+        this.name = name;
     }
-    public void setImageProfile(Drawable image) {
+    public void setImage(Drawable image) {
         this.image = image;
     }
 
