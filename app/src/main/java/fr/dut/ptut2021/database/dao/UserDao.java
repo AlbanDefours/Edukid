@@ -12,11 +12,11 @@ import fr.dut.ptut2021.models.User;
 @Dao
 public interface UserDao {
 
+    @Insert (onConflict = OnConflictStrategy.REPLACE)
+    long createUser(User user);
+
     @Query("SELECT * FROM User WHERE id = :userId")
     LiveData<User> getUsers(int userId);
-
-    @Insert (onConflict = OnConflictStrategy.REPLACE)
-    int createUser(User user);
 
     @Update
     int updateUser(User user);
