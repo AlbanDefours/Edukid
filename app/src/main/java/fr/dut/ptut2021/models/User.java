@@ -2,13 +2,13 @@ package fr.dut.ptut2021.models;
 
 import android.graphics.drawable.Drawable;
 
-public class Profile {
+public class User {
     private int id;
     private String name;
-    private Drawable image;
+    private int image;
 
     //Constructor
-    public Profile(int id, String name, Drawable image) {
+    public User(int id, String name, int image) {
         this.id = id;
         this.name = name;
         this.image = image;
@@ -21,7 +21,7 @@ public class Profile {
     public String getName() {
         return name;
     }
-    public Drawable getImage() {
+    public int getImage() {
         return image;
     }
 
@@ -32,7 +32,7 @@ public class Profile {
     public void setName(String Name) {
         this.name = Name;
     }
-    public void setImageProfile(Drawable image) {
+    public void setImageProfile(int image) {
         this.image = image;
     }
 
