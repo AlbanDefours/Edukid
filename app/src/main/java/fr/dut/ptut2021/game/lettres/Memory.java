@@ -1,4 +1,4 @@
-package fr.dut.ptut2021.miniJeux.lettres;
+package fr.dut.ptut2021.game.lettres;
 
 import androidx.appcompat.app.AppCompatActivity;
 

@@ -1,4 +1,4 @@
-package fr.dut.ptut2021.miniJeux.chiffres;
+package fr.dut.ptut2021.game.chiffres;
 
 import androidx.appcompat.app.AppCompatActivity;
 

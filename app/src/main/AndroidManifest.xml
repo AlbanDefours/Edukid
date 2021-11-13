@@ -25,10 +25,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".miniJeux.chiffres.Memory"
+            android:name=".game.chiffres.Memory"
             android:exported="false" />
         <activity
-            android:name=".miniJeux.lettres.Memory"
+            android:name=".game.lettres.Memory"
             android:exported="false" />
         <activity
             android:name=".application.MenuProfils"
