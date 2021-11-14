@@ -1,10 +1,12 @@
 package fr.dut.ptut2021.activities;
 
+import android.content.Intent;
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Bundle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +24,14 @@ public class UserMenu extends AppCompatActivity {
 
         List<User> listUser = new ArrayList<>();
 
-        // A remplacer par la BDD et supprimer les drawables au passage (a, b, c, d)
-        listUser.add(new User("Leon", R.drawable.a));
-        listUser.add(new User("ALban", R.drawable.b));
-        listUser.add(new User("William", R.drawable.c));
-        listUser.add(new User("Axel", R.drawable.d));
+        //TODO (a supprimer et importer BDD User)
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        if(bundle != null){
+            listUser.add(new User(bundle.getString("envoieNomPersonne", ""), R.drawable.a));
+        } else {
+            listUser.add(new User("NAME", R.drawable.a));
+        }
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview_users);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
