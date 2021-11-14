@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import afu.org.checkerframework.checker.nullness.qual.Nullable;
 
-public class LiveDataTestUtil {
+public class getDb {
     public static <T> T getValue(final LiveData<T> liveData) throws InterruptedException {
         final Object[] data = new Object[1];
         final CountDownLatch latch = new CountDownLatch(1);

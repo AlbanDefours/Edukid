@@ -7,6 +7,8 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import java.util.List;
+
 import fr.dut.ptut2021.models.User;
 
 @Dao
@@ -15,8 +17,11 @@ public interface UserDao {
     @Insert (onConflict = OnConflictStrategy.REPLACE)
     long createUser(User user);
 
+    @Query("SELECT * FROM User")
+    LiveData<List<User>> getAllUsers();
+
     @Query("SELECT * FROM User WHERE id = :userId")
-    LiveData<User> getUsers(int userId);
+    LiveData<User> getUser(int userId);
 
     @Update
     int updateUser(User user);
@@ -25,3 +30,5 @@ public interface UserDao {
     int deleteUser(int userId);
 
 }
+
+//https://www.youtube.com/watch?v=lwAvI3WDXBY

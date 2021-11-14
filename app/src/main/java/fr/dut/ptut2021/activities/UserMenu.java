@@ -23,10 +23,10 @@ public class UserMenu extends AppCompatActivity {
         List<User> listUser = new ArrayList<>();
 
         // A remplacer par la BDD et supprimer les drawables au passage (a, b, c, d)
-        listUser.add(new User(1, "Leon", R.drawable.a));
-        listUser.add(new User(2, "ALban", R.drawable.b));
-        listUser.add(new User(3, "William", R.drawable.c));
-        listUser.add(new User(4, "Axel", R.drawable.d));
+        listUser.add(new User("Leon", R.drawable.a));
+        listUser.add(new User("ALban", R.drawable.b));
+        listUser.add(new User("William", R.drawable.c));
+        listUser.add(new User("Axel", R.drawable.d));
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview_users);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
