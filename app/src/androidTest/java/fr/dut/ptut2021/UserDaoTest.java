@@ -1,10 +1,6 @@
 package fr.dut.ptut2021;
 
-import static junit.framework.TestCase.assertTrue;
-
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-import androidx.lifecycle.LiveData;
-import androidx.room.Database;
 import androidx.room.Room;
 import androidx.test.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -15,7 +11,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import fr.dut.ptut2021.database.CreateDatabase;
@@ -61,6 +56,10 @@ public class UserDaoTest {
         //assertTrue(user.getName().equals(USER1.getName()) && user.getId() == USER_ID);
         System.out.println(user1.getName());
         System.out.println(user2.getName());
+
+        //this.database.userDao().deleteAllUsers();
+        //user1 = getDb.getValue(this.database.userDao().getUser(1));
+        //System.out.println(user1.getName());
     }
 
     @Test

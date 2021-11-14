@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +15,7 @@ import fr.dut.ptut2021.adapters.UserAdapter;
 import fr.dut.ptut2021.models.User;
 
 public class UserMenu extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +30,7 @@ public class UserMenu extends AppCompatActivity {
         if(bundle != null){
             listUser.add(new User(bundle.getString("envoieNomPersonne", ""), R.drawable.a));
         } else {
-            listUser.add(new User("NAME", R.drawable.a));
+            listUser.add(new User("Léon", R.drawable.a));
         }
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview_users);
