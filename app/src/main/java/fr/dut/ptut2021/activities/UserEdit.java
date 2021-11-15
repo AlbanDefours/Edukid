@@ -12,7 +12,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.List;
+
 import fr.dut.ptut2021.R;
+import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.models.User;
 
 public class UserEdit extends AppCompatActivity {
 
@@ -21,6 +25,7 @@ public class UserEdit extends AppCompatActivity {
     private TextView title;
     private TextInputEditText textField_userName;
     private Button valider;
+    private CreateDatabase db;
 
     //TODO (a changer, pour le choix des images)
     private int i = 0;
@@ -30,6 +35,13 @@ public class UserEdit extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_edit);
+
+        new Thread(){
+            @Override
+            public void run() {
+                db = CreateDatabase.getInstance(UserEdit.this);
+            }
+        }.start();
 
         userAvatar = findViewById(R.id.userAvatar_editPage);
         title = findViewById(R.id.title_user_editPage);
@@ -63,8 +75,9 @@ public class UserEdit extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(isCorrect()){
+                    db.userDao().createUser(new User(textField_userName.getText().toString(), tableauImage[i]));
+                    db.close();
                     Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
-                    intent.putExtra("envoieNomPersonne", textField_userName.getText().toString()); //TODO (delete this code and save in BDD)
                     startActivity(intent);
                     finish();
                 } else {

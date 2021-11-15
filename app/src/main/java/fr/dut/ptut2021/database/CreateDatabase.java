@@ -12,7 +12,6 @@ import fr.dut.ptut2021.models.User;
 @Database(entities = { User.class }, version = 1, exportSchema = false)
 public abstract class CreateDatabase extends RoomDatabase {
 
-
     // --- SINGLETON ---
     private static volatile CreateDatabase INSTANCE;
 
@@ -26,12 +25,11 @@ public abstract class CreateDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             CreateDatabase.class, "database.db")
-                            //.allowMainThreadQueries()
+                            .allowMainThreadQueries()
                             .build();
                 }
             }
         }
         return INSTANCE;
     }
-
 }

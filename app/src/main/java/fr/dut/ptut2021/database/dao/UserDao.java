@@ -1,6 +1,5 @@
 package fr.dut.ptut2021.database.dao;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -18,7 +17,7 @@ public interface UserDao {
     long createUser(User user);
 
     @Query("SELECT * FROM User")
-    LiveData<List<User>> getAllUsers();
+    List<User> getAllUsers();
 
     @Query("SELECT * FROM User WHERE id = :userId")
     User getUser(int userId);
