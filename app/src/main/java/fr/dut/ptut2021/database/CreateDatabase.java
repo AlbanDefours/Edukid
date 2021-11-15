@@ -9,8 +9,9 @@ import androidx.room.RoomDatabase;
 import fr.dut.ptut2021.database.dao.UserDao;
 import fr.dut.ptut2021.models.User;
 
-@Database(entities = {User.class}, version = 1, exportSchema = false)
+@Database(entities = { User.class }, version = 1, exportSchema = false)
 public abstract class CreateDatabase extends RoomDatabase {
+
 
     // --- SINGLETON ---
     private static volatile CreateDatabase INSTANCE;
@@ -24,7 +25,8 @@ public abstract class CreateDatabase extends RoomDatabase {
             synchronized (CreateDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            CreateDatabase.class, "Database.db")
+                            CreateDatabase.class, "database.db")
+                            .allowMainThreadQueries()
                             .build();
                 }
             }

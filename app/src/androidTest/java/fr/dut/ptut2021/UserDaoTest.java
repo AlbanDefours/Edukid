@@ -33,8 +33,9 @@ public class UserDaoTest {
 
     @Before
     public void initDb() throws Exception {
-        this.database = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getContext(),
-                CreateDatabase.class)
+        this.database = Room.databaseBuilder(InstrumentationRegistry.getContext(),
+                CreateDatabase.class,
+                "database.db")
                 .allowMainThreadQueries()
                 .build();
     }

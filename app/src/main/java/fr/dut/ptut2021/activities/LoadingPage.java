@@ -30,7 +30,7 @@ public class LoadingPage extends AppCompatActivity {
                     finish();
                 }
             }
-        }, 5000);   //Loading Page time
+        }, 1000);   //Loading Page time
     }
 
     //Verifies que c'est la premiere fois que l'on ouvre l'application
