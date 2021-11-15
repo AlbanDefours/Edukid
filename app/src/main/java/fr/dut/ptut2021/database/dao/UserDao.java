@@ -21,7 +21,7 @@ public interface UserDao {
     LiveData<List<User>> getAllUsers();
 
     @Query("SELECT * FROM User WHERE id = :userId")
-    LiveData<User> getUser(int userId);
+    User getUser(int userId);
 
     @Update
     int updateUser(User user);
