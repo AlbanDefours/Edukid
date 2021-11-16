@@ -64,7 +64,7 @@ public class UserEdit extends AppCompatActivity {
             public void onClick(View v) {
                 if(isCorrect()){
                     Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
-                    intent.putExtra("envoieNomPersonne", textField_userName.getText().toString()); //TODO (delete this code and save in BDD)
+                    //intent.putExtra("envoieNomPersonne", textField_userName.getText().toString()); //TODO (delete this code and save in BDD)
                     startActivity(intent);
                     finish();
                 } else {

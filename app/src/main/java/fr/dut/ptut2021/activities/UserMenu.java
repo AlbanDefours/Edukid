@@ -2,6 +2,8 @@ package fr.dut.ptut2021.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
@@ -17,6 +19,8 @@ import fr.dut.ptut2021.models.User;
 
 public class UserMenu extends AppCompatActivity {
 
+    private ImageView addUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,17 +28,18 @@ public class UserMenu extends AppCompatActivity {
 
         List<User> listUser = new ArrayList<>();
 
-        //TODO (a supprimer et importer BDD User)
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        if(bundle != null){
-            listUser.add(new User(1, bundle.getString("envoieNomPersonne", ""), R.drawable.a));
-        } else {
-            listUser.add(new User(1, "NAME", R.drawable.a));
-        }
-
+        addUser = findViewById(R.id.addUser);
         RecyclerView recyclerView = findViewById(R.id.recyclerview_users);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new UserAdapter(getApplicationContext(), listUser));
+
+        addUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
+                intent.putExtra("isFirstTime", true);
+                startActivity(intent);
+            }
+        });
     }
 }
