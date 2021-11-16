@@ -1,43 +1,32 @@
 package fr.dut.ptut2021.models;
 
-import android.graphics.drawable.Drawable;
-
 public class Theme {
-    private int id;
     private String name;
-    private Drawable image;
+    private int image;
 
     public enum AllTheme {
-        LETTER, NUMBER;
+        LETTRES, CHIFFRES;
     }
 
     //Constructor
-    public Theme(int id, String name, Drawable image) {
-        this.id = id;
+    public Theme(String name, int image) {
         this.name = name;
         this.image = image;
     }
 
     //Getter
-    public int getId() {
-        return id;
-    }
     public String getName() {
         return name;
     }
-    public Drawable getImage() {
+    public int getImage() {
         return image;
     }
 
     //Setter
-    public void setId(int id) {
-        this.id = id;
-    }
     public void setName(String name) {
         this.name = name;
     }
-    public void setImage(Drawable image) {
+    public void setImage(int image) {
         this.image = image;
     }
-
 }

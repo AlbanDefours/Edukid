@@ -1,4 +1,4 @@
-package fr.dut.ptut2021.adapters;
+package fr.dut.ptut2021.adapters.user;
 
 import android.view.View;
 import android.widget.ImageView;

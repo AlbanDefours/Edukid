@@ -24,16 +24,24 @@ public class LoadingPage extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             public void run() {
                 if (db.userDao().dbIsEmpty()) {
-                    Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
-                    intent.putExtra("addUser", true);
-                    startActivity(intent);
-                    finish();
+                    openUserEditPage();
                 } else {
-                    Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
-                    startActivity(intent);
-                    finish();
+                    openUserMenuPage();
                 }
             }
         }, 1000);   //Loading Page time
+    }
+
+    private void openUserMenuPage() {
+        Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void openUserEditPage() {
+        Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
+        intent.putExtra("addUser", true);
+        startActivity(intent);
+        finish();
     }
 }

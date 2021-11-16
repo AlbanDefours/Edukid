@@ -1,5 +1,6 @@
 package fr.dut.ptut2021.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,29 +17,35 @@ import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.User;
 
-public class UserEdit extends AppCompatActivity {
+public class UserEdit extends AppCompatActivity implements View.OnClickListener {
 
     private boolean addUser = false;
-    private ImageView userAvatar;
     private TextView title;
-    private TextInputEditText textField_userName;
     private Button valid;
+    private ImageView userAvatar;
+    private TextInputEditText textField_userName;
     private CreateDatabase db = null;
 
     //TODO (a changer, pour le choix des images)
     private int i = 0;
-    private int[] tableauImage = {R.drawable.a, R.drawable.b, R.drawable.c, R.drawable.d};
+    private final int[] tableauImage = {R.drawable.a, R.drawable.b, R.drawable.c, R.drawable.d};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_edit);
 
-        userAvatar = findViewById(R.id.userAvatar_editPage);
-        title = findViewById(R.id.title_user_editPage);
-        textField_userName = findViewById(R.id.textField_userName);
-        valid = findViewById(R.id.button_userEditPage);
+        db = CreateDatabase.getInstance(UserEdit.this);
 
+        initializeLayout();
+
+        checkIfAddOrUpdateUser();
+
+        userAvatar.setOnClickListener(this);
+        valid.setOnClickListener(this);
+    }
+
+    private void checkIfAddOrUpdateUser(){
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
 
@@ -53,35 +60,31 @@ public class UserEdit extends AppCompatActivity {
                 userAvatar.setImageResource(R.drawable.a);
             }
         }
+    }
 
-        //TODO (add Image options like : take photo, choose photo ...)
-        userAvatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                userAvatar.setImageResource(tableauImage[++i % 4]);
-            }
-        });
+    private void initializeLayout() {
+        userAvatar = findViewById(R.id.userAvatar_editPage);
+        title = findViewById(R.id.title_user_editPage);
+        textField_userName = findViewById(R.id.textField_userName);
+        valid = findViewById(R.id.button_userEditPage);
+    }
 
-        valid.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    private void startUserMenuPage(){
+        Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
+        startActivity(intent);
+        finish();
+    }
 
-                if (isCorrect() && addUser) {
-                    db = CreateDatabase.getInstance(UserEdit.this);
-                    db.userDao().createUser(new User(textField_userName.getText().toString(), tableauImage[i]));
-
-                    Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
-                    startActivity(intent);
-                    finish();
-                } else if (!addUser && isCorrect()){
-                    Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
-                    startActivity(intent);
-                    finish();
-                } else if (!isCorrect()) {
-                    Toast.makeText(getApplicationContext(), "Veuillez saisir un prénom", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+    private void createUser(){
+        if (addUser && isCorrect()) {
+            db.userDao().createUser(new User(textField_userName.getText().toString(), tableauImage[i]));
+            startUserMenuPage();
+        } else if (!addUser && isCorrect()) {
+            //TODO DB UPDATE
+            startUserMenuPage();
+        } else if (!isCorrect()) {
+            Toast.makeText(getApplicationContext(), "Veuillez saisir un prénom", Toast.LENGTH_SHORT).show();
+        }
     }
 
     //TODO (verify image is correct)
@@ -91,5 +94,21 @@ public class UserEdit extends AppCompatActivity {
 
     private boolean isUserNameEmpty() {
         return textField_userName.getText().toString().isEmpty();
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.userAvatar_editPage:
+                userAvatar.setImageResource(tableauImage[++i % 4]);
+                break;
+
+            case R.id.button_userEditPage:
+                createUser();
+                break;
+            default:
+                break;
+        }
     }
 }
