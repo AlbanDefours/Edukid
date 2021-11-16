@@ -43,10 +43,29 @@ public class Symbol {
         }
     }
 
-
     //p1 et p2 sont les limites de la zone
     private boolean isInArea(Point point, Point p1, Point p2){
-        //todo
+        Point test;
+        test = new Point(p1);
+        int coef = (p1.x - p2.x) / (p1.y - p2.y);
+        
+        if(p1.y - p2.y < 0){
+            for(int i = p1.y - p2.y; i < 0; i--){
+                if(Math.sqrt(Math.pow(test.x - point.x)+Math.pow(test.y - point.y)) < tolerance){
+                    // c'est bon
+                }
+            }
+        }
+        else{
+            for(int i = 0; i < p1.y - p2.y; i++){
+                if(Math.sqrt(Math.pow(test.x - point.x)+Math.pow(test.y - point.y)) < tolerance){
+                    // c'est bon
+                }
+            }
+        }
+
+
+
         return true;
     }
 
