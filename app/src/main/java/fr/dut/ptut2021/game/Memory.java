@@ -2,6 +2,8 @@ package fr.dut.ptut2021.game;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,6 +14,7 @@ import fr.dut.ptut2021.adapters.MemoryAdapter;
 import fr.dut.ptut2021.models.Card;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Memory extends AppCompatActivity {
@@ -82,13 +85,15 @@ public class Memory extends AppCompatActivity {
         listCard.add(new Card("6",R.drawable.six));
 
         int size = listCard.size();
-        for(int i=0;i< size;i++){
+        for(int i=0;i<size;i++){
             this.listCard.add( new Card(listCard.get(i)));
         }
         shuffle();
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerview_memory);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new MemoryAdapter(getApplicationContext(), listCard));
+        //ArrayAdapter<MemoryAdapter> arrayAdapter = new ArrayAdapter<MemoryAdapter>(this, android.R.layout.simple_list_item_1 , (List<MemoryAdapter>) new MemoryAdapter(getApplicationContext(), listCard));
+        GridView gridView = findViewById(R.id.gridview_memory);
+        gridView.setAdapter(new MemoryAdapter(getApplicationContext(), listCard));
+        /*recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new MemoryAdapter(getApplicationContext(), listCard));*/
     }
 }

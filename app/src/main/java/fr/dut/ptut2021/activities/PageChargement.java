@@ -18,14 +18,10 @@ public class PageChargement extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_page_chargement);
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
+
                 Intent intent = new Intent().setClass(getApplicationContext(), Memory.class);
-                intent.putExtra("addMemory",true);
+
                 startActivity(intent);
-                finish();
-            }
-        },1000);
+
     }
 }
