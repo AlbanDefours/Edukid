@@ -19,6 +19,6 @@ public class MyViewHolderMemory extends RecyclerView.ViewHolder {
         super(itemView);
         element = itemView.findViewById(R.id.elementMemory);
         pattern = itemView.findViewById(R.id.patternImgMemory);
-        //background = itemView.findViewById(R.id.backgroundImgMemory);
+        background = itemView.findViewById(R.id.backgroundImgMemory);
     }
 }

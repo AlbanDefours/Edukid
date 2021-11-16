@@ -2,6 +2,8 @@ package fr.dut.ptut2021.game;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
@@ -35,10 +37,10 @@ public class Memory extends AppCompatActivity {
         Collections.shuffle(listCard);
     }
 
-    public void returnCard(int idCard) throws InterruptedException {
+    public void returnCard(int idCard,MemoryAdapter memoryAdapter) throws InterruptedException {
         listCard.get(idCard).setHidden(false);
-        display();
-        TimeUnit.SECONDS.sleep(1);
+        memoryAdapter.notifyDataSetChanged();
+        //TimeUnit.SECONDS.sleep(1);
 
         if(idLastCardReturn == -1){
             idLastCardReturn = idCard;
@@ -50,7 +52,7 @@ public class Memory extends AppCompatActivity {
             }else{
                 listCard.get(idCard).setHidden(true);
                 listCard.get(idLastCardReturn).setHidden(true);
-                display();
+                memoryAdapter.notifyDataSetChanged();
                 idLastCardReturn=-1;
             }
         }
@@ -97,6 +99,18 @@ public class Memory extends AppCompatActivity {
 
         MemoryAdapter memoryAdapter = new MemoryAdapter(getApplicationContext(), listCard,numColumns);
         gridView.setAdapter(memoryAdapter);
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+                try {
+                    returnCard(position,memoryAdapter);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         /*recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new MemoryAdapter(getApplicationContext(), listCard));*/
     }

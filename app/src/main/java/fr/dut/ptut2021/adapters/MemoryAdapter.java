@@ -70,19 +70,26 @@ public class MemoryAdapter extends BaseAdapter {
             holder = (MyViewHolderMemory) convertView.getTag();
         }
 
-
-        holder.pattern.setImageResource(R.drawable.patternimg);
-        //holder.background.setImageResource(R.drawable.backgroundmemory);
-
-        holder.element.setImageResource(listCard.get(i).getDrawableImage());
+        if(listCard.get(i).isHidden()){
+            holder.pattern.setImageResource(R.drawable.imgreturn);
+        }
+        else{
+            holder.pattern.setImageResource(R.drawable.patternimg);
+            holder.background.setImageResource(R.drawable.backgroundmemory);
+            holder.element.setImageResource(listCard.get(i).getDrawableImage());
+        }
 
         double width = (1094.0+20)/numColumns;
         double height = width*(1684.0/1094)+20;
         double sizeElement =  width*(800.0/1094);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int)width,(int)height);
+        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        holder.pattern.setLayoutParams(layoutParams);
+        holder.background.setLayoutParams(layoutParams);
 
-        holder.pattern.setLayoutParams(new RelativeLayout.LayoutParams((int)width,(int)height));
-        //holder.background.setLayoutParams(new RelativeLayout.LayoutParams((int)width,(int)height));
-        holder.element.setLayoutParams(new RelativeLayout.LayoutParams((int)sizeElement,(int)sizeElement));
+        layoutParams = new RelativeLayout.LayoutParams((int)sizeElement,(int)sizeElement);
+        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        holder.element.setLayoutParams(layoutParams);
 
         return convertView;
     }
