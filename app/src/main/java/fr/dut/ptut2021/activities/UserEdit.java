@@ -2,6 +2,7 @@ package fr.dut.ptut2021.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -24,36 +25,29 @@ public class UserEdit extends AppCompatActivity {
     private ImageView userAvatar;
     private TextView title;
     private TextInputEditText textField_userName;
-    private Button valider;
+    private Button valid;
     private CreateDatabase db;
 
     //TODO (a changer, pour le choix des images)
     private int i = 0;
-    private int[] tableauImage =  {R.drawable.a, R.drawable.b, R.drawable.c, R.drawable.d};
+    private int[] tableauImage = {R.drawable.a, R.drawable.b, R.drawable.c, R.drawable.d};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_edit);
 
-        new Thread(){
-            @Override
-            public void run() {
-                db = CreateDatabase.getInstance(UserEdit.this);
-            }
-        }.start();
-
         userAvatar = findViewById(R.id.userAvatar_editPage);
         title = findViewById(R.id.title_user_editPage);
         textField_userName = findViewById(R.id.textField_userName);
-        valider = findViewById(R.id.button_userEditPage);
+        valid = findViewById(R.id.button_userEditPage);
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
 
-        if(bundle != null){
+        if (bundle != null) {
             isFirstTime = bundle.getBoolean("isFirstTime", false);
-            if(!isFirstTime){
+            if (!isFirstTime) {
                 textField_userName.setText(bundle.getString("userName", ""));
                 userAvatar.setImageResource(bundle.getInt("userImage", R.drawable.a));
                 title.setText("Modification du profil de " + bundle.getString("userName", ""));
@@ -67,19 +61,26 @@ public class UserEdit extends AppCompatActivity {
         userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userAvatar.setImageResource(tableauImage[++i%4]);
+                userAvatar.setImageResource(tableauImage[++i % 4]);
             }
         });
 
-        valider.setOnClickListener(new View.OnClickListener() {
+        valid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isCorrect()){
-                    db.userDao().createUser(new User(textField_userName.getText().toString(), tableauImage[i]));
-                    db.close();
-                    Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
-                    startActivity(intent);
-                    finish();
+                if (isCorrect()) {
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            db = CreateDatabase.getInstance(UserEdit.this);
+                            db.userDao().createUser(new User(textField_userName.getText().toString(), tableauImage[i]));
+                            db.close();
+
+                            Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    }.start();
                 } else {
                     Toast.makeText(getApplicationContext(), "Veuillez saisir un prénom", Toast.LENGTH_SHORT).show();
                 }
@@ -88,11 +89,11 @@ public class UserEdit extends AppCompatActivity {
     }
 
     //TODO (verify image is correct)
-    private boolean isCorrect(){
+    private boolean isCorrect() {
         return !isUserNameEmpty();
     }
 
-    private boolean isUserNameEmpty(){
+    private boolean isUserNameEmpty() {
         return textField_userName.getText().toString().isEmpty();
     }
 }
