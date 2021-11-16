@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.game.Memory;
@@ -16,7 +17,15 @@ public class PageChargement extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_page_chargement);
-        Intent intent = new Intent().setClass(this, Memory.class);
-        startActivity(intent);
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                Intent intent = new Intent().setClass(getApplicationContext(), Memory.class);
+                intent.putExtra("addMemory",true);
+                startActivity(intent);
+                finish();
+            }
+        },1000);
     }
 }
