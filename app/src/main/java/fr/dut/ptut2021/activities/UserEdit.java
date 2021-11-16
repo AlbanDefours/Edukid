@@ -2,6 +2,7 @@ package fr.dut.ptut2021.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -12,7 +13,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.List;
+
 import fr.dut.ptut2021.R;
+import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.models.User;
 
 public class UserEdit extends AppCompatActivity {
 
@@ -20,11 +25,12 @@ public class UserEdit extends AppCompatActivity {
     private ImageView userAvatar;
     private TextView title;
     private TextInputEditText textField_userName;
-    private Button valider;
+    private Button valid;
+    private CreateDatabase db = null;
 
     //TODO (a changer, pour le choix des images)
     private int i = 0;
-    private int[] tableauImage =  {R.drawable.a, R.drawable.b, R.drawable.c, R.drawable.d};
+    private int[] tableauImage = {R.drawable.a, R.drawable.b, R.drawable.c, R.drawable.d};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,19 +40,19 @@ public class UserEdit extends AppCompatActivity {
         userAvatar = findViewById(R.id.userAvatar_editPage);
         title = findViewById(R.id.title_user_editPage);
         textField_userName = findViewById(R.id.textField_userName);
-        valider = findViewById(R.id.button_userEditPage);
+        valid = findViewById(R.id.button_userEditPage);
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
 
-        if(bundle != null){
+        if (bundle != null) {
             isFirstTime = bundle.getBoolean("isFirstTime", false);
-            if(!isFirstTime){
+            if (!isFirstTime) {
                 textField_userName.setText(bundle.getString("userName", ""));
                 userAvatar.setImageResource(bundle.getInt("userImage", R.drawable.a));
                 title.setText("Modification du profil de " + bundle.getString("userName", ""));
             } else {
-                title.setText("Creer votre première session");
+                title.setText("Créer votre première session");
                 userAvatar.setImageResource(R.drawable.a);
             }
         }
@@ -55,19 +61,23 @@ public class UserEdit extends AppCompatActivity {
         userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userAvatar.setImageResource(tableauImage[++i%4]);
+                userAvatar.setImageResource(tableauImage[++i % 4]);
             }
         });
 
-        valider.setOnClickListener(new View.OnClickListener() {
+        valid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(bundle.getBoolean("addUser", false) && isCorrect()){
+
+                if (bundle.getBoolean("addUser", false) && isCorrect()) {
                     //TODO createUser BDD
                     finish();
-                } else if(isCorrect()){
+                } else if (isCorrect()) {
+                    db = CreateDatabase.getInstance(UserEdit.this);
+                    db.userDao().createUser(new User(textField_userName.getText().toString(), tableauImage[i]));
+                    db.close();
+
                     Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
-                    intent.putExtra("envoieNomPersonne", textField_userName.getText().toString()); //TODO (delete this code and save in BDD)
                     startActivity(intent);
                     finish();
                 } else {
@@ -78,11 +88,11 @@ public class UserEdit extends AppCompatActivity {
     }
 
     //TODO (verify image is correct)
-    private boolean isCorrect(){
+    private boolean isCorrect() {
         return !isUserNameEmpty();
     }
 
-    private boolean isUserNameEmpty(){
+    private boolean isUserNameEmpty() {
         return textField_userName.getText().toString().isEmpty();
     }
 }

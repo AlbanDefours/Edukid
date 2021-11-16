@@ -2,9 +2,15 @@ package fr.dut.ptut2021.models;
 
 import android.graphics.drawable.Drawable;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.util.ArrayList;
 
+@Entity
 public class Game {
+
+    @PrimaryKey
     private int id;
     private String name;
     private Drawable image;
