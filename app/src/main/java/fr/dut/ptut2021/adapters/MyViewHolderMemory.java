@@ -13,10 +13,12 @@ public class MyViewHolderMemory extends RecyclerView.ViewHolder {
 
     ImageView element;
     ImageView pattern;
+    ImageView background;
 
     public MyViewHolderMemory(@NonNull View itemView) {
         super(itemView);
         element = itemView.findViewById(R.id.elementMemory);
         pattern = itemView.findViewById(R.id.patternImgMemory);
+        //background = itemView.findViewById(R.id.backgroundImgMemory);
     }
 }

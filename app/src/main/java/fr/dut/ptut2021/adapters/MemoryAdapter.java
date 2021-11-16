@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,10 +19,12 @@ public class MemoryAdapter extends BaseAdapter {
 
     Context  context;
     List<Card> listCard;
+    int numColumns;
 
-    public MemoryAdapter(Context context, List<Card> listCard) {
+    public MemoryAdapter(Context context, List<Card> listCard, int numColumns) {
         this.context = context;
         this.listCard = listCard;
+        this.numColumns = numColumns;
     }
 
     /*@NonNull
@@ -61,20 +63,28 @@ public class MemoryAdapter extends BaseAdapter {
     public View getView(int i, View convertView, ViewGroup parent) {
         MyViewHolderMemory holder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_card, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_card,parent, false);
             holder = new MyViewHolderMemory(convertView);
             convertView.setTag(holder);
         } else {
             holder = (MyViewHolderMemory) convertView.getTag();
         }
 
-        
+
         holder.pattern.setImageResource(R.drawable.patternimg);
-        holder.pattern.setImageResource(R.drawable.patternimg);
+        //holder.background.setImageResource(R.drawable.backgroundmemory);
 
         holder.element.setImageResource(listCard.get(i).getDrawableImage());
-        holder.element.setMaxWidth("");
+
+        double width = (1094.0+20)/numColumns;
+        double height = width*(1684.0/1094)+20;
+        double sizeElement =  width*(800.0/1094);
+
+        holder.pattern.setLayoutParams(new RelativeLayout.LayoutParams((int)width,(int)height));
+        //holder.background.setLayoutParams(new RelativeLayout.LayoutParams((int)width,(int)height));
+        holder.element.setLayoutParams(new RelativeLayout.LayoutParams((int)sizeElement,(int)sizeElement));
 
         return convertView;
     }
+
 }

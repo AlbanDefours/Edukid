@@ -7,8 +7,8 @@
     tools:context=".game.Memory">
 
     <GridView
+        android:stretchMode="columnWidth"
         android:id="@+id/gridview_memory"
-        android:numColumns ="2"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </RelativeLayout>

@@ -92,7 +92,11 @@ public class Memory extends AppCompatActivity {
 
         //ArrayAdapter<MemoryAdapter> arrayAdapter = new ArrayAdapter<MemoryAdapter>(this, android.R.layout.simple_list_item_1 , (List<MemoryAdapter>) new MemoryAdapter(getApplicationContext(), listCard));
         GridView gridView = findViewById(R.id.gridview_memory);
-        gridView.setAdapter(new MemoryAdapter(getApplicationContext(), listCard));
+        int numColumns = (int) Math.sqrt(listCard.size());
+        gridView.setNumColumns(numColumns);
+
+        MemoryAdapter memoryAdapter = new MemoryAdapter(getApplicationContext(), listCard,numColumns);
+        gridView.setAdapter(memoryAdapter);
         /*recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new MemoryAdapter(getApplicationContext(), listCard));*/
     }
