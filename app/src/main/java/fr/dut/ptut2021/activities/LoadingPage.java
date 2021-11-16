@@ -13,26 +13,19 @@ import fr.dut.ptut2021.database.CreateDatabase;
 
 public class LoadingPage extends AppCompatActivity {
 
-    private CreateDatabase db;
+    private CreateDatabase db = null;
     private boolean vide;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_page);
-
-        new Thread() {
-            @Override
-            public void run() {
-                db = CreateDatabase.getInstance(LoadingPage.this);
-                vide = db.userDao().dbIsEmpty();
-            }
-        }.start();
+        db = CreateDatabase.getInstance(getApplicationContext());
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                if (vide) {
+                if (db.userDao().dbIsEmpty()) {
                     Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
                     intent.putExtra("isFirstTime", true);
                     startActivity(intent);
@@ -43,7 +36,7 @@ public class LoadingPage extends AppCompatActivity {
                     finish();
                 }
             }
-        }, 10000);   //Loading Page time
+        }, 1000);   //Loading Page time
     }
 
     //Verifies que c'est la premiere fois que l'on ouvre l'application

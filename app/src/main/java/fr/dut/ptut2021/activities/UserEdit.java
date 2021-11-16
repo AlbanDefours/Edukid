@@ -26,7 +26,7 @@ public class UserEdit extends AppCompatActivity {
     private TextView title;
     private TextInputEditText textField_userName;
     private Button valid;
-    private CreateDatabase db;
+    private CreateDatabase db = null;
 
     //TODO (a changer, pour le choix des images)
     private int i = 0;
@@ -52,7 +52,7 @@ public class UserEdit extends AppCompatActivity {
                 userAvatar.setImageResource(bundle.getInt("userImage", R.drawable.a));
                 title.setText("Modification du profil de " + bundle.getString("userName", ""));
             } else {
-                title.setText("Creer votre première session");
+                title.setText("Créer votre première session");
                 userAvatar.setImageResource(R.drawable.a);
             }
         }
@@ -69,18 +69,13 @@ public class UserEdit extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isCorrect()) {
-                    new Thread(){
-                        @Override
-                        public void run() {
-                            db = CreateDatabase.getInstance(UserEdit.this);
-                            db.userDao().createUser(new User(textField_userName.getText().toString(), tableauImage[i]));
-                            db.close();
+                    db = CreateDatabase.getInstance(UserEdit.this);
+                    db.userDao().createUser(new User(textField_userName.getText().toString(), tableauImage[i]));
+                    db.close();
 
-                            Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                    }.start();
+                    Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
+                    startActivity(intent);
+                    finish();
                 } else {
                     Toast.makeText(getApplicationContext(), "Veuillez saisir un prénom", Toast.LENGTH_SHORT).show();
                 }

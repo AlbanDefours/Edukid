@@ -13,7 +13,7 @@ import fr.dut.ptut2021.models.User;
 @Dao
 public interface UserDao {
 
-    @Insert (onConflict = OnConflictStrategy.REPLACE)
+    @Insert (onConflict = OnConflictStrategy.IGNORE)
     long createUser(User user);
 
     @Query("SELECT * FROM User")
