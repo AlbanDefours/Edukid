@@ -1,27 +1,32 @@
 package fr.dut.ptut2021.models;
 
+import static android.graphics.Bitmap.Config.ARGB_8888;
+
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+
 public class Card {
     private String value;
     private boolean hidden=true;
-    private String nameImage;
+    private int drawableImage;
 
 
-    public Card(String value,String nameImage){
+    public Card(String value,int drawableImage){
         this.value = value;
-        this.nameImage = nameImage;
+        this.drawableImage = drawableImage;
     }
 
     public Card(Card card){
         this.value = card.getValue();
-        this.nameImage = card.getNameImage();
+        this.drawableImage = card.getDrawableImage();
     }
 
     //getter
     public boolean isHidden() {
         return hidden;
     }
-    public String getNameImage() {
-        return nameImage;
+    public int getDrawableImage() {
+        return drawableImage;
     }
     public String getValue() {
         return value;
@@ -31,10 +36,11 @@ public class Card {
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
     }
-    public void setNameImage(String nameImage) {
-        this.nameImage = nameImage;
+    public void setDrawableImage(int drawableImage) {
+        this.drawableImage = drawableImage;
     }
     public void setValue(String value) {
         this.value = value;
     }
+
 }

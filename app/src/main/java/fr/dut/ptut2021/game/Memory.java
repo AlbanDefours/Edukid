@@ -1,23 +1,27 @@
 package fr.dut.ptut2021.game;
 
+import android.content.Intent;
+import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import fr.dut.ptut2021.R;
+import fr.dut.ptut2021.adapters.MemoryAdapter;
 import fr.dut.ptut2021.models.Card;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
-public class Memory {
+public class Memory extends AppCompatActivity {
     private ArrayList<Card> listCard;
     private int idLastCardReturn=-1;
 
-    public Memory(ArrayList<Card> listCard){
-        this.listCard = new ArrayList<>();
-        for(Card card : listCard){
-            this.listCard.add(card);
-            this.listCard.add( new Card(card));
-        }
-        shuffle();
+   /* public Memory(ArrayList<Card> listCard){
+
         display();
-    }
+    }*/
 
     private void shuffle(){
         Collections.shuffle(listCard);
@@ -62,5 +66,28 @@ public class Memory {
 
             compteur++;
         }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_memory);
+
+        listCard = new ArrayList<>();
+        listCard.add(new Card("1",R.drawable.one));
+        listCard.add(new Card("2",R.drawable.two));
+        listCard.add(new Card("3",R.drawable.three));
+        listCard.add(new Card("4",R.drawable.four));
+        listCard.add(new Card("5",R.drawable.five));
+        listCard.add(new Card("6",R.drawable.six));
+
+        for(int i=0;i<listCard.size();i++){
+            this.listCard.add( new Card(listCard.get(i)));
+        }
+        shuffle();
+
+        RecyclerView recyclerView = findViewById(R.id.recyclerview_memory);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new MemoryAdapter(getApplicationContext(), listCard));
     }
 }
