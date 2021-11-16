@@ -2,7 +2,6 @@ package fr.dut.ptut2021.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,15 +12,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.util.List;
-
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.User;
 
 public class UserEdit extends AppCompatActivity {
 
-    private boolean isFirstTime = false;
+    private boolean addUser = false;
     private ImageView userAvatar;
     private TextView title;
     private TextInputEditText textField_userName;
@@ -46,13 +43,13 @@ public class UserEdit extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
 
         if (bundle != null) {
-            isFirstTime = bundle.getBoolean("isFirstTime", false);
-            if (!isFirstTime) {
+            addUser = bundle.getBoolean("addUser", false);
+            if (!addUser) {
                 textField_userName.setText(bundle.getString("userName", ""));
                 userAvatar.setImageResource(bundle.getInt("userImage", R.drawable.a));
                 title.setText("Modification du profil de " + bundle.getString("userName", ""));
             } else {
-                title.setText("Créer votre première session");
+                title.setText("Créer votre session");
                 userAvatar.setImageResource(R.drawable.a);
             }
         }
@@ -69,18 +66,18 @@ public class UserEdit extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (bundle.getBoolean("addUser", false) && isCorrect()) {
-                    //TODO createUser BDD
-                    finish();
-                } else if (isCorrect()) {
+                if (isCorrect() && addUser) {
                     db = CreateDatabase.getInstance(UserEdit.this);
                     db.userDao().createUser(new User(textField_userName.getText().toString(), tableauImage[i]));
-                    db.close();
 
                     Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
                     startActivity(intent);
                     finish();
-                } else {
+                } else if (!addUser && isCorrect()){
+                    Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
+                    startActivity(intent);
+                    finish();
+                } else if (!isCorrect()) {
                     Toast.makeText(getApplicationContext(), "Veuillez saisir un prénom", Toast.LENGTH_SHORT).show();
                 }
             }

@@ -29,6 +29,7 @@ public class UserMenu extends AppCompatActivity {
 
         List<User> listUser = db.userDao().getAllUsers();
 
+        addUser = findViewById(R.id.addUser);
         RecyclerView recyclerView = findViewById(R.id.recyclerview_users);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new UserAdapter(getApplicationContext(), listUser));
@@ -51,6 +52,7 @@ public class UserMenu extends AppCompatActivity {
                 Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
                 intent.putExtra("addUser", true);
                 startActivity(intent);
+                finish();
             }
         });
     }
