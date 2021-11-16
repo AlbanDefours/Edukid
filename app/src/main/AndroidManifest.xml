@@ -25,10 +25,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".game.number.Memory"
-            android:exported="false" />
-        <activity
-            android:name=".game.letter.Memory"
+            android:name=".game.Memory"
             android:exported="false" />
         <activity
             android:name=".activities.MenuProfils"

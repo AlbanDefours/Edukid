@@ -81,7 +81,8 @@ public class Memory extends AppCompatActivity {
         listCard.add(new Card("5",R.drawable.five));
         listCard.add(new Card("6",R.drawable.six));
 
-        for(int i=0;i<listCard.size();i++){
+        int size = listCard.size();
+        for(int i=0;i< size;i++){
             this.listCard.add( new Card(listCard.get(i)));
         }
         shuffle();
