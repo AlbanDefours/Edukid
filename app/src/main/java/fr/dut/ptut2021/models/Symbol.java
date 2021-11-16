@@ -29,7 +29,7 @@ public class Symbol {
         return idNearestPoint;
     }
 
-    /*
+    
     public int findIdOfSecondNearestPoint(Point point){
         int idNearestPoint = findIdOfNearestPoint(point);
         if(points.size() <= 1){
@@ -42,7 +42,7 @@ public class Symbol {
             }
         }
     }
-    */
+
 
     //p1 et p2 sont les limites de la zone
     private boolean isInArea(Point point, Point p1, Point p2){
