@@ -6,10 +6,19 @@
     android:layout_height="wrap_content"
     tools:context=".activities.UserMenu">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerview_users"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview_users"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/addUser"

@@ -62,9 +62,12 @@ public class UserEdit extends AppCompatActivity {
         valider.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isCorrect()){
+                if(bundle.getBoolean("addUser", false) && isCorrect()){
+                    //TODO createUser BDD
+                    finish();
+                } else if(isCorrect()){
                     Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
-                    //intent.putExtra("envoieNomPersonne", textField_userName.getText().toString()); //TODO (delete this code and save in BDD)
+                    intent.putExtra("envoieNomPersonne", textField_userName.getText().toString()); //TODO (delete this code and save in BDD)
                     startActivity(intent);
                     finish();
                 } else {

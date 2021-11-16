@@ -10,6 +10,7 @@ public class Game {
     private Drawable image;
     private ArrayList<Theme> listTheme;
 
+
     //Constructor
     public Game(int id, String name, Drawable image, ArrayList<Theme> listTheme) {
         this.id = id;

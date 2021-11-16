@@ -7,6 +7,10 @@ public class Theme {
     private String name;
     private Drawable image;
 
+    public enum AllTheme {
+        LETTER, NUMBER;
+    }
+
     //Constructor
     public Theme(int id, String name, Drawable image) {
         this.id = id;
