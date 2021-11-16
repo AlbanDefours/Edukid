@@ -1,4 +1,4 @@
-package fr.dut.ptut2021.database.dao;
+package fr.dut.ptut2021;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
