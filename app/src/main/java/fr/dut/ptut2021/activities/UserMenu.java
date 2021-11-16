@@ -26,7 +26,13 @@ public class UserMenu extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_menu);
 
-        db = CreateDatabase.getInstance(UserMenu.this);
+        new Thread() {
+            @Override
+            public void run() {
+                db = CreateDatabase.getInstance(UserMenu.this);
+            }
+        }.start();
+
         List<User> listUser = db.userDao().getAllUsers();
         db.close();
 

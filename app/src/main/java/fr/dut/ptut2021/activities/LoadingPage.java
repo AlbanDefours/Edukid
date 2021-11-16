@@ -20,7 +20,12 @@ public class LoadingPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_page);
 
-        db = CreateDatabase.getInstance(LoadingPage.this);
+        new Thread() {
+            @Override
+            public void run() {
+                db = CreateDatabase.getInstance(LoadingPage.this);
+            }
+        }.start();
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
