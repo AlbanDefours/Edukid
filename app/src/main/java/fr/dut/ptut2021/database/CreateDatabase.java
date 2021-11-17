@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase;
 import fr.dut.ptut2021.database.dao.UserDao;
 import fr.dut.ptut2021.models.User;
 
-@Database(entities = { User.class }, version = 1, exportSchema = true)
+@Database(entities = { User.class }, version = 2, exportSchema = true)
 public abstract class CreateDatabase extends RoomDatabase {
 
     // --- SINGLETON ---
