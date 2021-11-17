@@ -6,6 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import fr.dut.ptut2021.database.dao.ThemeDao;
 import fr.dut.ptut2021.database.dao.UserDao;
 import fr.dut.ptut2021.models.Theme;
 import fr.dut.ptut2021.models.User;
@@ -18,6 +19,7 @@ public abstract class CreateDatabase extends RoomDatabase {
 
     // --- DAO ---
     public abstract UserDao userDao();
+    public abstract ThemeDao themeDao();
 
     // --- INSTANCE ---
     public static CreateDatabase getInstance(Context context) {

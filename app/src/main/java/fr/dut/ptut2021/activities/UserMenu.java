@@ -30,7 +30,7 @@ public class UserMenu extends AppCompatActivity {
         db = CreateDatabase.getInstance(UserMenu.this);
 
         //Peut etre plus opti de faire un seul getAllUser() en testant listUser empty ?
-        if (!db.userDao().dbIsEmpty()) {
+        if (!db.userDao().tabUserIsEmpty()) {
             listUser = db.userDao().getAllUsers();
         } else {
             startAddUserPage();

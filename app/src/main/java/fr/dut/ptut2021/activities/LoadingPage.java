@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.models.Theme;
 
 public class LoadingPage extends AppCompatActivity {
 
@@ -19,6 +20,7 @@ public class LoadingPage extends AppCompatActivity {
         setContentView(R.layout.activity_loading_page);
 
         db = CreateDatabase.getInstance(getApplicationContext());
+        createThemes();
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -31,6 +33,13 @@ public class LoadingPage extends AppCompatActivity {
                 }
             }
         }, 1000);   //Loading Page time
+    }
+
+    private void createThemes() {
+        if (db.themeDao().tabThemeIsEmpty()) {
+            db.themeDao().createTheme(new Theme("Lettres", R.drawable.lettres));
+            db.themeDao().createTheme(new Theme("Chiffres", R.drawable.chiffres));
+        }
     }
 
     private void openUserMenuPage() {
