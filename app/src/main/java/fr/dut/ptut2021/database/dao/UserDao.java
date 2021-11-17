@@ -31,7 +31,7 @@ public interface UserDao {
     @Query("DELETE FROM User")
     int deleteAllUsers();
 
-    default boolean dbIsEmpty() {
+    default boolean tabUserIsEmpty() {
         return getAllUsers().isEmpty();
     }
 

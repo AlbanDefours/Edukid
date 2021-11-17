@@ -25,7 +25,7 @@ public class LoadingPage extends AppCompatActivity {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                if (db.userDao().dbIsEmpty()) {
+                if (db.userDao().tabUserIsEmpty()) {
                     Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
                     intent.putExtra("isFirstTime", true);
                     startActivity(intent);

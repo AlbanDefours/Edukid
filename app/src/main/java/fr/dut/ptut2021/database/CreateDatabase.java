@@ -7,9 +7,10 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import fr.dut.ptut2021.database.dao.UserDao;
+import fr.dut.ptut2021.models.Theme;
 import fr.dut.ptut2021.models.User;
 
-@Database(entities = { User.class }, version = 2, exportSchema = true)
+@Database(entities = { User.class, Theme.class }, version = 2, exportSchema = true)
 public abstract class CreateDatabase extends RoomDatabase {
 
     // --- SINGLETON ---
@@ -21,17 +22,13 @@ public abstract class CreateDatabase extends RoomDatabase {
     // --- INSTANCE ---
     public static CreateDatabase getInstance(Context context) {
 
-        //if (INSTANCE == null) {
-            //synchronized (CreateDatabase.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context,
-                            CreateDatabase.class, "database")
-                            .allowMainThreadQueries()
-                            .fallbackToDestructiveMigration()
-                            .build();
-                }
-            //}
-        //}
+        if (INSTANCE == null) {
+            INSTANCE = Room.databaseBuilder(context,
+                    CreateDatabase.class, "database")
+                    .allowMainThreadQueries()
+                    .fallbackToDestructiveMigration()
+                    .build();
+        }
         return INSTANCE;
     }
 }
