@@ -10,7 +10,12 @@ public class Symbol {
 
     public Symbol(){
         this.points = new ArrayList<>();
+        this.tolerance = 10;
+    }
 
+    public Symbol(int tolerance){
+        this.points = new ArrayList<>();
+        this.tolerance = tolerance;
     }
 
     private int findIdOfNearestPoint(Point point){
@@ -48,25 +53,22 @@ public class Symbol {
         Point test;
         test = new Point(p1);
         int coef = (p1.x - p2.x) / (p1.y - p2.y);
-        
+
         if(p1.y - p2.y < 0){
-            for(int i = p1.y - p2.y; i < 0; i--){
-                if(Math.sqrt(Math.pow(test.x - point.x)+Math.pow(test.y - point.y)) < tolerance){
-                    // c'est bon
+            for(int i = p1.y - p2.y; i <= 0; i--){
+                if(Math.sqrt(Math.pow((test.x + i * (coef)) - point.x)+Math.pow(test.y - point.y)) <= tolerance){
+                    return true;
                 }
             }
         }
         else{
-            for(int i = 0; i < p1.y - p2.y; i++){
-                if(Math.sqrt(Math.pow(test.x - point.x)+Math.pow(test.y - point.y)) < tolerance){
-                    // c'est bon
+            for(int i = 0; i <= p1.y - p2.y; i++){
+                if(Math.sqrt(Math.pow((test.x + i * (coef)) - point.x)+Math.pow(test.y - point.y)) <= tolerance){
+                    return true;
                 }
             }
         }
-
-
-
-        return true;
+        return false;
     }
 
     public boolean isInSymbol(Point point){
@@ -82,5 +84,4 @@ public class Symbol {
             return false;
         }
     }
-
 }
