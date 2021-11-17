@@ -12,7 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import fr.dut.ptut2021.R;
 
 public class MyViewHolderMemory extends RecyclerView.ViewHolder {
-
+    
+    View viewCard;
     ImageView element;
     ImageView pattern;
     ImageView returnCard;
@@ -26,6 +27,7 @@ public class MyViewHolderMemory extends RecyclerView.ViewHolder {
 
     public MyViewHolderMemory(@NonNull View itemView) {
         super(itemView);
+        viewCard = itemView.findViewById(R.id.viewCard);
         element = itemView.findViewById(R.id.elementMemory);
         pattern = itemView.findViewById(R.id.patternImgMemory);
         background = itemView.findViewById(R.id.backgroundImgMemory);
@@ -51,18 +53,14 @@ public class MyViewHolderMemory extends RecyclerView.ViewHolder {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                if (pattern.getVisibility() == View.VISIBLE) {
-                    pattern.setAnimation(null);
-                    background.setAnimation(null);
-                    element.setAnimation(null);
+                if (viewCard.getVisibility() == View.VISIBLE) {
+                    viewCard.setAnimation(null);
                     showImageReturnCard();
                     returnCard.startAnimation(sato1);
                 } else {
                     returnCard.setAnimation(null);
-                    showImagePattern();
-                    pattern.startAnimation(sato1);
-                    background.startAnimation(sato1);
-                    element.startAnimation(sato1);
+                    showImageViewCard();
+                    viewCard.startAnimation(sato1);
                 }
             }
         });
@@ -71,15 +69,11 @@ public class MyViewHolderMemory extends RecyclerView.ViewHolder {
 
     public void showImageReturnCard() {
             returnCard.setVisibility(View.VISIBLE);
-            pattern.setVisibility(View.INVISIBLE);
-            element.setVisibility(View.INVISIBLE);
-            background.setVisibility(View.INVISIBLE);
+            viewCard.setVisibility(View.INVISIBLE);
     }
 
-    public void showImagePattern() {
+    public void showImageViewCard() {
         returnCard.setVisibility(View.INVISIBLE);
-        pattern.setVisibility(View.VISIBLE);
-        element.setVisibility(View.VISIBLE);
-        background.setVisibility(View.VISIBLE);
+        viewCard.setVisibility(View.VISIBLE);
     }
 }
