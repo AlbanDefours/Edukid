@@ -82,10 +82,11 @@ public class MemoryAdapter extends BaseAdapter {
         holder.element.setImageResource(listCard.get(i).getDrawableImage());
 
         if(listCard.get(i).isHidden()){
-            holder.shwoImageReturnCard();
+            holder.showImagePattern();
         }
         else{
-            holder.showImagePattern();
+
+            holder.shwoImageReturnCard();
         }
 
         //animation(i);
