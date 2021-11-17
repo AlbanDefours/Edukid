@@ -34,8 +34,8 @@ public class MyViewHolderMemory extends RecyclerView.ViewHolder {
         returnCard = itemView.findViewById(R.id.returnImgMemory);
 
 
-        sato0.setDuration(500);
-        sato1.setDuration(500);
+        sato0.setDuration(250);
+        sato1.setDuration(250);
 
         sato0.setAnimationListener(new Animation.AnimationListener() {
 
