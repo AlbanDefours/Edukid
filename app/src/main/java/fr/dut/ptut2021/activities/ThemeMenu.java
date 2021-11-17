@@ -49,7 +49,7 @@ public class ThemeMenu extends AppCompatActivity {
 
     private void startGameMenu(int position) {
         Intent intent = new Intent().setClass(getApplicationContext(), GameMenu.class);
-        intent.putExtra("themeName", listTheme.get(position).getName(position));
+        intent.putExtra("themeName", listTheme.get(position).getName());
         startActivity(intent);
     }
 }

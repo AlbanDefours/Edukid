@@ -1,30 +1,35 @@
 package fr.dut.ptut2021.models;
 
-import java.util.List;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+@Entity
 public class Theme {
-    private List<String> name;
-    private List<Integer> image;
+
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+    private String name;
+    private int image;
 
     //Constructor
     public Theme(String name, int image) {
-        this.name.add(name);
-        this.image.add(image);
+        this.name = name;
+        this.image = image;
     }
 
     //Getter
-    public String getName(int pos) {
-        return name.get(pos);
+    public String getName() {
+        return name;
     }
-    public int getImage(int pos) {
-        return image.get(pos);
+    public int getImage() {
+        return image;
     }
 
     //Setter
     public void setName(String name) {
-        this.name.add(name);
+        this.name = name;
     }
     public void setImage(int image) {
-        this.image.add(image);
+        this.image = image;
     }
 }
