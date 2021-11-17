@@ -34,5 +34,4 @@ public interface UserDao {
     default boolean tabUserIsEmpty() {
         return getAllUsers().isEmpty();
     }
-
 }
