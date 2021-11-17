@@ -1,9 +1,14 @@
 package fr.dut.ptut2021.adapters;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.BaseAdapter;
 import android.widget.RelativeLayout;
 
@@ -20,6 +25,9 @@ public class MemoryAdapter extends BaseAdapter {
     Context  context;
     List<Card> listCard;
     int numColumns;
+    MyViewHolderMemory holder;
+
+
 
     public MemoryAdapter(Context context, List<Card> listCard, int numColumns) {
         this.context = context;
@@ -61,7 +69,6 @@ public class MemoryAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View convertView, ViewGroup parent) {
-        MyViewHolderMemory holder;
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_card,parent, false);
             holder = new MyViewHolderMemory(convertView);
@@ -69,15 +76,20 @@ public class MemoryAdapter extends BaseAdapter {
         } else {
             holder = (MyViewHolderMemory) convertView.getTag();
         }
+        holder.returnCard.setImageResource(R.drawable.imgreturn);
+        holder.pattern.setImageResource(R.drawable.patternimg);
+        holder.background.setImageResource(R.drawable.backgroundmemory);
+        holder.element.setImageResource(listCard.get(i).getDrawableImage());
 
         if(listCard.get(i).isHidden()){
-            holder.pattern.setImageResource(R.drawable.imgreturn);
+            holder.shwoImageReturnCard();
         }
         else{
-            holder.pattern.setImageResource(R.drawable.patternimg);
-            holder.background.setImageResource(R.drawable.backgroundmemory);
-            holder.element.setImageResource(listCard.get(i).getDrawableImage());
+            holder.showImagePattern();
         }
+
+        //animation(i);
+
 
         double width = (1094.0+20)/numColumns;
         double height = width*(1684.0/1094)+20;
@@ -86,12 +98,25 @@ public class MemoryAdapter extends BaseAdapter {
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         holder.pattern.setLayoutParams(layoutParams);
         holder.background.setLayoutParams(layoutParams);
+        holder.returnCard.setLayoutParams(layoutParams);
 
         layoutParams = new RelativeLayout.LayoutParams((int)sizeElement,(int)sizeElement);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         holder.element.setLayoutParams(layoutParams);
 
         return convertView;
+    }
+
+
+    public void animation(int i){
+        if (holder.returnCard.getVisibility() == View.VISIBLE && !listCard.get(i).isHidden()) {
+            holder.returnCard.startAnimation(holder.sato0);
+        }else if(holder.pattern.getVisibility() == View.VISIBLE && listCard.get(i).isHidden()){
+            holder.pattern.startAnimation(holder.sato0);
+            holder.background.startAnimation(holder.sato0);
+            holder.element.startAnimation(holder.sato0);
+        }
+
     }
 
 }

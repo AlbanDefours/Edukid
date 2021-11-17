@@ -38,22 +38,24 @@ public class Memory extends AppCompatActivity {
     }
 
     public void returnCard(int idCard,MemoryAdapter memoryAdapter) throws InterruptedException {
-        listCard.get(idCard).setHidden(false);
-        memoryAdapter.notifyDataSetChanged();
-        //TimeUnit.SECONDS.sleep(1);
+        if(listCard.get(idCard).isHidden()){
+            listCard.get(idCard).setHidden(false);
+            memoryAdapter.animation(idCard);
+            //TimeUnit.SECONDS.sleep(1);
 
-        if(idLastCardReturn == -1){
-            idLastCardReturn = idCard;
-        }
-        else{
-            if(listCard.get(idLastCardReturn).getValue() == listCard.get(idCard).getValue()){
+            if (idLastCardReturn == -1) {
+                idLastCardReturn = idCard;
+            } else {
+                if (listCard.get(idLastCardReturn).getValue() == listCard.get(idCard).getValue()) {
 
-                idLastCardReturn = -1;
-            }else{
-                listCard.get(idCard).setHidden(true);
-                listCard.get(idLastCardReturn).setHidden(true);
-                memoryAdapter.notifyDataSetChanged();
-                idLastCardReturn=-1;
+                    idLastCardReturn = -1;
+                } else {
+                    listCard.get(idCard).setHidden(true);
+                    listCard.get(idLastCardReturn).setHidden(true);
+                    memoryAdapter.animation(idLastCardReturn);
+                    memoryAdapter.animation(idCard);
+                    idLastCardReturn = -1;
+                }
             }
         }
     }
