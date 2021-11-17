@@ -2,6 +2,7 @@ package fr.dut.ptut2021.game;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.MemoryAdapter;
 import fr.dut.ptut2021.models.Card;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 public class Memory extends AppCompatActivity {
     private ArrayList<Card> listCard;
     private int idLastCardReturn=-1;
+    int numColumns;
 
    /* public Memory(ArrayList<Card> listCard){
 
@@ -37,7 +41,7 @@ public class Memory extends AppCompatActivity {
         Collections.shuffle(listCard);
     }
 
-    public void returnCard(int idCard,MemoryAdapter memoryAdapter) throws InterruptedException {
+    public void returnCard(int idCard,MemoryAdapter memoryAdapter) throws InterruptedException, IOException {
         if(listCard.get(idCard).isHidden()){
             listCard.get(idCard).setHidden(false);
             memoryAdapter.setCard(idCard);
@@ -47,7 +51,7 @@ public class Memory extends AppCompatActivity {
             if (idLastCardReturn == -1) {
                 idLastCardReturn = idCard;
             } else {
-                if (listCard.get(idLastCardReturn).getValue() == listCard.get(idCard).getValue()) {
+                if (idCard != idLastCardReturn && listCard.get(idLastCardReturn).getValue() == listCard.get(idCard).getValue()) {
 
                     idLastCardReturn = -1;
                 } else {
@@ -63,16 +67,19 @@ public class Memory extends AppCompatActivity {
         }
     }
 
-    public void display(){
+    public void display(MemoryAdapter memoryAdapter) throws IOException, InterruptedException {
         int compteur=1;
+
+        System.out.println("Memory : ");
         for (Card card : listCard){
-            if(!card.isHidden())
+            if(!card.isHidden()){
                 System.out.print(card.getValue()+" ");
+            }
             else
                 System.out.print("X ");
 
-            if(compteur%4 ==0)
-                System.out.println("");
+            if(compteur%numColumns ==0)
+                System.out.println("   __   "+compteur);
 
             compteur++;
         }
@@ -97,9 +104,9 @@ public class Memory extends AppCompatActivity {
         }
         shuffle();
 
-        //ArrayAdapter<MemoryAdapter> arrayAdapter = new ArrayAdapter<MemoryAdapter>(this, android.R.layout.simple_list_item_1 , (List<MemoryAdapter>) new MemoryAdapter(getApplicationContext(), listCard));
+
         GridView gridView = findViewById(R.id.gridview_memory);
-        int numColumns = (int) Math.sqrt(listCard.size());
+        numColumns = (int) Math.sqrt(listCard.size());
         gridView.setNumColumns(numColumns);
 
         MemoryAdapter memoryAdapter = new MemoryAdapter(getApplicationContext(), listCard,numColumns);
@@ -111,7 +118,8 @@ public class Memory extends AppCompatActivity {
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                 try {
                     returnCard(position,memoryAdapter);
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException | IOException e) {
                     e.printStackTrace();
                 }
             }

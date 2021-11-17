@@ -97,9 +97,18 @@ public class MemoryAdapter extends BaseAdapter {
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
             holder.element.setLayoutParams(layoutParams);
 
+            holder.hidden = listCard.get(i).isHidden();
+
 
         if(position==-1){
-            holder.showImageReturnCard();
+
+            if (listCard.get(i).isHidden()) {
+                holder.showImageReturnCard();
+
+            }else{
+                holder.showImageViewCard();
+            }
+
         }
         else if(position == i){
             if (listCard.get(i).isHidden()) {

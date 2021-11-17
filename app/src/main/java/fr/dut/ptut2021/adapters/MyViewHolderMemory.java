@@ -12,7 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import fr.dut.ptut2021.R;
 
 public class MyViewHolderMemory extends RecyclerView.ViewHolder {
-    
+
+    boolean hidden;
     View viewCard;
     ImageView element;
     ImageView pattern;
@@ -53,7 +54,7 @@ public class MyViewHolderMemory extends RecyclerView.ViewHolder {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                if (viewCard.getVisibility() == View.VISIBLE) {
+                if (hidden) {
                     viewCard.setAnimation(null);
                     showImageReturnCard();
                     returnCard.startAnimation(sato1);
