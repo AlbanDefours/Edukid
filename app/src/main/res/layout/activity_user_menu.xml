@@ -15,8 +15,11 @@
             android:id="@+id/recyclerview_users"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            android:overScrollMode="never"/>
 
     </LinearLayout>
 
@@ -28,6 +31,16 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
-        android:src="@drawable/ic_plus"/>
+        android:src="@drawable/adding_icon" />
+
+    <ImageView
+        android:id="@+id/adultProfile"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:src="@drawable/adult_profile" />
 
 </RelativeLayout>

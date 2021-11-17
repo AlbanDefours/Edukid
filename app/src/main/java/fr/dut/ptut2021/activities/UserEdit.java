@@ -21,7 +21,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
 
     private boolean addUser = false;
     private TextView title;
-    private Button valid;
+    private Button valid, cancel;
     private ImageView userAvatar;
     private TextInputEditText textField_userName;
     private CreateDatabase db = null;
@@ -38,11 +38,19 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         db = CreateDatabase.getInstance(UserEdit.this);
 
         initializeLayout();
-
         checkIfAddOrUpdateUser();
 
         userAvatar.setOnClickListener(this);
         valid.setOnClickListener(this);
+        cancel.setOnClickListener(this);
+    }
+
+    private void initializeLayout() {
+        userAvatar = findViewById(R.id.userAvatar_editPage);
+        title = findViewById(R.id.title_user_editPage);
+        textField_userName = findViewById(R.id.textField_userName);
+        valid = findViewById(R.id.buttonValider_userEditPage);
+        cancel = findViewById(R.id.buttonCancel_userEditPage);
     }
 
     private void checkIfAddOrUpdateUser(){
@@ -60,13 +68,6 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                 userAvatar.setImageResource(R.drawable.a);
             }
         }
-    }
-
-    private void initializeLayout() {
-        userAvatar = findViewById(R.id.userAvatar_editPage);
-        title = findViewById(R.id.title_user_editPage);
-        textField_userName = findViewById(R.id.textField_userName);
-        valid = findViewById(R.id.button_userEditPage);
     }
 
     private void startUserMenuPage(){
@@ -101,11 +102,16 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.userAvatar_editPage:
-                userAvatar.setImageResource(tableauImage[++i % 4]);
+                i = ++i % 4;
+                userAvatar.setImageResource(tableauImage[i]);
                 break;
 
-            case R.id.button_userEditPage:
+            case R.id.buttonValider_userEditPage:
                 createUser();
+                break;
+
+            case R.id.buttonCancel_userEditPage:
+                startUserMenuPage();
                 break;
             default:
                 break;

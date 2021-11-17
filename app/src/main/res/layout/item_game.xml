@@ -6,8 +6,9 @@
 
     <ImageView
         android:id="@+id/gameImage"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:layout_marginTop="20dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true" />
 
@@ -17,8 +18,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/gameImage"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="30dp"
-        android:textSize="20sp"
+        android:layout_marginBottom="20dp"
+        android:textSize="21sp"
         android:textAlignment="center"
         android:textColor="@color/black"/>
 

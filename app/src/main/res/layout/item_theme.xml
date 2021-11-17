@@ -6,10 +6,11 @@
 
     <ImageView
         android:id="@+id/themeImage"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_marginTop="35dp"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"/>
 
     <TextView
         android:id="@+id/themeName"
@@ -17,8 +18,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/themeImage"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="30dp"
-        android:textSize="20sp"
+        android:layout_marginBottom="35dp"
+        android:textSize="21sp"
         android:textAlignment="center"
         android:textColor="@color/black"/>
 

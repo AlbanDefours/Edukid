@@ -24,6 +24,9 @@ public class Theme {
     public int getImage() {
         return image;
     }
+    public int getId() {
+        return id;
+    }
 
     //Setter
     public void setName(String name) {
@@ -31,5 +34,8 @@ public class Theme {
     }
     public void setImage(int image) {
         this.image = image;
+    }
+    public void setId(int id) {
+        this.id = id;
     }
 }

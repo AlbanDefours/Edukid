@@ -6,6 +6,9 @@ import android.os.Handler;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
+
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.Theme;
@@ -21,6 +24,7 @@ public class LoadingPage extends AppCompatActivity {
 
         db = CreateDatabase.getInstance(getApplicationContext());
         createThemes();
+        animationTexte();
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -32,7 +36,7 @@ public class LoadingPage extends AppCompatActivity {
                     openUserMenuPage();
                 }
             }
-        }, 1000);   //Loading Page time
+        }, 1200);   //Loading Page time
     }
 
     private void createThemes() {
@@ -40,6 +44,13 @@ public class LoadingPage extends AppCompatActivity {
             db.themeDao().createTheme(new Theme("Lettres", R.drawable.lettres));
             db.themeDao().createTheme(new Theme("Chiffres", R.drawable.chiffres));
         }
+    }
+
+    //TODO Faire bing bing bing bing de la gauche et TADA !
+    private void animationTexte() {
+        YoYo.with(Techniques.Tada)
+                .duration(1000)
+                .playOn(findViewById(R.id.applicationName));
     }
 
     private void openUserMenuPage() {

@@ -1,11 +1,15 @@
 package fr.dut.ptut2021.activities;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,7 +24,9 @@ import fr.dut.ptut2021.models.User;
 public class UserMenu extends AppCompatActivity {
 
     private CreateDatabase db = null;
+    private RecyclerView recyclerView;
     private List<User> listUser = null;
+    private ImageView addUser, adultProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,29 +35,21 @@ public class UserMenu extends AppCompatActivity {
 
         db = CreateDatabase.getInstance(UserMenu.this);
 
-        //Peut etre plus opti de faire un seul getAllUser() en testant listUser empty ?
-        if (!db.userDao().tabUserIsEmpty()) {
-            listUser = db.userDao().getAllUsers();
-        } else {
-            startAddUserPage();
-        }
-
-        ImageView addUser = findViewById(R.id.addUser);
-        RecyclerView recyclerView = findViewById(R.id.recyclerview_users);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new UserAdapter(getApplicationContext(), listUser));
+        getAllUser();
+        initializeFindView();
+        createRecyclerView();
 
         recyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(getApplicationContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        startThemeMenu(position);
-                    }
+            new RecyclerItemClickListener(getApplicationContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    startThemeMenu(position);
+                }
 
-                    @Override
-                    public void onLongItemClick(View view, int position) {
-                    }
-                })
+                @Override
+                public void onLongItemClick(View view, int position) {
+                }
+            })
         );
 
         addUser.setOnClickListener(new View.OnClickListener() {
@@ -60,6 +58,39 @@ public class UserMenu extends AppCompatActivity {
                 startAddUserPage();
             }
         });
+
+        adultProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO coder la session adulte
+            }
+        });
+    }
+
+    private void initializeFindView(){
+        adultProfile = findViewById(R.id.adultProfile);
+        addUser = findViewById(R.id.addUser);
+        recyclerView = findViewById(R.id.recyclerview_users);
+    }
+
+    private void getAllUser() {
+        if (!db.userDao().tabUserIsEmpty()) {
+            listUser = db.userDao().getAllUsers();
+        } else {
+            startAddUserPage();
+        }
+    }
+
+    private void createRecyclerView() {
+        RecyclerView.LayoutManager mLayoutManager;
+        if (listUser.size() < 5) {
+            mLayoutManager = new GridLayoutManager(this, 1);
+        } else {
+            mLayoutManager = new GridLayoutManager(this, 2);
+        }
+
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setAdapter(new UserAdapter(getApplicationContext(), listUser));
     }
 
     private void startAddUserPage() {
