@@ -6,12 +6,16 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import fr.dut.ptut2021.database.dao.GameDao;
 import fr.dut.ptut2021.database.dao.ThemeDao;
+import fr.dut.ptut2021.database.dao.ThemeGameDao;
 import fr.dut.ptut2021.database.dao.UserDao;
+import fr.dut.ptut2021.models.Game;
 import fr.dut.ptut2021.models.Theme;
+import fr.dut.ptut2021.models.ThemeGame;
 import fr.dut.ptut2021.models.User;
 
-@Database(entities = { User.class, Theme.class }, version = 2, exportSchema = true)
+@Database(entities = { User.class, Theme.class, Game.class, ThemeGame.class}, version = 3, exportSchema = true)
 public abstract class CreateDatabase extends RoomDatabase {
 
     // --- SINGLETON ---
@@ -20,6 +24,8 @@ public abstract class CreateDatabase extends RoomDatabase {
     // --- DAO ---
     public abstract UserDao userDao();
     public abstract ThemeDao themeDao();
+    public abstract GameDao gameDao();
+    public abstract ThemeGameDao themeGameDao();
 
     // --- INSTANCE ---
     public static CreateDatabase getInstance(Context context) {

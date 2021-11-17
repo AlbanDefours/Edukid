@@ -8,7 +8,7 @@ import java.util.ArrayList;
 @Entity
 public class Game {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     private int id;
     private String name;
     private int image;
