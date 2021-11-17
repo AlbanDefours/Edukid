@@ -24,6 +24,7 @@ public class MemoryAdapter extends BaseAdapter {
 
     Context  context;
     List<Card> listCard;
+    int position=-1;
     int numColumns;
     MyViewHolderMemory holder;
 
@@ -69,55 +70,57 @@ public class MemoryAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_card,parent, false);
-            holder = new MyViewHolderMemory(convertView);
-            convertView.setTag(holder);
-        } else {
-            holder = (MyViewHolderMemory) convertView.getTag();
+            if (convertView == null) {
+                convertView = LayoutInflater.from(context).inflate(R.layout.item_card, parent, false);
+                holder = new MyViewHolderMemory(convertView);
+                convertView.setTag(holder);
+            } else {
+                holder = (MyViewHolderMemory) convertView.getTag();
+            }
+
+            holder.returnCard.setImageResource(R.drawable.imgreturn);
+            holder.pattern.setImageResource(R.drawable.patternimg);
+            holder.background.setImageResource(R.drawable.backgroundmemory);
+            holder.element.setImageResource(listCard.get(i).getDrawableImage());
+
+            if (listCard.get(i).isHidden()) {
+
+                holder.showImagePattern();
+            } else {
+                holder.showImageReturnCard();
+            }
+
+            //animation(i);
+
+
+            double width = (1094.0 + 20) / numColumns;
+            double height = width * (1684.0 / 1094) + 20;
+            double sizeElement = width * (800.0 / 1094);
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) width, (int) height);
+            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+            holder.pattern.setLayoutParams(layoutParams);
+            holder.background.setLayoutParams(layoutParams);
+            holder.returnCard.setLayoutParams(layoutParams);
+
+            layoutParams = new RelativeLayout.LayoutParams((int) sizeElement, (int) sizeElement);
+            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+            holder.element.setLayoutParams(layoutParams);
+
+        if(position == i){
+            if (holder.pattern.getVisibility() == View.VISIBLE) {
+                holder.pattern.startAnimation(holder.sato0);
+                holder.background.startAnimation(holder.sato0);
+                holder.element.startAnimation(holder.sato0);
+
+            }else{
+                holder.returnCard.startAnimation(holder.sato0);
+            }
         }
-        holder.returnCard.setImageResource(R.drawable.imgreturn);
-        holder.pattern.setImageResource(R.drawable.patternimg);
-        holder.background.setImageResource(R.drawable.backgroundmemory);
-        holder.element.setImageResource(listCard.get(i).getDrawableImage());
-
-        if(listCard.get(i).isHidden()){
-            holder.showImagePattern();
-        }
-        else{
-
-            holder.shwoImageReturnCard();
-        }
-
-        //animation(i);
-
-
-        double width = (1094.0+20)/numColumns;
-        double height = width*(1684.0/1094)+20;
-        double sizeElement =  width*(800.0/1094);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int)width,(int)height);
-        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-        holder.pattern.setLayoutParams(layoutParams);
-        holder.background.setLayoutParams(layoutParams);
-        holder.returnCard.setLayoutParams(layoutParams);
-
-        layoutParams = new RelativeLayout.LayoutParams((int)sizeElement,(int)sizeElement);
-        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-        holder.element.setLayoutParams(layoutParams);
-
         return convertView;
     }
 
-
-    public void animation(int i){
-        if (holder.returnCard.getVisibility() == View.VISIBLE && !listCard.get(i).isHidden()) {
-            holder.returnCard.startAnimation(holder.sato0);
-        }else if(holder.pattern.getVisibility() == View.VISIBLE && listCard.get(i).isHidden()){
-            holder.pattern.startAnimation(holder.sato0);
-            holder.background.startAnimation(holder.sato0);
-            holder.element.startAnimation(holder.sato0);
-        }
-
+    public void setCard(int position){
+        this.position = position;
     }
 
 }

@@ -40,7 +40,7 @@ public class Memory extends AppCompatActivity {
     public void returnCard(int idCard,MemoryAdapter memoryAdapter) throws InterruptedException {
         if(listCard.get(idCard).isHidden()){
             listCard.get(idCard).setHidden(false);
-            //memoryAdapter.animation(idCard);
+            memoryAdapter.setCard(idCard);
             memoryAdapter.notifyDataSetChanged();
             //TimeUnit.SECONDS.sleep(1);
 
@@ -53,8 +53,9 @@ public class Memory extends AppCompatActivity {
                 } else {
                     listCard.get(idCard).setHidden(true);
                     listCard.get(idLastCardReturn).setHidden(true);
-                    //memoryAdapter.animation(idLastCardReturn);
-                    //memoryAdapter.animation(idCard);
+                    memoryAdapter.setCard(idCard);
+                    memoryAdapter.notifyDataSetChanged();
+                    memoryAdapter.setCard(idLastCardReturn);
                     memoryAdapter.notifyDataSetChanged();
                     idLastCardReturn = -1;
                 }

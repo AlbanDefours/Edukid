@@ -31,7 +31,7 @@ public class MyViewHolderMemory extends RecyclerView.ViewHolder {
         background = itemView.findViewById(R.id.backgroundImgMemory);
         returnCard = itemView.findViewById(R.id.returnImgMemory);
 
-        shwoImageReturnCard();
+
         sato0.setDuration(500);
         sato1.setDuration(500);
 
@@ -51,33 +51,32 @@ public class MyViewHolderMemory extends RecyclerView.ViewHolder {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                if (returnCard.getVisibility() == View.VISIBLE) {
+                if (pattern.getVisibility() == View.VISIBLE) {
+                    pattern.setAnimation(null);
+                    background.setAnimation(null);
+                    element.setAnimation(null);
+                    showImageReturnCard();
+                    returnCard.startAnimation(sato1);
+                } else {
                     returnCard.setAnimation(null);
                     showImagePattern();
                     pattern.startAnimation(sato1);
                     background.startAnimation(sato1);
                     element.startAnimation(sato1);
-                    System.out.println("SATO1");
-                } else {
-                    pattern.setAnimation(null);
-                    background.setAnimation(null);
-                    element.setAnimation(null);
-                    shwoImageReturnCard();
-                    returnCard.startAnimation(sato1);
                 }
             }
         });
 
     }
 
-    public void showImagePattern() {
+    public void showImageReturnCard() {
             returnCard.setVisibility(View.VISIBLE);
             pattern.setVisibility(View.INVISIBLE);
             element.setVisibility(View.INVISIBLE);
             background.setVisibility(View.INVISIBLE);
     }
 
-    public void shwoImageReturnCard() {
+    public void showImagePattern() {
         returnCard.setVisibility(View.INVISIBLE);
         pattern.setVisibility(View.VISIBLE);
         element.setVisibility(View.VISIBLE);
