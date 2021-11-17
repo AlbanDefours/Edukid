@@ -90,8 +90,7 @@ public class MemoryAdapter extends BaseAdapter {
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) width, (int) height);
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
             holder.viewCard.setLayoutParams(layoutParams);
-            holder.pattern.setLayoutParams(layoutParams);
-            holder.background.setLayoutParams(layoutParams);
+
             holder.returnCard.setLayoutParams(layoutParams);
 
             layoutParams = new RelativeLayout.LayoutParams((int) sizeElement, (int) sizeElement);
