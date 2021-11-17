@@ -4,6 +4,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Game {
@@ -12,11 +13,11 @@ public class Game {
     private int id;
     private String name;
     private int image;
-    private ArrayList<Theme> listTheme;
+    private List<Theme> listTheme;
 
 
     //Constructor
-    public Game(String name, int image, ArrayList<Theme> listTheme) {
+    public Game(String name, int image, List<Theme> listTheme) {
         this.name = name;
         this.image = image;
         this.listTheme = listTheme;
@@ -39,7 +40,7 @@ public class Game {
     public int getImage() {
         return image;
     }
-    public ArrayList<Theme> getTheme() {
+    public List<Theme> getTheme() {
         return listTheme;
     }
 
@@ -53,7 +54,7 @@ public class Game {
     public void setImage(int image) {
         this.image = image;
     }
-    public void setTheme(ArrayList<Theme> listTheme) {
+    public void setTheme(List<Theme> listTheme) {
         this.listTheme = listTheme;
     }
 
