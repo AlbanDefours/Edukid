@@ -1,7 +1,5 @@
 package fr.dut.ptut2021.models;
 
-import android.graphics.drawable.Drawable;
-
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -13,19 +11,18 @@ public class Game {
     @PrimaryKey
     private int id;
     private String name;
-    private Drawable image;
+    private int image;
     private ArrayList<Theme> listTheme;
 
 
     //Constructor
-    public Game(int id, String name, Drawable image, ArrayList<Theme> listTheme) {
-        this.id = id;
+    public Game(String name, int image, ArrayList<Theme> listTheme) {
         this.name = name;
         this.image = image;
         this.listTheme = listTheme;
     }
-    public Game(int id, String name, Drawable image, Theme theme) {
-        this.id = id;
+    
+    public Game(String name, int image, Theme theme) {
         this.name = name;
         this.image = image;
         this.listTheme = new ArrayList<>();
@@ -39,7 +36,7 @@ public class Game {
     public String getName() {
         return name;
     }
-    public Drawable getImage() {
+    public int getImage() {
         return image;
     }
     public ArrayList<Theme> getTheme() {
@@ -53,7 +50,7 @@ public class Game {
     public void setName(String name) {
         this.name = name;
     }
-    public void setImage(Drawable image) {
+    public void setImage(int image) {
         this.image = image;
     }
     public void setTheme(ArrayList<Theme> listTheme) {
@@ -62,9 +59,9 @@ public class Game {
 
     public Boolean checkTheme(String nameTheme) {
         for (Theme theme : listTheme) {
-            if (nameTheme == theme.getName()) {
+            /*if (nameTheme == theme.getName()) {
                 return true;
-            }
+            }*/
         }
         return false;
     }

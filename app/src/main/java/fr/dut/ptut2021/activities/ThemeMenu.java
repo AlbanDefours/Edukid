@@ -25,9 +25,9 @@ public class ThemeMenu extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_theme_menu);
 
-        for (Theme.AllTheme theme : Theme.AllTheme.values()) {
-            listTheme.add(new Theme(theme.name(), R.drawable.a));
-        }
+        //TODO get Theme from BDD
+        listTheme.add(new Theme("Lettres", R.drawable.lettres));
+        listTheme.add(new Theme("Chiffres", R.drawable.chiffres));
 
         RecyclerView recyclerViewListTheme = findViewById(R.id.recyclerview_theme);
         recyclerViewListTheme.setLayoutManager(new LinearLayoutManager(this));
@@ -49,7 +49,7 @@ public class ThemeMenu extends AppCompatActivity {
 
     private void startGameMenu(int position) {
         Intent intent = new Intent().setClass(getApplicationContext(), GameMenu.class);
-        intent.putExtra("themeName", listTheme.get(position).getName());
+        intent.putExtra("themeName", listTheme.get(position).getName(position));
         startActivity(intent);
     }
 }

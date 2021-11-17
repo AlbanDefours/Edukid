@@ -1,32 +1,30 @@
 package fr.dut.ptut2021.models;
 
-public class Theme {
-    private String name;
-    private int image;
+import java.util.List;
 
-    public enum AllTheme {
-        LETTRES, CHIFFRES;
-    }
+public class Theme {
+    private List<String> name;
+    private List<Integer> image;
 
     //Constructor
     public Theme(String name, int image) {
-        this.name = name;
-        this.image = image;
+        this.name.add(name);
+        this.image.add(image);
     }
 
     //Getter
-    public String getName() {
-        return name;
+    public String getName(int pos) {
+        return name.get(pos);
     }
-    public int getImage() {
-        return image;
+    public int getImage(int pos) {
+        return image.get(pos);
     }
 
     //Setter
     public void setName(String name) {
-        this.name = name;
+        this.name.add(name);
     }
     public void setImage(int image) {
-        this.image = image;
+        this.image.add(image);
     }
 }
