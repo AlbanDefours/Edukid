@@ -1,6 +1,7 @@
 package fr.dut.ptut2021.activities;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -19,7 +21,7 @@ import fr.dut.ptut2021.models.User;
 
 public class UserEdit extends AppCompatActivity implements View.OnClickListener {
 
-    private boolean addUser = false;
+    private boolean addUser = false, tabUserIsEmpty = false;
     private TextView title;
     private Button valid, cancel;
     private ImageView userAvatar;
@@ -36,6 +38,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         setContentView(R.layout.activity_user_edit);
 
         db = CreateDatabase.getInstance(UserEdit.this);
+        tabUserIsEmpty = db.userDao().tabUserIsEmpty();
 
         initializeLayout();
         checkIfAddOrUpdateUser();
@@ -88,6 +91,26 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
+    private void showMesageDialog(String title, String message){
+        AlertDialog alertDialog = new AlertDialog.Builder(UserEdit.this).create();
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OUI",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NON",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+    }
+
     //TODO (verify image is correct)
     private boolean isCorrect() {
         return !isUserNameEmpty();
@@ -111,7 +134,11 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                 break;
 
             case R.id.buttonCancel_userEditPage:
-                startUserMenuPage();
+                if(tabUserIsEmpty){
+                    showMesageDialog("Voulez-vous quitter ?", "Vous n'avez aucune session, êtes vous sur de vouloir quitter ?");
+                }else{
+                    startUserMenuPage();
+                }
                 break;
             default:
                 break;
