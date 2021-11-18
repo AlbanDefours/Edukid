@@ -8,6 +8,8 @@ import androidx.room.Update;
 
 import java.util.List;
 
+import fr.dut.ptut2021.models.Game;
+import fr.dut.ptut2021.models.Theme;
 import fr.dut.ptut2021.models.ThemeGame;
 
 @Dao
@@ -26,6 +28,15 @@ public interface ThemeGameDao {
     //Renvoie une List des gameId correspondant au themeId en paramètre
     @Query("SELECT gameId FROM ThemeGame WHERE themeId = :themeId")
     List<Integer> getGamesIdByTheme(int themeId);
+
+    //Renvoie List Theme en fonction d'un game id
+    @Query("SELECT Theme.* FROM Theme INNER JOIN ThemeGame INNER JOIN Game WHERE gameId = :gameId")
+    List<Theme> getAllThemeByGameId(int gameId);
+
+    //Renvoie List Game en fonction d'un theme id
+    @Query("SELECT Game.* FROM Theme INNER JOIN ThemeGame INNER JOIN Game WHERE themeId = :themeId")
+    //@Query("SELECT g.* FROM Theme as t INNER JOIN ThemeGame as tg ON t.id = tg.themeId INNER JOIN Game as g ON tg.gameId=g.id WHERE themeId = :themeId")
+    List<Game> getAllGameByThemeId(int themeId);
 
     @Update
     int updateThemeGame(ThemeGame themeGame);
