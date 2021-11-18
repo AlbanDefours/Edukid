@@ -52,18 +52,18 @@ public class Symbol {
     private boolean isInArea(Point point, Point p1, Point p2){
         Point test;
         test = new Point(p1);
-        int coef = (p1.x - p2.x) / (p1.y - p2.y);
+        int coef = (p1.getX() - p2.getX()) / (p1.getY() - p2.getY());
 
-        if(p1.y - p2.y < 0){
-            for(int i = p1.y - p2.y; i <= 0; i--){
-                if(Math.sqrt(Math.pow((test.x + i * (coef)) - point.x)+Math.pow(test.y - point.y)) <= tolerance){
+        if(p1.getY() - p2.getY() < 0){
+            for(int i = p1.getY() - p2.getY(); i <= 0; i--){
+                if(Math.sqrt(Math.pow((test.getX() + i * (coef)) - point.getX(), 2)+Math.pow(test.getY() - point.getY(), 2)) <= tolerance){
                     return true;
                 }
             }
         }
         else{
-            for(int i = 0; i <= p1.y - p2.y; i++){
-                if(Math.sqrt(Math.pow((test.x + i * (coef)) - point.x)+Math.pow(test.y - point.y)) <= tolerance){
+            for(int i = 0; i <= p1.getY() - p2.getY(); i++){
+                if(Math.sqrt(Math.pow((test.getX() + i * (coef)) - point.getX(), 2)+Math.pow(test.getY() - point.getY(), 2)) <= tolerance){
                     return true;
                 }
             }
