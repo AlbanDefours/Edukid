@@ -27,6 +27,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private ImageView userAvatar;
     private TextInputEditText textField_userName;
     private CreateDatabase db = null;
+    private int idUser;
 
     //TODO (a changer, pour le choix des images)
     private int i = 0;
@@ -64,6 +65,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
             addUser = bundle.getBoolean("addUser", false);
             if (!addUser) {
                 textField_userName.setText(bundle.getString("userName", ""));
+                idUser = bundle.getInt("userId", 0);
                 userAvatar.setImageResource(bundle.getInt("userImage", R.drawable.a));
                 title.setText("Modification du profil de " + bundle.getString("userName", ""));
             } else {
@@ -76,6 +78,13 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private void startUserMenuPage(){
         Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+        finish();
+    }
+
+    private void startUserResumePage(){
+        Intent intent = new Intent().setClass(getApplicationContext(), UserResume.class);
+        startActivity(intent);
         finish();
     }
 
@@ -84,8 +93,11 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
             db.userDao().createUser(new User(textField_userName.getText().toString(), tableauImage[i]));
             startUserMenuPage();
         } else if (!addUser && isCorrect()) {
-            //TODO DB UPDATE
-            startUserMenuPage();
+            User user = db.userDao().getUser(idUser);
+            user.setName(textField_userName.getText().toString());
+            user.setImage( tableauImage[i]);
+            db.userDao().updateUser(user);
+            startUserResumePage();
         } else if (!isCorrect()) {
             Toast.makeText(getApplicationContext(), "Veuillez saisir un prénom", Toast.LENGTH_SHORT).show();
         }
@@ -137,7 +149,11 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                 if(tabUserIsEmpty){
                     showMesageDialog("Voulez-vous quitter ?", "Vous n'avez aucune session, êtes vous sur de vouloir quitter ?");
                 }else{
-                    startUserMenuPage();
+                    if(addUser){
+                        startUserMenuPage();
+                    } else {
+                        startUserResumePage();
+                    }
                 }
                 break;
             default:

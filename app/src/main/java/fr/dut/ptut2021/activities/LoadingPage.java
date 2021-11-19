@@ -29,7 +29,6 @@ public class LoadingPage extends AppCompatActivity {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-
                 if (db.userDao().tabUserIsEmpty()) {
                     openUserEditPage();
                 } else {

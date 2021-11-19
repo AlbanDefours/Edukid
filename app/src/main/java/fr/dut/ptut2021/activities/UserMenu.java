@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -26,17 +27,15 @@ public class UserMenu extends AppCompatActivity {
     private CreateDatabase db = null;
     private RecyclerView recyclerView;
     private List<User> listUser = null;
-    private ImageView addUser, adultProfile;
+    private ImageView settings, adultProfile, addUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_menu);
 
-        db = CreateDatabase.getInstance(UserMenu.this);
-
-        getAllUser();
         initializeFindView();
+        hideAddUserImage();
         createRecyclerView();
 
         recyclerView.addOnItemTouchListener(
@@ -52,10 +51,10 @@ public class UserMenu extends AppCompatActivity {
             })
         );
 
-        addUser.setOnClickListener(new View.OnClickListener() {
+        settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startAddUserPage();
+                startSettingPage();
             }
         });
 
@@ -63,14 +62,27 @@ public class UserMenu extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //TODO coder la session adulte
+                Toast.makeText(getApplicationContext(), "AdultPage", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        db = CreateDatabase.getInstance(UserMenu.this);
+        getAllUser();
+    }
+
     private void initializeFindView(){
         adultProfile = findViewById(R.id.adultProfile);
+        settings = findViewById(R.id.settings);
         addUser = findViewById(R.id.addUser);
         recyclerView = findViewById(R.id.recyclerview_users);
+    }
+
+    private void hideAddUserImage() {
+        addUser.setVisibility(View.GONE);
     }
 
     private void getAllUser() {
@@ -90,13 +102,19 @@ public class UserMenu extends AppCompatActivity {
         }
 
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setAdapter(new UserAdapter(getApplicationContext(), listUser));
+        recyclerView.setAdapter(new UserAdapter(getApplicationContext(), listUser, false));
+    }
+
+    private void startSettingPage() {
+        Intent intent = new Intent().setClass(getApplicationContext(), UserResume.class);
+        startActivity(intent);
     }
 
     private void startAddUserPage() {
         Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
         intent.putExtra("addUser", true);
         startActivity(intent);
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         finish();
     }
 
