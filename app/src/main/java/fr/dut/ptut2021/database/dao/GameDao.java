@@ -25,20 +25,13 @@ public interface GameDao {
     Game getGameById(int gameId);
 
     @Query("SELECT gameId FROM Game WHERE name = :gameName")
-    int getGameIdByName(String gameName);
+    int getIdByName(String gameName);
 
     @Update
     int updateGame(Game game);
 
-    @Query("DELETE FROM Game WHERE gameId = :gameId")
-    int deleteGameInGame(int gameId);
-
     @Query("DELETE FROM Game")
-    int deleteAllGamesInGame();
-
-    /*@Transaction
-    @Query("SELECT * FROM Game")
-    public List<ThemeWithGame> getGameWithTheme();*/
+    int deleteAllGames();
 
     default boolean tabGameIsEmpty() {
         return getAllGames().isEmpty();

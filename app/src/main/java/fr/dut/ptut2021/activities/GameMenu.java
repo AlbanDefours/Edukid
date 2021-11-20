@@ -42,7 +42,7 @@ public class GameMenu extends AppCompatActivity {
         }
 
         //TODO create list from BDD themes
-        db.gameDao().deleteAllGamesInGame();
+        db.gameDao().deleteAllGames();
         List<Game> listGame = db.gameDao().getAllGames();
         for (int i = 0; i < listGame.size(); i++){
             Log.e("LISTGAMEEMPTY", listGame.get(i).getName());
@@ -58,29 +58,6 @@ public class GameMenu extends AppCompatActivity {
 
         //juste pour pas que ca crash
         gameList.add(new Game("test", R.drawable.lettres));
-
-/* INUTILE MTN
-        db.gameDao().createGame(new Game ("Memory", R.drawable.memory_icon));
-        db.gameDao().createGame(new Game ("Dessine", R.drawable.memory_icon));
-        db.themeGameDao().createThemeGame(new ThemeGame(db.themeDao().getThemeByName("Chiffres").getId(), db.gameDao().getGameId("Memory")));
-        db.themeGameDao().createThemeGame(new ThemeGame(db.themeDao().getThemeByName("Lettres").getId(), db.gameDao().getGameId("Memory")));
-        db.themeGameDao().createThemeGame(new ThemeGame(db.themeDao().getThemeByName("Lettres").getId(), db.gameDao().getGameId("Dessine")));
-
-        themeGameList = db.themeGameDao().getAllThemeGames();
-        for (int i = 0; i < themeGameList.size(); i++) {
-            Log.e("THEMEGAME_THEME", ""+themeGameList.get(i).getThemeId());
-            Log.e("THEMEGAME_GAME", ""+themeGameList.get(i).getGameId());
-        }
-
-        List<Integer> gameIdList = db.themeGameDao().getGameIdByTheme(db.themeDao().getThemeByName(themeName).getId());
-        Log.e("GAMEIDLIST_SIZE", ""+gameIdList.size());
-
-
-        for (int i = 0; i < gameIdList.size(); i++) {
-            gameList.add(db.gameDao().getGame(gameIdList.get(i)));
-            //Log.e("GAMELIST_NAME", gameList.get(gameId).getName());
-        }
-        Log.e("GAMELIST_SIZE", ""+gameList.size());*/
 
 
         RecyclerView recyclerViewListGame = findViewById(R.id.recyclerview_game);

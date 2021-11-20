@@ -18,6 +18,9 @@ public class Game {
     }
 
     //Getter
+    public int getGameId() {
+        return gameId;
+    }
     public String getName() {
         return name;
     }
@@ -32,11 +35,6 @@ public class Game {
     public void setImage(int image) {
         this.image = image;
     }
-
-    public int getGameId() {
-        return gameId;
-    }
-
     public void setGameId(int gameId) {
         this.gameId = gameId;
     }

@@ -18,6 +18,9 @@ public class Theme {
     }
 
     //Getter
+    public int getThemeId() {
+        return themeId;
+    }
     public String getName() {
         return name;
     }
@@ -32,11 +35,6 @@ public class Theme {
     public void setImage(int image) {
         this.image = image;
     }
-
-    public int getThemeId() {
-        return themeId;
-    }
-
     public void setThemeId(int themeId) {
         this.themeId = themeId;
     }
