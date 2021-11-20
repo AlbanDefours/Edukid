@@ -58,8 +58,8 @@ public class UserResume extends AppCompatActivity {
     }
 
     private void getAllUser() {
-        if (!db.userDao().tabUserIsEmpty()) {
-            listUser = db.userDao().getAllUsers();
+        if (!db.appDao().tabUserIsEmpty()) {
+            listUser = db.appDao().getAllUsers();
         }
     }
 
@@ -97,9 +97,9 @@ public class UserResume extends AppCompatActivity {
 
     private void startEditUserPage(int position) {
         Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
-        intent.putExtra("userName", listUser.get(position).getName());
-        intent.putExtra("userId", listUser.get(position).getId());
-        intent.putExtra("userImage", listUser.get(position).getImage());
+        intent.putExtra("userName", listUser.get(position).getUserName());
+        intent.putExtra("userId", listUser.get(position).getUserId());
+        intent.putExtra("userImage", listUser.get(position).getUserImage());
         startActivity(intent);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         finish();

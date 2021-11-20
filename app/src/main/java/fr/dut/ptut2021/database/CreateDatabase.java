@@ -6,20 +6,20 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import fr.dut.ptut2021.database.dao.ThemeDao;
-import fr.dut.ptut2021.database.dao.UserDao;
+import fr.dut.ptut2021.database.dao.AppDao;
+import fr.dut.ptut2021.models.Game;
 import fr.dut.ptut2021.models.Theme;
+import fr.dut.ptut2021.models.ThemeGameCrossRef;
 import fr.dut.ptut2021.models.User;
 
-@Database(entities = { User.class, Theme.class }, version = 2, exportSchema = true)
+@Database(entities = { User.class, Theme.class, Game.class, ThemeGameCrossRef.class}, version = 1, exportSchema = true)
 public abstract class CreateDatabase extends RoomDatabase {
 
     // --- SINGLETON ---
     private static volatile CreateDatabase INSTANCE;
 
     // --- DAO ---
-    public abstract UserDao userDao();
-    public abstract ThemeDao themeDao();
+    public abstract AppDao appDao();
 
     // --- INSTANCE ---
     public static CreateDatabase getInstance(Context context) {

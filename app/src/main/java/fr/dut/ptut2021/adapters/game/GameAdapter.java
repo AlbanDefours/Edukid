@@ -30,8 +30,8 @@ public class GameAdapter extends RecyclerView.Adapter<MyViewHolderGame> {
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolderGame holder, int position) {
-        holder.name.setText(listGame.get(position).getName());
-        holder.image.setImageResource(listGame.get(position).getImage());
+        holder.name.setText(listGame.get(position).getGameName());
+        holder.image.setImageResource(listGame.get(position).getGameImage());
     }
 
     @Override

@@ -7,33 +7,41 @@ import androidx.room.PrimaryKey;
 public class Theme {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
-    private String name;
-    private int image;
+    private int themeId;
+    private String themeName;
+    private int themeImage;
 
     //Constructor
-    public Theme(String name, int image) {
-        this.name = name;
-        this.image = image;
+    public Theme(String themeName, int themeImage) {
+        this.themeName = themeName;
+        this.themeImage = themeImage;
     }
 
-    //Getter
-    public String getName() {
-        return name;
+    public int getThemeId() {
+        return themeId;
     }
-    public int getImage() {
-        return image;
+
+    public void setThemeId(int themeId) {
+        this.themeId = themeId;
+    }
+
+    public String getThemeName() {
+        return themeName;
     }
     public int getId() {
         return id;
     }
 
-    //Setter
-    public void setName(String name) {
-        this.name = name;
+    public void setThemeName(String themeName) {
+        this.themeName = themeName;
     }
-    public void setImage(int image) {
-        this.image = image;
+
+    public int getThemeImage() {
+        return themeImage;
+    }
+
+    public void setThemeImage(int themeImage) {
+        this.themeImage = themeImage;
     }
     public void setId(int id) {
         this.id = id;

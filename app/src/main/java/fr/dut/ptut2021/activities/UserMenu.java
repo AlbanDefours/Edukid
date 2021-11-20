@@ -86,10 +86,11 @@ public class UserMenu extends AppCompatActivity {
     }
 
     private void getAllUser() {
-        if (!db.userDao().tabUserIsEmpty()) {
-            listUser = db.userDao().getAllUsers();
+        if (!db.appDao().tabUserIsEmpty()) {
+            listUser = db.appDao().getAllUsers();
         } else {
             startAddUserPage();
+            finish();
         }
     }
 
@@ -120,7 +121,7 @@ public class UserMenu extends AppCompatActivity {
 
     private void startThemeMenu(int position) {
         Intent intent = new Intent().setClass(getApplicationContext(), ThemeMenu.class);
-        intent.putExtra("idUser", listUser.get(position).getId());
+        intent.putExtra("idUser", listUser.get(position).getUserId());
         startActivity(intent);
     }
 }

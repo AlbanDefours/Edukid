@@ -7,44 +7,48 @@ import androidx.room.PrimaryKey;
 public class User {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
-    private String name;
-    private int image;
-    private long creationDate;
+    private int userId;
+    private String userName;
+    private int userImage;
+    private long userCreationDate = 0;
     //java.sql.Date date=new java.sql.Date(creationDate);  TO CONVERT
 
     //Constructor
-    public User(String name, int image) {
-        this.name = name;
-        this.image = image;
-        this.creationDate = System.currentTimeMillis();
+    public User(String userName, int userImage) {
+        this.userName = userName;
+        this.userImage = userImage;
+        this.userCreationDate = System.currentTimeMillis();
     }
 
-    //Getter
-    public int getId() {
-        return id;
-    }
-    public String getName() {
-        return name;
-    }
-    public int getImage() {
-        return image;
-    }
-    public long getCreationDate() {
-        return creationDate;
+    public int getUserId() {
+        return userId;
     }
 
-    //Setter
-    public void setId(int id) {
-        this.id = id;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
-    public void setName(String Name) {
-        this.name = Name;
+
+    public String getUserName() {
+        return userName;
     }
-    public void setImage(int image) {
-        this.image = image;
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
-    public void setCreationDate(long creationDate) {
-        this.creationDate = creationDate;
+
+    public int getUserImage() {
+        return userImage;
+    }
+
+    public void setUserImage(int userImage) {
+        this.userImage = userImage;
+    }
+
+    public long getUserCreationDate() {
+        return userCreationDate;
+    }
+
+    public void setUserCreationDate(long userCreationDate) {
+        this.userCreationDate = userCreationDate;
     }
 }

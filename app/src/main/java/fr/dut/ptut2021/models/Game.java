@@ -3,68 +3,41 @@ package fr.dut.ptut2021.models;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 public class Game {
 
-    @PrimaryKey
-    private int id;
-    private String name;
-    private int image;
-    private List<Theme> listTheme;
-
+    @PrimaryKey(autoGenerate = true)
+    private int gameId;
+    private String gameName;
+    private int gameImage;
 
     //Constructor
-    public Game(String name, int image, List<Theme> listTheme) {
-        this.name = name;
-        this.image = image;
-        this.listTheme = listTheme;
-    }
-    
-    public Game(String name, int image, Theme theme) {
-        this.name = name;
-        this.image = image;
-        this.listTheme = new ArrayList<>();
-        this.listTheme.add(theme);
+    public Game(String gameName, int gameImage) {
+        this.gameName = gameName;
+        this.gameImage = gameImage;
     }
 
-    //Getter
-    public int getId() {
-        return id;
-    }
-    public String getName() {
-        return name;
-    }
-    public int getImage() {
-        return image;
-    }
-    public List<Theme> getTheme() {
-        return listTheme;
+    public int getGameId() {
+        return gameId;
     }
 
-    //Setter
-    public void setId(int id) {
-        this.id = id;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public void setImage(int image) {
-        this.image = image;
-    }
-    public void setTheme(List<Theme> listTheme) {
-        this.listTheme = listTheme;
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
     }
 
-    public Boolean checkTheme(String nameTheme) {
-        for (Theme theme : listTheme) {
-            /*if (nameTheme == theme.getName()) {
-                return true;
-            }*/
-        }
-        return false;
+    public String getGameName() {
+        return gameName;
     }
 
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
+    }
+
+    public int getGameImage() {
+        return gameImage;
+    }
+
+    public void setGameImage(int gameImage) {
+        this.gameImage = gameImage;
+    }
 }

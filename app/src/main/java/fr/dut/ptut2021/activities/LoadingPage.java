@@ -11,7 +11,9 @@ import com.daimajia.androidanimations.library.YoYo;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.models.Game;
 import fr.dut.ptut2021.models.Theme;
+import fr.dut.ptut2021.models.ThemeGameCrossRef;
 
 public class LoadingPage extends AppCompatActivity {
 
@@ -22,26 +24,56 @@ public class LoadingPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_page);
 
-        db = CreateDatabase.getInstance(getApplicationContext());
-        createThemes();
         animationTexte();
+        createDatabase();
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                if (db.userDao().tabUserIsEmpty()) {
+                if (db.appDao().tabUserIsEmpty()) {
                     openUserEditPage();
                 } else {
                     openUserMenuPage();
                 }
             }
-        }, 1200);   //Loading Page time
+        }, 1000);
     }
 
+
+    private void createDatabase() {
+        db = CreateDatabase.getInstance(getApplicationContext());
+        createThemes();
+        createGames();
+        createThemeGamesCross();
+    }
+
+    //Here to add/update/delete Theme
     private void createThemes() {
-        if (db.themeDao().tabThemeIsEmpty()) {
-            db.themeDao().createTheme(new Theme("Lettres", R.drawable.lettres));
-            db.themeDao().createTheme(new Theme("Chiffres", R.drawable.chiffres));
+        if (db.appDao().tabThemeIsEmpty()) {
+            db.appDao().insertTheme(new Theme("Lettres", R.drawable.lettres));
+            db.appDao().insertTheme(new Theme("Chiffres", R.drawable.chiffres));
+        }
+    }
+
+    //Here to add/update/delete Game
+    private void createGames() {
+        if (db.appDao().tabGameIsEmpty()) {
+            db.appDao().insertGame(new Game("Memory", R.drawable.memory_icon));
+            db.appDao().insertGame(new Game("DrawOnIt", R.drawable.memory_icon));
+            db.appDao().insertGame(new Game("Syllabe", R.drawable.memory_icon));
+            db.appDao().insertGame(new Game("Suite chiffre", R.drawable.memory_icon));
+        }
+    }
+
+    //Here to set theme to Game
+    private void createThemeGamesCross() {
+        if (db.appDao().tabThemeGameIsEmpty()) {
+            db.appDao().insertThemeGame(new ThemeGameCrossRef("Memory", "Lettres"));
+            db.appDao().insertThemeGame(new ThemeGameCrossRef("Memory", "Chiffres"));
+            db.appDao().insertThemeGame(new ThemeGameCrossRef("DrawOnIt", "Lettres"));
+            db.appDao().insertThemeGame(new ThemeGameCrossRef("DrawOnIt", "Chiffres"));
+            db.appDao().insertThemeGame(new ThemeGameCrossRef("Syllabe", "Lettres"));
+            db.appDao().insertThemeGame(new ThemeGameCrossRef("Suite chiffre", "Chiffres"));
         }
     }
 

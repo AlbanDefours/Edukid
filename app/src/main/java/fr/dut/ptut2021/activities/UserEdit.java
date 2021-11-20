@@ -39,7 +39,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         setContentView(R.layout.activity_user_edit);
 
         db = CreateDatabase.getInstance(UserEdit.this);
-        tabUserIsEmpty = db.userDao().tabUserIsEmpty();
+        tabUserIsEmpty = db.appDao().tabUserIsEmpty();
 
         initializeLayout();
         checkIfAddOrUpdateUser();
@@ -90,13 +90,13 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
 
     private void createUser(){
         if (addUser && isCorrect()) {
-            db.userDao().createUser(new User(textField_userName.getText().toString(), tableauImage[i]));
+            db.appDao().insertUser(new User(textField_userName.getText().toString(), tableauImage[i]));
             startUserMenuPage();
         } else if (!addUser && isCorrect()) {
-            User user = db.userDao().getUser(idUser);
-            user.setName(textField_userName.getText().toString());
-            user.setImage( tableauImage[i]);
-            db.userDao().updateUser(user);
+            User user = db.appDao().getUserById(idUser);
+            user.setUserName(textField_userName.getText().toString());
+            user.setUserImage( tableauImage[i]);
+            db.appDao().updateUser(user);
             startUserResumePage();
         } else if (!isCorrect()) {
             Toast.makeText(getApplicationContext(), "Veuillez saisir un prénom", Toast.LENGTH_SHORT).show();
