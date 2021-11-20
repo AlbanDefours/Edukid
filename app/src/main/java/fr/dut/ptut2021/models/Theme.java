@@ -28,9 +28,6 @@ public class Theme {
     public String getThemeName() {
         return themeName;
     }
-    public int getId() {
-        return id;
-    }
 
     public void setThemeName(String themeName) {
         this.themeName = themeName;
@@ -42,8 +39,5 @@ public class Theme {
 
     public void setThemeImage(int themeImage) {
         this.themeImage = themeImage;
-    }
-    public void setId(int id) {
-        this.id = id;
     }
 }

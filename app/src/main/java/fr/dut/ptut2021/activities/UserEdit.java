@@ -57,7 +57,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         cancel = findViewById(R.id.buttonCancel_userEditPage);
     }
 
-    private void checkIfAddOrUpdateUser(){
+    private void checkIfAddOrUpdateUser() {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
 
@@ -75,27 +75,32 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
-    private void startUserMenuPage(){
+    private void startUserMenuPage() {
         Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
         startActivity(intent);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         finish();
     }
 
-    private void startUserResumePage(){
+    private void startUserResumePage() {
         Intent intent = new Intent().setClass(getApplicationContext(), UserResume.class);
         startActivity(intent);
         finish();
     }
 
-    private void createUser(){
+    private void createUser() {
         if (addUser && isCorrect()) {
-            db.appDao().insertUser(new User(textField_userName.getText().toString(), tableauImage[i]));
-            startUserMenuPage();
+            if(db.appDao().tabUserIsEmpty()){
+                db.appDao().insertUser(new User(textField_userName.getText().toString(), tableauImage[i]));
+                startUserMenuPage();
+            }else {
+                db.appDao().insertUser(new User(textField_userName.getText().toString(), tableauImage[i]));
+                startUserResumePage();
+            }
         } else if (!addUser && isCorrect()) {
             User user = db.appDao().getUserById(idUser);
             user.setUserName(textField_userName.getText().toString());
-            user.setUserImage( tableauImage[i]);
+            user.setUserImage(tableauImage[i]);
             db.appDao().updateUser(user);
             startUserResumePage();
         } else if (!isCorrect()) {
@@ -103,7 +108,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
-    private void showMesageDialog(String title, String message){
+    private void showMesageDialog(String title, String message) {
         AlertDialog alertDialog = new AlertDialog.Builder(UserEdit.this).create();
         alertDialog.setTitle(title);
         alertDialog.setMessage(message);
@@ -146,14 +151,10 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                 break;
 
             case R.id.buttonCancel_userEditPage:
-                if(tabUserIsEmpty){
+                if (tabUserIsEmpty) {
                     showMesageDialog("Voulez-vous quitter ?", "Vous n'avez aucune session, êtes vous sur de vouloir quitter ?");
-                }else{
-                    if(addUser){
-                        startUserMenuPage();
-                    } else {
-                        startUserResumePage();
-                    }
+                } else {
+                    startUserResumePage();
                 }
                 break;
             default:

@@ -1,9 +1,6 @@
 package fr.dut.ptut2021.activities;
 
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,7 +8,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -27,6 +23,7 @@ public class UserMenu extends AppCompatActivity {
     private CreateDatabase db = null;
     private RecyclerView recyclerView;
     private List<User> listUser = null;
+    private UserAdapter adapter;
     private ImageView settings, adultProfile, addUser;
 
     @Override
@@ -34,6 +31,7 @@ public class UserMenu extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_menu);
 
+        createAndGetDatabase();
         initializeFindView();
         hideAddUserImage();
         createRecyclerView();
@@ -70,6 +68,11 @@ public class UserMenu extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        getAllUser(); //TODO Marche pas
+        adapter.notifyDataSetChanged(); //TODO Marche pas
+    }
+
+    private void createAndGetDatabase() {
         db = CreateDatabase.getInstance(UserMenu.this);
         getAllUser();
     }
@@ -103,7 +106,8 @@ public class UserMenu extends AppCompatActivity {
         }
 
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setAdapter(new UserAdapter(getApplicationContext(), listUser, false));
+        adapter = new UserAdapter(getApplicationContext(), listUser, false);
+        recyclerView.setAdapter(adapter);
     }
 
     private void startSettingPage() {
@@ -115,7 +119,6 @@ public class UserMenu extends AppCompatActivity {
         Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
         intent.putExtra("addUser", true);
         startActivity(intent);
-        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         finish();
     }
 

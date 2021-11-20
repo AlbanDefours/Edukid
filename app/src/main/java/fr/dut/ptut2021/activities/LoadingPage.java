@@ -27,18 +27,21 @@ public class LoadingPage extends AppCompatActivity {
         animationTexte();
         createDatabase();
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                if (db.appDao().tabUserIsEmpty()) {
-                    openUserEditPage();
-                } else {
-                    openUserMenuPage();
-                }
+        new Handler().postDelayed(() -> {
+            if (db.appDao().tabUserIsEmpty()) {
+                openUserEditPage();
+            } else {
+                openUserMenuPage();
             }
-        }, 1000);
+        }, 1500);
     }
 
+    //TODO Faire bing bing bing bing de la gauche et TADA !
+    private void animationTexte() {
+        YoYo.with(Techniques.Tada)
+                .duration(1000)
+                .playOn(findViewById(R.id.applicationName));
+    }
 
     private void createDatabase() {
         db = CreateDatabase.getInstance(getApplicationContext());
@@ -75,13 +78,6 @@ public class LoadingPage extends AppCompatActivity {
             db.appDao().insertThemeGame(new ThemeGameCrossRef("Syllabe", "Lettres"));
             db.appDao().insertThemeGame(new ThemeGameCrossRef("Suite chiffre", "Chiffres"));
         }
-    }
-
-    //TODO Faire bing bing bing bing de la gauche et TADA !
-    private void animationTexte() {
-        YoYo.with(Techniques.Tada)
-                .duration(1000)
-                .playOn(findViewById(R.id.applicationName));
     }
 
     private void openUserMenuPage() {
