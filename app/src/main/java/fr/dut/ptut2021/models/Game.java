@@ -8,34 +8,36 @@ public class Game {
 
     @PrimaryKey(autoGenerate = true)
     private int gameId;
-    private String name;
-    private int image;
+    private String gameName;
+    private int gameImage;
 
     //Constructor
-    public Game(String name, int image) {
-        this.name = name;
-        this.image = image;
+    public Game(String gameName, int gameImage) {
+        this.gameName = gameName;
+        this.gameImage = gameImage;
     }
 
-    //Getter
     public int getGameId() {
         return gameId;
     }
-    public String getName() {
-        return name;
-    }
-    public int getImage() {
-        return image;
-    }
 
-    //Setter
-    public void setName(String name) {
-        this.name = name;
-    }
-    public void setImage(int image) {
-        this.image = image;
-    }
     public void setGameId(int gameId) {
         this.gameId = gameId;
+    }
+
+    public String getGameName() {
+        return gameName;
+    }
+
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
+    }
+
+    public int getGameImage() {
+        return gameImage;
+    }
+
+    public void setGameImage(int gameImage) {
+        this.gameImage = gameImage;
     }
 }

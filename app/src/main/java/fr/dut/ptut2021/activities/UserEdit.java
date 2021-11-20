@@ -77,7 +77,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
 
     private void createUser(){
         if (addUser && isCorrect()) {
-            db.userDao().createUser(new User(textField_userName.getText().toString(), tableauImage[i]));
+            db.appDao().insertUser(new User(textField_userName.getText().toString(), tableauImage[i]));
             startUserMenuPage();
         } else if (!addUser && isCorrect()) {
             //TODO DB UPDATE
@@ -103,7 +103,6 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
             case R.id.userAvatar_editPage:
                 userAvatar.setImageResource(tableauImage[++i % 4]);
                 break;
-
             case R.id.button_userEditPage:
                 createUser();
                 break;

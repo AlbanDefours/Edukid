@@ -1,9 +1,33 @@
 package fr.dut.ptut2021.models;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 
-@Entity(primaryKeys = {"gameId", "themeId"})
+@Entity (primaryKeys = {"gameName", "themeName"})
 public class ThemeGameCrossRef {
-    public int gameId;
-    public int themeId;
+    @NonNull
+    private String gameName, themeName;
+
+    public ThemeGameCrossRef(String gameName, String themeName){
+        this.gameName = gameName;
+        this.themeName = themeName;
+    }
+
+    @NonNull
+    public String getGameName() {
+        return gameName;
+    }
+
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
+    }
+
+    @NonNull
+    public String getThemeName() {
+        return themeName;
+    }
+
+    public void setThemeName(String themeName) {
+        this.themeName = themeName;
+    }
 }

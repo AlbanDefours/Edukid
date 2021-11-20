@@ -29,11 +29,11 @@ public class ThemeMenu extends AppCompatActivity {
 
         db = CreateDatabase.getInstance(ThemeMenu.this);
 
-        if (!db.themeDao().tabThemeIsEmpty()) {
-            listTheme = db.themeDao().getAllThemes();
+        if (!db.appDao().tabThemeIsEmpty()) {
+            listTheme = db.appDao().getAllThemes();
         } else {
-            db.themeDao().createTheme(new Theme("Lettres", R.drawable.lettres));
-            db.themeDao().createTheme(new Theme("Chiffres", R.drawable.chiffres));
+            db.appDao().insertTheme(new Theme("Lettres", R.drawable.lettres));
+            db.appDao().insertTheme(new Theme("Chiffres", R.drawable.chiffres));
         }
 
         RecyclerView recyclerViewListTheme = findViewById(R.id.recyclerview_theme);
@@ -56,7 +56,7 @@ public class ThemeMenu extends AppCompatActivity {
 
     private void startGameMenu(int position) {
         Intent intent = new Intent().setClass(getApplicationContext(), GameMenu.class);
-        intent.putExtra("themeName", listTheme.get(position).getName());
+        intent.putExtra("themeName", listTheme.get(position).getThemeName());
         startActivity(intent);
     }
 }

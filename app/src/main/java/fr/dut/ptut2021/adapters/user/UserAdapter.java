@@ -30,8 +30,8 @@ public class UserAdapter extends RecyclerView.Adapter<MyViewHolderUser> {
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolderUser holder, int position) {
-        holder.name.setText(listUser.get(position).getName());
-        holder.avatar.setImageResource(listUser.get(position).getImage());
+        holder.name.setText(listUser.get(position).getUserName());
+        holder.avatar.setImageResource(listUser.get(position).getUserImage());
     }
 
     @Override

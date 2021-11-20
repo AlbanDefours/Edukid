@@ -29,11 +29,11 @@ public class UserMenu extends AppCompatActivity {
 
         db = CreateDatabase.getInstance(UserMenu.this);
 
-        //Peut etre plus opti de faire un seul getAllUser() en testant listUser empty ?
-        if (!db.userDao().tabUserIsEmpty()) {
-            listUser = db.userDao().getAllUsers();
+        if (!db.appDao().tabUserIsEmpty()) {
+            listUser = db.appDao().getAllUsers();
         } else {
             startAddUserPage();
+            finish();
         }
 
         ImageView addUser = findViewById(R.id.addUser);
@@ -71,7 +71,7 @@ public class UserMenu extends AppCompatActivity {
 
     private void startThemeMenu(int position) {
         Intent intent = new Intent().setClass(getApplicationContext(), ThemeMenu.class);
-        intent.putExtra("idUser", listUser.get(position).getId());
+        intent.putExtra("idUser", listUser.get(position).getUserId());
         startActivity(intent);
     }
 }

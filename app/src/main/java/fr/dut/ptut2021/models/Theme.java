@@ -8,34 +8,36 @@ public class Theme {
 
     @PrimaryKey(autoGenerate = true)
     private int themeId;
-    private String name;
-    private int image;
+    private String themeName;
+    private int themeImage;
 
     //Constructor
-    public Theme(String name, int image) {
-        this.name = name;
-        this.image = image;
+    public Theme(String themeName, int themeImage) {
+        this.themeName = themeName;
+        this.themeImage = themeImage;
     }
 
-    //Getter
     public int getThemeId() {
         return themeId;
     }
-    public String getName() {
-        return name;
-    }
-    public int getImage() {
-        return image;
-    }
 
-    //Setter
-    public void setName(String name) {
-        this.name = name;
-    }
-    public void setImage(int image) {
-        this.image = image;
-    }
     public void setThemeId(int themeId) {
         this.themeId = themeId;
+    }
+
+    public String getThemeName() {
+        return themeName;
+    }
+
+    public void setThemeName(String themeName) {
+        this.themeName = themeName;
+    }
+
+    public int getThemeImage() {
+        return themeImage;
+    }
+
+    public void setThemeImage(int themeImage) {
+        this.themeImage = themeImage;
     }
 }
