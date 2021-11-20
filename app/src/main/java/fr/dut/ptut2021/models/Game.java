@@ -1,18 +1,13 @@
 package fr.dut.ptut2021.models;
 
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-
-import java.util.ArrayList;
-
-import fr.dut.ptut2021.database.CreateDatabase;
 
 @Entity
 public class Game {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private int gameId;
     private String name;
     private int image;
 
@@ -22,15 +17,7 @@ public class Game {
         this.image = image;
     }
 
-    public Game(String name, int image, Theme theme) {
-        this.name = name;
-        this.image = image;
-    }
-
     //Getter
-    public int getId() {
-        return id;
-    }
     public String getName() {
         return name;
     }
@@ -39,9 +26,6 @@ public class Game {
     }
 
     //Setter
-    public void setId(int id) {
-        this.id = id;
-    }
     public void setName(String name) {
         this.name = name;
     }
@@ -49,4 +33,11 @@ public class Game {
         this.image = image;
     }
 
+    public int getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
+    }
 }

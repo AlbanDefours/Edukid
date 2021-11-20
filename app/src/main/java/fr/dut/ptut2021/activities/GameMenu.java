@@ -15,17 +15,15 @@ import java.util.List;
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.game.GameAdapter;
-import fr.dut.ptut2021.adapters.theme.ThemeAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.game.Memory;
 import fr.dut.ptut2021.models.Game;
-import fr.dut.ptut2021.models.Theme;
-import fr.dut.ptut2021.models.ThemeGame;
+import fr.dut.ptut2021.models.ThemeWithGame;
 
 public class GameMenu extends AppCompatActivity {
 
     private List<Game> gameList = new ArrayList<>();
-    private List<ThemeGame> themeGameList = new ArrayList<>();
+    //private List<ThemeGame> themeGameList = new ArrayList<>();
     private String themeName;
     private CreateDatabase db = null;
 
@@ -45,7 +43,22 @@ public class GameMenu extends AppCompatActivity {
 
         //TODO create list from BDD themes
         db.gameDao().deleteAllGamesInGame();
+        List<Game> listGame = db.gameDao().getAllGames();
+        for (int i = 0; i < listGame.size(); i++){
+            Log.e("LISTGAMEEMPTY", listGame.get(i).getName());
+        }
 
+        db.gameDao().createGame(new Game("Jeu 1", R.drawable.chiffres));
+        db.gameDao().createGame(new Game("Jeu 2", R.drawable.lettres));
+
+        listGame = db.gameDao().getAllGames();
+        for (int i = 0; i < listGame.size(); i++){
+            Log.e("LISTGAMEFULL", listGame.get(i).getName());
+        }
+
+        gameList.add(new Game("test", R.drawable.lettres));
+
+/*
         db.gameDao().createGame(new Game ("Memory", R.drawable.memory_icon));
         db.gameDao().createGame(new Game ("Dessine", R.drawable.memory_icon));
         db.themeGameDao().createThemeGame(new ThemeGame(db.themeDao().getThemeByName("Chiffres").getId(), db.gameDao().getGameId("Memory")));
@@ -66,7 +79,7 @@ public class GameMenu extends AppCompatActivity {
             gameList.add(db.gameDao().getGame(gameIdList.get(i)));
             //Log.e("GAMELIST_NAME", gameList.get(gameId).getName());
         }
-        Log.e("GAMELIST_SIZE", ""+gameList.size());
+        Log.e("GAMELIST_SIZE", ""+gameList.size());*/
 
 
         RecyclerView recyclerViewListGame = findViewById(R.id.recyclerview_game);

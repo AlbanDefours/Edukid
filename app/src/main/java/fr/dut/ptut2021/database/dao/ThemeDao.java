@@ -22,39 +22,19 @@ public interface ThemeDao {
     @Query("SELECT * FROM Theme")
     List<Theme> getAllThemes();
 
-    @Query("SELECT * FROM Theme WHERE id = :themeId")
-    Theme getTheme(int themeId);
+    @Query("SELECT * FROM Theme WHERE themeId = :themeId")
+    Theme getThemeById(int themeId);
 
     @Update
     int updateTheme(Theme theme);
 
-
-    @Query("DELETE FROM ThemeGame WHERE themeId = :themeId")
-    int deleteThemeInThemeGame(int themeId);
-
-    @Query("DELETE FROM Theme WHERE id = :themeId")
-    int deleteThemeInTheme(int themeId);
-
-    default void deleteTheme(int themeId) {
-        deleteThemeInThemeGame(themeId);
-        deleteThemeInTheme(themeId);
-    }
-
-
-    @Query("DELETE FROM ThemeGame")
-    int deleteAllThemesInThemeGame();
+    @Query("DELETE FROM Theme WHERE themeId = :themeId")
+    int deleteThemeById(int themeId);
 
     @Query("DELETE FROM Theme")
     int deleteAllThemesInTheme();
 
-    default void deleteAllThemes() {
-        deleteAllThemesInThemeGame();
-        deleteAllThemesInTheme();
-    }
-
-
     default boolean tabThemeIsEmpty() {
         return getAllThemes().isEmpty();
     }
-
 }

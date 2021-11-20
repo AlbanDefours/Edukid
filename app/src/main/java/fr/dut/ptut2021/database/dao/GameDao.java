@@ -4,11 +4,13 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 import androidx.room.Update;
 
 import java.util.List;
 
 import fr.dut.ptut2021.models.Game;
+import fr.dut.ptut2021.models.ThemeWithGame;
 
 @Dao
 public interface GameDao {
@@ -19,39 +21,24 @@ public interface GameDao {
     @Query("SELECT * FROM Game")
     List<Game> getAllGames();
 
-    @Query("SELECT * FROM Game WHERE id = :gameId")
-    Game getGame(int gameId);
+    @Query("SELECT * FROM Game WHERE gameId = :gameId")
+    Game getGameById(int gameId);
 
-    @Query("SELECT id FROM Game WHERE name = :gameName")
-    int getGameId(String gameName);
+    @Query("SELECT gameId FROM Game WHERE name = :gameName")
+    int getGameIdByName(String gameName);
 
     @Update
     int updateGame(Game game);
 
-
-    @Query("DELETE FROM ThemeGame WHERE gameId = :gameId")
-    int deleteGameInThemeGame(int gameId);
-
-    @Query("DELETE FROM Game WHERE id = :gameId")
+    @Query("DELETE FROM Game WHERE gameId = :gameId")
     int deleteGameInGame(int gameId);
-
-    default void deleteGame(int gameId) {
-        deleteGameInThemeGame(gameId);
-        deleteGameInGame(gameId);
-    }
-
-
-    @Query("DELETE FROM ThemeGame")
-    int deleteAllGamesInThemeGame();
 
     @Query("DELETE FROM Game")
     int deleteAllGamesInGame();
 
-    default void deleteAllGames() {
-        deleteAllGamesInThemeGame();
-        deleteAllGamesInGame();
-    }
-
+    /*@Transaction
+    @Query("SELECT * FROM Game")
+    public List<ThemeWithGame> getGameWithTheme();*/
 
     default boolean tabGameIsEmpty() {
         return getAllGames().isEmpty();

@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 public class Theme {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private int themeId;
     private String name;
     private int image;
 
@@ -18,9 +18,6 @@ public class Theme {
     }
 
     //Getter
-    public int getId() {
-        return id;
-    }
     public String getName() {
         return name;
     }
@@ -29,13 +26,18 @@ public class Theme {
     }
 
     //Setter
-    public void setId(int id) {
-        this.id = id;
-    }
     public void setName(String name) {
         this.name = name;
     }
     public void setImage(int image) {
         this.image = image;
+    }
+
+    public int getThemeId() {
+        return themeId;
+    }
+
+    public void setThemeId(int themeId) {
+        this.themeId = themeId;
     }
 }
