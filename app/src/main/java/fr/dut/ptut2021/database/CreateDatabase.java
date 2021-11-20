@@ -15,7 +15,7 @@ import fr.dut.ptut2021.models.Theme;
 import fr.dut.ptut2021.models.ThemeGame;
 import fr.dut.ptut2021.models.User;
 
-@Database(entities = { User.class, Theme.class, Game.class, ThemeGame.class}, version = 3, exportSchema = true)
+@Database(entities = { User.class, Theme.class, Game.class, ThemeGame.class}, version = 4, exportSchema = true)
 public abstract class CreateDatabase extends RoomDatabase {
 
     // --- SINGLETON ---

@@ -16,36 +16,36 @@ import fr.dut.ptut2021.models.ThemeGame;
 public interface ThemeGameDao {
 
     @Insert (onConflict = OnConflictStrategy.REPLACE)
-    long addThemeGame(ThemeGame themeGame);
+    long createThemeGame(ThemeGame themeGame);
 
     @Query("SELECT * FROM ThemeGame")
     List<ThemeGame> getAllThemeGames();
 
     //Renvoie une List des themeId correspondant au gameId en paramètre
-    @Query("SELECT themeId FROM ThemeGame WHERE gameId = :gameId")
-    List<Integer> getThemesIdByGame(int gameId);
+    //@Query("SELECT themeId FROM ThemeGame WHERE gameId = :gameId")
+    //List<Integer> getThemesIdByGame(int gameId);
 
     //Renvoie une List des gameId correspondant au themeId en paramètre
     @Query("SELECT gameId FROM ThemeGame WHERE themeId = :themeId")
-    List<Integer> getGamesIdByTheme(int themeId);
+    List<Integer> getGameIdByTheme(int themeId);
 
     //Renvoie List Theme en fonction d'un game id
     @Query("SELECT Theme.* FROM Theme INNER JOIN ThemeGame INNER JOIN Game WHERE gameId = :gameId")
     List<Theme> getAllThemeByGameId(int gameId);
 
     //Renvoie List Game en fonction d'un theme id
-    @Query("SELECT Game.* FROM Theme INNER JOIN ThemeGame INNER JOIN Game WHERE themeId = :themeId")
-    //@Query("SELECT g.* FROM Theme as t INNER JOIN ThemeGame as tg ON t.id = tg.themeId INNER JOIN Game as g ON tg.gameId=g.id WHERE themeId = :themeId")
+    //@Query("SELECT Game.* FROM Theme INNER JOIN ThemeGame INNER JOIN Game WHERE themeId = :themeId")
+    @Query("SELECT Game.* FROM ThemeGame as tg JOIN Game ON tg.gameId=Game.id WHERE themeId = :themeId")
     List<Game> getAllGameByThemeId(int themeId);
 
     @Update
     int updateThemeGame(ThemeGame themeGame);
 
     @Query("DELETE FROM ThemeGame WHERE gameId = :gameId")
-    int deleteThemeGameByGame(int gameId);
+    int deleteTgByGame(int gameId);
 
     @Query("DELETE FROM ThemeGame WHERE themeId = :themeId")
-    int deleteThemeGameByTheme(int themeId);
+    int deleteTgByTheme(int themeId);
 
     @Query("DELETE FROM ThemeGame")
     int deleteAllThemeGames();

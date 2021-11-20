@@ -22,6 +22,9 @@ public interface GameDao {
     @Query("SELECT * FROM Game WHERE id = :gameId")
     Game getGame(int gameId);
 
+    @Query("SELECT id FROM Game WHERE name = :gameName")
+    int getGameId(String gameName);
+
     @Update
     int updateGame(Game game);
 
@@ -32,7 +35,7 @@ public interface GameDao {
     @Query("DELETE FROM Game WHERE id = :gameId")
     int deleteGameInGame(int gameId);
 
-    default void deleteTheme(int gameId) {
+    default void deleteGame(int gameId) {
         deleteGameInThemeGame(gameId);
         deleteGameInGame(gameId);
     }
@@ -44,7 +47,7 @@ public interface GameDao {
     @Query("DELETE FROM Game")
     int deleteAllGamesInGame();
 
-    default void deleteAllThemes() {
+    default void deleteAllGames() {
         deleteAllGamesInThemeGame();
         deleteAllGamesInGame();
     }

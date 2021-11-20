@@ -16,6 +16,9 @@ public interface ThemeDao {
     @Insert (onConflict = OnConflictStrategy.IGNORE)
     long createTheme(Theme theme);
 
+    @Query("SELECT * FROM Theme WHERE name = :themeName")
+    Theme getThemeByName(String themeName);
+
     @Query("SELECT * FROM Theme")
     List<Theme> getAllThemes();
 

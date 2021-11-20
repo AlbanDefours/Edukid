@@ -5,7 +5,7 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-@Entity(foreignKeys = {
+/*@Entity(foreignKeys = {
         @ForeignKey(
                 entity = Theme.class,
                 parentColumns = "id",
@@ -16,16 +16,17 @@ import androidx.room.PrimaryKey;
                 parentColumns = "id",
                 childColumns = "themeId"
         )
-})
-
+})*/
+@Entity
 public class ThemeGame {
 
-    @PrimaryKey
-    @ColumnInfo(name="themeId")
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+
+    //@ColumnInfo(name="themeId")
     private int themeId;
 
-    @PrimaryKey
-    @ColumnInfo(name="gameId")
+    //@ColumnInfo(name="gameId")
     private int gameId;
 
     //Constructor
@@ -35,6 +36,9 @@ public class ThemeGame {
     }
 
     //Getter
+    public int getId() {
+        return id;
+    }
     public int getThemeId() {
         return themeId;
     }
@@ -43,6 +47,9 @@ public class ThemeGame {
     }
 
     //Setter
+    public void setId(int id) {
+        this.id = id;
+    }
     public void setThemeId(int themeId) {
         this.themeId = themeId;
     }
