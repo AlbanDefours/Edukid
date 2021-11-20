@@ -21,7 +21,7 @@ public interface AppDao {
     long insertThemeGame(ThemeGameCrossRef themeGame);
 
     @Query("SELECT * FROM ThemeGameCrossRef")
-    List<Theme> getAllThemeGame();
+    List<ThemeGameCrossRef> getAllThemeGame();
 
     default boolean tabThemeGameIsEmpty() {
         return getAllThemeGame().isEmpty();

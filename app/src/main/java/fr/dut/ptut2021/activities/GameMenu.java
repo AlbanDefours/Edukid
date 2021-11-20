@@ -29,9 +29,10 @@ public class GameMenu extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_menu);
 
-        createDatabaseAndImportGames();
         getThemeName();
+        createDatabaseAndImportGames();
         createRecyclerView();
+        db.close();
 
         recyclerViewListGame.addOnItemTouchListener(
                 new RecyclerItemClickListener(getApplicationContext(), recyclerViewListGame, new RecyclerItemClickListener.OnItemClickListener() {

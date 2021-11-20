@@ -53,12 +53,10 @@ public class LoadingPage extends AppCompatActivity {
     //Here to add/update/delete Game
     private void createGames() {
         if (db.appDao().tabGameIsEmpty()) {
-            db.appDao().insertGame(new Game("Memory", R.drawable.chiffres));
-            db.appDao().insertGame(new Game("Memory", R.drawable.lettres));
-            db.appDao().insertGame(new Game("DrawOnIt", R.drawable.lettres));
-            db.appDao().insertGame(new Game("DrawOnIt", R.drawable.chiffres));
-            db.appDao().insertGame(new Game("Syllabe", R.drawable.lettres));
-            db.appDao().insertGame(new Game("Suite chiffre", R.drawable.chiffres));
+            db.appDao().insertGame(new Game("Memory", R.drawable.memory_icon));
+            db.appDao().insertGame(new Game("DrawOnIt", R.drawable.memory_icon));
+            db.appDao().insertGame(new Game("Syllabe", R.drawable.memory_icon));
+            db.appDao().insertGame(new Game("Suite chiffre", R.drawable.memory_icon));
         }
     }
 
