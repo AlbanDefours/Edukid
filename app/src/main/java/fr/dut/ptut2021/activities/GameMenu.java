@@ -56,9 +56,10 @@ public class GameMenu extends AppCompatActivity {
             Log.e("LISTGAMEFULL", listGame.get(i).getName());
         }
 
+        //juste pour pas que ca crash
         gameList.add(new Game("test", R.drawable.lettres));
 
-/*
+/* INUTILE MTN
         db.gameDao().createGame(new Game ("Memory", R.drawable.memory_icon));
         db.gameDao().createGame(new Game ("Dessine", R.drawable.memory_icon));
         db.themeGameDao().createThemeGame(new ThemeGame(db.themeDao().getThemeByName("Chiffres").getId(), db.gameDao().getGameId("Memory")));
