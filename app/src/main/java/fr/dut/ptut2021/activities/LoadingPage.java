@@ -28,11 +28,12 @@ public class LoadingPage extends AppCompatActivity {
         createDatabase();
 
         new Handler().postDelayed(() -> {
-            if (db.appDao().tabUserIsEmpty()) {
+            /*if (db.appDao().tabUserIsEmpty()) {
                 openUserEditPage();
             } else {
                 openUserMenuPage();
-            }
+            }*/
+            openWordWithHole();
         }, 1500);
     }
 
@@ -89,6 +90,12 @@ public class LoadingPage extends AppCompatActivity {
     private void openUserEditPage() {
         Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
         intent.putExtra("addUser", true);
+        startActivity(intent);
+        finish();
+    }
+
+    private void openWordWithHole() {
+        Intent intent = new Intent().setClass(getApplicationContext(), WordWithHole.class);
         startActivity(intent);
         finish();
     }

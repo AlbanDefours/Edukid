@@ -10,26 +10,25 @@
 
     <TextView
         android:id="@+id/word_wordWithHole"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="108dp"
+        android:layout_width="415dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="104dp"
         android:textAlignment="center"
         android:textColor="@color/black"
-        android:textSize="21sp"
+        android:textSize="55sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageWord_wordWithHole"
-        android:layout_width="170dp"
-        android:layout_height="170dp"
-        android:layout_marginBottom="136dp"
-        android:src="@drawable/b"
+        android:layout_width="411dp"
+        android:layout_height="247dp"
+        android:layout_marginBottom="104dp"
+        android:src="@drawable/wordwithhole_avion"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
@@ -48,22 +47,28 @@
             android:id="@+id/buttonAnswer1_wordWithHole"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
-            android:text="@string/cancel" />
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textSize="30sp"
+            android:text="" />
 
         <Button
             android:id="@+id/buttonAnswer2_wordWithHole"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="@string/valid" />
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textSize="30sp"
+            android:text="" />
 
         <Button
             android:id="@+id/buttonAnswer3_wordWithHole"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="@string/valid" />
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textSize="30sp"
+            android:text="" />
 
     </LinearLayout>
 

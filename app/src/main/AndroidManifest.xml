@@ -20,8 +20,11 @@
             android:name=".activities.StatisticPage"
             android:exported="false" />
         <activity
+            android:name=".activities.WordWithHole"
+            android:exported="false" />
+        <activity
             android:name=".activities.LoadingPage"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

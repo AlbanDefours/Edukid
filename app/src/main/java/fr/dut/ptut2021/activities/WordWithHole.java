@@ -33,6 +33,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
         initListWord();
         initializeLayout();
+        setLayoutContent();
     }
 
     private void initListWord() {
@@ -53,7 +54,14 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         answer1 = findViewById(R.id.buttonAnswer1_wordWithHole);
         answer2 = findViewById(R.id.buttonAnswer2_wordWithHole);
         answer3 = findViewById(R.id.buttonAnswer3_wordWithHole);
+    }
 
+    private void setLayoutContent() {
+        image.setImageResource(R.drawable.wordwithhole_avion);
+        word.setText(listWord.get("Avion"));
+        answer1.setText("ON");
+        answer2.setText("TA");
+        answer3.setText("LU");
     }
 
     @Override
