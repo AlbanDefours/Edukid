@@ -4,4 +4,5 @@
     <string name="valid">Valider</string>
     <string name="applicationName">Kakid</string>
     <string name="cancel">Annuler</string>
+    <string name="delete">SUPPRIMER</string>
 </resources>

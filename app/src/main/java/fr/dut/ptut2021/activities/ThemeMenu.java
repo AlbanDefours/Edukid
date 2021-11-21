@@ -1,24 +1,25 @@
 package fr.dut.ptut2021.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.adapters.theme.ThemeAdapter;
 import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
+import fr.dut.ptut2021.adapters.theme.ThemeAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.Theme;
 
 public class ThemeMenu extends AppCompatActivity {
 
+    private String userName;
     private CreateDatabase db = null;
     private RecyclerView recyclerViewListTheme;
     private List<Theme> listTheme = new ArrayList<>();
@@ -28,6 +29,7 @@ public class ThemeMenu extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_theme_menu);
 
+        getUserName();
         createAndGetDatabase();
         createRecyclerView();
 
@@ -43,6 +45,15 @@ public class ThemeMenu extends AppCompatActivity {
                     }
                 })
         );
+    }
+
+    private void getUserName() {
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+
+        if (bundle != null) {
+            userName = bundle.getString("userName", " ");
+        }
     }
 
     private void createAndGetDatabase() {
@@ -65,6 +76,7 @@ public class ThemeMenu extends AppCompatActivity {
     private void startGameMenu(int position) {
         Intent intent = new Intent().setClass(getApplicationContext(), GameMenu.class);
         intent.putExtra("themeName", listTheme.get(position).getThemeName());
+        intent.putExtra("userName", userName);
         startActivity(intent);
     }
 }

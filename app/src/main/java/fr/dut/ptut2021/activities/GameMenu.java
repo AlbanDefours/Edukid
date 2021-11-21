@@ -3,6 +3,7 @@ package fr.dut.ptut2021.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,8 +20,8 @@ import fr.dut.ptut2021.models.Game;
 
 public class GameMenu extends AppCompatActivity {
 
-    private String themeName;
     private CreateDatabase db = null;
+    private String themeName, userName;
     private RecyclerView recyclerViewListGame;
     private List<Game> gameList = new ArrayList<>();
 
@@ -58,6 +59,7 @@ public class GameMenu extends AppCompatActivity {
 
         if (bundle != null) {
             themeName = bundle.getString("themeName", " ");
+            userName = bundle.getString("userName", " ");
         }
     }
 
@@ -74,6 +76,7 @@ public class GameMenu extends AppCompatActivity {
 
     //TODO A mettre les jeux développer
     private void findWhichGame(int position) {
+        Toast.makeText(getApplicationContext(), userName+" "+themeName+" "+gameList.get(position).getGameName(), Toast.LENGTH_LONG).show();
         switch (position) {
             case 0:
                 //startGame(new Intent().setClass(getApplicationContext(), Memory.class), position);

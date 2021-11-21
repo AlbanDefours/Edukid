@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -57,8 +56,7 @@ public class UserMenu extends AppCompatActivity {
         adultProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO coder la session adulte
-                Toast.makeText(getApplicationContext(), "AdultPage", Toast.LENGTH_SHORT).show();
+                startStatisticPage();
             }
         });
     }
@@ -114,6 +112,11 @@ public class UserMenu extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void startStatisticPage() {
+        Intent intent = new Intent().setClass(getApplicationContext(), StatisticPage.class);
+        startActivity(intent);
+    }
+
     private void startAddUserPage() {
         Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
         intent.putExtra("addUser", true);
@@ -123,7 +126,7 @@ public class UserMenu extends AppCompatActivity {
 
     private void startThemeMenu(int position) {
         Intent intent = new Intent().setClass(getApplicationContext(), ThemeMenu.class);
-        intent.putExtra("idUser", listUser.get(position).getUserId());
+        intent.putExtra("userName", listUser.get(position).getUserName());
         startActivity(intent);
     }
 }

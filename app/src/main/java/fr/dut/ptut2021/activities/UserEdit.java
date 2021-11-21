@@ -1,7 +1,6 @@
 package fr.dut.ptut2021.activities;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -21,13 +20,15 @@ import fr.dut.ptut2021.models.User;
 
 public class UserEdit extends AppCompatActivity implements View.OnClickListener {
 
-    private boolean addUser = false, tabUserIsEmpty = false;
+
     private TextView title;
-    private Button valid, cancel;
+    private String userName;
     private ImageView userAvatar;
-    private TextInputEditText textField_userName;
+    private int userId, imageTmp;
     private CreateDatabase db = null;
-    private int idUser, imageTmp;
+    private Button valid, cancel, delete;
+    private TextInputEditText textField_userName;
+    private boolean isAddUser = false, tabUserIsEmpty = false;
 
     //TODO (a changer, pour le choix des images)
     private int i = 0;
@@ -43,10 +44,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
 
         initializeLayout();
         checkIfAddOrUpdateUser();
-
-        userAvatar.setOnClickListener(this);
-        valid.setOnClickListener(this);
-        cancel.setOnClickListener(this);
+        addOnClickListener();
     }
 
     private void initializeLayout() {
@@ -55,6 +53,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         textField_userName = findViewById(R.id.textField_userName);
         valid = findViewById(R.id.buttonValider_userEditPage);
         cancel = findViewById(R.id.buttonCancel_userEditPage);
+        delete = findViewById(R.id.buttonDelete_userEditPage);
     }
 
     private void checkIfAddOrUpdateUser() {
@@ -62,13 +61,14 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         Bundle bundle = intent.getExtras();
 
         if (bundle != null) {
-            addUser = bundle.getBoolean("addUser", false);
-            if (!addUser) {
-                textField_userName.setText(bundle.getString("userName", ""));
-                idUser = bundle.getInt("userId", 0);
+            isAddUser = bundle.getBoolean("addUser", false);
+            if (!isAddUser) {
+                userName = bundle.getString("userName", "");
+                userId = bundle.getInt("userId", 0);
                 imageTmp = bundle.getInt("userImage", R.drawable.a);
-                userAvatar.setImageResource(imageTmp);
-                i = findImage();
+                i = findImageNumber();
+                fillInFields();
+                delete.setVisibility(View.VISIBLE);
                 title.setText("Modification du profil de " + bundle.getString("userName", ""));
             } else {
                 title.setText("Créer votre session");
@@ -77,37 +77,36 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
-    private int findImage(){
-        for (int i = 0; i < tableauImage.length; i++){
-            if(tableauImage[i] == imageTmp) return i;
+    private void fillInFields() {
+        userAvatar.setImageResource(imageTmp);
+        textField_userName.setText(userName);
+    }
+
+    private void addOnClickListener() {
+        userAvatar.setOnClickListener(this);
+        valid.setOnClickListener(this);
+        cancel.setOnClickListener(this);
+        delete.setOnClickListener(this);
+    }
+
+    private int findImageNumber() {
+        for (int i = 0; i < tableauImage.length; i++) {
+            if (tableauImage[i] == imageTmp) return i;
         }
         return 0;
     }
 
-    private void startUserMenuPage() {
-        Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-        finish();
-    }
-
-    private void startUserResumePage() {
-        Intent intent = new Intent().setClass(getApplicationContext(), UserResume.class);
-        startActivity(intent);
-        finish();
-    }
-
     private void createUser() {
-        if (addUser && isCorrect()) {
-            if(db.appDao().tabUserIsEmpty()){
+        if (isAddUser && isCorrect()) {
+            if (db.appDao().tabUserIsEmpty()) {
                 db.appDao().insertUser(new User(textField_userName.getText().toString(), tableauImage[i]));
                 startUserMenuPage();
-            }else {
+            } else {
                 db.appDao().insertUser(new User(textField_userName.getText().toString(), tableauImage[i]));
                 startUserResumePage();
             }
-        } else if (!addUser && isCorrect()) {
-            User user = db.appDao().getUserById(idUser);
+        } else if (!isAddUser && isCorrect()) {
+            User user = db.appDao().getUserById(userId);
             user.setUserName(textField_userName.getText().toString());
             user.setUserImage(tableauImage[i]);
             db.appDao().updateUser(user);
@@ -117,23 +116,26 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
-    private void showMesageDialog(String title, String message) {
+    private void showMesageDialog(String title, String message, boolean wantToDelete) {
         AlertDialog alertDialog = new AlertDialog.Builder(UserEdit.this).create();
         alertDialog.setTitle(title);
         alertDialog.setMessage(message);
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OUI",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+                (dialog, which) -> {
+                    dialog.dismiss();
+                    if (wantToDelete) {
+                        db.appDao().deleteUserById(userId);
+                        //TODO crash ici
+                        if (db.appDao().tabUserIsEmpty())
+                            startUserMenuPage();
+                        else
+                            startUserResumePage();
+                        //A verifier si y a plus d'user
+                    } else
                         finish();
-                    }
                 });
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NON",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                (dialog, which) -> dialog.dismiss());
         alertDialog.show();
     }
 
@@ -160,14 +162,31 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                 break;
 
             case R.id.buttonCancel_userEditPage:
-                if (tabUserIsEmpty) {
-                    showMesageDialog("Voulez-vous quitter ?", "Vous n'avez aucune session, êtes vous sur de vouloir quitter ?");
-                } else {
+                if (tabUserIsEmpty)
+                    showMesageDialog("Voulez-vous quitter ?", "Vous n'avez aucune session, êtes vous sur de vouloir quitter ?", false);
+                else
                     startUserResumePage();
-                }
+                break;
+
+            case R.id.buttonDelete_userEditPage:
+                showMesageDialog("Suppression d'un utilisateur", "Voulez-vous vraiment supprimer \"" + userName + "\" ?", true);
                 break;
             default:
                 break;
         }
+    }
+
+    private void startUserMenuPage() {
+        Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+        finish();
+    }
+
+    private void startUserResumePage() {
+        Intent intent = new Intent().setClass(getApplicationContext(), UserResume.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+        finish();
     }
 }
