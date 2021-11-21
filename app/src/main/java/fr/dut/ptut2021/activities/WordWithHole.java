@@ -1,6 +1,7 @@
 package fr.dut.ptut2021.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +33,8 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private List<String> listSyllable;
     private int indWordChoose;
     private CreateDatabase db;
+    private int nbTryMax = 3;
+    private int nbTry = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,14 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
         db = CreateDatabase.getInstance(WordWithHole.this);
 
+        initGame();
+
+        answer1.setOnClickListener(this);
+        answer2.setOnClickListener(this);
+        answer3.setOnClickListener(this);
+    }
+
+    private void initGame() {
         initListWord();
         initListSyllable();
 
@@ -48,10 +59,6 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
         initializeLayout();
         setLayoutContent();
-
-        answer1.setOnClickListener(this);
-        answer2.setOnClickListener(this);
-        answer3.setOnClickListener(this);
     }
 
     private void initListWord() {
@@ -116,6 +123,20 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         answer3 = findViewById(R.id.buttonAnswer3_wordWithHole);
     }
 
+    private void replay() {
+        if (nbTry < nbTryMax) {
+            nbTry++;
+            initGame();
+            answer1.setBackgroundColor(Color.parseColor("#03DACD"));
+            answer2.setBackgroundColor(Color.parseColor("#03DACD"));
+            answer3.setBackgroundColor(Color.parseColor("#03DACD"));
+        } else {
+            Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
@@ -126,6 +147,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             } else {
                 answer1.setBackgroundColor(Color.RED);
             }
+            replay();
             break;
 
         case R.id.buttonAnswer2_wordWithHole:
@@ -134,6 +156,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             } else {
                 answer2.setBackgroundColor(Color.RED);
             }
+            replay();
             break;
 
         case R.id.buttonAnswer3_wordWithHole:
@@ -142,6 +165,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             } else {
                 answer3.setBackgroundColor(Color.RED);
             }
+            replay();
             break;
         }
     }
