@@ -1,5 +1,7 @@
 package fr.dut.ptut2021.activities;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,8 +27,10 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private ImageView image;
     private Button answer1 , answer2, answer3;
     private List<ArrayList<String>> listWord;   //Mot plein, Mot à trou, Bonne réponse
+    private List<Integer> listImage;
     private List<String> listAnswer;
     private List<String> listSyllable;
+    private int indWordChoose;
     private CreateDatabase db;
 
     @Override
@@ -39,11 +43,15 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         initListWord();
         initListSyllable();
 
-        int indWordChoose = getRandomWord();
-        initListAnswer(indWordChoose);
+        indWordChoose = getRandomWord();
+        initListAnswer();
 
         initializeLayout();
-        setLayoutContent(indWordChoose);
+        setLayoutContent();
+
+        answer1.setOnClickListener(this);
+        answer2.setOnClickListener(this);
+        answer3.setOnClickListener(this);
     }
 
     private void initListWord() {
@@ -70,10 +78,10 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         listSyllable.add("SA");
     }
 
-    private void initListAnswer(int ind) {
+    private void initListAnswer() {
         listAnswer = new ArrayList<>();
 
-        listAnswer.add(listWord.get(ind).get(2));
+        listAnswer.add(listWord.get(indWordChoose).get(2));
         while (listAnswer.size() < 3) {
             int rand = (int) (Math.random() * listSyllable.size());
             if (!listAnswer.contains(listSyllable.get(rand))) {
@@ -86,9 +94,9 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void setLayoutContent(int ind) {
+    private void setLayoutContent() {
         image.setImageResource(R.drawable.wordwithhole_avion);
-        word.setText(listWord.get(ind).get(1));
+        word.setText(listWord.get(indWordChoose).get(1));
         answer1.setText(listAnswer.get(0));
         answer2.setText(listAnswer.get(1));
         answer3.setText(listAnswer.get(2));
@@ -108,9 +116,34 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         answer3 = findViewById(R.id.buttonAnswer3_wordWithHole);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
+        switch (v.getId()) {
+        case R.id.buttonAnswer1_wordWithHole:
+            if (answer1.getText() == listWord.get(indWordChoose).get(2)) {
+                answer1.setBackgroundColor(Color.GREEN);
+            } else {
+                answer1.setBackgroundColor(Color.RED);
+            }
+            break;
 
+        case R.id.buttonAnswer2_wordWithHole:
+            if (answer2.getText() == listWord.get(indWordChoose).get(2)) {
+                answer2.setBackgroundColor(Color.GREEN);
+            } else {
+                answer2.setBackgroundColor(Color.RED);
+            }
+            break;
+
+        case R.id.buttonAnswer3_wordWithHole:
+            if (answer3.getText() == listWord.get(indWordChoose).get(2)) {
+                answer3.setBackgroundColor(Color.GREEN);
+            } else {
+                answer3.setBackgroundColor(Color.RED);
+            }
+            break;
+        }
     }
 
 }
