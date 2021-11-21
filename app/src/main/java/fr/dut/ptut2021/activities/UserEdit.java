@@ -27,7 +27,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private ImageView userAvatar;
     private TextInputEditText textField_userName;
     private CreateDatabase db = null;
-    private int idUser;
+    private int idUser, imageTmp;
 
     //TODO (a changer, pour le choix des images)
     private int i = 0;
@@ -66,13 +66,22 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
             if (!addUser) {
                 textField_userName.setText(bundle.getString("userName", ""));
                 idUser = bundle.getInt("userId", 0);
-                userAvatar.setImageResource(bundle.getInt("userImage", R.drawable.a));
+                imageTmp = bundle.getInt("userImage", R.drawable.a);
+                userAvatar.setImageResource(imageTmp);
+                i = findImage();
                 title.setText("Modification du profil de " + bundle.getString("userName", ""));
             } else {
                 title.setText("Créer votre session");
                 userAvatar.setImageResource(R.drawable.a);
             }
         }
+    }
+
+    private int findImage(){
+        for (int i = 0; i < tableauImage.length; i++){
+            if(tableauImage[i] == imageTmp) return i;
+        }
+        return 0;
     }
 
     private void startUserMenuPage() {

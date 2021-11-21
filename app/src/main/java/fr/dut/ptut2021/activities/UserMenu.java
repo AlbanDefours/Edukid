@@ -31,10 +31,8 @@ public class UserMenu extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_menu);
 
-        createAndGetDatabase();
         initializeFindView();
         hideAddUserImage();
-        createRecyclerView();
 
         recyclerView.addOnItemTouchListener(
             new RecyclerItemClickListener(getApplicationContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
@@ -68,7 +66,8 @@ public class UserMenu extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        getAllUser(); //TODO Marche pas
+        createAndGetDatabase();
+        createRecyclerView();
         adapter.notifyDataSetChanged(); //TODO Marche pas
     }
 
