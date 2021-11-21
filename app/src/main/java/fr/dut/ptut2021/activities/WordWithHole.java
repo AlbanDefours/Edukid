@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
@@ -125,6 +126,11 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
     private void replay() {
         if (nbTry < nbTryMax) {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             nbTry++;
             initGame();
             answer1.setBackgroundColor(Color.parseColor("#03DACD"));
