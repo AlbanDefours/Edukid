@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -34,8 +35,12 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private List<String> listSyllable;
     private int indWordChoose;
     private CreateDatabase db;
-    private int nbTryMax = 3;
+    private final int nbGamePlayedMax = 5;
+    private int nbGamePlayed = 1;
+    private final int nbTryMax = 2;
     private int nbTry = 0;
+    private int wrongAnswerCheck = 0;
+    private boolean delay = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,54 +130,75 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void replay() {
-        if (nbTry < nbTryMax) {
-            try {
-                TimeUnit.SECONDS.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        word.setText(listWord.get(indWordChoose).get(0));
+        nbGamePlayed++;
+        delay = true;
+        new Handler().postDelayed(() -> {
+            delay = false;
+            if (nbGamePlayed <= nbGamePlayedMax) {
+                nbTry = 0;
+                initGame();
+                answer1.setBackgroundColor(Color.parseColor("#00BCD4"));
+                answer2.setBackgroundColor(Color.parseColor("#00BCD4"));
+                answer3.setBackgroundColor(Color.parseColor("#00BCD4"));
+            } else {
+                Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
+                startActivity(intent);
+                finish();
             }
-            nbTry++;
-            initGame();
-            answer1.setBackgroundColor(Color.parseColor("#03DACD"));
-            answer2.setBackgroundColor(Color.parseColor("#03DACD"));
-            answer3.setBackgroundColor(Color.parseColor("#03DACD"));
-        } else {
-            Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
-            startActivity(intent);
-            finish();
-        }
+        }, 1500);
     }
 
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-        case R.id.buttonAnswer1_wordWithHole:
-            if (answer1.getText() == listWord.get(indWordChoose).get(2)) {
-                answer1.setBackgroundColor(Color.GREEN);
-            } else {
-                answer1.setBackgroundColor(Color.RED);
-            }
-            replay();
-            break;
+        if (!delay) {
+            switch (v.getId()) {
+                case R.id.buttonAnswer1_wordWithHole:
+                    if (answer1.getText() == listWord.get(indWordChoose).get(2)) {
+                        answer1.setBackgroundColor(Color.GREEN);
+                        replay();
+                    } else {
+                        answer1.setBackgroundColor(Color.RED);
+                        if (wrongAnswerCheck != 1) {
+                            nbTry++;
+                            if (nbTry >= nbTryMax) {
+                                replay();
+                            }
+                        }
+                    }
+                    break;
 
-        case R.id.buttonAnswer2_wordWithHole:
-            if (answer2.getText() == listWord.get(indWordChoose).get(2)) {
-                answer2.setBackgroundColor(Color.GREEN);
-            } else {
-                answer2.setBackgroundColor(Color.RED);
-            }
-            replay();
-            break;
+                case R.id.buttonAnswer2_wordWithHole:
+                    if (answer2.getText() == listWord.get(indWordChoose).get(2)) {
+                        answer2.setBackgroundColor(Color.GREEN);
+                        replay();
+                    } else {
+                        answer2.setBackgroundColor(Color.RED);
+                        if (wrongAnswerCheck != 2) {
+                            nbTry++;
+                            if (nbTry >= nbTryMax) {
+                                replay();
+                            }
+                        }
+                    }
+                    break;
 
-        case R.id.buttonAnswer3_wordWithHole:
-            if (answer3.getText() == listWord.get(indWordChoose).get(2)) {
-                answer3.setBackgroundColor(Color.GREEN);
-            } else {
-                answer3.setBackgroundColor(Color.RED);
+                case R.id.buttonAnswer3_wordWithHole:
+                    if (answer3.getText() == listWord.get(indWordChoose).get(2)) {
+                        answer3.setBackgroundColor(Color.GREEN);
+                        replay();
+                    } else {
+                        answer3.setBackgroundColor(Color.RED);
+                        if (wrongAnswerCheck != 3) {
+                            nbTry++;
+                            if (nbTry >= nbTryMax) {
+                                replay();
+                            }
+                        }
+                    }
+                    break;
             }
-            replay();
-            break;
         }
     }
 
