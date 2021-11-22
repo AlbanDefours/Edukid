@@ -2,6 +2,7 @@ package fr.dut.ptut2021.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.dut.ptut2021.R;
@@ -21,7 +23,7 @@ public class UserMenu extends AppCompatActivity {
 
     private CreateDatabase db = null;
     private RecyclerView recyclerView;
-    private List<User> listUser = null;
+    private List<User> listUser = new ArrayList<>();
     private UserAdapter adapter;
     private ImageView settings, adultProfile, addUser;
 
@@ -66,7 +68,7 @@ public class UserMenu extends AppCompatActivity {
         super.onStart();
         createAndGetDatabase();
         createRecyclerView();
-        adapter.notifyDataSetChanged(); //TODO Marche pas
+        adapter.notifyDataSetChanged();
     }
 
     private void createAndGetDatabase() {

@@ -3,13 +3,16 @@
     package="fr.dut.ptut2021">
 
     <application
+        android:name=".adapters.ApplicationPtut"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name=".adapters.ApplicationPtut"
         android:theme="@style/Theme.PTUT2021">
+        <activity
+            android:name=".activities.ResultGamePage"
+            android:exported="false" />
         <activity
             android:name=".activities.UserResume"
             android:exported="false" />

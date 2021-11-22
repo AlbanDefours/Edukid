@@ -20,7 +20,6 @@ import fr.dut.ptut2021.models.User;
 
 public class UserEdit extends AppCompatActivity implements View.OnClickListener {
 
-
     private TextView title;
     private String userName;
     private ImageView userAvatar;
@@ -31,7 +30,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private boolean isAddUser = false, tabUserIsEmpty = false;
 
     //TODO (a changer, pour le choix des images)
-    private int i = 0;
+    private int cpt= 0;
     private final int[] tableauImage = {R.drawable.a, R.drawable.b, R.drawable.c, R.drawable.d};
 
     @Override
@@ -39,12 +38,15 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_edit);
 
-        db = CreateDatabase.getInstance(UserEdit.this);
-        tabUserIsEmpty = db.appDao().tabUserIsEmpty();
-
+        getDb();
         initializeLayout();
         checkIfAddOrUpdateUser();
         addOnClickListener();
+    }
+
+    private void getDb() {
+        db = CreateDatabase.getInstance(UserEdit.this);
+        tabUserIsEmpty = db.appDao().tabUserIsEmpty();
     }
 
     private void initializeLayout() {
@@ -63,10 +65,8 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         if (bundle != null) {
             isAddUser = bundle.getBoolean("addUser", false);
             if (!isAddUser) {
-                userName = bundle.getString("userName", "");
-                userId = bundle.getInt("userId", 0);
-                imageTmp = bundle.getInt("userImage", R.drawable.a);
-                i = findImageNumber();
+                getUserAttribute(bundle);
+                findCurrentImageUser();
                 fillInFields();
                 delete.setVisibility(View.VISIBLE);
                 title.setText("Modification du profil de " + bundle.getString("userName", ""));
@@ -74,6 +74,19 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                 title.setText("Créer votre session");
                 userAvatar.setImageResource(R.drawable.a);
             }
+        }
+    }
+
+    private void getUserAttribute(Bundle bundle){
+        userName = bundle.getString("userName", "");
+        userId = bundle.getInt("userId", 0);
+        imageTmp = bundle.getInt("userImage", R.drawable.a);
+    }
+
+    private void findCurrentImageUser() {
+        for (int i = 0; i < tableauImage.length; i++) {
+            if (tableauImage[i] == imageTmp)
+                cpt = i;
         }
     }
 
@@ -89,26 +102,19 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         delete.setOnClickListener(this);
     }
 
-    private int findImageNumber() {
-        for (int i = 0; i < tableauImage.length; i++) {
-            if (tableauImage[i] == imageTmp) return i;
-        }
-        return 0;
-    }
-
     private void createUser() {
         if (isAddUser && isCorrect()) {
             if (db.appDao().tabUserIsEmpty()) {
-                db.appDao().insertUser(new User(textField_userName.getText().toString(), tableauImage[i]));
-                startUserMenuPage();
+                db.appDao().insertUser(new User(textField_userName.getText().toString(), tableauImage[cpt]));
+                startUserMenuPage(false);
             } else {
-                db.appDao().insertUser(new User(textField_userName.getText().toString(), tableauImage[i]));
+                db.appDao().insertUser(new User(textField_userName.getText().toString(), tableauImage[cpt]));
                 startUserResumePage();
             }
         } else if (!isAddUser && isCorrect()) {
             User user = db.appDao().getUserById(userId);
             user.setUserName(textField_userName.getText().toString());
-            user.setUserImage(tableauImage[i]);
+            user.setUserImage(tableauImage[cpt]);
             db.appDao().updateUser(user);
             startUserResumePage();
         } else if (!isCorrect()) {
@@ -125,12 +131,12 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                     dialog.dismiss();
                     if (wantToDelete) {
                         db.appDao().deleteUserById(userId);
-                        //TODO crash ici
-                        if (db.appDao().tabUserIsEmpty())
-                            startUserMenuPage();
+                        if (db.appDao().tabUserIsEmpty()){
+                            Toast.makeText(getApplicationContext(), "User empty", Toast.LENGTH_LONG).show();
+                            startUserMenuPage(true);
+                        }
                         else
                             startUserResumePage();
-                        //A verifier si y a plus d'user
                     } else
                         finish();
                 });
@@ -153,8 +159,8 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.userAvatar_editPage:
-                i = ++i % 4;
-                userAvatar.setImageResource(tableauImage[i]);
+                cpt= ++cpt% 4;
+                userAvatar.setImageResource(tableauImage[cpt]);
                 break;
 
             case R.id.buttonValider_userEditPage:
@@ -176,8 +182,10 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
-    private void startUserMenuPage() {
+    private void startUserMenuPage(boolean force) {
         Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
+        if(force)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         finish();
