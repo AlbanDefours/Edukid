@@ -69,16 +69,19 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
     private void initListWord() {
         listWord = new ArrayList<>();
+        listImage = new ArrayList<>();
 
         listWord.add(new ArrayList<>());
         listWord.get(0).add("Avion");
         listWord.get(0).add("Avi__");
         listWord.get(0).add("ON");
+        listImage.add(R.drawable.wordwithhole_avion);
 
         listWord.add(new ArrayList<>());
         listWord.get(1).add("Maison");
         listWord.get(1).add("Mais__");
         listWord.get(1).add("ON");
+        listImage.add(R.drawable.wordwithhole_maison);
     }
 
     private void initListSyllable() {
@@ -108,7 +111,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setLayoutContent() {
-        image.setImageResource(R.drawable.wordwithhole_avion);
+        image.setImageResource(listImage.get(indWordChoose));
         word.setText(listWord.get(indWordChoose).get(1));
         answer1.setText(listAnswer.get(0));
         answer2.setText(listAnswer.get(1));
