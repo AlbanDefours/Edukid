@@ -11,6 +11,7 @@ import com.daimajia.androidanimations.library.YoYo;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.game.WordWithHole;
 import fr.dut.ptut2021.models.Game;
 import fr.dut.ptut2021.models.Theme;
 import fr.dut.ptut2021.models.ThemeGameCrossRef;

@@ -20,7 +20,7 @@
             android:name=".activities.StatisticPage"
             android:exported="false" />
         <activity
-            android:name=".activities.WordWithHole"
+            android:name=".game.WordWithHole"
             android:exported="false" />
         <activity
             android:name=".activities.LoadingPage"
