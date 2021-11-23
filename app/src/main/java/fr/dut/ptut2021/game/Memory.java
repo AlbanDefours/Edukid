@@ -2,6 +2,7 @@ package fr.dut.ptut2021.game;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -46,24 +47,25 @@ public class Memory extends AppCompatActivity {
             listCard.get(idCard).setHidden(false);
             memoryAdapter.setCard(idCard);
             memoryAdapter.notifyDataSetChanged();
-            //TimeUnit.SECONDS.sleep(1);
 
-            if (idLastCardReturn == -1) {
-                idLastCardReturn = idCard;
-            } else {
-                if (idCard != idLastCardReturn && listCard.get(idLastCardReturn).getValue() == listCard.get(idCard).getValue()) {
-
-                    idLastCardReturn = -1;
+            new Handler().postDelayed(() -> {
+                if (idLastCardReturn == -1) {
+                    idLastCardReturn = idCard;
                 } else {
-                    listCard.get(idCard).setHidden(true);
-                    listCard.get(idLastCardReturn).setHidden(true);
-                    memoryAdapter.setCard(idCard);
-                    memoryAdapter.notifyDataSetChanged();
-                    memoryAdapter.setCard(idLastCardReturn);
-                    memoryAdapter.notifyDataSetChanged();
-                    idLastCardReturn = -1;
+                    if (idCard != idLastCardReturn && listCard.get(idLastCardReturn).getValue() == listCard.get(idCard).getValue()) {
+
+                        idLastCardReturn = -1;
+                    } else {
+                        listCard.get(idCard).setHidden(true);
+                        listCard.get(idLastCardReturn).setHidden(true);
+                        memoryAdapter.setCard(idCard);
+                        memoryAdapter.notifyDataSetChanged();
+                        memoryAdapter.setCard(idLastCardReturn);
+                        memoryAdapter.notifyDataSetChanged();
+                        idLastCardReturn = -1;
+                    }
                 }
-            }
+            }, 2000);
         }
     }
 
