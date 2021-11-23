@@ -15,6 +15,7 @@ import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.game.GameAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.game.Memory;
 import fr.dut.ptut2021.models.Game;
 
 public class GameMenu extends AppCompatActivity {
@@ -76,7 +77,7 @@ public class GameMenu extends AppCompatActivity {
     private void findWhichGame(int position) {
         switch (position) {
             case 0:
-                //startGame(new Intent().setClass(getApplicationContext(), Memory.class), position);
+                startGame(new Intent().setClass(getApplicationContext(), Memory.class), position);
                 break;
             case 1:
                 //startGame(new Intent().setClass(getApplicationContext(), Memory.class), position);
