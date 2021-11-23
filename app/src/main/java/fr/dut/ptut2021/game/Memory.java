@@ -17,7 +17,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+
 public class Memory extends AppCompatActivity {
+
     private ArrayList<Card> listCard;
     private int idLastCardReturn=-1;
     int numColumns;

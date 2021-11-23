@@ -8,15 +8,19 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:name=".adapters.ApplicationPtut"
         android:theme="@style/Theme.PTUT2021">
         <activity
-            android:name=".activities.ModificationProfils"
+            android:name=".activities.UserResume"
             android:exported="false" />
         <activity
-            android:name=".activities.PageStatistiques"
+            android:name=".activities.UserEdit"
             android:exported="false" />
         <activity
-            android:name=".activities.PageChargement"
+            android:name=".activities.StatisticPage"
+            android:exported="false" />
+        <activity
+            android:name=".activities.LoadingPage"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,13 +32,14 @@
             android:name=".game.Memory"
             android:exported="false" />
         <activity
-            android:name=".activities.MenuProfils"
+            android:name=".activities.UserMenu"
+
             android:exported="false" />
         <activity
-            android:name=".activities.MenuThemes"
+            android:name=".activities.ThemeMenu"
             android:exported="false" />
         <activity
-            android:name=".activities.MenuJeux"
+            android:name=".activities.GameMenu"
             android:exported="false" />
     </application>
 
