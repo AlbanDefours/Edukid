@@ -77,6 +77,7 @@ public class GameMenu extends AppCompatActivity {
     private void findWhichGame(int position) {
         switch (position) {
             case 0:
+                //teste
                 startGame(new Intent().setClass(getApplicationContext(), Memory.class), position);
                 break;
             case 1:
