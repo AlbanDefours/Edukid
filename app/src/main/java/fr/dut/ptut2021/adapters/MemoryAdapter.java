@@ -1,20 +1,15 @@
 package fr.dut.ptut2021.adapters;
 
-import android.animation.ObjectAnimator;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.ScaleAnimation;
 import android.widget.BaseAdapter;
 import android.widget.RelativeLayout;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.dut.ptut2021.R;
@@ -24,7 +19,7 @@ public class MemoryAdapter extends BaseAdapter {
 
     Context  context;
     List<Card> listCard;
-    int position=-1;
+    ArrayList<Integer> position;
     int numColumns;
     MyViewHolderMemory holder;
 
@@ -100,7 +95,7 @@ public class MemoryAdapter extends BaseAdapter {
             holder.hidden = listCard.get(i).isHidden();
 
 
-        if(position==-1){
+        if(position== null || position.isEmpty()){
 
             if (listCard.get(i).isHidden()) {
                 holder.showImageReturnCard();
@@ -110,18 +105,22 @@ public class MemoryAdapter extends BaseAdapter {
             }
 
         }
-        else if(position == i){
-            if (listCard.get(i).isHidden()) {
-                holder.viewCard.startAnimation(holder.sato0);
+        else {
+            for (int j=0;j<position.size();j++){
+                if(position.get(j) == i) {
+                    if (listCard.get(i).isHidden()) {
+                        holder.viewCard.startAnimation(holder.sato0);
 
-            }else{
-                holder.returnCard.startAnimation(holder.sato0);
+                    } else {
+                        holder.returnCard.startAnimation(holder.sato0);
+                    }
+                }
             }
         }
         return convertView;
     }
 
-    public void setCard(int position){
+    public void setCard(ArrayList<Integer> position){
         this.position = position;
     }
 

@@ -1,17 +1,13 @@
 package fr.dut.ptut2021.game;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.MemoryAdapter;
@@ -20,13 +16,12 @@ import fr.dut.ptut2021.models.Card;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class Memory extends AppCompatActivity {
     private ArrayList<Card> listCard;
     private int idLastCardReturn=-1;
     int numColumns;
+    boolean isClicked=false;
 
    /* public Memory(ArrayList<Card> listCard){
 
@@ -42,30 +37,37 @@ public class Memory extends AppCompatActivity {
         Collections.shuffle(listCard);
     }
 
-    public void returnCard(int idCard,MemoryAdapter memoryAdapter) throws InterruptedException, IOException {
+    public void returnCard(int idCard,MemoryAdapter memoryAdapter) {
         if(listCard.get(idCard).isHidden()){
+            ArrayList<Integer> returnableCards=new ArrayList<>();
+            isClicked=true;
             listCard.get(idCard).setHidden(false);
-            memoryAdapter.setCard(idCard);
+            returnableCards.add(idCard);
+            memoryAdapter.setCard(returnableCards);
             memoryAdapter.notifyDataSetChanged();
 
-            new Handler().postDelayed(() -> {
+
                 if (idLastCardReturn == -1) {
                     idLastCardReturn = idCard;
+                    isClicked=false;
                 } else {
-                    if (idCard != idLastCardReturn && listCard.get(idLastCardReturn).getValue() == listCard.get(idCard).getValue()) {
+                    new Handler().postDelayed(() -> {
+                        if (idCard != idLastCardReturn && listCard.get(idLastCardReturn).getValue() == listCard.get(idCard).getValue()) {
 
-                        idLastCardReturn = -1;
-                    } else {
-                        listCard.get(idCard).setHidden(true);
-                        listCard.get(idLastCardReturn).setHidden(true);
-                        memoryAdapter.setCard(idCard);
-                        memoryAdapter.notifyDataSetChanged();
-                        memoryAdapter.setCard(idLastCardReturn);
-                        memoryAdapter.notifyDataSetChanged();
-                        idLastCardReturn = -1;
-                    }
+                            idLastCardReturn = -1;
+                        } else {
+                            listCard.get(idCard).setHidden(true);
+                            listCard.get(idLastCardReturn).setHidden(true);
+                            returnableCards.add(idLastCardReturn);
+                            memoryAdapter.setCard(returnableCards);
+                            memoryAdapter.notifyDataSetChanged();
+
+                            idLastCardReturn = -1;
+                        }
+                        System.out.println("JE SUIS LA");
+                        isClicked=false;
+                    }, 1000);
                 }
-            }, 2000);
         }
     }
 
@@ -108,7 +110,8 @@ public class Memory extends AppCompatActivity {
 
 
         GridView gridView = findViewById(R.id.gridview_memory);
-        numColumns = (int) Math.sqrt(listCard.size());
+
+        calculatesNbColumns();
         gridView.setNumColumns(numColumns);
 
         MemoryAdapter memoryAdapter = new MemoryAdapter(getApplicationContext(), listCard,numColumns);
@@ -118,15 +121,30 @@ public class Memory extends AppCompatActivity {
 
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                try {
-                    returnCard(position,memoryAdapter);
-                }
-                catch (InterruptedException | IOException e) {
-                    e.printStackTrace();
+                if(!isClicked) {
+                    returnCard(position, memoryAdapter);
                 }
             }
         });
         /*recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new MemoryAdapter(getApplicationContext(), listCard));*/
+    }
+
+    void calculatesNbColumns(){
+        numColumns = (int) Math.sqrt(listCard.size());
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        double cardWidth = (1094.0 + 20) / numColumns ;
+        double cardHeight = cardWidth* (1684.0 / 1094) + 20;
+
+        double screenHeight = metrics.heightPixels;
+        int nbRows = (int) ((listCard.size()+ numColumns - 1) / numColumns);
+        System.out.println("Nombre de Ligne : "+nbRows);
+        System.out.println("Hauteur Ecran : "+ screenHeight);
+        if(cardHeight*nbRows>screenHeight){
+            numColumns++;
+        }
     }
 }
