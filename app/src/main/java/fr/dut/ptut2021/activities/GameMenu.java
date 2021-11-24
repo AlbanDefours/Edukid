@@ -16,6 +16,7 @@ import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.game.GameAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.game.Memory;
+import fr.dut.ptut2021.game.WordWithHole;
 import fr.dut.ptut2021.models.Game;
 
 public class GameMenu extends AppCompatActivity {
@@ -83,5 +84,7 @@ public class GameMenu extends AppCompatActivity {
                 //startGame(new Intent().setClass(getApplicationContext(), Memory.class), position);
                 break;
         }
+        if (gameList.get(position).getGameName().equals("WordWithHole"))
+            startGame(new Intent().setClass(getApplicationContext(), WordWithHole.class), position);
     }
 }

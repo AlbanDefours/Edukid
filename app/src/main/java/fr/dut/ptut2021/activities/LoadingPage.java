@@ -29,12 +29,12 @@ public class LoadingPage extends AppCompatActivity {
         createDatabase();
 
         new Handler().postDelayed(() -> {
-            /*if (db.appDao().tabUserIsEmpty()) {
+            if (db.appDao().tabUserIsEmpty()) {
                 openUserEditPage();
             } else {
                 openUserMenuPage();
-            }*/
-            openWordWithHole();
+            }
+            //openWordWithHole();
         }, 1500);
     }
 
@@ -65,7 +65,7 @@ public class LoadingPage extends AppCompatActivity {
         if (db.appDao().tabGameIsEmpty()) {
             db.appDao().insertGame(new Game("Memory", R.drawable.memory_icon));
             db.appDao().insertGame(new Game("DrawOnIt", R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Syllabe", R.drawable.memory_icon));
+            db.appDao().insertGame(new Game("WordWithHole", R.drawable.memory_icon));
             db.appDao().insertGame(new Game("Suite chiffre", R.drawable.memory_icon));
         }
     }
@@ -77,7 +77,7 @@ public class LoadingPage extends AppCompatActivity {
             db.appDao().insertThemeGame(new ThemeGameCrossRef("Memory", "Chiffres"));
             db.appDao().insertThemeGame(new ThemeGameCrossRef("DrawOnIt", "Lettres"));
             db.appDao().insertThemeGame(new ThemeGameCrossRef("DrawOnIt", "Chiffres"));
-            db.appDao().insertThemeGame(new ThemeGameCrossRef("Syllabe", "Lettres"));
+            db.appDao().insertThemeGame(new ThemeGameCrossRef("WordWithHole", "Lettres"));
             db.appDao().insertThemeGame(new ThemeGameCrossRef("Suite chiffre", "Chiffres"));
         }
     }

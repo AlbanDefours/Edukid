@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.List;
 
 import fr.dut.ptut2021.R;
+import fr.dut.ptut2021.activities.GameMenu;
+import fr.dut.ptut2021.activities.ThemeMenu;
 import fr.dut.ptut2021.activities.UserMenu;
 import fr.dut.ptut2021.database.CreateDatabase;
 
@@ -32,17 +34,11 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private Button answer1 , answer2, answer3;
     private List<ArrayList<String>> listWord;   //Mot plein, Mot à trou, Bonne réponse
     private List<Integer> listImage;
-    private List<String> listAnswer;
-    private List<String> listSyllable;
-    private int indWordChoose;
-    private final int nbGamePlayedMax = 5;
-    private int nbGamePlayed = 1;
-    private final int nbTryMax = 2;
-    private int nbTry = 0;
-    private int wrongAnswerCheck = 0;
+    private List<String> listAnswer, listSyllable;
+    private final int MAX_GAME_PLAYED = 5, MAX_TRY = 2;
+    private int indWordChoose, gamePlayed = 1, nbTry = 0, wrongAnswerCheck = 0;
     private boolean delay = false;
-    MediaPlayer mpGoodAnswer;
-    MediaPlayer mpWrongAnswer;
+    private MediaPlayer mpGoodAnswer, mpWrongAnswer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +59,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         initListWord();
         initListSyllable();
 
-        indWordChoose = getRandomWord();
+        indWordChoose = (int)(Math.random() * listWord.size());
         initListAnswer();
 
         initializeLayout();
@@ -127,12 +123,6 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         answer3.setText(listAnswer.get(2));
     }
 
-    //Renvoie l'indice de la liste listWord
-    private int getRandomWord() {
-        int rand = (int)(Math.random() * listWord.size());
-        return rand;
-    }
-
     private void initializeLayout() {
         word = findViewById(R.id.word_wordWithHole);
         image = findViewById(R.id.imageWord_wordWithHole);
@@ -182,7 +172,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
         if (wrongAnswerCheck != indWrongAnswer) {
             nbTry++;
-            if (nbTry >= nbTryMax) {
+            if (nbTry >= MAX_TRY) {
                 delay = true;
                 new Handler().postDelayed(() -> {
                     if (answer1.getText() == listWord.get(indWordChoose).get(2))
@@ -203,11 +193,11 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         word.setTextColor(Color.GREEN);
         playSound(true);
         textAnimation(true);
-        nbGamePlayed++;
+        gamePlayed++;
         delay = true;
         new Handler().postDelayed(() -> {
             delay = false;
-            if (nbGamePlayed <= nbGamePlayedMax) {
+            if (gamePlayed <= MAX_GAME_PLAYED) {
                 nbTry = 0;
                 initGame();
                 word.setTextColor(Color.BLACK);
@@ -215,8 +205,6 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 answer2.setBackgroundColor(Color.parseColor("#00BCD4"));
                 answer3.setBackgroundColor(Color.parseColor("#00BCD4"));
             } else {
-                Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
-                startActivity(intent);
                 finish();
             }
         }, 3000);
@@ -226,9 +214,10 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (!delay) {
+            String goodAnswer = listWord.get(indWordChoose).get(2);
             switch (v.getId()) {
                 case R.id.buttonAnswer1_wordWithHole:
-                    if (answer1.getText() == listWord.get(indWordChoose).get(2)) {
+                    if (answer1.getText() == goodAnswer) {
                         answer1.setBackgroundColor(Color.GREEN);
                         replay();
                     } else {
@@ -238,7 +227,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                     break;
 
                 case R.id.buttonAnswer2_wordWithHole:
-                    if (answer2.getText() == listWord.get(indWordChoose).get(2)) {
+                    if (answer2.getText() == goodAnswer) {
                         answer2.setBackgroundColor(Color.GREEN);
                         replay();
                     } else {
@@ -248,7 +237,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                     break;
 
                 case R.id.buttonAnswer3_wordWithHole:
-                    if (answer3.getText() == listWord.get(indWordChoose).get(2)) {
+                    if (answer3.getText() == goodAnswer) {
                         answer3.setBackgroundColor(Color.GREEN);
                         replay();
                     } else {
@@ -257,7 +246,6 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                     }
                     break;
             }
-            //textAnimation();
         }
     }
 
