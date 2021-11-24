@@ -23,8 +23,11 @@
             android:name=".activities.StatisticPage"
             android:exported="false" />
         <activity
+            android:name=".game.WordWithHole"
+            android:exported="false" />
+        <activity
             android:name=".activities.LoadingPage"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,7 +35,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".game.Memory"
+            android:exported="false" />
+        <activity
             android:name=".activities.UserMenu"
+
             android:exported="false" />
         <activity
             android:name=".activities.ThemeMenu"

@@ -16,6 +16,8 @@ import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.game.GameAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.game.Memory;
+import fr.dut.ptut2021.game.WordWithHole;
 import fr.dut.ptut2021.models.Game;
 
 public class GameMenu extends AppCompatActivity {
@@ -79,11 +81,13 @@ public class GameMenu extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), userName+" "+themeName+" "+gameList.get(position).getGameName(), Toast.LENGTH_LONG).show();
         switch (position) {
             case 0:
-                //startGame(new Intent().setClass(getApplicationContext(), Memory.class), position);
+                startGame(new Intent().setClass(getApplicationContext(), Memory.class), position);
                 break;
             case 1:
                 //startGame(new Intent().setClass(getApplicationContext(), Memory.class), position);
                 break;
         }
+        if (gameList.get(position).getGameName().equals("WordWithHole"))
+            startGame(new Intent().setClass(getApplicationContext(), WordWithHole.class), position);
     }
 }
