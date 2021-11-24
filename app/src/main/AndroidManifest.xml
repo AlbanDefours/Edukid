@@ -32,7 +32,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".game.Memory"
+            android:exported="false" />
+        <activity
             android:name=".activities.UserMenu"
+
             android:exported="false" />
         <activity
             android:name=".activities.ThemeMenu"
