@@ -3,6 +3,7 @@ package fr.dut.ptut2021.game;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -40,6 +41,8 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private int nbTry = 0;
     private int wrongAnswerCheck = 0;
     private boolean delay = false;
+    MediaPlayer mpGoodAnswer;
+    MediaPlayer mpWrongAnswer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         db = CreateDatabase.getInstance(WordWithHole.this);
 
         initGame();
+        initSoundEffect();
 
         answer1.setOnClickListener(this);
         answer2.setOnClickListener(this);
@@ -64,6 +68,11 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
         initializeLayout();
         setLayoutContent();
+    }
+
+    private void initSoundEffect() {
+        mpGoodAnswer = MediaPlayer.create(this, R.raw.correct_answer);
+        mpWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
     }
 
     private void initListWord() {
@@ -132,10 +141,23 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         answer3 = findViewById(R.id.buttonAnswer3_wordWithHole);
     }
 
-    private void textAnimation() {
-        YoYo.with(Techniques.Tada)
-                .duration(1000)
-                .playOn(findViewById(R.id.word_wordWithHole));
+    private void textAnimation(boolean goodAnswer) {
+        if (goodAnswer) {
+            YoYo.with(Techniques.Pulse)
+                    .duration(1000)
+                    .playOn(findViewById(R.id.word_wordWithHole));
+        } else {
+            YoYo.with(Techniques.Shake)
+                    .duration(1000)
+                    .playOn(findViewById(R.id.word_wordWithHole));
+        }
+    }
+
+    private void playSound(boolean goodAnswer) {
+        if (goodAnswer)
+            mpGoodAnswer.start();
+        else
+            mpWrongAnswer.start();
     }
 
     private String concatWrongAnswer(int indAnswer) {
@@ -149,12 +171,14 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         delay = true;
         word.setText(concatWrongAnswer(indWrongAnswer));
         word.setTextColor(Color.RED);
+        playSound(false);
+        textAnimation(false);
 
         new Handler().postDelayed(() -> {
             delay = false;
             word.setText(listWord.get(indWordChoose).get(1));
             word.setTextColor(Color.BLACK);
-        }, 3000);
+        }, 2000);
 
         if (wrongAnswerCheck != indWrongAnswer) {
             nbTry++;
@@ -168,7 +192,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                     if (answer3.getText() == listWord.get(indWordChoose).get(2))
                         answer3.setBackgroundColor(Color.GREEN);
                     replay();
-                }, 3000);
+                }, 2000);
             }
         }
 
@@ -177,6 +201,8 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private void replay() {
         word.setText(listWord.get(indWordChoose).get(0));
         word.setTextColor(Color.GREEN);
+        playSound(true);
+        textAnimation(true);
         nbGamePlayed++;
         delay = true;
         new Handler().postDelayed(() -> {
