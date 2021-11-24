@@ -21,9 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.activities.GameMenu;
-import fr.dut.ptut2021.activities.ThemeMenu;
-import fr.dut.ptut2021.activities.UserMenu;
+import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.database.CreateDatabase;
 
 public class WordWithHole extends AppCompatActivity implements View.OnClickListener {
@@ -205,6 +203,10 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 answer2.setBackgroundColor(Color.parseColor("#00BCD4"));
                 answer3.setBackgroundColor(Color.parseColor("#00BCD4"));
             } else {
+                Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
+                intent.putExtra("gameName","WordWithHole");
+                intent.putExtra("themeName","Lettres");
+                startActivity(intent);
                 finish();
             }
         }, 3000);
@@ -248,5 +250,4 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
-
 }

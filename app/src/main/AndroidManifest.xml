@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PTUT2021">
         <activity
+            android:name=".activities.RecognizeWithVoice"
+            android:exported="false" />
+        <activity
             android:name=".activities.ResultGamePage"
             android:exported="false" />
         <activity
@@ -27,7 +30,7 @@
             android:exported="false" />
         <activity
             android:name=".activities.LoadingPage"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,7 +42,6 @@
             android:exported="false" />
         <activity
             android:name=".activities.UserMenu"
-
             android:exported="false" />
         <activity
             android:name=".activities.ThemeMenu"

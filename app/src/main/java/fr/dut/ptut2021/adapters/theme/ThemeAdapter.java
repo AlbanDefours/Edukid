@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.adapters.user.MyViewHolderUser;
 import fr.dut.ptut2021.models.Theme;
 
 public class ThemeAdapter extends RecyclerView.Adapter<MyViewHolderTheme> {

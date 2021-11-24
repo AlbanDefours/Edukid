@@ -1,10 +1,5 @@
 package fr.dut.ptut2021.models;
 
-import static android.graphics.Bitmap.Config.ARGB_8888;
-
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-
 public class Card {
     private String value;
     private boolean hidden=true;

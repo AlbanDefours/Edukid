@@ -3,7 +3,6 @@ package fr.dut.ptut2021.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -50,11 +49,6 @@ public class GameMenu extends AppCompatActivity {
         );
     }
 
-    private void createDatabaseAndImportGames() {
-        db = CreateDatabase.getInstance(getApplicationContext());
-        gameList = db.appDao().getAllGamesByTheme(themeName);
-    }
-
     private void getThemeName() {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
@@ -65,29 +59,34 @@ public class GameMenu extends AppCompatActivity {
         }
     }
 
+    private void createDatabaseAndImportGames() {
+        db = CreateDatabase.getInstance(getApplicationContext());
+        gameList = db.appDao().getAllGamesByTheme(themeName);
+    }
+
     private void createRecyclerView() {
         recyclerViewListGame = findViewById(R.id.recyclerview_game);
         recyclerViewListGame.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewListGame.setAdapter(new GameAdapter(getApplicationContext(), gameList));
     }
 
-    private void startGame(Intent intent, int position) {
+    private void startGame(Intent intent) {
         intent.putExtra("themeName", themeName);
         startActivity(intent);
     }
 
     //TODO A mettre les jeux développer
     private void findWhichGame(int position) {
-        Toast.makeText(getApplicationContext(), userName+" "+themeName+" "+gameList.get(position).getGameName(), Toast.LENGTH_LONG).show();
-        switch (position) {
-            case 0:
-                startGame(new Intent().setClass(getApplicationContext(), Memory.class), position);
+        switch (gameList.get(position).getGameName()) {
+            case "WordWithHole":
+                startGame(new Intent().setClass(getApplicationContext(), WordWithHole.class));
                 break;
-            case 1:
-                //startGame(new Intent().setClass(getApplicationContext(), Memory.class), position);
+            case "Memory":
+                startGame(new Intent().setClass(getApplicationContext(), Memory.class));
+                break;
+            case "Reconnaissance vocale":
+                startGame(new Intent().setClass(getApplicationContext(), RecognizeWithVoice.class));
                 break;
         }
-        if (gameList.get(position).getGameName().equals("WordWithHole"))
-            startGame(new Intent().setClass(getApplicationContext(), WordWithHole.class), position);
     }
 }

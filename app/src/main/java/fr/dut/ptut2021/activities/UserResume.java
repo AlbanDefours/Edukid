@@ -49,12 +49,7 @@ public class UserResume extends AppCompatActivity {
                 })
         );
 
-        addUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startAddUserPage();
-            }
-        });
+        addUser.setOnClickListener(view -> startAddUserPage());
     }
 
     private void getAllUser() {

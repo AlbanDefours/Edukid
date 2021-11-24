@@ -2,6 +2,7 @@ package fr.dut.ptut2021.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,8 +11,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
@@ -21,10 +24,10 @@ import fr.dut.ptut2021.models.User;
 
 public class UserMenu extends AppCompatActivity {
 
+    private UserAdapter adapter;
     private CreateDatabase db = null;
     private RecyclerView recyclerView;
     private List<User> listUser = new ArrayList<>();
-    private UserAdapter adapter;
     private ImageView settings, adultProfile, addUser;
 
     @Override
@@ -48,19 +51,9 @@ public class UserMenu extends AppCompatActivity {
             })
         );
 
-        settings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startSettingPage();
-            }
-        });
+        settings.setOnClickListener(v -> startSettingPage());
 
-        adultProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startStatisticPage();
-            }
-        });
+        adultProfile.setOnClickListener(v -> startStatisticPage());
     }
 
     @Override

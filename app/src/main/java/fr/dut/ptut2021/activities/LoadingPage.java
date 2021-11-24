@@ -34,7 +34,6 @@ public class LoadingPage extends AppCompatActivity {
             } else {
                 openUserMenuPage();
             }
-            //openWordWithHole();
         }, 1500);
     }
 
@@ -67,6 +66,7 @@ public class LoadingPage extends AppCompatActivity {
             db.appDao().insertGame(new Game("DrawOnIt", R.drawable.memory_icon));
             db.appDao().insertGame(new Game("WordWithHole", R.drawable.memory_icon));
             db.appDao().insertGame(new Game("Suite chiffre", R.drawable.memory_icon));
+            db.appDao().insertGame(new Game("Reconnaissance vocale", R.drawable.memory_icon));
         }
     }
 
@@ -79,6 +79,8 @@ public class LoadingPage extends AppCompatActivity {
             db.appDao().insertThemeGame(new ThemeGameCrossRef("DrawOnIt", "Chiffres"));
             db.appDao().insertThemeGame(new ThemeGameCrossRef("WordWithHole", "Lettres"));
             db.appDao().insertThemeGame(new ThemeGameCrossRef("Suite chiffre", "Chiffres"));
+            db.appDao().insertThemeGame(new ThemeGameCrossRef("Reconnaissance vocale", "Chiffres"));
+            db.appDao().insertThemeGame(new ThemeGameCrossRef("Reconnaissance vocale", "Lettres"));
         }
     }
 
@@ -91,12 +93,6 @@ public class LoadingPage extends AppCompatActivity {
     private void openUserEditPage() {
         Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
         intent.putExtra("addUser", true);
-        startActivity(intent);
-        finish();
-    }
-
-    private void openWordWithHole() {
-        Intent intent = new Intent().setClass(getApplicationContext(), WordWithHole.class);
         startActivity(intent);
         finish();
     }
