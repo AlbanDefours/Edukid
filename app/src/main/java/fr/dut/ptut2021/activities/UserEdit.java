@@ -132,7 +132,6 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                     if (wantToDelete) {
                         db.appDao().deleteUserById(userId);
                         if (db.appDao().tabUserIsEmpty()){
-                            Toast.makeText(getApplicationContext(), "User empty", Toast.LENGTH_LONG).show();
                             startUserMenuPage(true);
                         }
                         else

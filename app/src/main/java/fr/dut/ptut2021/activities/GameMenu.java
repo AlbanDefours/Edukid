@@ -78,13 +78,13 @@ public class GameMenu extends AppCompatActivity {
     //TODO A mettre les jeux développer
     private void findWhichGame(int position) {
         switch (gameList.get(position).getGameName()) {
-            case "WordWithHole":
+            case "Mot à trou":
                 startGame(new Intent().setClass(getApplicationContext(), WordWithHole.class));
                 break;
             case "Memory":
                 startGame(new Intent().setClass(getApplicationContext(), Memory.class));
                 break;
-            case "Reconnaissance vocale":
+            case "Ecoute":
                 startGame(new Intent().setClass(getApplicationContext(), RecognizeWithVoice.class));
                 break;
         }
