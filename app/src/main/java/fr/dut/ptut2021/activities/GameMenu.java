@@ -16,12 +16,13 @@ import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.game.GameAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.game.Memory;
+import fr.dut.ptut2021.game.WordWithHole;
 import fr.dut.ptut2021.models.Game;
 
 public class GameMenu extends AppCompatActivity {
 
-    private String themeName;
     private CreateDatabase db = null;
+    private String themeName, userName;
     private RecyclerView recyclerViewListGame;
     private List<Game> gameList = new ArrayList<>();
 
@@ -48,18 +49,19 @@ public class GameMenu extends AppCompatActivity {
         );
     }
 
-    private void createDatabaseAndImportGames() {
-        db = CreateDatabase.getInstance(getApplicationContext());
-        gameList = db.appDao().getAllGamesByTheme(themeName);
-    }
-
     private void getThemeName() {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
 
         if (bundle != null) {
             themeName = bundle.getString("themeName", " ");
+            userName = bundle.getString("userName", " ");
         }
+    }
+
+    private void createDatabaseAndImportGames() {
+        db = CreateDatabase.getInstance(getApplicationContext());
+        gameList = db.appDao().getAllGamesByTheme(themeName);
     }
 
     private void createRecyclerView() {
@@ -68,20 +70,22 @@ public class GameMenu extends AppCompatActivity {
         recyclerViewListGame.setAdapter(new GameAdapter(getApplicationContext(), gameList));
     }
 
-    private void startGame(Intent intent, int position) {
+    private void startGame(Intent intent) {
         intent.putExtra("themeName", themeName);
         startActivity(intent);
     }
 
     //TODO A mettre les jeux développer
     private void findWhichGame(int position) {
-        switch (position) {
-            case 0:
-                //teste
-                startGame(new Intent().setClass(getApplicationContext(), Memory.class), position);
+        switch (gameList.get(position).getGameName()) {
+            case "Mot à trou":
+                startGame(new Intent().setClass(getApplicationContext(), WordWithHole.class));
                 break;
-            case 1:
-                //startGame(new Intent().setClass(getApplicationContext(), Memory.class), position);
+            case "Memory":
+                startGame(new Intent().setClass(getApplicationContext(), Memory.class));
+                break;
+            case "Ecoute":
+                startGame(new Intent().setClass(getApplicationContext(), RecognizeWithVoice.class));
                 break;
         }
     }

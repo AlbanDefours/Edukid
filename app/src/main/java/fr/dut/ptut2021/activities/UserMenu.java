@@ -2,15 +2,19 @@ package fr.dut.ptut2021.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
@@ -20,10 +24,10 @@ import fr.dut.ptut2021.models.User;
 
 public class UserMenu extends AppCompatActivity {
 
+    private UserAdapter adapter;
     private CreateDatabase db = null;
     private RecyclerView recyclerView;
-    private List<User> listUser = null;
-    private UserAdapter adapter;
+    private List<User> listUser = new ArrayList<>();
     private ImageView settings, adultProfile, addUser;
 
     @Override
@@ -31,10 +35,8 @@ public class UserMenu extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_menu);
 
-        createAndGetDatabase();
         initializeFindView();
         hideAddUserImage();
-        createRecyclerView();
 
         recyclerView.addOnItemTouchListener(
             new RecyclerItemClickListener(getApplicationContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
@@ -49,27 +51,17 @@ public class UserMenu extends AppCompatActivity {
             })
         );
 
-        settings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startSettingPage();
-            }
-        });
+        settings.setOnClickListener(v -> startSettingPage());
 
-        adultProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO coder la session adulte
-                Toast.makeText(getApplicationContext(), "AdultPage", Toast.LENGTH_SHORT).show();
-            }
-        });
+        adultProfile.setOnClickListener(v -> startStatisticPage());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        getAllUser(); //TODO Marche pas
-        adapter.notifyDataSetChanged(); //TODO Marche pas
+        createAndGetDatabase();
+        createRecyclerView();
+        adapter.notifyDataSetChanged();
     }
 
     private void createAndGetDatabase() {
@@ -115,6 +107,11 @@ public class UserMenu extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void startStatisticPage() {
+        Intent intent = new Intent().setClass(getApplicationContext(), StatisticPage.class);
+        startActivity(intent);
+    }
+
     private void startAddUserPage() {
         Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
         intent.putExtra("addUser", true);
@@ -124,7 +121,7 @@ public class UserMenu extends AppCompatActivity {
 
     private void startThemeMenu(int position) {
         Intent intent = new Intent().setClass(getApplicationContext(), ThemeMenu.class);
-        intent.putExtra("idUser", listUser.get(position).getUserId());
+        intent.putExtra("userName", listUser.get(position).getUserName());
         startActivity(intent);
     }
 }

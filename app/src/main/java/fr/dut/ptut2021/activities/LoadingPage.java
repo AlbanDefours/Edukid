@@ -11,6 +11,7 @@ import com.daimajia.androidanimations.library.YoYo;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.game.WordWithHole;
 import fr.dut.ptut2021.models.Game;
 import fr.dut.ptut2021.models.Theme;
 import fr.dut.ptut2021.models.ThemeGameCrossRef;
@@ -24,7 +25,7 @@ public class LoadingPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_page);
 
-        animationTexte();
+        textAnimation();
         createDatabase();
 
         new Handler().postDelayed(() -> {
@@ -37,7 +38,7 @@ public class LoadingPage extends AppCompatActivity {
     }
 
     //TODO Faire bing bing bing bing de la gauche et TADA !
-    private void animationTexte() {
+    private void textAnimation() {
         YoYo.with(Techniques.Tada)
                 .duration(1000)
                 .playOn(findViewById(R.id.applicationName));
@@ -62,9 +63,9 @@ public class LoadingPage extends AppCompatActivity {
     private void createGames() {
         if (db.appDao().tabGameIsEmpty()) {
             db.appDao().insertGame(new Game("Memory", R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("DrawOnIt", R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Syllabe", R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Suite chiffre", R.drawable.memory_icon));
+            db.appDao().insertGame(new Game("Dessine", R.drawable.memory_icon));
+            db.appDao().insertGame(new Game("Mot à trou", R.drawable.memory_icon));
+            db.appDao().insertGame(new Game("Ecoute", R.drawable.memory_icon));
         }
     }
 
@@ -73,10 +74,11 @@ public class LoadingPage extends AppCompatActivity {
         if (db.appDao().tabThemeGameIsEmpty()) {
             db.appDao().insertThemeGame(new ThemeGameCrossRef("Memory", "Lettres"));
             db.appDao().insertThemeGame(new ThemeGameCrossRef("Memory", "Chiffres"));
-            db.appDao().insertThemeGame(new ThemeGameCrossRef("DrawOnIt", "Lettres"));
-            db.appDao().insertThemeGame(new ThemeGameCrossRef("DrawOnIt", "Chiffres"));
-            db.appDao().insertThemeGame(new ThemeGameCrossRef("Syllabe", "Lettres"));
-            db.appDao().insertThemeGame(new ThemeGameCrossRef("Suite chiffre", "Chiffres"));
+            db.appDao().insertThemeGame(new ThemeGameCrossRef("Dessine", "Lettres"));
+            db.appDao().insertThemeGame(new ThemeGameCrossRef("Dessine", "Chiffres"));
+            db.appDao().insertThemeGame(new ThemeGameCrossRef("Mot à trou", "Lettres"));
+            db.appDao().insertThemeGame(new ThemeGameCrossRef("Ecoute", "Chiffres"));
+            db.appDao().insertThemeGame(new ThemeGameCrossRef("Ecoute", "Lettres"));
         }
     }
 
