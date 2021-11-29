@@ -34,7 +34,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private Button answer1 , answer2, answer3;
     private List<WordWithHoleData> listData;
     private List<String> listAnswer;
-    private final int MAX_GAME_PLAYED = 5, MAX_TRY = 2;
+    private final int MAX_GAME_PLAYED = 3, MAX_TRY = 2;
     private int indWordChoose, gamePlayed = 1, nbTry = 0, wrongAnswerCheck = 0;
     private boolean delay = false;
     private MediaPlayer mpGoodAnswer, mpWrongAnswer;
@@ -47,8 +47,10 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         db = CreateDatabase.getInstance(WordWithHole.this);
         fillDatabase();
 
+        mpGoodAnswer = MediaPlayer.create(this, R.raw.correct_answer);
+        mpWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
+
         initGame();
-        initSoundEffect();
 
         answer1.setOnClickListener(this);
         answer2.setOnClickListener(this);
@@ -71,14 +73,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
         indWordChoose = (int)(Math.random() * listData.size());
         initListAnswer();
-
-        initializeLayout();
         setLayoutContent();
-    }
-
-    private void initSoundEffect() {
-        mpGoodAnswer = MediaPlayer.create(this, R.raw.correct_answer);
-        mpWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
     }
 
     private void initListAnswer() {
@@ -98,19 +93,17 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setLayoutContent() {
-        image.setImageResource(listData.get(indWordChoose).getImage());
-        word.setText(holeTheWord());
-        answer1.setText(listAnswer.get(0));
-        answer2.setText(listAnswer.get(1));
-        answer3.setText(listAnswer.get(2));
-    }
-
-    private void initializeLayout() {
         word = findViewById(R.id.word_wordWithHole);
         image = findViewById(R.id.imageWord_wordWithHole);
         answer1 = findViewById(R.id.buttonAnswer1_wordWithHole);
         answer2 = findViewById(R.id.buttonAnswer2_wordWithHole);
         answer3 = findViewById(R.id.buttonAnswer3_wordWithHole);
+
+        word.setText(holeTheWord());
+        image.setImageResource(listData.get(indWordChoose).getImage());
+        answer1.setText(listAnswer.get(0));
+        answer2.setText(listAnswer.get(1));
+        answer3.setText(listAnswer.get(2));
     }
 
     private void textAnimation(boolean goodAnswer) {
@@ -182,6 +175,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         textAnimation(true);
         gamePlayed++;
         delay = true;
+        updateDatabase();
         new Handler().postDelayed(() -> {
             delay = false;
             if (gamePlayed <= MAX_GAME_PLAYED) {
@@ -199,6 +193,10 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 finish();
             }
         }, 3000);
+    }
+
+    private void updateDatabase() {
+        
     }
 
     @SuppressLint({"NonConstantResourceId", "SetTextI18n"})
