@@ -1,22 +1,24 @@
 package fr.dut.ptut2021.models.stats.game;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity
-public class WordWithHoleStats {
+@Entity (primaryKeys = {"userId", "word", "syllable"})
+public class WordWithHoleData {
 
-    @PrimaryKey(autoGenerate = true)
-    private int wordWithHoleId;
+    @NonNull
     private int userId;
+    @NonNull
     private String word, syllable;
-    private int win, winStreak, lose, loseStreak;
+    private int image, win, winStreak, lose, loseStreak;
     private boolean lastUsed;
 
-    public WordWithHoleStats(int userId, String word, String syllable) {
+    public WordWithHoleData(int userId, String word, String syllable, int image) {
         this.userId = userId;
         this.word = word;
         this.syllable = syllable;
+        this.image = image;
         this.win = 0;
         this.winStreak = 0;
         this.lose = 0;
@@ -25,13 +27,6 @@ public class WordWithHoleStats {
     }
 
     //Getter & Setter
-    public int getWordWithHoleId() {
-        return wordWithHoleId;
-    }
-    public void setWordWithHoleId(int wordWithHoleId) {
-        this.wordWithHoleId = wordWithHoleId;
-    }
-
     public int getUserId() {
         return userId;
     }
@@ -51,6 +46,13 @@ public class WordWithHoleStats {
     }
     public void setSyllable(String syllable) {
         this.syllable = syllable;
+    }
+
+    public int getImage() {
+        return image;
+    }
+    public void setImage(int image) {
+        this.image = image;
     }
 
     public int getWin() {
