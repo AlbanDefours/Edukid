@@ -4,7 +4,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity
-public class WordWithHole {
+public class WordWithHoleStats {
 
     @PrimaryKey(autoGenerate = true)
     private int wordWithHoleId;
@@ -13,7 +13,7 @@ public class WordWithHole {
     private int win, winStreak, lose, loseStreak;
     private boolean lastUsed;
 
-    public WordWithHole(int userId, String word, String syllable) {
+    public WordWithHoleStats(int userId, String word, String syllable) {
         this.userId = userId;
         this.word = word;
         this.syllable = syllable;
