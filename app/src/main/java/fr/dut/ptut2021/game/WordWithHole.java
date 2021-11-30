@@ -48,6 +48,8 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         db = CreateDatabase.getInstance(WordWithHole.this);
         fillDatabase();
 
+        //TODO Récupérer le userId de l'utilisateur qui joue pour utiliser la BDD
+
         mpGoodAnswer = MediaPlayer.create(this, R.raw.correct_answer);
         mpWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
 
@@ -61,19 +63,21 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void fillDatabase() {
-        db.gameDao().insertWWHStats(new WordWithHoleData(userId, "AVION", "ON", R.drawable.wordwithhole_avion));
-        db.gameDao().insertWWHStats(new WordWithHoleData(userId, "MAISON", "ON", R.drawable.wordwithhole_maison));
-        db.gameDao().insertWWHStats(new WordWithHoleData(userId, "POULE", "OU", R.drawable.wordwithhole_poule));
-        db.gameDao().insertWWHStats(new WordWithHoleData(userId, "BOUCHE", "OU", R.drawable.wordwithhole_bouche));
-        db.gameDao().insertWWHStats(new WordWithHoleData(userId, "LIVRE", "LI", R.drawable.wordwithhole_livre));
-        db.gameDao().insertWWHStats(new WordWithHoleData(userId, "VACHE", "VA", R.drawable.wordwithhole_vache));
-        db.gameDao().insertWWHStats(new WordWithHoleData(userId, "TOMATE", "MA", R.drawable.wordwithhole_tomate));
-        db.gameDao().insertWWHStats(new WordWithHoleData(userId, "TOMATE", "TO", R.drawable.wordwithhole_tomate));
+        db.gameDao().insertWWHData(new WordWithHoleData(userId, "AVION", "ON", R.drawable.wordwithhole_avion));
+        db.gameDao().insertWWHData(new WordWithHoleData(userId, "MAISON", "ON", R.drawable.wordwithhole_maison));
+        db.gameDao().insertWWHData(new WordWithHoleData(userId, "POULE", "OU", R.drawable.wordwithhole_poule));
+        db.gameDao().insertWWHData(new WordWithHoleData(userId, "BOUCHE", "OU", R.drawable.wordwithhole_bouche));
+        db.gameDao().insertWWHData(new WordWithHoleData(userId, "LIVRE", "LI", R.drawable.wordwithhole_livre));
+        db.gameDao().insertWWHData(new WordWithHoleData(userId, "VACHE", "VA", R.drawable.wordwithhole_vache));
+        db.gameDao().insertWWHData(new WordWithHoleData(userId, "TOMATE", "MA", R.drawable.wordwithhole_tomate));
+        db.gameDao().insertWWHData(new WordWithHoleData(userId, "TOMATE", "TO", R.drawable.wordwithhole_tomate));
     }
 
     private void initGame() {
-        listData = db.gameDao().getAllWWHStats(userId);
+        listData = db.gameDao().getAllWWHData(userId);
         listChooseWord = new ArrayList<>();
+        List<WordWithHoleData> listDataNotUsed = db.gameDao().getAllWWHDataNotLastUsed(userId);
+
         
         while (listChooseWord.size() < MAX_GAME_PLAYED) {
             int rand = (int)(Math.random() * listData.size());
@@ -81,6 +85,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 listChooseWord.add(rand);
             }
         }
+        //db.gameDao().updateAllLastUsed(userId);   //TODO à décommenter
     }
 
     private void initListAnswer() {
@@ -178,13 +183,18 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private void replay() {
         word.setText(listData.get(listChooseWord.get(gamePlayed -1)).getWord());
         word.setTextColor(Color.GREEN);
+
         playSound(true);
         textAnimation(true);
+
         gamePlayed++;
         delay = true;
-        updateDatabase();
+
+        //updateDataDb();   //TODO à décommenter
+
         new Handler().postDelayed(() -> {
             delay = false;
+
             if (gamePlayed <= MAX_GAME_PLAYED) {
                 nbTry = 0;
                 initListAnswer();
@@ -203,8 +213,23 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         }, 3000);
     }
 
-    private void updateDbLastUsed() {
-        
+    private void updateDataDb() {
+        WordWithHoleData data = db.gameDao().getWWHData(
+                userId,
+                listData.get(listChooseWord.get(gamePlayed -1)).getWord(),
+                listData.get(listChooseWord.get(gamePlayed -1)).getSyllable());
+        data.setLastUsed(true);
+        if (nbTry == 0) {
+            data.setWin(data.getWin() +1);
+            data.setWinStreak(data.getWinStreak() +1);
+            data.setLoseStreak(0);
+        }
+        else {
+            data.setLose(data.getLose() +1);
+            data.setLoseStreak(data.getLoseStreak() +1);
+            data.setWinStreak(0);
+        }
+        db.gameDao().updateWWHData(data);
     }
 
     @SuppressLint({"NonConstantResourceId", "SetTextI18n"})

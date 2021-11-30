@@ -4,33 +4,38 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
+import fr.dut.ptut2021.models.Theme;
 import fr.dut.ptut2021.models.stats.GameLog;
 import fr.dut.ptut2021.models.stats.game.WordWithHoleData;
 
 @Dao
 public interface GameDao {
 
-    //WordWithHoleStats
+    //WordWithHoleData
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    long insertWWHStats(WordWithHoleData wordWithHoleStats);
+    long insertWWHData(WordWithHoleData wordWithHoleStats);
+
+    @Update
+    int updateWWHData(WordWithHoleData wordWithHoleStats);
+
+    @Query("UPDATE WordWithHoleData SET lastUsed = 0 WHERE userId = :userId")
+    int updateAllLastUsed(int userId);
+
+    @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId AND word = :word AND syllable = :syllable")
+    WordWithHoleData getWWHData(int userId, String word, String syllable);
 
     @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId")
-    List<WordWithHoleData> getAllWWHStats(int userId);
+    List<WordWithHoleData> getAllWWHData(int userId);
 
-    @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId AND word = :word")
-    WordWithHoleData getWWHByWord(int userId, String word);
+    @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId AND lastUsed = 1")
+    List<WordWithHoleData> getAllWWHDataLastUsed(int userId);
 
-    @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId AND syllable = :syllable")
-    List<WordWithHoleData> getWWHBySyllable(int userId, String syllable);
-
-    @Query("SELECT syllable FROM WordWithHoleData WHERE userId = :userId")
-    List<String> getAllSyllable(int userId);
-
-    @Query("SELECT image FROM WordWithHoleData WHERE userId = :userId")
-    List<Integer> getAllImage(int userId);
+    @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId AND lastUsed = 0")
+    List<WordWithHoleData> getAllWWHDataNotLastUsed(int userId);
 
 
     //GameLog
