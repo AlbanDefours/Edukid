@@ -2,6 +2,7 @@ package fr.dut.ptut2021.game;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -48,7 +49,8 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         db = CreateDatabase.getInstance(WordWithHole.this);
         fillDatabase();
 
-        //TODO Récupérer le userId de l'utilisateur qui joue pour utiliser la BDD
+        SharedPreferences settings = getSharedPreferences("MyPref", 0);
+        userId = settings.getInt("userId", 0);
 
         mpGoodAnswer = MediaPlayer.create(this, R.raw.correct_answer);
         mpWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
@@ -76,16 +78,40 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private void initGame() {
         listData = db.gameDao().getAllWWHData(userId);
         listChooseWord = new ArrayList<>();
-        List<WordWithHoleData> listDataNotUsed = db.gameDao().getAllWWHDataNotLastUsed(userId);
+        List<Integer> listDataNotUsed = db.gameDao().getAllWWHDataLastUsed(userId, listData, false);
+        System.out.println("CA A REMPLIT LA LISTE :");
+        for (int i : listDataNotUsed) {
+            System.out.println(i);
+        }
+        //TODO Passe dans le else alors qu'il devrait pas (vérifier le userId)
+        if (listDataNotUsed.size() > MAX_GAME_PLAYED) {
+            while (listChooseWord.size() < MAX_GAME_PLAYED) {
+                int rand = (int)(Math.random() * listDataNotUsed.size());
+                if (!listChooseWord.contains(listDataNotUsed.get(rand))) {
+                    listChooseWord.add(listDataNotUsed.get(rand));
+                }
+            }
+        }
+        else {
+            List<Integer> listDataUsed = db.gameDao().getAllWWHDataLastUsed(userId, listData, true);
+            listChooseWord.addAll(listDataNotUsed);
+            System.out.println("AVANT FOR");
+            for (int i = listDataNotUsed.size(); i < MAX_GAME_PLAYED; i++) {
+                System.out.println("DANS FOR");
+                int rand = (int)(Math.random() * listDataUsed.size());
+                if (!listChooseWord.contains(listDataUsed.get(rand))) {
+                    listChooseWord.add(listDataUsed.get(rand));
+                }
+            }
+        }
 
-        
         while (listChooseWord.size() < MAX_GAME_PLAYED) {
             int rand = (int)(Math.random() * listData.size());
             if (!listChooseWord.contains(rand)) {
                 listChooseWord.add(rand);
             }
         }
-        //db.gameDao().updateAllLastUsed(userId);   //TODO à décommenter
+        db.gameDao().updateAllLastUsed(userId);
     }
 
     private void initListAnswer() {
@@ -190,7 +216,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         gamePlayed++;
         delay = true;
 
-        //updateDataDb();   //TODO à décommenter
+        updateDataDb();
 
         new Handler().postDelayed(() -> {
             delay = false;

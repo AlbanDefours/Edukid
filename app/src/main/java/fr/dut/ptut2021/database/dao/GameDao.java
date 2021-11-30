@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.dut.ptut2021.models.Theme;
@@ -31,11 +32,27 @@ public interface GameDao {
     @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId")
     List<WordWithHoleData> getAllWWHData(int userId);
 
-    @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId AND lastUsed = 1")
-    List<WordWithHoleData> getAllWWHDataLastUsed(int userId);
-
-    @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId AND lastUsed = 0")
-    List<WordWithHoleData> getAllWWHDataNotLastUsed(int userId);
+    default List<Integer> getAllWWHDataLastUsed(int userId, List<WordWithHoleData> listData, boolean lastUsed) {
+        List<Integer> listInt = new ArrayList<>();
+        System.out.println("SIZE : " + listData.size());
+        if (lastUsed) {
+            System.out.println("LASTUSED = TRUE");
+            for (int i = 0; i < listData.size(); i++) {
+                if (listData.get(i).isLastUsed()) {
+                    listInt.add(i);
+                }
+            }
+        }
+        else {
+            System.out.println("LASTUSED = FALSE");
+            for (int i = 0; i < listData.size(); i++) {
+                if (!listData.get(i).isLastUsed()) {
+                    listInt.add(i);
+                }
+            }
+        }
+        return  listInt;
+    }
 
 
     //GameLog
