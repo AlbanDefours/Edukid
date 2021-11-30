@@ -1,6 +1,7 @@
 package fr.dut.ptut2021.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
@@ -19,7 +20,6 @@ import fr.dut.ptut2021.models.Theme;
 
 public class ThemeMenu extends AppCompatActivity {
 
-    private String userName;
     private CreateDatabase db = null;
     private RecyclerView recyclerViewListTheme;
     private List<Theme> listTheme = new ArrayList<>();
@@ -29,7 +29,6 @@ public class ThemeMenu extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_theme_menu);
 
-        getUserName();
         createAndGetDatabase();
         createRecyclerView();
 
@@ -37,6 +36,7 @@ public class ThemeMenu extends AppCompatActivity {
                 new RecyclerItemClickListener(getApplicationContext(), recyclerViewListTheme, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
+                        saveUserNameSahredPref(position);
                         startGameMenu(position);
                     }
 
@@ -45,15 +45,6 @@ public class ThemeMenu extends AppCompatActivity {
                     }
                 })
         );
-    }
-
-    private void getUserName() {
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-
-        if (bundle != null) {
-            userName = bundle.getString("userName", " ");
-        }
     }
 
     private void createAndGetDatabase() {
@@ -75,8 +66,13 @@ public class ThemeMenu extends AppCompatActivity {
 
     private void startGameMenu(int position) {
         Intent intent = new Intent().setClass(getApplicationContext(), GameMenu.class);
-        intent.putExtra("themeName", listTheme.get(position).getThemeName());
-        intent.putExtra("userName", userName);
         startActivity(intent);
+    }
+
+    private void saveUserNameSahredPref(int position){
+        SharedPreferences settings = getSharedPreferences("MyPref", 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("themeName", listTheme.get(position).getThemeName());
+        editor.commit();
     }
 }

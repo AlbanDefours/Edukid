@@ -1,9 +1,11 @@
-package fr.dut.ptut2021.activities;
+package fr.dut.ptut2021.game;
 
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,6 +22,11 @@ public class RecognizeWithVoice extends AppCompatActivity implements TextToSpeec
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recognize_with_voice);
+
+        SharedPreferences settings = getSharedPreferences("MyPref", 0);
+        String theme = settings.getString("themeName", "default");
+        String game = settings.getString("gameName", "default");
+        String user = settings.getString("userName", "default");
 
         textToSpeech = new TextToSpeech(this, this);
 

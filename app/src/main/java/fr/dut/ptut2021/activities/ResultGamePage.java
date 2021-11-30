@@ -1,6 +1,7 @@
 package fr.dut.ptut2021.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,7 +29,7 @@ public class ResultGamePage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_game_page);
 
-        getGameName();
+        getGameThemeName();
         initializeView();
         initSoundEffect();
         new Handler().postDelayed(() -> {
@@ -44,14 +45,10 @@ public class ResultGamePage extends AppCompatActivity {
         });
     }
 
-    private void getGameName() {
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-
-        if (bundle != null) {
-            gameName = bundle.getString("gameName", " ");
-            themeName = bundle.getString("themeName", " ");
-        }
+    private void getGameThemeName() {
+        SharedPreferences settings = getSharedPreferences("MyPref", 0);
+        themeName = settings.getString("themeName", "");
+        gameName = settings.getString("gameName", "");
     }
 
     private void initializeView() {
@@ -113,7 +110,6 @@ public class ResultGamePage extends AppCompatActivity {
     }
 
     private void startGame(Intent intent) {
-        intent.putExtra("themeName", themeName);
         startActivity(intent);
         finish();
     }

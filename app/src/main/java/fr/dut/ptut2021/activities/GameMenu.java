@@ -1,6 +1,7 @@
 package fr.dut.ptut2021.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
@@ -16,13 +17,14 @@ import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.game.GameAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.game.Memory;
+import fr.dut.ptut2021.game.RecognizeWithVoice;
 import fr.dut.ptut2021.game.WordWithHole;
 import fr.dut.ptut2021.models.Game;
 
 public class GameMenu extends AppCompatActivity {
 
+    private String themeName;
     private CreateDatabase db = null;
-    private String themeName, userName;
     private RecyclerView recyclerViewListGame;
     private List<Game> gameList = new ArrayList<>();
 
@@ -39,6 +41,7 @@ public class GameMenu extends AppCompatActivity {
                 new RecyclerItemClickListener(getApplicationContext(), recyclerViewListGame, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
+                        saveGameName(position);
                         findWhichGame(position);
                     }
 
@@ -49,14 +52,16 @@ public class GameMenu extends AppCompatActivity {
         );
     }
 
-    private void getThemeName() {
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
+    private void getThemeName(){
+        SharedPreferences settings = getSharedPreferences("MyPref", 0);
+        themeName = settings.getString("themeName", "");
+    }
 
-        if (bundle != null) {
-            themeName = bundle.getString("themeName", " ");
-            userName = bundle.getString("userName", " ");
-        }
+    private void saveGameName(int position){
+        SharedPreferences settings = getSharedPreferences("MyPref", 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("gameName", gameList.get(position).getGameName());
+        editor.commit();
     }
 
     private void createDatabaseAndImportGames() {
@@ -70,22 +75,17 @@ public class GameMenu extends AppCompatActivity {
         recyclerViewListGame.setAdapter(new GameAdapter(getApplicationContext(), gameList));
     }
 
-    private void startGame(Intent intent) {
-        intent.putExtra("themeName", themeName);
-        startActivity(intent);
-    }
-
     //TODO A mettre les jeux développer
     private void findWhichGame(int position) {
         switch (gameList.get(position).getGameName()) {
             case "Mot à trou":
-                startGame(new Intent().setClass(getApplicationContext(), WordWithHole.class));
+                startActivity(new Intent().setClass(getApplicationContext(), WordWithHole.class));
                 break;
             case "Memory":
-                startGame(new Intent().setClass(getApplicationContext(), Memory.class));
+                startActivity(new Intent().setClass(getApplicationContext(), Memory.class));
                 break;
             case "Ecoute":
-                startGame(new Intent().setClass(getApplicationContext(), RecognizeWithVoice.class));
+                startActivity(new Intent().setClass(getApplicationContext(), RecognizeWithVoice.class));
                 break;
         }
     }
