@@ -36,7 +36,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private List<WordWithHoleData> listData;
     private List<Integer> listChooseWord;
     private List<String> listAnswer;
-    private final int MAX_GAME_PLAYED = 3, MAX_TRY = 2;
+    private final int MAX_GAME_PLAYED = 4, MAX_TRY = 2;
     private int gamePlayed = 1, nbTry = 0, wrongAnswerCheck = 0;
     private boolean delay = false;
     private MediaPlayer mpGoodAnswer, mpWrongAnswer;
@@ -47,10 +47,9 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_word_with_hole);
 
         db = CreateDatabase.getInstance(WordWithHole.this);
-        fillDatabase();
-
         SharedPreferences settings = getSharedPreferences("MyPref", 0);
         userId = settings.getInt("userId", 0);
+        fillDatabase();
 
         mpGoodAnswer = MediaPlayer.create(this, R.raw.correct_answer);
         mpWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
@@ -76,10 +75,10 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initGame() {
-        listData = db.gameDao().getAllWWHData(userId);
+        listData = new ArrayList<>();
+        listData.addAll(db.gameDao().getAllWWHData(userId));
         listChooseWord = new ArrayList<>();
         List<Integer> listDataNotUsed = db.gameDao().getAllWWHDataLastUsed(userId, listData, false);
-        System.out.println("CA A REMPLIT LA LISTE :");
         for (int i : listDataNotUsed) {
             System.out.println(i);
         }
@@ -95,9 +94,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         else {
             List<Integer> listDataUsed = db.gameDao().getAllWWHDataLastUsed(userId, listData, true);
             listChooseWord.addAll(listDataNotUsed);
-            System.out.println("AVANT FOR");
             for (int i = listDataNotUsed.size(); i < MAX_GAME_PLAYED; i++) {
-                System.out.println("DANS FOR");
                 int rand = (int)(Math.random() * listDataUsed.size());
                 if (!listChooseWord.contains(listDataUsed.get(rand))) {
                     listChooseWord.add(listDataUsed.get(rand));
@@ -213,10 +210,10 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         playSound(true);
         textAnimation(true);
 
+        updateDataDb();
+
         gamePlayed++;
         delay = true;
-
-        updateDataDb();
 
         new Handler().postDelayed(() -> {
             delay = false;
@@ -231,8 +228,6 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 answer3.setBackgroundColor(Color.parseColor("#00BCD4"));
             } else {
                 Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
-                intent.putExtra("gameName","WordWithHole");
-                intent.putExtra("themeName","Lettres");
                 startActivity(intent);
                 finish();
             }
