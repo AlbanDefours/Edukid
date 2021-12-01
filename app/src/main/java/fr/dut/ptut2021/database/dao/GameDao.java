@@ -34,9 +34,7 @@ public interface GameDao {
 
     default List<Integer> getAllWWHDataLastUsed(int userId, List<WordWithHoleData> listData, boolean lastUsed) {
         List<Integer> listInt = new ArrayList<>();
-        System.out.println("SIZE : " + listData.size());
         if (lastUsed) {
-            System.out.println("LASTUSED = TRUE");
             for (int i = 0; i < listData.size(); i++) {
                 if (listData.get(i).isLastUsed()) {
                     listInt.add(i);
@@ -44,7 +42,6 @@ public interface GameDao {
             }
         }
         else {
-            System.out.println("LASTUSED = FALSE");
             for (int i = 0; i < listData.size(); i++) {
                 if (!listData.get(i).isLastUsed()) {
                     listInt.add(i);
@@ -53,6 +50,9 @@ public interface GameDao {
         }
         return  listInt;
     }
+
+    @Query("DELETE FROM WordWithHoleData WHERE userId = :userId")
+    int deleteWWHDataByUser(int userId);
 
 
     //GameLog
@@ -68,7 +68,5 @@ public interface GameDao {
 
     @Query("SELECT g.* FROM GameLog AS g NATURAL JOIN WordWithHoleData AS w WHERE w.userId = :userId AND g.gameName = :gameName")
     List<GameLog> getWWHLogByUserAndGame(int userId, String gameName);
-
-
 
 }
