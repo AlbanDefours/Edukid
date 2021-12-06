@@ -80,11 +80,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         listData.addAll(db.gameDao().getAllWWHData(userId));
         listChooseWord = new ArrayList<>();
         List<Integer> listDataNotUsed = db.gameDao().getAllWWHDataLastUsed(listData, false);
-        goodAnswer = listData.get(listChooseWord.get(gamePlayed -1)).getSyllable();
 
-        for (int i : listDataNotUsed) {
-            System.out.println(i);
-        }
         if (listDataNotUsed.size() > MAX_GAME_PLAYED) {
             while (listChooseWord.size() < MAX_GAME_PLAYED) {
                 int rand = (int)(Math.random() * listDataNotUsed.size());
@@ -127,6 +123,8 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         for (int i = 0; i < 4; i++) {
             Collections.shuffle(listAnswer);
         }
+
+        goodAnswer = listData.get(listChooseWord.get(gamePlayed -1)).getSyllable();
     }
 
     private void setLayoutContent() {
@@ -192,9 +190,13 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             if (nbTry >= MAX_TRY) {
                 delay = true;
                 new Handler().postDelayed(() -> {
-                    colorIfGoodAnswer(answer1);
-                    colorIfGoodAnswer(answer2);
-                    colorIfGoodAnswer(answer3);
+                    //TODO utiliser colorIfGoodAnswer()
+                    if (answer1.getText() == listData.get(listChooseWord.get(gamePlayed -1)).getSyllable())
+                        answer1.setBackgroundColor(Color.GREEN);
+                    if (answer2.getText() == listData.get(listChooseWord.get(gamePlayed -1)).getSyllable())
+                        answer2.setBackgroundColor(Color.GREEN);
+                    if (answer3.getText() == listData.get(listChooseWord.get(gamePlayed -1)).getSyllable())
+                        answer3.setBackgroundColor(Color.GREEN);
                     replay();
                 }, 2000);
             }
@@ -202,6 +204,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void colorIfGoodAnswer(Button button) {
+        System.out.println(listData.get(listChooseWord.get(gamePlayed)).getSyllable());
         if (button.getText() == listData.get(listChooseWord.get(gamePlayed)).getSyllable())
             button.setBackgroundColor(Color.GREEN);
     }
@@ -213,7 +216,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         playSound(true);
         textAnimation(true);
 
-        updateDataDb();
+        updateDataInDb();
 
         gamePlayed++;
         delay = true;
@@ -237,7 +240,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         }, 3000);
     }
 
-    private void updateDataDb() {
+    private void updateDataInDb() {
         WordWithHoleData data = db.gameDao().getWWHData(
                 userId,
                 listData.get(listChooseWord.get(gamePlayed -1)).getWord(),
@@ -270,7 +273,6 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (!delay) {
-            String goodAnswer = listData.get(listChooseWord.get(gamePlayed -1)).getSyllable();
             switch (v.getId()) {
                 case R.id.buttonAnswer1_wordWithHole:
                     verifyAnswer(answer1, 1);
