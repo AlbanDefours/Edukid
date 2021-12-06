@@ -17,7 +17,7 @@ import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.game.GameAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.game.Memory;
-import fr.dut.ptut2021.game.RecognizeWithVoice;
+import fr.dut.ptut2021.game.PlayWithSound;
 import fr.dut.ptut2021.game.WordWithHole;
 import fr.dut.ptut2021.models.Game;
 
@@ -85,7 +85,7 @@ public class GameMenu extends AppCompatActivity {
                 startActivity(new Intent().setClass(getApplicationContext(), Memory.class));
                 break;
             case "Ecoute":
-                startActivity(new Intent().setClass(getApplicationContext(), RecognizeWithVoice.class));
+                startActivity(new Intent().setClass(getApplicationContext(), PlayWithSound.class));
                 break;
         }
     }

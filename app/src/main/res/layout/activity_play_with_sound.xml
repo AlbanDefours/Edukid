@@ -4,15 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".game.RecognizeWithVoice">
+    tools:context=".game.PlayWithSound">
 
     <TextView
+        android:id="@+id/goodAnswer_playWithSound"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="A"
         android:textSize="200sp"
         android:layout_marginTop="170dp"
         android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/btnSound_playWithSound"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/ic_sound"
+        android:layout_marginTop="200dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -30,7 +41,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/buttonAnswer1_recognizeVoice"
+            android:id="@+id/buttonAnswer1_playWithSound"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
@@ -40,7 +51,7 @@
             android:text="z" />
 
         <Button
-            android:id="@+id/buttonAnswer2_recognizeVoice"
+            android:id="@+id/buttonAnswer2_playWithSound"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -50,7 +61,7 @@
             android:text="a" />
 
         <Button
-            android:id="@+id/buttonAnswer3_recognizeVoice"
+            android:id="@+id/buttonAnswer3_playWithSound"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
