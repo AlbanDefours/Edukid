@@ -36,6 +36,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private List<WordWithHoleData> listData;
     private List<Integer> listChooseWord;
     private List<String> listAnswer;
+    private String goodAnswer;
     private final int MAX_GAME_PLAYED = 4, MAX_TRY = 2;
     private int gamePlayed = 1, nbTry = 0, wrongAnswerCheck = 0;
     private boolean delay = false;
@@ -79,6 +80,8 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         listData.addAll(db.gameDao().getAllWWHData(userId));
         listChooseWord = new ArrayList<>();
         List<Integer> listDataNotUsed = db.gameDao().getAllWWHDataLastUsed(listData, false);
+        goodAnswer = listData.get(listChooseWord.get(gamePlayed -1)).getSyllable();
+
         for (int i : listDataNotUsed) {
             System.out.println(i);
         }
@@ -152,8 +155,8 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void playSound(boolean goodAnswer) {
-        if (goodAnswer)
+    private void playSound(boolean isGoodAnswer) {
+        if (isGoodAnswer)
             mpGoodAnswer.start();
         else
             mpWrongAnswer.start();
@@ -189,17 +192,18 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             if (nbTry >= MAX_TRY) {
                 delay = true;
                 new Handler().postDelayed(() -> {
-                    if (answer1.getText() == listData.get(listChooseWord.get(gamePlayed -1)).getSyllable())
-                        answer1.setBackgroundColor(Color.GREEN);
-                    if (answer2.getText() == listData.get(listChooseWord.get(gamePlayed -1)).getSyllable())
-                        answer2.setBackgroundColor(Color.GREEN);
-                    if (answer3.getText() == listData.get(listChooseWord.get(gamePlayed -1)).getSyllable())
-                        answer3.setBackgroundColor(Color.GREEN);
+                    colorIfGoodAnswer(answer1);
+                    colorIfGoodAnswer(answer2);
+                    colorIfGoodAnswer(answer3);
                     replay();
                 }, 2000);
             }
         }
+    }
 
+    private void colorIfGoodAnswer(Button button) {
+        if (button.getText() == listData.get(listChooseWord.get(gamePlayed)).getSyllable())
+            button.setBackgroundColor(Color.GREEN);
     }
 
     private void replay() {
@@ -252,6 +256,16 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         db.gameDao().updateWWHData(data);
     }
 
+    private void verifyAnswer(Button answer, int numAnswer) {
+        if (answer.getText() == goodAnswer) {
+            answer.setBackgroundColor(Color.GREEN);
+            replay();
+        } else {
+            answer.setBackgroundColor(Color.RED);
+            setWordAndAddDelay(numAnswer);
+        }
+    }
+
     @SuppressLint({"NonConstantResourceId", "SetTextI18n"})
     @Override
     public void onClick(View v) {
@@ -259,33 +273,15 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             String goodAnswer = listData.get(listChooseWord.get(gamePlayed -1)).getSyllable();
             switch (v.getId()) {
                 case R.id.buttonAnswer1_wordWithHole:
-                    if (answer1.getText() == goodAnswer) {
-                        answer1.setBackgroundColor(Color.GREEN);
-                        replay();
-                    } else {
-                        answer1.setBackgroundColor(Color.RED);
-                        setWordAndAddDelay(1);
-                    }
+                    verifyAnswer(answer1, 1);
                     break;
 
                 case R.id.buttonAnswer2_wordWithHole:
-                    if (answer2.getText() == goodAnswer) {
-                        answer2.setBackgroundColor(Color.GREEN);
-                        replay();
-                    } else {
-                        answer2.setBackgroundColor(Color.RED);
-                        setWordAndAddDelay(2);
-                    }
+                    verifyAnswer(answer2, 2);
                     break;
 
                 case R.id.buttonAnswer3_wordWithHole:
-                    if (answer3.getText() == goodAnswer) {
-                        answer3.setBackgroundColor(Color.GREEN);
-                        replay();
-                    } else {
-                        answer3.setBackgroundColor(Color.RED);
-                        setWordAndAddDelay(3);
-                    }
+                    verifyAnswer(answer3, 3);
                     break;
             }
         }
