@@ -2,30 +2,30 @@ package fr.dut.ptut2021.models.stats.game;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 
-@Entity (primaryKeys = {"userId", "word", "syllable"})
-public class WordWithHoleData {
+@Entity (primaryKeys = {"userId", "result"})
+public class PlayWithSoundData {
 
     private int userId;
     @NonNull
-    private String word, syllable;
-    private int image, win, winStreak, lose, loseStreak;
+    private String result;
+    private String theme;
+    private int difficulty, win, winStreak, lose, loseStreak, image;
     private boolean lastUsed;
 
-    public WordWithHoleData(int userId, @NonNull String word, @NonNull String syllable, int image) {
+    public PlayWithSoundData(int userId, @NonNull String result, String theme, int difficulty, int image) {
         this.userId = userId;
-        this.word = word;
-        this.syllable = syllable;
-        this.image = image;
+        this.result = result;
+        this.theme = theme;
+        this.difficulty = difficulty;
         this.win = 0;
         this.winStreak = 0;
         this.lose = 0;
         this.loseStreak = 0;
+        this.image = image;
         this.lastUsed = false;
     }
 
-    //Getter & Setter
     public int getUserId() {
         return userId;
     }
@@ -34,26 +34,25 @@ public class WordWithHoleData {
     }
 
     @NonNull
-    public String getWord() {
-        return word;
+    public String getResult() {
+        return result;
     }
-    public void setWord(@NonNull String word) {
-        this.word = word;
-    }
-
-    @NonNull
-    public String getSyllable() {
-        return syllable;
-    }
-    public void setSyllable(@NonNull String syllable) {
-        this.syllable = syllable;
+    public void setResult(@NonNull String result) {
+        this.result = result;
     }
 
-    public int getImage() {
-        return image;
+    public String getTheme() {
+        return theme;
     }
-    public void setImage(int image) {
-        this.image = image;
+    public void setTheme(String theme) {
+        this.theme = theme;
+    }
+
+    public int getDifficulty() {
+        return difficulty;
+    }
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
     }
 
     public int getWin() {
@@ -84,11 +83,17 @@ public class WordWithHoleData {
         this.loseStreak = loseStreak;
     }
 
+    public int getImage() {
+        return image;
+    }
+    public void setImage(int image) {
+        this.image = image;
+    }
+
     public boolean isLastUsed() {
         return lastUsed;
     }
     public void setLastUsed(boolean lastUsed) {
         this.lastUsed = lastUsed;
     }
-
 }

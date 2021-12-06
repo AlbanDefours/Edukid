@@ -130,6 +130,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                 (dialog, which) -> {
                     dialog.dismiss();
                     if (wantToDelete) {
+                        deleteGameData();
                         db.appDao().deleteUserById(userId);
                         if (db.appDao().tabUserIsEmpty()){
                             startUserMenuPage(true);
@@ -179,6 +180,11 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
             default:
                 break;
         }
+    }
+
+    private void deleteGameData() {
+        db.gameDao().deleteWWHDataByUser(userId);
+        //TODO rajouter les fonctions de suppression des jeux à venir
     }
 
     private void startUserMenuPage(boolean force) {
