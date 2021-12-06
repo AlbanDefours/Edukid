@@ -1,0 +1,28 @@
+package fr.dut.ptut2021.database.dao;
+
+import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
+
+import fr.dut.ptut2021.models.stats.GameLog;
+
+import java.util.List;
+
+@Dao
+public interface GameLogDao {
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    long insertGameLog(GameLog gameLog);
+
+    @Query("SELECT * FROM GameLog")
+    List<GameLog> getAllGameLog();
+
+    //GameLog For WordWithHoleData
+    @Query("SELECT g.* FROM GameLog AS g NATURAL JOIN WordWithHoleData AS w WHERE w.userId = :userId")
+    List<GameLog> getWWHLogByUser(int userId);
+
+    @Query("SELECT g.* FROM GameLog AS g NATURAL JOIN WordWithHoleData AS w WHERE w.userId = :userId AND g.gameName = :gameName")
+    List<GameLog> getWWHLogByUserAndGame(int userId, String gameName);
+
+}

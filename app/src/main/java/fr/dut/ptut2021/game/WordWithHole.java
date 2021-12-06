@@ -78,11 +78,10 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         listData = new ArrayList<>();
         listData.addAll(db.gameDao().getAllWWHData(userId));
         listChooseWord = new ArrayList<>();
-        List<Integer> listDataNotUsed = db.gameDao().getAllWWHDataLastUsed(userId, listData, false);
+        List<Integer> listDataNotUsed = db.gameDao().getAllWWHDataLastUsed(listData, false);
         for (int i : listDataNotUsed) {
             System.out.println(i);
         }
-        //TODO Passe dans le else alors qu'il devrait pas (vérifier le userId)
         if (listDataNotUsed.size() > MAX_GAME_PLAYED) {
             while (listChooseWord.size() < MAX_GAME_PLAYED) {
                 int rand = (int)(Math.random() * listDataNotUsed.size());
@@ -92,7 +91,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             }
         }
         else {
-            List<Integer> listDataUsed = db.gameDao().getAllWWHDataLastUsed(userId, listData, true);
+            List<Integer> listDataUsed = db.gameDao().getAllWWHDataLastUsed(listData, true);
             listChooseWord.addAll(listDataNotUsed);
             for (int i = listDataNotUsed.size(); i < MAX_GAME_PLAYED; i++) {
                 int rand = (int)(Math.random() * listDataUsed.size());
@@ -108,7 +107,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 listChooseWord.add(rand);
             }
         }
-        db.gameDao().updateAllLastUsed(userId);
+        db.gameDao().updateAllWWHDataLastUsed(userId);
     }
 
     private void initListAnswer() {
