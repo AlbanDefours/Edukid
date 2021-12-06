@@ -4,33 +4,55 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import fr.dut.ptut2021.models.Theme;
 import fr.dut.ptut2021.models.stats.GameLog;
 import fr.dut.ptut2021.models.stats.game.WordWithHoleData;
 
 @Dao
 public interface GameDao {
 
-    //WordWithHoleStats
+    //WordWithHoleData
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    long insertWWHStats(WordWithHoleData wordWithHoleStats);
+    long insertWWHData(WordWithHoleData wordWithHoleStats);
+
+    @Update
+    int updateWWHData(WordWithHoleData wordWithHoleStats);
+
+    @Query("UPDATE WordWithHoleData SET lastUsed = 0 WHERE userId = :userId")
+    int updateAllLastUsed(int userId);
+
+    @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId AND word = :word AND syllable = :syllable")
+    WordWithHoleData getWWHData(int userId, String word, String syllable);
 
     @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId")
-    List<WordWithHoleData> getAllWWHStats(int userId);
+    List<WordWithHoleData> getAllWWHData(int userId);
 
-    @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId AND word = :word")
-    WordWithHoleData getWWHByWord(int userId, String word);
+    default List<Integer> getAllWWHDataLastUsed(int userId, List<WordWithHoleData> listData, boolean lastUsed) {
+        List<Integer> listInt = new ArrayList<>();
+        if (lastUsed) {
+            for (int i = 0; i < listData.size(); i++) {
+                if (listData.get(i).isLastUsed()) {
+                    listInt.add(i);
+                }
+            }
+        }
+        else {
+            for (int i = 0; i < listData.size(); i++) {
+                if (!listData.get(i).isLastUsed()) {
+                    listInt.add(i);
+                }
+            }
+        }
+        return  listInt;
+    }
 
-    @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId AND syllable = :syllable")
-    List<WordWithHoleData> getWWHBySyllable(int userId, String syllable);
-
-    @Query("SELECT syllable FROM WordWithHoleData WHERE userId = :userId")
-    List<String> getAllSyllable(int userId);
-
-    @Query("SELECT image FROM WordWithHoleData WHERE userId = :userId")
-    List<Integer> getAllImage(int userId);
+    @Query("DELETE FROM WordWithHoleData WHERE userId = :userId")
+    int deleteWWHDataByUser(int userId);
 
 
     //GameLog
@@ -46,7 +68,5 @@ public interface GameDao {
 
     @Query("SELECT g.* FROM GameLog AS g NATURAL JOIN WordWithHoleData AS w WHERE w.userId = :userId AND g.gameName = :gameName")
     List<GameLog> getWWHLogByUserAndGame(int userId, String gameName);
-
-
 
 }

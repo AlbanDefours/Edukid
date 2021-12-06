@@ -126,6 +126,7 @@ public class UserMenu extends AppCompatActivity {
         SharedPreferences settings = getSharedPreferences("MyPref", 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString("userName", listUser.get(position).getUserName());
+        editor.putInt("userId", listUser.get(position).getUserId());
         editor.commit();
     }
 }
