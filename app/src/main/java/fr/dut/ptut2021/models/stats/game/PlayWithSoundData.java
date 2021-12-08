@@ -10,10 +10,10 @@ public class PlayWithSoundData {
     @NonNull
     private String result;
     private String theme;
-    private int difficulty, win, winStreak, lose, loseStreak;
+    private int difficulty, win, winStreak, lose, loseStreak, image;
     private boolean lastUsed;
 
-    public PlayWithSoundData(int userId, @NonNull String result, String theme, int difficulty) {
+    public PlayWithSoundData(int userId, @NonNull String result, String theme, int difficulty, int image) {
         this.userId = userId;
         this.result = result;
         this.theme = theme;
@@ -22,6 +22,7 @@ public class PlayWithSoundData {
         this.winStreak = 0;
         this.lose = 0;
         this.loseStreak = 0;
+        this.image = image;
         this.lastUsed = false;
     }
 
@@ -80,6 +81,13 @@ public class PlayWithSoundData {
     }
     public void setLoseStreak(int loseStreak) {
         this.loseStreak = loseStreak;
+    }
+
+    public int getImage() {
+        return image;
+    }
+    public void setImage(int image) {
+        this.image = image;
     }
 
     public boolean isLastUsed() {

@@ -32,7 +32,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private int userId;
     private TextView word;
     private ImageView image;
-    private Button answer1 , answer2, answer3;
+    private Button answer1, answer2, answer3;
     private List<WordWithHoleData> listData;
     private List<Integer> listChooseWord;
     private List<String> listAnswer;
@@ -83,17 +83,16 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
         if (listDataNotUsed.size() > MAX_GAME_PLAYED) {
             while (listChooseWord.size() < MAX_GAME_PLAYED) {
-                int rand = (int)(Math.random() * listDataNotUsed.size());
+                int rand = (int) (Math.random() * listDataNotUsed.size());
                 if (!listChooseWord.contains(listDataNotUsed.get(rand))) {
                     listChooseWord.add(listDataNotUsed.get(rand));
                 }
             }
-        }
-        else {
+        } else {
             List<Integer> listDataUsed = db.gameDao().getAllWWHDataLastUsed(listData, true);
             listChooseWord.addAll(listDataNotUsed);
             for (int i = listDataNotUsed.size(); i < MAX_GAME_PLAYED; i++) {
-                int rand = (int)(Math.random() * listDataUsed.size());
+                int rand = (int) (Math.random() * listDataUsed.size());
                 if (!listChooseWord.contains(listDataUsed.get(rand))) {
                     listChooseWord.add(listDataUsed.get(rand));
                 }
@@ -101,7 +100,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         }
 
         while (listChooseWord.size() < MAX_GAME_PLAYED) {
-            int rand = (int)(Math.random() * listData.size());
+            int rand = (int) (Math.random() * listData.size());
             if (!listChooseWord.contains(rand)) {
                 listChooseWord.add(rand);
             }
@@ -112,7 +111,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private void initListAnswer() {
         listAnswer = new ArrayList<>();
 
-        listAnswer.add(listData.get(listChooseWord.get(gamePlayed -1)).getSyllable());
+        listAnswer.add(listData.get(listChooseWord.get(gamePlayed - 1)).getSyllable());
         while (listAnswer.size() < 3) {
             int rand = (int) (Math.random() * listData.size());
             if (!listAnswer.contains(listData.get(rand).getSyllable())) {
@@ -135,7 +134,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         answer3 = findViewById(R.id.buttonAnswer3_wordWithHole);
 
         word.setText(holeTheWord());
-        image.setImageResource(listData.get(listChooseWord.get(gamePlayed -1)).getImage());
+        image.setImageResource(listData.get(listChooseWord.get(gamePlayed - 1)).getImage());
         answer1.setText(listAnswer.get(0));
         answer2.setText(listAnswer.get(1));
         answer3.setText(listAnswer.get(2));
@@ -161,14 +160,14 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private String concatWrongAnswer(int indAnswer) {
-        String s = listData.get(listChooseWord.get(gamePlayed -1)).getWord();
-        s = s.replace(listData.get(listChooseWord.get(gamePlayed -1)).getSyllable(), listAnswer.get(indAnswer - 1));
+        String s = listData.get(listChooseWord.get(gamePlayed - 1)).getWord();
+        s = s.replace(listData.get(listChooseWord.get(gamePlayed - 1)).getSyllable(), listAnswer.get(indAnswer - 1));
         return s;
     }
 
     private String holeTheWord() {
-        String s = listData.get(listChooseWord.get(gamePlayed -1)).getWord();
-        s = s.replace(listData.get(listChooseWord.get(gamePlayed -1)).getSyllable(), "__");
+        String s = listData.get(listChooseWord.get(gamePlayed - 1)).getWord();
+        s = s.replace(listData.get(listChooseWord.get(gamePlayed - 1)).getSyllable(), "__");
         return s;
     }
 
@@ -203,7 +202,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void replay() {
-        word.setText(listData.get(listChooseWord.get(gamePlayed -1)).getWord());
+        word.setText(listData.get(listChooseWord.get(gamePlayed - 1)).getWord());
         word.setTextColor(Color.GREEN);
 
         playSound(true);
@@ -237,17 +236,16 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private void updateDataInDb() {
         WordWithHoleData data = db.gameDao().getWWHData(
                 userId,
-                listData.get(listChooseWord.get(gamePlayed -1)).getWord(),
-                listData.get(listChooseWord.get(gamePlayed -1)).getSyllable());
+                listData.get(listChooseWord.get(gamePlayed - 1)).getWord(),
+                listData.get(listChooseWord.get(gamePlayed - 1)).getSyllable());
         data.setLastUsed(true);
         if (nbTry == 0) {
-            data.setWin(data.getWin() +1);
-            data.setWinStreak(data.getWinStreak() +1);
+            data.setWin(data.getWin() + 1);
+            data.setWinStreak(data.getWinStreak() + 1);
             data.setLoseStreak(0);
-        }
-        else {
-            data.setLose(data.getLose() +1);
-            data.setLoseStreak(data.getLoseStreak() +1);
+        } else {
+            data.setLose(data.getLose() + 1);
+            data.setLoseStreak(data.getLoseStreak() + 1);
             data.setWinStreak(0);
         }
         db.gameDao().updateWWHData(data);

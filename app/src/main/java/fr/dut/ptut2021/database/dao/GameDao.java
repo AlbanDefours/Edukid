@@ -66,11 +66,11 @@ public interface GameDao {
     @Query("UPDATE PlayWithSoundData SET lastUsed = 0 WHERE userId = :userId")
     void updateAllPWSDataLastUsed(int userId);
 
-    @Query("SELECT * FROM PlayWithSoundData WHERE userId = :userId AND result = :result")
-    PlayWithSoundData getPWSData(int userId, String result);
+    @Query("SELECT * FROM PlayWithSoundData WHERE userId = :userId AND theme = :theme AND difficulty = :difficulty")
+    List<PlayWithSoundData> getAllPWSData(int userId, String theme, int difficulty);
 
-    @Query("SELECT * FROM PlayWithSoundData WHERE userId = :userId")
-    List<PlayWithSoundData> getAllPWSData(int userId);
+    @Query("SELECT * FROM PlayWithSoundData")
+    List<PlayWithSoundData> getAllPWSData();
 
     default List<Integer> getAllPWSDataLastUsed(List<PlayWithSoundData> listData, boolean lastUsed) {
         List<Integer> listInt = new ArrayList<>();
@@ -94,6 +94,9 @@ public interface GameDao {
     @Query("DELETE FROM PlayWithSoundData WHERE userId = :userId")
     void deletePWSDataByUser(int userId);
 
+    default boolean tabPWSDataIsEmpty() {
+        return getAllPWSData().isEmpty();
+    }
 
 
     //DrawOnItData
