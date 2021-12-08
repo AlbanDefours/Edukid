@@ -38,7 +38,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private List<String> listAnswer;
     private String goodAnswer;
     private final int MAX_GAME_PLAYED = 4, MAX_TRY = 2;
-    private int gamePlayed = 1, nbTry = 0, wrongAnswerCheck = 0;
+    private int gamePlayed = 1, nbTry = 0;
     private boolean delay = false;
     private MediaPlayer mpGoodAnswer, mpWrongAnswer;
 
@@ -185,27 +185,20 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             word.setTextColor(Color.BLACK);
         }, 2000);
 
-        if (wrongAnswerCheck != indWrongAnswer) {
-            nbTry++;
-            if (nbTry >= MAX_TRY) {
-                delay = true;
-                new Handler().postDelayed(() -> {
-                    //TODO utiliser colorIfGoodAnswer()
-                    if (answer1.getText() == listData.get(listChooseWord.get(gamePlayed -1)).getSyllable())
-                        answer1.setBackgroundColor(Color.GREEN);
-                    if (answer2.getText() == listData.get(listChooseWord.get(gamePlayed -1)).getSyllable())
-                        answer2.setBackgroundColor(Color.GREEN);
-                    if (answer3.getText() == listData.get(listChooseWord.get(gamePlayed -1)).getSyllable())
-                        answer3.setBackgroundColor(Color.GREEN);
-                    replay();
-                }, 2000);
-            }
+        nbTry++;
+        if (nbTry >= MAX_TRY) {
+            delay = true;
+            new Handler().postDelayed(() -> {
+                colorIfGoodAnswer(answer1);
+                colorIfGoodAnswer(answer2);
+                colorIfGoodAnswer(answer3);
+                replay();
+            }, 2000);
         }
     }
 
     private void colorIfGoodAnswer(Button button) {
-        System.out.println(listData.get(listChooseWord.get(gamePlayed)).getSyllable());
-        if (button.getText() == listData.get(listChooseWord.get(gamePlayed)).getSyllable())
+        if (button.getText() == listData.get(listChooseWord.get(gamePlayed - 1)).getSyllable())
             button.setBackgroundColor(Color.GREEN);
     }
 
@@ -234,6 +227,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 answer3.setBackgroundColor(Color.parseColor("#00BCD4"));
             } else {
                 Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
+                intent.putExtra("starsNumber", 3);
                 startActivity(intent);
                 finish();
             }
