@@ -20,14 +20,14 @@ public interface GameDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertWWHData(WordWithHoleData wordWithHoleStats);
 
+    @Query("SELECT MAX(dataId) FROM WordWithHoleData")
+    int getMaxId();
+
     @Update
     void updateWWHData(WordWithHoleData wordWithHoleStats);
 
     @Query("UPDATE WordWithHoleData SET lastUsed = 0 WHERE userId = :userId")
     void updateAllWWHDataLastUsed(int userId);
-
-    @Query("SELECT * FROM WordWithHoleData WHERE gameId = :gameId")
-    WordWithHoleData getWWHDataById(int gameId);
 
     @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId AND word = :word AND syllable = :syllable")
     WordWithHoleData getWWHDataByData(int userId, String word, String syllable);
