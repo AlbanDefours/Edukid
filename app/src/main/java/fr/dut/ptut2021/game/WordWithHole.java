@@ -66,14 +66,14 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void fillDatabase() {
-        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getMaxId()+1, userId, "AVION", "ON", R.drawable.wordwithhole_avion));
-        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getMaxId()+1, userId, "MAISON", "ON", R.drawable.wordwithhole_maison));
-        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getMaxId()+1, userId, "POULE", "OU", R.drawable.wordwithhole_poule));
-        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getMaxId()+1, userId, "BOUCHE", "OU", R.drawable.wordwithhole_bouche));
-        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getMaxId()+1, userId, "LIVRE", "LI", R.drawable.wordwithhole_livre));
-        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getMaxId()+1, userId, "VACHE", "VA", R.drawable.wordwithhole_vache));
-        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getMaxId()+1, userId, "TOMATE", "MA", R.drawable.wordwithhole_tomate));
-        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getMaxId()+1, userId, "TOMATE", "TO", R.drawable.wordwithhole_tomate));
+        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, "AVION", "ON", R.drawable.wordwithhole_avion));
+        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, "MAISON", "ON", R.drawable.wordwithhole_maison));
+        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, "POULE", "OU", R.drawable.wordwithhole_poule));
+        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, "BOUCHE", "OU", R.drawable.wordwithhole_bouche));
+        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, "LIVRE", "LI", R.drawable.wordwithhole_livre));
+        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, "VACHE", "VA", R.drawable.wordwithhole_vache));
+        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, "TOMATE", "MA", R.drawable.wordwithhole_tomate));
+        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, "TOMATE", "TO", R.drawable.wordwithhole_tomate));
     }
 
     private void initGame() {

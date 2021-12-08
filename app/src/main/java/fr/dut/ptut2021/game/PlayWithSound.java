@@ -28,7 +28,9 @@ import java.util.Locale;
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.models.stats.GameLog;
 import fr.dut.ptut2021.models.stats.game.PlayWithSoundData;
+import fr.dut.ptut2021.models.stats.game.WordWithHoleData;
 
 public class PlayWithSound extends AppCompatActivity implements View.OnClickListener, TextToSpeech.OnInitListener {
 
@@ -70,20 +72,19 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
     private void initDatabase() {
         db = CreateDatabase.getInstance(PlayWithSound.this);
-        if (db.gameDao().tabPWSDataIsEmpty()) {
-            String[] alphabetList = getResources().getStringArray(R.array.alphabet);
-            for (String letter : alphabetList) {
-                db.gameDao().insertPWSData(new PlayWithSoundData(userId, letter, "Lettres", 1, 0));
-            }
 
-            String[] syllableList = getResources().getStringArray(R.array.syllable);
-            for (String syllable : syllableList) {
-                db.gameDao().insertPWSData(new PlayWithSoundData(userId, syllable, "Lettres", 2, 0));
-            }
+        String[] alphabetList = getResources().getStringArray(R.array.alphabet);
+        for (String letter : alphabetList) {
+            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId(), userId, letter, "Lettres", 1, 0));
+        }
 
-            for (int i = 1; i < 10; i++) {
-                db.gameDao().insertPWSData(new PlayWithSoundData(userId, Integer.toString(i), "Chiffres", 1, 0));
-            }
+        String[] syllableList = getResources().getStringArray(R.array.syllable);
+        for (String syllable : syllableList) {
+            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId(), userId, syllable, "Lettres", 2, 0));
+        }
+
+        for (int i = 1; i < 10; i++) {
+            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId(), userId, Integer.toString(i), "Chiffres", 1, 0));
         }
     }
 
@@ -217,6 +218,20 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             textToSpeech.speak(texte, TextToSpeech.QUEUE_FLUSH, null, null);
         else
             textToSpeech.speak(texte, TextToSpeech.QUEUE_FLUSH, onlineSpeech);
+    }
+
+    //TODO remplir les tables PlayWithSound et GameLog
+    private void updateDataInDb() {
+/*
+        boolean win = false;
+        if (nbTry == 0) win = true;
+        GameLog gameLog = new GameLog(
+                "WordWithHole",
+                data.getDataId(),
+                win,
+                nbTry);
+        db.gameLogDao().insertGameLog(gameLog);
+*/
     }
 
     private void verifyAnswer(Button answer, int nbAnswer) {
