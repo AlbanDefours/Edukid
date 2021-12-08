@@ -54,6 +54,8 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     //TESTING
     androidTestImplementation 'android.arch.core:core-testing:1.1.1'
-    //Animation
+    //ANIMATION
     implementation 'com.daimajia.androidanimations:library:2.4@aar'
+    //DATABASE
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
 }

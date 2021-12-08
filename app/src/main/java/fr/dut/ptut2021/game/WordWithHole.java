@@ -24,6 +24,7 @@ import java.util.List;
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.models.stats.GameLog;
 import fr.dut.ptut2021.models.stats.game.WordWithHoleData;
 
 public class WordWithHole extends AppCompatActivity implements View.OnClickListener {
@@ -234,7 +235,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void updateDataInDb() {
-        WordWithHoleData data = db.gameDao().getWWHData(
+        WordWithHoleData data = db.gameDao().getWWHDataByData(
                 userId,
                 listData.get(listChooseWord.get(gamePlayed - 1)).getWord(),
                 listData.get(listChooseWord.get(gamePlayed - 1)).getSyllable());
@@ -249,6 +250,15 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             data.setWinStreak(0);
         }
         db.gameDao().updateWWHData(data);
+
+        boolean win = false;
+        if (nbTry == 0) win = true;
+        GameLog gameLog = new GameLog(
+                "WordWithHole",
+                data.getGameId(),
+                win,
+                nbTry);
+        db.gameLogDao().insertGameLog(gameLog);
     }
 
     private void verifyAnswer(Button answer, int numAnswer) {

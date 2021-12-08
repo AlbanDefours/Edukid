@@ -26,8 +26,11 @@ public interface GameDao {
     @Query("UPDATE WordWithHoleData SET lastUsed = 0 WHERE userId = :userId")
     void updateAllWWHDataLastUsed(int userId);
 
+    @Query("SELECT * FROM WordWithHoleData WHERE gameId = :gameId")
+    WordWithHoleData getWWHDataById(int gameId);
+
     @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId AND word = :word AND syllable = :syllable")
-    WordWithHoleData getWWHData(int userId, String word, String syllable);
+    WordWithHoleData getWWHDataByData(int userId, String word, String syllable);
 
     @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId")
     List<WordWithHoleData> getAllWWHData(int userId);

@@ -4,16 +4,17 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity (primaryKeys = {"userId", "word", "syllable"})
+@Entity
 public class WordWithHoleData {
 
+    @PrimaryKey(autoGenerate = true)
+    private int gameId;
     private int userId;
-    @NonNull
     private String word, syllable;
     private int image, win, winStreak, lose, loseStreak;
     private boolean lastUsed;
 
-    public WordWithHoleData(int userId, @NonNull String word, @NonNull String syllable, int image) {
+    public WordWithHoleData(int userId, String word, String syllable, int image) {
         this.userId = userId;
         this.word = word;
         this.syllable = syllable;
@@ -26,6 +27,13 @@ public class WordWithHoleData {
     }
 
     //Getter & Setter
+    public int getGameId() {
+        return gameId;
+    }
+    public void setGameId(int gameId) {
+        this.userId = gameId;
+    }
+
     public int getUserId() {
         return userId;
     }
@@ -33,19 +41,17 @@ public class WordWithHoleData {
         this.userId = userId;
     }
 
-    @NonNull
     public String getWord() {
         return word;
     }
-    public void setWord(@NonNull String word) {
+    public void setWord(String word) {
         this.word = word;
     }
 
-    @NonNull
     public String getSyllable() {
         return syllable;
     }
-    public void setSyllable(@NonNull String syllable) {
+    public void setSyllable(String syllable) {
         this.syllable = syllable;
     }
 

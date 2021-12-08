@@ -11,18 +11,18 @@ public class GameLog {
     //Nom du jeu (de la table du jeu)
     private String gameName;
     //Id de la ligne correspondante (de la table gameName)
-    private int gameId;
+    private int tableRowId;
     private long gameLogDate;
     private boolean win;
-    private int nbTry;
+    private int extraTry;
 
-    public GameLog(String gameName, int gameId, boolean win, int nbTry) {
+    public GameLog(String gameName, int tableRowId, boolean win, int extraTry) {
         this.gameName = gameName;
-        this.gameId = gameId;
+        this.tableRowId = tableRowId;
         this.gameLogDate = System.currentTimeMillis();
         //java.sql.Date date=new java.sql.Date(creationDate);  TO CONVERT
         this.win = win;
-        this.nbTry = nbTry;
+        this.extraTry = extraTry;
     }
 
 
@@ -41,11 +41,11 @@ public class GameLog {
         this.gameName = gameName;
     }
 
-    public int getGameId() {
-        return gameId;
+    public int getTableRowId() {
+        return tableRowId;
     }
-    public void setGameId(int gameId) {
-        this.gameId = gameId;
+    public void setTableRowId(int tableRowId) {
+        this.tableRowId = tableRowId;
     }
 
     public long getGameLogDate() {
@@ -62,10 +62,10 @@ public class GameLog {
         this.win = win;
     }
 
-    public int getNbTry() {
-        return nbTry;
+    public int getExtraTry() {
+        return extraTry;
     }
-    public void setNbTry(int nbTry) {
-        this.nbTry = nbTry;
+    public void setExtraTry(int nbTry) {
+        this.extraTry = extraTry;
     }
 }
