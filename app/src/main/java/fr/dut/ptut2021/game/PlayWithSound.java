@@ -132,9 +132,8 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private void setLayoutContent() {
         goodAnswer.setVisibility(View.INVISIBLE);
         goodAnswer.setText(listData.get(indWordChoose).getResult());
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++)
             listButton[i].setText(listAnswer.get(i));
-        }
     }
 
     private void initSoundEffect() {
@@ -144,9 +143,8 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
     private void addOnClickListener() {
         btnSound.setOnClickListener(this);
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++)
             listButton[i].setOnClickListener(this);
-        }
     }
 
     private void playSound(boolean isGoodAnswer) {
