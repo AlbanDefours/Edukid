@@ -114,6 +114,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         new Handler().postDelayed(this::readTheAnswer, 1200);
     }
 
+    //TODO Choisi pour le moment Result uniquement en fonction de LastUsed
     private void fillListChooseResult(String theme) {
         listData = new ArrayList<>(db.gameDao().getAllPWSDataByTheme(userId, theme, 1));
         listChooseResult = new ArrayList<>();
@@ -123,7 +124,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
         for (int i = 0; i < MAX_GAME_PLAYED; i++) {
             if (listDataNeverUsed.size() > 0 && !listChooseResult.contains(listDataNeverUsed.get(i))) {
-                listChooseResult.add(i);
+                listChooseResult.add(listDataNeverUsed.get(i));
             }
             else if (listDataNotUsed.size() > 0) {
                 int rand = (int) (Math.random() * listDataNotUsed.size());
@@ -138,7 +139,6 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                 }
             }
         }
-
         db.gameDao().updateAllPWSDataLastUsed(userId);
     }
 

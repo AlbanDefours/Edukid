@@ -69,7 +69,7 @@ public interface GameDao {
     @Update
     void updatePWSData(PlayWithSoundData playWithSoundData);
 
-    @Query("UPDATE PlayWithSoundData SET lastUsed = 0 WHERE userId = :userId")
+    @Query("UPDATE PlayWithSoundData SET lastUsed = 0 WHERE userId = :userId AND lastUsed = 1")
     void updateAllPWSDataLastUsed(int userId);
 
     @Query("SELECT * FROM PlayWithSoundData WHERE userId = :userId AND result = :result")
