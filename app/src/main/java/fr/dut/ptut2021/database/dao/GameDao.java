@@ -100,10 +100,6 @@ public interface GameDao {
     @Query("DELETE FROM PlayWithSoundData WHERE userId = :userId")
     void deletePWSDataByUser(int userId);
 
-    default boolean tabPWSDataIsEmpty() {
-        return getAllPWSData().isEmpty();
-    }
-
 
     //DrawOnItData
     @Insert(onConflict = OnConflictStrategy.IGNORE)
