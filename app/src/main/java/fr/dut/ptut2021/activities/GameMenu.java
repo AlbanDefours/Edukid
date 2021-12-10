@@ -16,6 +16,7 @@ import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.game.GameAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.game.DrawOnIt;
 import fr.dut.ptut2021.game.Memory;
 import fr.dut.ptut2021.game.PlayWithSound;
 import fr.dut.ptut2021.game.WordWithHole;
@@ -86,6 +87,9 @@ public class GameMenu extends AppCompatActivity {
                 break;
             case "Ecoute":
                 startActivity(new Intent().setClass(getApplicationContext(), PlayWithSound.class));
+                break;
+            case "Dessine":
+                startActivity(new Intent().setClass(getApplicationContext(), DrawOnIt.class));
                 break;
         }
     }

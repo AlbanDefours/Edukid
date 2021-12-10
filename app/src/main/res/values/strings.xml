@@ -7,16 +7,49 @@
     <string name="delete">SUPPRIMER</string>
 
     <string-array name="alphabet">
-        <item>A</item> <item>B</item> <item>C</item> <item>D</item> <item>E</item> <item>F</item>
-        <item>G</item> <item>H</item> <item>I</item> <item>J</item> <item>K</item> <item>L</item>
-        <item>M</item> <item>N</item> <item>O</item> <item>P</item> <item>Q</item> <item>R</item>
-        <item>S</item> <item>T</item> <item>U</item> <item>V</item> <item>W</item> <item>X</item>
-        <item>Y</item> <item>Z</item>
+        <item>A</item>
+        <item>B</item>
+        <item>C</item>
+        <item>D</item>
+        <item>E</item>
+        <item>F</item>
+        <item>G</item>
+        <item>H</item>
+        <item>I</item>
+        <item>J</item>
+        <item>K</item>
+        <item>L</item>
+        <item>M</item>
+        <item>N</item>
+        <item>O</item>
+        <item>P</item>
+        <item>Q</item>
+        <item>R</item>
+        <item>S</item>
+        <item>T</item>
+        <item>U</item>
+        <item>V</item>
+        <item>W</item>
+        <item>X</item>
+        <item>Y</item>
+        <item>Z</item>
     </string-array>
 
     <string-array name="syllable">
-        <item>ON</item> <item>OU</item> <item>LI</item> <item>VA</item> <item>MA</item>
-        <item>TO</item> <item>PU</item> <item>BA</item> <item>ME</item> <item>RI</item>
-        <item>TU</item> <item>VI</item> <item>RA</item> <item>AN</item> <item>PO</item>
+        <item>ON</item>
+        <item>OU</item>
+        <item>LI</item>
+        <item>VA</item>
+        <item>MA</item>
+        <item>TO</item>
+        <item>PU</item>
+        <item>BA</item>
+        <item>ME</item>
+        <item>RI</item>
+        <item>TU</item>
+        <item>VI</item>
+        <item>RA</item>
+        <item>AN</item>
+        <item>PO</item>
     </string-array>
 </resources>
