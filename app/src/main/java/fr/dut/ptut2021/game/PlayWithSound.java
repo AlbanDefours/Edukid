@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -43,7 +44,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private TextToSpeech textToSpeech;
     private List<PlayWithSoundData> listData;
     private Button answer1, answer2, answer3;
-    private String goodAnswerString, themeName;
+    private String themeName;
     private MediaPlayer mpGoodAnswer, mpWrongAnswer;
     private final Button[] listButton = new Button[3];
     private final int MAX_GAME_PLAYED = 5;
@@ -58,7 +59,8 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         getSharedPref();
         initDatabase();
         initializeLayout();
-        initGame(themeName, 1);
+        fillListChooseResult(themeName);
+        initGame();
         initSoundEffect();
         addOnClickListener();
 
@@ -100,13 +102,13 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         listButton[2] = answer3;
     }
 
-    private void initGame(String theme, int difficulty) {
+    private void initGame() {
         /*
         listData = db.gameDao().getAllPWSData(userId, theme, difficulty);
         indWordChoose = (int) (Math.random() * listData.size());
         goodAnswerString = listData.get(indWordChoose).getResult();
          */
-        fillListChooseResult(theme);
+
         initListAnswer();
         setLayoutContent();
         new Handler().postDelayed(this::readTheAnswer, 1200);
@@ -115,7 +117,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     //TODO A adapter en fonction de la difficulté
     private void fillListChooseResult(String theme) {
         listData = new ArrayList<>();
-        listData.addAll(db.gameDao().getAllPWSDataByTheme(userId, theme));
+        listData.addAll(db.gameDao().getAllPWSDataByTheme(userId, theme, 1));
         listChooseResult = new ArrayList<>();
         List<Integer> listDataNotUsed = db.gameDao().getAllPWSDataLastUsed(listData, false);
 
@@ -137,22 +139,25 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                 }
             }
         }
-        //Erreur si il n'y a pas assez de données dans la database
+        Log.e("SIZE LIST CHOOSE RESULT", "" + listChooseResult.size());
+        for (Integer i : listChooseResult)
+        Log.e("RESULT " + i, listData.get(i).getResult());
+        //Erreur s'il n'y a pas assez de données dans la database
 
         db.gameDao().updateAllPWSDataLastUsed(userId);
     }
 
     private void readTheAnswer() {
         if (themeName.equals("Lettres"))
-            speak("Trouve la lettre : " + goodAnswerString);
+            speak("Trouve la lettre : " + listData.get(listChooseResult.get(gamePlayed-1)).getResult());
         else if (themeName.equals("Chiffres"))
-            speak("Trouve le chiffre : " + goodAnswerString);
+            speak("Trouve le chiffre : " + listData.get(listChooseResult.get(gamePlayed-1)).getResult());
     }
 
     private void initListAnswer() {
         listAnswer = new ArrayList<>();
 
-        listAnswer.add(goodAnswerString);
+        listAnswer.add(listData.get(listChooseResult.get(gamePlayed-1)).getResult());
         while (listAnswer.size() < 3) {
             int rand = (int) (Math.random() * listData.size());
             if (!listAnswer.contains(listData.get(rand).getResult()))
@@ -189,7 +194,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             mpWrongAnswer.start();
     }
 
-    private void setWordAndAddDelay(int indWrongAnswer) {
+    private void setWordAndAddDelay() {
         delay = true;
         playSound(false);
 
@@ -232,7 +237,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             if (gamePlayed <= MAX_GAME_PLAYED) {
                 nbTry = 0;
                 displayAnswer(false);
-                initGame(themeName, 1);
+                initGame();
                 for (int i = 0; i < 3; i++)
                     listButton[i].setBackgroundColor(Color.parseColor("#00BCD4"));
             } else {
@@ -267,13 +272,13 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 */
     }
 
-    private void verifyAnswer(Button answer, int nbAnswer) {
-        if (answer.getText() == goodAnswerString) {
+    private void verifyAnswer(Button answer) {
+        if (answer.getText() == listData.get(listChooseResult.get(gamePlayed - 1)).getResult()) {
             answer.setBackgroundColor(Color.GREEN);
             replay();
         } else {
             answer.setBackgroundColor(Color.RED);
-            setWordAndAddDelay(nbAnswer);
+            setWordAndAddDelay();
         }
     }
 
@@ -298,15 +303,15 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         if (!delay) {
             switch (v.getId()) {
                 case R.id.buttonAnswer1_playWithSound:
-                    verifyAnswer(answer1, 1);
+                    verifyAnswer(answer1);
                     break;
 
                 case R.id.buttonAnswer2_playWithSound:
-                    verifyAnswer(answer2, 2);
+                    verifyAnswer(answer2);
                     break;
 
                 case R.id.buttonAnswer3_playWithSound:
-                    verifyAnswer(answer3, 3);
+                    verifyAnswer(answer3);
                     break;
 
                 case R.id.btnSound_playWithSound:
