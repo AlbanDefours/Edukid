@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.activities.ResultGamePage;
@@ -49,6 +50,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private final Button[] listButton = new Button[3];
     private final int MAX_GAME_PLAYED = 5;
     private int userId, gamePlayed = 1, nbTry = 0;
+    private Random random = new Random();
 
 
     @Override
@@ -103,12 +105,6 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     }
 
     private void initGame() {
-        /*
-        listData = db.gameDao().getAllPWSData(userId, theme, difficulty);
-        indWordChoose = (int) (Math.random() * listData.size());
-        goodAnswerString = listData.get(indWordChoose).getResult();
-         */
-
         initListAnswer();
         setLayoutContent();
         new Handler().postDelayed(this::readTheAnswer, 1200);
@@ -123,19 +119,22 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         List<Integer> listDataUsed = db.gameDao().getAllPWSDataLastUsed(listData, 1);
 
         for (int i = 0; i < MAX_GAME_PLAYED; i++) {
-            if (listDataNeverUsed.size() > 0 && !listChooseResult.contains(listDataNeverUsed.get(i))) {
-                listChooseResult.add(listDataNeverUsed.get(i));
+            if (!listDataNeverUsed.isEmpty() && !listChooseResult.contains(listDataNeverUsed.get(0))) {
+                listChooseResult.add(listDataNeverUsed.get(0));
+                listDataNeverUsed.remove(0);
             }
-            else if (listDataNotUsed.size() > 0) {
-                int rand = (int) (Math.random() * listDataNotUsed.size());
+            else if (!listDataNotUsed.isEmpty()) {
+                int rand = random.nextInt(listDataNotUsed.size());
                 if (!listChooseResult.contains(listDataNotUsed.get(rand))) {
                     listChooseResult.add(listDataNotUsed.get(rand));
+                    listDataNotUsed.remove(rand);
                 }
             }
             else {
-                int rand = (int) (Math.random() * listDataUsed.size());
+                int rand = random.nextInt(listDataUsed.size());
                 if (!listChooseResult.contains(listDataUsed.get(rand))) {
                     listChooseResult.add(listDataUsed.get(rand));
+                    listDataUsed.remove(rand);
                 }
             }
         }
@@ -154,7 +153,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
         listAnswer.add(listData.get(listChooseResult.get(gamePlayed-1)).getResult());
         while (listAnswer.size() < 3) {
-            int rand = (int) (Math.random() * listData.size());
+            int rand = random.nextInt(listData.size());
             if (!listAnswer.contains(listData.get(rand).getResult()))
                 listAnswer.add(listData.get(rand).getResult());
         }
@@ -327,6 +326,8 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
                 case R.id.btnSound_playWithSound:
                     readTheAnswer();
+                    break;
+                default:
                     break;
             }
         }
