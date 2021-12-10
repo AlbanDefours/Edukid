@@ -1,39 +1,32 @@
 package fr.dut.ptut2021.game;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.models.DataSymbol;
-import fr.dut.ptut2021.models.Symbol;
+import fr.dut.ptut2021.models.Point;
 
 public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener {
 
-    private ImageView image;
-    private ImageView imageVide;
-
+    private ImageView image, imageVide;
     private Bitmap bitmap;
     private Canvas canvas;
     private Paint paint;
-    float downx = 0, downy = 0, upx = 0, upy = 0;
-    DataSymbol data;
+    float largeur = 0, hauteur = 0, downx = 0, downy = 0, upx = 0, upy = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,26 +37,25 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         imageVide = findViewById(R.id.idImageVide_drawOnIt);
 
         Display currentDisplay = getWindowManager().getDefaultDisplay();
-        float dw = currentDisplay.getWidth();
-        float dh = currentDisplay.getHeight();
+        float largeur = currentDisplay.getWidth();
+        float hauteur = currentDisplay.getHeight();
 
-        bitmap = Bitmap.createBitmap((int) dw, (int) dh, Bitmap.Config.ARGB_8888);
+        bitmap = Bitmap.createBitmap((int) largeur, (int) hauteur, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
         paint = new Paint();
-        paint.setColor(Color.RED);
-        paint.setStrokeWidth(70);
+        paint.setColor(Color.YELLOW);
+        paint.setStrokeWidth(0.18f*largeur);
         paint.setAntiAlias(true);
         paint.setStrokeCap(Paint.Cap.ROUND);
         imageVide.setImageBitmap(bitmap);
 
+        //canvas.drawLine(0.25f*dw, 0.25f*dh, 0.5f*dw, 0.5f*dh, paint);
+
         imageVide.setOnTouchListener(this);
-
-
     }
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
-
         int action = event.getAction();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
@@ -73,24 +65,11 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
             case MotionEvent.ACTION_MOVE:
                 upx = event.getX();
                 upy = event.getY();
-                //canvas.drawLine(downx, downy, upx, upy, paint);
                 canvas.drawPoint(upx, upy, paint);
-                //downx = event.getX();
-                //downy = event.getY();
                 imageVide.invalidate();
                 System.out.println(downx + " " + downy);
                 break;
             case MotionEvent.ACTION_UP:
-                System.out.println(" ");
-                System.out.println(" ");
-                System.out.println("bite");
-
-                /*File filename = new File(Environment.getExternalStorageDirectory(), "imagedsddsds.png") ;
-                try (FileOutputStream out = new FileOutputStream(filename)) {
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }*/
                 break;
             case MotionEvent.ACTION_CANCEL:
                 break;
@@ -99,4 +78,28 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         }
         return true;
     }
+
+    //Permet afficher point du clic
+    /*@Override
+    public boolean onTouch(View view, MotionEvent event) {
+        int action = event.getAction();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                downx = event.getX();
+                downy = event.getY();
+                canvas.drawPoint(downx, downy, paint);
+                imageVide.invalidate();
+                System.out.println(downx/largeur + " " + downy/hauteur);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                break;
+            default:
+                break;
+        }
+        return true;
+    }*/
 }
