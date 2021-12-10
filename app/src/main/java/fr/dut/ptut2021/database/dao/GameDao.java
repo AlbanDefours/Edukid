@@ -26,7 +26,7 @@ public interface GameDao {
     @Update
     void updateWWHData(WordWithHoleData wordWithHoleStats);
 
-    @Query("UPDATE WordWithHoleData SET lastUsed = 0 WHERE userId = :userId")
+    @Query("UPDATE WordWithHoleData SET lastUsed = 0 WHERE userId = :userId AND lastUsed = 1")
     void updateAllWWHDataLastUsed(int userId);
 
     @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId AND word = :word AND syllable = :syllable")
@@ -35,20 +35,12 @@ public interface GameDao {
     @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId")
     List<WordWithHoleData> getAllWWHData(int userId);
 
-    default List<Integer> getAllWWHDataLastUsed(List<WordWithHoleData> listData, boolean lastUsed) {
+    default List<Integer> getAllWWHDataLastUsed(List<WordWithHoleData> listData, int lastUsed) {
         List<Integer> listInt = new ArrayList<>();
-        if (lastUsed) {
-            for (int i = 0; i < listData.size(); i++) {
-                if (listData.get(i).isLastUsed()) {
-                    listInt.add(i);
-                }
-            }
-        }
-        else {
-            for (int i = 0; i < listData.size(); i++) {
-                if (!listData.get(i).isLastUsed()) {
-                    listInt.add(i);
-                }
+
+        for (int i = 0; i < listData.size(); i++) {
+            if (listData.get(i).getLastUsed() == lastUsed) {
+                listInt.add(i);
             }
         }
         return  listInt;
