@@ -233,8 +233,10 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                 nbTry = 0;
                 displayAnswer(false);
                 initGame();
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < 3; i++) {
                     listButton[i].setBackgroundColor(Color.parseColor("#00BCD4"));
+                    listButton[i].setEnabled(true);
+                }
             } else {
                 Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
                 intent.putExtra("starsNumber", 3);
@@ -289,6 +291,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         } else {
             answer.setBackgroundColor(Color.RED);
             setWordAndAddDelay();
+            answer.setEnabled(false);
         }
     }
 
