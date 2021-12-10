@@ -14,6 +14,7 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 
 import fr.dut.ptut2021.R;
+import fr.dut.ptut2021.game.DrawOnIt;
 import fr.dut.ptut2021.game.Memory;
 import fr.dut.ptut2021.game.PlayWithSound;
 import fr.dut.ptut2021.game.WordWithHole;
@@ -96,7 +97,7 @@ public class ResultGamePage extends AppCompatActivity {
                 startActivity(new Intent().setClass(getApplicationContext(), PlayWithSound.class));
                 break;
             case "Dessine":
-                //startActivity(new Intent().setClass(getApplicationContext(), DrawOnIt.class));
+                startActivity(new Intent().setClass(getApplicationContext(), DrawOnIt.class));
                 break;
             case "Memory":
                 startActivity(new Intent().setClass(getApplicationContext(), Memory.class));

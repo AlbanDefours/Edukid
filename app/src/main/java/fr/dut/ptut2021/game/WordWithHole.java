@@ -30,7 +30,6 @@ import fr.dut.ptut2021.models.stats.game.WordWithHoleData;
 public class WordWithHole extends AppCompatActivity implements View.OnClickListener {
 
     private CreateDatabase db;
-    private int userId;
     private TextView word;
     private ImageView image;
     private Button answer1, answer2, answer3;
@@ -38,8 +37,8 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private List<Integer> listChooseWord;
     private List<String> listAnswer;
     private String goodAnswer;
-    private final int MAX_GAME_PLAYED = 4, MAX_TRY = 2;
-    private int gamePlayed = 1, nbTry = 0;
+    private final int MAX_GAME_PLAYED = 4;
+    private int userId, gamePlayed = 1, nbTry = 0;
     private boolean delay = false;
     private MediaPlayer mpGoodAnswer, mpWrongAnswer;
 
@@ -66,14 +65,14 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void fillDatabase() {
-        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getMaxId()+1, userId, "AVION", "ON", R.drawable.wordwithhole_avion));
-        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getMaxId()+1, userId, "MAISON", "ON", R.drawable.wordwithhole_maison));
-        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getMaxId()+1, userId, "POULE", "OU", R.drawable.wordwithhole_poule));
-        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getMaxId()+1, userId, "BOUCHE", "OU", R.drawable.wordwithhole_bouche));
-        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getMaxId()+1, userId, "LIVRE", "LI", R.drawable.wordwithhole_livre));
-        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getMaxId()+1, userId, "VACHE", "VA", R.drawable.wordwithhole_vache));
-        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getMaxId()+1, userId, "TOMATE", "MA", R.drawable.wordwithhole_tomate));
-        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getMaxId()+1, userId, "TOMATE", "TO", R.drawable.wordwithhole_tomate));
+        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, "AVION", "ON", R.drawable.wordwithhole_avion));
+        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, "MAISON", "ON", R.drawable.wordwithhole_maison));
+        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, "POULE", "OU", R.drawable.wordwithhole_poule));
+        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, "BOUCHE", "OU", R.drawable.wordwithhole_bouche));
+        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, "LIVRE", "LI", R.drawable.wordwithhole_livre));
+        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, "VACHE", "VA", R.drawable.wordwithhole_vache));
+        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, "TOMATE", "MA", R.drawable.wordwithhole_tomate));
+        db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, "TOMATE", "TO", R.drawable.wordwithhole_tomate));
     }
 
     private void initGame() {
@@ -92,20 +91,15 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         } else {
             List<Integer> listDataUsed = db.gameDao().getAllWWHDataLastUsed(listData, true);
             listChooseWord.addAll(listDataNotUsed);
-            for (int i = listDataNotUsed.size(); i < MAX_GAME_PLAYED; i++) {
+            for (int i = listChooseWord.size(); i < MAX_GAME_PLAYED; i++) {
                 int rand = (int) (Math.random() * listDataUsed.size());
                 if (!listChooseWord.contains(listDataUsed.get(rand))) {
                     listChooseWord.add(listDataUsed.get(rand));
                 }
             }
         }
+        //Erreur si il n'y a pas assez de données dans la database
 
-        while (listChooseWord.size() < MAX_GAME_PLAYED) {
-            int rand = (int) (Math.random() * listData.size());
-            if (!listChooseWord.contains(rand)) {
-                listChooseWord.add(rand);
-            }
-        }
         db.gameDao().updateAllWWHDataLastUsed(userId);
     }
 
@@ -186,6 +180,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         }, 2000);
 
         nbTry++;
+        int MAX_TRY = 2;
         if (nbTry >= MAX_TRY) {
             delay = true;
             new Handler().postDelayed(() -> {

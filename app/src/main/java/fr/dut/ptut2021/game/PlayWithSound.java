@@ -28,7 +28,9 @@ import java.util.Locale;
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.models.stats.GameLog;
 import fr.dut.ptut2021.models.stats.game.PlayWithSoundData;
+import fr.dut.ptut2021.models.stats.game.WordWithHoleData;
 
 public class PlayWithSound extends AppCompatActivity implements View.OnClickListener, TextToSpeech.OnInitListener {
 
@@ -37,14 +39,15 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private TextView goodAnswer;
     private boolean delay = false;
     private List<String> listAnswer;
+    private List<Integer> listChooseResult;
     private TextToSpeech textToSpeech;
     private List<PlayWithSoundData> listData;
     private Button answer1, answer2, answer3;
     private String goodAnswerString, themeName;
     private MediaPlayer mpGoodAnswer, mpWrongAnswer;
     private final Button[] listButton = new Button[3];
-    private final int MAX_GAME_PLAYED = 5, MAX_TRY = 2;
-    private int userId, gamePlayed = 1, indWordChoose, wrongAnswerCheck = 0, nbTry = 0;
+    private final int MAX_GAME_PLAYED = 5;
+    private int userId, gamePlayed = 1, nbTry = 0;
 
 
     @Override
@@ -70,20 +73,19 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
     private void initDatabase() {
         db = CreateDatabase.getInstance(PlayWithSound.this);
-        if (db.gameDao().tabPWSDataIsEmpty()) {
-            String[] alphabetList = getResources().getStringArray(R.array.alphabet);
-            for (String letter : alphabetList) {
-                db.gameDao().insertPWSData(new PlayWithSoundData(userId, letter, "Lettres", 1, 0));
-            }
 
-            String[] syllableList = getResources().getStringArray(R.array.syllable);
-            for (String syllable : syllableList) {
-                db.gameDao().insertPWSData(new PlayWithSoundData(userId, syllable, "Lettres", 2, 0));
-            }
+        String[] alphabetList = getResources().getStringArray(R.array.alphabet);
+        for (String letter : alphabetList) {
+            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId(), userId, letter, "Lettres", 1, 0));
+        }
 
-            for (int i = 1; i < 10; i++) {
-                db.gameDao().insertPWSData(new PlayWithSoundData(userId, Integer.toString(i), "Chiffres", 1, 0));
-            }
+        String[] syllableList = getResources().getStringArray(R.array.syllable);
+        for (String syllable : syllableList) {
+            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId(), userId, syllable, "Lettres", 2, 0));
+        }
+
+        for (int i = 1; i < 10; i++) {
+            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId(), userId, Integer.toString(i), "Chiffres", 1, 0));
         }
     }
 
@@ -99,12 +101,45 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     }
 
     private void initGame(String theme, int difficulty) {
+        /*
         listData = db.gameDao().getAllPWSData(userId, theme, difficulty);
         indWordChoose = (int) (Math.random() * listData.size());
         goodAnswerString = listData.get(indWordChoose).getResult();
+         */
+        fillListChooseResult(theme);
         initListAnswer();
         setLayoutContent();
         new Handler().postDelayed(this::readTheAnswer, 1200);
+    }
+
+    //TODO A adapter en fonction de la difficulté
+    private void fillListChooseResult(String theme) {
+        listData = new ArrayList<>();
+        listData.addAll(db.gameDao().getAllPWSDataByTheme(userId, theme));
+        listChooseResult = new ArrayList<>();
+        List<Integer> listDataNotUsed = db.gameDao().getAllPWSDataLastUsed(listData, false);
+
+        //Remplit les listChooseResult avec les indices (de listData) des Result avec un lastUsed = false
+        if (listDataNotUsed.size() > MAX_GAME_PLAYED) {
+            while (listChooseResult.size() < MAX_GAME_PLAYED) {
+                int rand = (int) (Math.random() * listDataNotUsed.size());
+                if (!listChooseResult.contains(listDataNotUsed.get(rand))) {
+                    listChooseResult.add(listDataNotUsed.get(rand));
+                }
+            }
+        } else {
+            List<Integer> listDataUsed = db.gameDao().getAllPWSDataLastUsed(listData, true);
+            listChooseResult.addAll(listDataNotUsed);
+            for (int i = listChooseResult.size(); i < MAX_GAME_PLAYED; i++) {
+                int rand = (int) (Math.random() * listDataUsed.size());
+                if (!listChooseResult.contains(listDataUsed.get(rand))) {
+                    listChooseResult.add(listDataUsed.get(rand));
+                }
+            }
+        }
+        //Erreur si il n'y a pas assez de données dans la database
+
+        db.gameDao().updateAllPWSDataLastUsed(userId);
     }
 
     private void readTheAnswer() {
@@ -131,7 +166,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
     private void setLayoutContent() {
         goodAnswer.setVisibility(View.INVISIBLE);
-        goodAnswer.setText(listData.get(indWordChoose).getResult());
+        goodAnswer.setText(listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
         for (int i = 0; i < 3; i++)
             listButton[i].setText(listAnswer.get(i));
     }
@@ -163,18 +198,17 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             readTheAnswer();
         }, 2000);
 
-        if (wrongAnswerCheck != indWrongAnswer) { //TODO demander ce qu'elle fait
-            nbTry++;
-            if (nbTry >= MAX_TRY) {
-                delay = true;
-                new Handler().postDelayed(() -> {
-                    for (int i = 0; i < 3; i++) {
-                        if (listButton[i].getText().equals(listData.get(indWordChoose).getResult()))
-                            listButton[i].setBackgroundColor(Color.GREEN);
-                    }
-                    replay();
-                }, 2000);
-            }
+        nbTry++;
+        int MAX_TRY = 2;
+        if (nbTry >= MAX_TRY) {
+            delay = true;
+            new Handler().postDelayed(() -> {
+                for (int i = 0; i < 3; i++) {
+                    if (listButton[i].getText().equals(listData.get(listChooseResult.get(gamePlayed - 1)).getResult()))
+                        listButton[i].setBackgroundColor(Color.GREEN);
+                }
+                replay();
+            }, 2000);
         }
     }
 
@@ -217,6 +251,20 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             textToSpeech.speak(texte, TextToSpeech.QUEUE_FLUSH, null, null);
         else
             textToSpeech.speak(texte, TextToSpeech.QUEUE_FLUSH, onlineSpeech);
+    }
+
+    //TODO remplir les tables PlayWithSound et GameLog
+    private void updateDataInDb() {
+/*
+        boolean win = false;
+        if (nbTry == 0) win = true;
+        GameLog gameLog = new GameLog(
+                "WordWithHole",
+                data.getDataId(),
+                win,
+                nbTry);
+        db.gameLogDao().insertGameLog(gameLog);
+*/
     }
 
     private void verifyAnswer(Button answer, int nbAnswer) {

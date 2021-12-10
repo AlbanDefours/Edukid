@@ -21,7 +21,7 @@ public interface GameDao {
     void insertWWHData(WordWithHoleData wordWithHoleStats);
 
     @Query("SELECT MAX(dataId) FROM WordWithHoleData")
-    int getMaxId();
+    int getWWHMaxId();
 
     @Update
     void updateWWHData(WordWithHoleData wordWithHoleStats);
@@ -63,17 +63,20 @@ public interface GameDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertPWSData(PlayWithSoundData playWithSoundData);
 
+    @Query("SELECT MAX(dataId) FROM WordWithHoleData")
+    int getPWSMaxId();
+
     @Update
     void updatePWSData(PlayWithSoundData playWithSoundData);
 
     @Query("UPDATE PlayWithSoundData SET lastUsed = 0 WHERE userId = :userId")
     void updateAllPWSDataLastUsed(int userId);
 
-    @Query("SELECT * FROM PlayWithSoundData WHERE userId = :userId AND theme = :theme AND difficulty = :difficulty")
-    List<PlayWithSoundData> getAllPWSData(int userId, String theme, int difficulty);
+    @Query("SELECT * FROM PlayWithSoundData WHERE userId = :userId AND result = :result")
+    PlayWithSoundData getWWHDataByResult(int userId, String result);
 
-    @Query("SELECT * FROM PlayWithSoundData")
-    List<PlayWithSoundData> getAllPWSData();
+    @Query("SELECT * FROM PlayWithSoundData WHERE userId = :userId AND theme = :theme")
+    List<PlayWithSoundData> getAllPWSDataByTheme(int userId, String theme);
 
     default List<Integer> getAllPWSDataLastUsed(List<PlayWithSoundData> listData, boolean lastUsed) {
         List<Integer> listInt = new ArrayList<>();
