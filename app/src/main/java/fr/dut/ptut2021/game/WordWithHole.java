@@ -233,10 +233,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 initListAnswer();
                 setLayoutContent();
                 word.setTextColor(Color.BLACK);
-                final String BASIC_BUTTON_COLOR = "#00BCD4";
-                answer1.setBackgroundColor(Color.parseColor(BASIC_BUTTON_COLOR));
-                answer2.setBackgroundColor(Color.parseColor(BASIC_BUTTON_COLOR));
-                answer3.setBackgroundColor(Color.parseColor(BASIC_BUTTON_COLOR));
+                resetButton();
             } else {
                 Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
                 intent.putExtra("starsNumber", starsNumber());
@@ -244,6 +241,16 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 finish();
             }
         }, 3000);
+    }
+
+    private void resetButton() {
+        final String BASIC_BUTTON_COLOR = "#00BCD4";
+        answer1.setBackgroundColor(Color.parseColor(BASIC_BUTTON_COLOR));
+        answer1.setEnabled(true);
+        answer2.setBackgroundColor(Color.parseColor(BASIC_BUTTON_COLOR));
+        answer2.setEnabled(true);
+        answer3.setBackgroundColor(Color.parseColor(BASIC_BUTTON_COLOR));
+        answer3.setEnabled(true);
     }
 
     private void updateDataInDb() {
@@ -282,6 +289,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         } else {
             answer.setBackgroundColor(Color.RED);
             setWordAndAddDelay(numAnswer);
+            answer.setEnabled(false);
         }
     }
 
