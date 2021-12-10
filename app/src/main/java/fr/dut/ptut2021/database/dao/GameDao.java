@@ -78,22 +78,14 @@ public interface GameDao {
     @Query("SELECT * FROM PlayWithSoundData WHERE userId = :userId AND theme = :theme AND difficulty = :difficulty")
     List<PlayWithSoundData> getAllPWSDataByTheme(int userId, String theme, int difficulty);
 
-    default List<Integer> getAllPWSDataLastUsed(List<PlayWithSoundData> listData, boolean lastUsed) {
+    default List<Integer> getAllPWSDataLastUsed(List<PlayWithSoundData> listData, int lastUsed) {
         List<Integer> listInt = new ArrayList<>();
-        if (lastUsed) {
+
             for (int i = 0; i < listData.size(); i++) {
-                if (listData.get(i).isLastUsed()) {
+                if (listData.get(i).getLastUsed() == lastUsed) {
                     listInt.add(i);
                 }
             }
-        }
-        else {
-            for (int i = 0; i < listData.size(); i++) {
-                if (!listData.get(i).isLastUsed()) {
-                    listInt.add(i);
-                }
-            }
-        }
         return  listInt;
     }
 

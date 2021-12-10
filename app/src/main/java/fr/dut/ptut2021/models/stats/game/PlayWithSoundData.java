@@ -10,8 +10,7 @@ public class PlayWithSoundData {
     @NonNull
     private String result;
     private String theme;
-    private int difficulty, win, winStreak, lose, loseStreak, image;
-    private boolean lastUsed;
+    private int difficulty, win, winStreak, lose, loseStreak, image, lastUsed;
 
     public PlayWithSoundData(int dataId, int userId, @NonNull String result, String theme, int difficulty, int image) {
         this.dataId = dataId;
@@ -24,7 +23,7 @@ public class PlayWithSoundData {
         this.lose = 0;
         this.loseStreak = 0;
         this.image = image;
-        this.lastUsed = false;
+        this.lastUsed = -1;
     }
 
     public int getDataId() {
@@ -98,10 +97,10 @@ public class PlayWithSoundData {
         this.image = image;
     }
 
-    public boolean isLastUsed() {
+    public int getLastUsed() {
         return lastUsed;
     }
-    public void setLastUsed(boolean lastUsed) {
+    public void setLastUsed(int lastUsed) {
         this.lastUsed = lastUsed;
     }
 }

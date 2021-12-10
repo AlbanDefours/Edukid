@@ -114,35 +114,30 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         new Handler().postDelayed(this::readTheAnswer, 1200);
     }
 
-    //TODO A adapter en fonction de la difficulté
     private void fillListChooseResult(String theme) {
-        listData = new ArrayList<>();
-        listData.addAll(db.gameDao().getAllPWSDataByTheme(userId, theme, 1));
+        listData = new ArrayList<>(db.gameDao().getAllPWSDataByTheme(userId, theme, 1));
         listChooseResult = new ArrayList<>();
-        List<Integer> listDataNotUsed = db.gameDao().getAllPWSDataLastUsed(listData, false);
+        List<Integer> listDataNeverUsed = db.gameDao().getAllPWSDataLastUsed(listData, -1);
+        List<Integer> listDataNotUsed = db.gameDao().getAllPWSDataLastUsed(listData, 0);
+        List<Integer> listDataUsed = db.gameDao().getAllPWSDataLastUsed(listData, 1);
 
-        //Remplit les listChooseResult avec les indices (de listData) des Result avec un lastUsed = false
-        if (listDataNotUsed.size() > MAX_GAME_PLAYED) {
-            while (listChooseResult.size() < MAX_GAME_PLAYED) {
+        for (int i = 0; i < MAX_GAME_PLAYED; i++) {
+            if (listDataNeverUsed.size() > 0 && !listChooseResult.contains(listDataNeverUsed.get(i))) {
+                listChooseResult.add(i);
+            }
+            else if (listDataNotUsed.size() > 0) {
                 int rand = (int) (Math.random() * listDataNotUsed.size());
                 if (!listChooseResult.contains(listDataNotUsed.get(rand))) {
                     listChooseResult.add(listDataNotUsed.get(rand));
                 }
             }
-        } else {
-            List<Integer> listDataUsed = db.gameDao().getAllPWSDataLastUsed(listData, true);
-            listChooseResult.addAll(listDataNotUsed);
-            for (int i = listChooseResult.size(); i < MAX_GAME_PLAYED; i++) {
+            else {
                 int rand = (int) (Math.random() * listDataUsed.size());
                 if (!listChooseResult.contains(listDataUsed.get(rand))) {
                     listChooseResult.add(listDataUsed.get(rand));
                 }
             }
         }
-        Log.e("SIZE LIST CHOOSE RESULT", "" + listChooseResult.size());
-        for (Integer i : listChooseResult)
-        Log.e("RESULT " + i, listData.get(i).getResult());
-        //Erreur s'il n'y a pas assez de données dans la database
 
         db.gameDao().updateAllPWSDataLastUsed(userId);
     }
@@ -264,7 +259,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         PlayWithSoundData data = db.gameDao().getPWSDataByResult(
                 userId,
                 listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
-        data.setLastUsed(true);
+        data.setLastUsed(1);
         boolean win;
         if (nbTry == 0) {
             data.setWin(data.getWin() + 1);
