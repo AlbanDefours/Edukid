@@ -73,9 +73,11 @@ public class ResultGamePage extends AppCompatActivity {
         mpNiceTry = MediaPlayer.create(this, R.raw.kids_cheering);
     }
 
+    /*TODO Faire en sorte que les etoiles grises soit afficher de base, et que les jaunes les remplaces
+       (en fct du nb d'étoiles) en faisant l'animation que si elle devient jaune*/
     private void starsNumber(int nbStars) {
         ImageView[] tabStars = {star1, star2, star3};
-        for (int i = 0; i < nbStars; i++) {
+        for (int i = 0; i < 3; i++) {
             int finalI = i;
             new Handler().postDelayed(() -> {
                 tabStars[finalI].setVisibility(View.VISIBLE);

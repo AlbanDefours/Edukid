@@ -1,5 +1,6 @@
 package fr.dut.ptut2021.game;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -10,6 +11,7 @@ import android.widget.GridView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import fr.dut.ptut2021.R;
+import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.adapters.MemoryAdapter;
 import fr.dut.ptut2021.models.Card;
 
@@ -73,6 +75,32 @@ public class Memory extends AppCompatActivity {
         }
     }
 
+    private boolean isWin(){
+        for(int i=0;i<listCard.size();i++){
+            if(listCard.get(i).isHidden()){
+                return false;
+            }
+        }
+        int ptMalus=0;
+        for(int i=0;i<listCard.size();i++){
+            if(listCard.get(i).getNbReturn()>0){
+                ptMalus+=listCard.get(i).getNbReturn()-1;
+            }
+        }
+        int nbStar;
+        if(ptMalus<=2)
+            nbStar=3;
+        else if(ptMalus<=5)
+            nbStar=2;
+        else
+            nbStar=1;
+        Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
+        intent.putExtra("starsNumber", nbStar);
+        startActivity(intent);
+        finish();
+        return true;
+    }
+
     public void display(MemoryAdapter memoryAdapter) throws IOException, InterruptedException {
         int compteur=1;
 
@@ -125,6 +153,8 @@ public class Memory extends AppCompatActivity {
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                 if(!isClicked) {
                     returnCard(position, memoryAdapter);
+
+                    isWin();
                 }
             }
         });
