@@ -3,6 +3,7 @@
     package="fr.dut.ptut2021">
 
     <application
+        android:name=".adapters.ApplicationPtut"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -10,10 +11,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PTUT2021">
         <activity
+            android:name=".game.DrawOnIt"
+            android:exported="false" />
+        <activity
+            android:name=".game.PlayWithSound"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ResultGamePage"
+            android:exported="false" />
+        <activity
+            android:name=".activities.UserResume"
+            android:exported="false" />
+        <activity
             android:name=".activities.UserEdit"
             android:exported="false" />
         <activity
             android:name=".activities.StatisticPage"
+            android:exported="false" />
+        <activity
+            android:name=".game.WordWithHole"
             android:exported="false" />
         <activity
             android:name=".activities.LoadingPage"
@@ -24,6 +40,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".game.Memory"
+            android:exported="false" />
         <activity
             android:name=".activities.UserMenu"
             android:exported="false" />

@@ -2,24 +2,35 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center">
 
     <ImageView
         android:id="@+id/userAvatar"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"/>
+
+    <ImageView
+        android:id="@+id/icon_modif"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="45dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:visibility="invisible"
+        android:src="@drawable/settings_icon"/>
 
     <TextView
         android:id="@+id/userName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/userAvatar"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="30dp"
-        android:textSize="20sp"
+        android:textSize="21sp"
         android:textAlignment="center"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"/>
 
 </RelativeLayout>

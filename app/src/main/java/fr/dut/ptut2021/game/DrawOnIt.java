@@ -1,16 +1,30 @@
 package fr.dut.ptut2021.game;
 
-import fr.dut.ptut2021.models.Symbol;
+import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.ArrayList;
+import android.os.Bundle;
+import android.widget.ImageView;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class DrawOnIt {
+import fr.dut.ptut2021.R;
+import fr.dut.ptut2021.models.Symbol;
+
+public class DrawOnIt extends AppCompatActivity {
+
+    private ImageView image;
 
     private Map<String, Symbol> symbols = new HashMap<>();
 
-    public DrawOnIt(){
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_draw_on_it);
+
+        image = findViewById(R.id.idImage_drawOnIt);
+
         symbols.put("0", new Symbol());
         symbols.put("1", new Symbol());
         symbols.put("2", new Symbol());
@@ -47,6 +61,6 @@ public class DrawOnIt {
         symbols.put("X", new Symbol());
         symbols.put("Y", new Symbol());
         symbols.put("Z", new Symbol());
-    }
 
+    }
 }
