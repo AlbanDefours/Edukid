@@ -1,9 +1,8 @@
 package fr.dut.ptut2021.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -11,10 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
@@ -42,6 +39,7 @@ public class UserMenu extends AppCompatActivity {
             new RecyclerItemClickListener(getApplicationContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
+                    saveUserNameSahredPref(position);
                     startThemeMenu(position);
                 }
 
@@ -121,7 +119,14 @@ public class UserMenu extends AppCompatActivity {
 
     private void startThemeMenu(int position) {
         Intent intent = new Intent().setClass(getApplicationContext(), ThemeMenu.class);
-        intent.putExtra("userName", listUser.get(position).getUserName());
         startActivity(intent);
+    }
+
+    private void saveUserNameSahredPref(int position){
+        SharedPreferences settings = getSharedPreferences("MyPref", 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("userName", listUser.get(position).getUserName());
+        editor.putInt("userId", listUser.get(position).getUserId());
+        editor.commit();
     }
 }

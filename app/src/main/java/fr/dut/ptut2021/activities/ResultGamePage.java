@@ -1,6 +1,7 @@
 package fr.dut.ptut2021.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,13 +15,14 @@ import com.daimajia.androidanimations.library.YoYo;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.game.Memory;
+import fr.dut.ptut2021.game.PlayWithSound;
 import fr.dut.ptut2021.game.WordWithHole;
 
-//TODO refaire la page qaund on aura choisi les sons
 public class ResultGamePage extends AppCompatActivity {
 
+    private int starsNb;
     private String gameName, themeName;
-    private MediaPlayer mpStarsSound, mpNiceTry;
+    private MediaPlayer mpNiceTry;
     private ImageView star1, star2, star3, exit, replay;
 
     @Override
@@ -28,12 +30,11 @@ public class ResultGamePage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_game_page);
 
-        getGameName();
+        getNbStars();
+        getGameThemeName();
         initializeView();
         initSoundEffect();
-        new Handler().postDelayed(() -> {
-            starsNumber(3);
-        }, 1500);
+        starsNumber(starsNb);
 
         exit.setOnClickListener(v -> {
             finish();
@@ -44,14 +45,20 @@ public class ResultGamePage extends AppCompatActivity {
         });
     }
 
-    private void getGameName() {
+    private void getNbStars() {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
 
-        if (bundle != null) {
-            gameName = bundle.getString("gameName", " ");
-            themeName = bundle.getString("themeName", " ");
-        }
+        if (bundle != null)
+            starsNb = bundle.getInt("starsNumber", 2);
+        else
+            starsNb = 3;
+    }
+
+    private void getGameThemeName() {
+        SharedPreferences settings = getSharedPreferences("MyPref", 0);
+        themeName = settings.getString("themeName", "");
+        gameName = settings.getString("gameName", "");
     }
 
     private void initializeView() {
@@ -63,69 +70,41 @@ public class ResultGamePage extends AppCompatActivity {
     }
 
     private void initSoundEffect() {
-        mpStarsSound = MediaPlayer.create(this, R.raw.correct_answer);
         mpNiceTry = MediaPlayer.create(this, R.raw.kids_cheering);
     }
 
     private void starsNumber(int nbStars) {
-        switch (nbStars) {
-            case 1:
-                star1.setVisibility(View.VISIBLE);
-                YoYo.with(Techniques.Swing).duration(800).playOn(star1);
-                mpStarsSound.start();
-                break;
-
-            case 2:
-                star1.setVisibility(View.VISIBLE);
-                YoYo.with(Techniques.Swing).duration(800).playOn(star1);
-                mpStarsSound.start();
-                new Handler().postDelayed(() -> {
-                    star2.setVisibility(View.VISIBLE);
-                    YoYo.with(Techniques.Swing).duration(800).playOn(star2);
-                    mpStarsSound.start();
-                }, 1200);
-                break;
-
-            case 3:
-                star1.setVisibility(View.VISIBLE);
-                YoYo.with(Techniques.Swing).duration(800).playOn(star1);
-                mpStarsSound.start();
-                new Handler().postDelayed(() -> {
-                    star2.setVisibility(View.VISIBLE);
-                    YoYo.with(Techniques.Swing).duration(800).playOn(star2);
-                    //mpStarsSound.stop();
-                    //mpStarsSound.reset();
-                    mpStarsSound.start();
-                    new Handler().postDelayed(() -> {
-                        star3.setVisibility(View.VISIBLE);
-                        YoYo.with(Techniques.Swing).duration(800).playOn(star3);
-                        //mpStarsSound.stop();
-                        //mpStarsSound.reset();
-                        mpStarsSound.start();
-                    }, 1500);
-                }, 1500);
-                break;
+        ImageView[] tabStars = {star1, star2, star3};
+        for (int i = 0; i < nbStars; i++) {
+            int finalI = i;
+            new Handler().postDelayed(() -> {
+                tabStars[finalI].setVisibility(View.VISIBLE);
+                YoYo.with(Techniques.Swing).duration(800).playOn(tabStars[finalI]);
+            }, 800L * i);
         }
+
         new Handler().postDelayed(() -> {
             YoYo.with(Techniques.Tada).duration(1000).repeat(2).playOn(findViewById(R.id.text_felicitation));
             mpNiceTry.start();
-        }, 1200L * nbStars + 500);
-    }
-
-    private void startGame(Intent intent) {
-        intent.putExtra("themeName", themeName);
-        startActivity(intent);
-        finish();
+        }, 600L * nbStars + 500);
     }
 
     private void findGame() {
+        System.out.println(gameName);
         switch (gameName) {
-            case "WordWithHole":
-                startGame(new Intent().setClass(getApplicationContext(), WordWithHole.class));
+            case "Ecoute":
+                startActivity(new Intent().setClass(getApplicationContext(), PlayWithSound.class));
+                break;
+            case "Dessine":
+                //startActivity(new Intent().setClass(getApplicationContext(), DrawOnIt.class));
                 break;
             case "Memory":
-                startGame(new Intent().setClass(getApplicationContext(), Memory.class));
+                startActivity(new Intent().setClass(getApplicationContext(), Memory.class));
+                break;
+            case "Mot à trou":
+                startActivity(new Intent().setClass(getApplicationContext(), WordWithHole.class));
                 break;
         }
+        finish();
     }
 }

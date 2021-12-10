@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PTUT2021">
         <activity
-            android:name=".activities.RecognizeWithVoice"
+            android:name=".game.PlayWithSound"
             android:exported="false" />
         <activity
             android:name=".activities.ResultGamePage"

@@ -18,7 +18,7 @@ public interface AppDao {
 
     //ThemeGameCrossRef
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long insertThemeGame(ThemeGameCrossRef themeGame);
+    void insertThemeGame(ThemeGameCrossRef themeGame);
 
     @Query("SELECT * FROM ThemeGameCrossRef")
     List<ThemeGameCrossRef> getAllThemeGame();
@@ -34,7 +34,7 @@ public interface AppDao {
 
     //ThemeDao
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long insertTheme(Theme theme);
+    void insertTheme(Theme theme);
 
     @Query("SELECT * FROM Theme")
     List<Theme> getAllThemes();
@@ -46,13 +46,13 @@ public interface AppDao {
     Theme getThemeByName(String themeName);
 
     @Update
-    int updateTheme(Theme theme);
+    void updateTheme(Theme theme);
 
     @Query("DELETE FROM Theme WHERE themeId = :themeId")
-    int deleteThemeById(int themeId);
+    void deleteThemeById(int themeId);
 
     @Query("DELETE FROM Theme")
-    int deleteAllThemes();
+    void deleteAllThemes();
 
     default boolean tabThemeIsEmpty() {
         return getAllThemes().isEmpty();
@@ -61,7 +61,7 @@ public interface AppDao {
 
     //GameDao
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long insertGame(Game game);
+    void insertGame(Game game);
 
     @Query("SELECT * FROM Game")
     List<Game> getAllGames();
@@ -73,13 +73,13 @@ public interface AppDao {
     Game getGameByName(String gameName);
 
     @Update
-    int updateGame(Game game);
+    void updateGame(Game game);
 
     @Query("DELETE FROM Game WHERE gameId = :gameId")
-    int deleteGameById(int gameId);
+    void deleteGameById(int gameId);
 
     @Query("DELETE FROM Game")
-    int deleteAllGames();
+    void deleteAllGames();
 
     default boolean tabGameIsEmpty() {
         return getAllGames().isEmpty();
@@ -88,7 +88,7 @@ public interface AppDao {
 
     //UserDao
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long insertUser(User user);
+    void insertUser(User user);
 
     @Query("SELECT * FROM User")
     List<User> getAllUsers();
@@ -100,13 +100,13 @@ public interface AppDao {
     User getUserByName(String userName);
 
     @Update
-    int updateUser(User user);
+    void updateUser(User user);
 
     @Query("DELETE FROM User WHERE userId = :userId")
-    int deleteUserById(int userId);
+    void deleteUserById(int userId);
 
     @Query("DELETE FROM User")
-    int deleteAllUsers();
+    void deleteAllUsers();
 
     default boolean tabUserIsEmpty() {
         return getAllUsers().isEmpty();
