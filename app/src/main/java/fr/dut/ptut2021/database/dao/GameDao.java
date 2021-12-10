@@ -63,7 +63,7 @@ public interface GameDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertPWSData(PlayWithSoundData playWithSoundData);
 
-    @Query("SELECT MAX(dataId) FROM WordWithHoleData")
+    @Query("SELECT MAX(dataId) FROM PlayWithSoundData")
     int getPWSMaxId();
 
     @Update
@@ -73,7 +73,7 @@ public interface GameDao {
     void updateAllPWSDataLastUsed(int userId);
 
     @Query("SELECT * FROM PlayWithSoundData WHERE userId = :userId AND result = :result")
-    PlayWithSoundData getWWHDataByResult(int userId, String result);
+    PlayWithSoundData getPWSDataByResult(int userId, String result);
 
     @Query("SELECT * FROM PlayWithSoundData WHERE userId = :userId AND theme = :theme AND difficulty = :difficulty")
     List<PlayWithSoundData> getAllPWSDataByTheme(int userId, String theme, int difficulty);

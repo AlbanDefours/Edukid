@@ -78,16 +78,16 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
         String[] alphabetList = getResources().getStringArray(R.array.alphabet);
         for (String letter : alphabetList) {
-            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId(), userId, letter, "Lettres", 1, 0));
+            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId()+1, userId, letter, "Lettres", 1, 0));
         }
 
         String[] syllableList = getResources().getStringArray(R.array.syllable);
         for (String syllable : syllableList) {
-            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId(), userId, syllable, "Lettres", 2, 0));
+            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId()+1, userId, syllable, "Lettres", 2, 0));
         }
 
         for (int i = 1; i < 10; i++) {
-            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId(), userId, Integer.toString(i), "Chiffres", 1, 0));
+            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId()+1, userId, Integer.toString(i), "Chiffres", 1, 0));
         }
     }
 
@@ -229,6 +229,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
     private void replay() {
         playSound(true);
+        updateDataInDb();
         gamePlayed++;
         delay = true;
         displayAnswer(true);
@@ -258,18 +259,33 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             textToSpeech.speak(texte, TextToSpeech.QUEUE_FLUSH, onlineSpeech);
     }
 
-    //TODO remplir les tables PlayWithSound et GameLog
     private void updateDataInDb() {
-/*
-        boolean win = false;
-        if (nbTry == 0) win = true;
+
+        PlayWithSoundData data = db.gameDao().getPWSDataByResult(
+                userId,
+                listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
+        data.setLastUsed(true);
+        boolean win;
+        if (nbTry == 0) {
+            data.setWin(data.getWin() + 1);
+            data.setWinStreak(data.getWinStreak() + 1);
+            data.setLoseStreak(0);
+            win = true;
+        } else {
+            data.setLose(data.getLose() + 1);
+            data.setLoseStreak(data.getLoseStreak() + 1);
+            data.setWinStreak(0);
+            win = false;
+        }
+        db.gameDao().updatePWSData(data);
+
         GameLog gameLog = new GameLog(
-                "WordWithHole",
+                "PlayWithSound",
                 data.getDataId(),
                 win,
                 nbTry);
         db.gameLogDao().insertGameLog(gameLog);
-*/
+
     }
 
     private void verifyAnswer(Button answer) {
