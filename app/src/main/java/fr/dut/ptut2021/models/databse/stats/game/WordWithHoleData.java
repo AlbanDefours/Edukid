@@ -10,8 +10,7 @@ public class WordWithHoleData {
     private int dataId, userId;
     @NonNull
     private String word, syllable;
-    private int image, win, winStreak, lose, loseStreak;
-    private boolean lastUsed;
+    private int image, win, winStreak, lose, loseStreak, lastUsed;
 
     public WordWithHoleData(int dataId, int userId, @NonNull String word, @NonNull String syllable, int image) {
         this.dataId = dataId;
@@ -23,7 +22,7 @@ public class WordWithHoleData {
         this.winStreak = 0;
         this.lose = 0;
         this.loseStreak = 0;
-        this.lastUsed = false;
+        this.lastUsed = -1;
     }
 
     //Getter & Setter
@@ -92,10 +91,10 @@ public class WordWithHoleData {
         this.loseStreak = loseStreak;
     }
 
-    public boolean isLastUsed() {
+    public int getLastUsed() {
         return lastUsed;
     }
-    public void setLastUsed(boolean lastUsed) {
+    public void setLastUsed(int lastUsed) {
         this.lastUsed = lastUsed;
     }
 
