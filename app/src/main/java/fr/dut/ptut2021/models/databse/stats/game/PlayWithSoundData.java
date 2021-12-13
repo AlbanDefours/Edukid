@@ -1,4 +1,4 @@
-package fr.dut.ptut2021.models.stats.game;
+package fr.dut.ptut2021.models.databse.stats.game;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;

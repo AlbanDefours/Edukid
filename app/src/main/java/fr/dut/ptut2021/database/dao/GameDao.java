@@ -9,9 +9,9 @@ import androidx.room.Update;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.dut.ptut2021.models.stats.game.DrawOnItData;
-import fr.dut.ptut2021.models.stats.game.PlayWithSoundData;
-import fr.dut.ptut2021.models.stats.game.WordWithHoleData;
+import fr.dut.ptut2021.models.databse.stats.game.DrawOnItData;
+import fr.dut.ptut2021.models.databse.stats.game.PlayWithSoundData;
+import fr.dut.ptut2021.models.databse.stats.game.WordWithHoleData;
 
 @Dao
 public interface GameDao {

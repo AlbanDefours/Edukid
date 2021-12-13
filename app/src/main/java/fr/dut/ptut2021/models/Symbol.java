@@ -1,35 +1,32 @@
 package fr.dut.ptut2021.models;
 
-import fr.dut.ptut2021.models.Point;
-
 import java.util.ArrayList;
-
 
 public class Symbol {
 
     private ArrayList<Point> points;
     private int tolerance;
 
-    public Symbol(){
+    public Symbol() {
         this.points = new ArrayList<>();
         this.tolerance = 3;
     }
 
-    public Symbol(int tolerance){
+    public Symbol(int tolerance) {
         this.points = new ArrayList<>();
         this.tolerance = tolerance;
     }
 
-    public Symbol(ArrayList<Point> points){
+    public Symbol(ArrayList<Point> points) {
         this.points = points;
         this.tolerance = 10;
     }
 
-    private int findIdOfNearestPoint(Point point){
+    private int findIdOfNearestPoint(Point point) {
         int idNearestPoint;
-        if(points.isEmpty()){
+        if (points.isEmpty()) {
             return -1;
-        }else {
+        } else {
             double dist = Math.sqrt(Math.pow(point.getX() - points.get(0).getX(), 2) + Math.pow(point.getY() - points.get(0).getY(), 2));
             idNearestPoint = 0;
             System.out.println("dist_" + dist);
@@ -46,7 +43,7 @@ public class Symbol {
     }
 
     //p1 et p2 sont les limites de la zone
-    public boolean isInArea(Point point, Point p1, Point p2){
+    public boolean isInArea(Point point, Point p1, Point p2) {
         Point test;
         test = new Point(p1);
 
@@ -54,19 +51,19 @@ public class Symbol {
 
         double coef, coefPrime, p, pPrime;
 
-        if((p1.getX() - p2.getX()) != 0){
+        if ((p1.getX() - p2.getX()) != 0) {
             System.out.print(" cc1 ");
             coef = (p1.getY() - p2.getY()) / (p1.getX() - p2.getX());
             System.out.print(" dx_" + (p1.getX() - p2.getX()) + " dy_" + (p1.getY() - p2.getY()) + " coef_" + coef + " ");
-            if(coef == 0){
+            if (coef == 0) {
                 System.out.print(" cc1_1 ");
                 coefPrime = 0;
-            }else{
+            } else {
                 System.out.print(" cc1_2 ");
                 coefPrime = -1 / (coef);
             }
             System.out.print(" coefPrime_" + coefPrime + " ");
-        }else{
+        } else {
             System.out.print(" cc2 ");
             coef = (p1.getY() - p2.getY());
             coefPrime = 0;
@@ -78,45 +75,45 @@ public class Symbol {
 
         Point inter;
 
-        if(coef + coefPrime == 0){
+        if (coef + coefPrime == 0) {
             System.out.print(" cc3_1 ");
-            inter = new Point( (pPrime - p), coef * (pPrime - p) + p);
-        }else{
+            inter = new Point((pPrime - p), coef * (pPrime - p) + p);
+        } else {
             System.out.print(" cc3_2 ");
-            inter = new Point( (pPrime - p)/(coef - coefPrime), coef * ((pPrime - p)/(coef - coefPrime)) + p);
+            inter = new Point((pPrime - p) / (coef - coefPrime), coef * ((pPrime - p) / (coef - coefPrime)) + p);
         }
         System.out.println("");
-        System.out.print(Math.sqrt(Math.pow( inter.getX() - point.getX(), 2)+Math.pow( inter.getY() - point.getY(), 2)) <= tolerance);
+        System.out.print(Math.sqrt(Math.pow(inter.getX() - point.getX(), 2) + Math.pow(inter.getY() - point.getY(), 2)) <= tolerance);
         System.out.print(" intx_" + inter.getX() + " inty_" + inter.getY() + " ");
-        System.out.print(" dist_" + Math.sqrt(Math.pow( inter.getX() - point.getX(), 2)+Math.pow( inter.getY() - point.getY(), 2)) + " ");
-        System.out.print("x²_" + Math.pow( inter.getX() - point.getX(), 2) + " y²_" + Math.pow( inter.getY() - point.getY(), 2) + " ");
+        System.out.print(" dist_" + Math.sqrt(Math.pow(inter.getX() - point.getX(), 2) + Math.pow(inter.getY() - point.getY(), 2)) + " ");
+        System.out.print("x²_" + Math.pow(inter.getX() - point.getX(), 2) + " y²_" + Math.pow(inter.getY() - point.getY(), 2) + " ");
 
 
-        if(Math.sqrt(Math.pow( inter.getX() - point.getX(), 2)+Math.pow( inter.getY() - point.getY(), 2)) <= tolerance){
+        if (Math.sqrt(Math.pow(inter.getX() - point.getX(), 2) + Math.pow(inter.getY() - point.getY(), 2)) <= tolerance) {
             return true;
         }
 
         return false;
     }
 
-    public boolean isInSymbol(Point point){
+    public boolean isInSymbol(Point point) {
         int idNearestPoint = findIdOfNearestPoint(point);
         int maxId = 0;
 
-        if(idNearestPoint == -1){
+        if (idNearestPoint == -1) {
             return false;
         }
 
-        if(idNearestPoint >= 1) {
+        if (idNearestPoint >= 1) {
             System.out.println("c1");
-            if(isInArea(point, points.get(idNearestPoint - 1), points.get(idNearestPoint))){
+            if (isInArea(point, points.get(idNearestPoint - 1), points.get(idNearestPoint))) {
                 System.out.println("c1 1");
                 return true;
             }
         }
-        if(idNearestPoint + 1 < points.size()){
+        if (idNearestPoint + 1 < points.size()) {
             System.out.println("c2");
-            if(isInArea(point, points.get(idNearestPoint), points.get(idNearestPoint + 1))){
+            if (isInArea(point, points.get(idNearestPoint), points.get(idNearestPoint + 1))) {
                 System.out.println("c2 1");
                 return true;
             }

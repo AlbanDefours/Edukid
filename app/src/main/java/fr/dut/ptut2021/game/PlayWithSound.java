@@ -9,16 +9,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,9 +26,8 @@ import java.util.Random;
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.models.stats.GameLog;
-import fr.dut.ptut2021.models.stats.game.PlayWithSoundData;
-import fr.dut.ptut2021.models.stats.game.WordWithHoleData;
+import fr.dut.ptut2021.models.databse.stats.GameLog;
+import fr.dut.ptut2021.models.databse.stats.game.PlayWithSoundData;
 
 public class PlayWithSound extends AppCompatActivity implements View.OnClickListener, TextToSpeech.OnInitListener {
 

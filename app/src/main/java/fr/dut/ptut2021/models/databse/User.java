@@ -1,4 +1,4 @@
-package fr.dut.ptut2021.models;
+package fr.dut.ptut2021.models.databse;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
