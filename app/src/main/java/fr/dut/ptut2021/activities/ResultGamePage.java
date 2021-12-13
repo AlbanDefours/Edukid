@@ -74,12 +74,14 @@ public class ResultGamePage extends AppCompatActivity {
         mpNiceTry = MediaPlayer.create(this, R.raw.kids_cheering);
     }
 
+    /*TODO Faire en sorte que les etoiles grises soit afficher de base, et que les jaunes les remplaces
+       (en fct du nb d'étoiles) en faisant l'animation que si elle devient jaune*/
     private void starsNumber(int nbStars) {
         ImageView[] tabStars = {star1, star2, star3};
         for (int i = 0; i < nbStars; i++) {
             int finalI = i;
             new Handler().postDelayed(() -> {
-                tabStars[finalI].setVisibility(View.VISIBLE);
+                tabStars[finalI].setImageResource(R.id.icon_star);
                 YoYo.with(Techniques.Swing).duration(800).playOn(tabStars[finalI]);
             }, 800L * i);
         }
@@ -91,7 +93,6 @@ public class ResultGamePage extends AppCompatActivity {
     }
 
     private void findGame() {
-        System.out.println(gameName);
         switch (gameName) {
             case "Ecoute":
                 startActivity(new Intent().setClass(getApplicationContext(), PlayWithSound.class));
