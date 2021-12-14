@@ -59,7 +59,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         BarData barData = new BarData(barDataSet);
         barChart.setFitBars(true);
         barChart.setData(barData);
-        barChart.getDescription().setText("Bar Chart Example");
+        barChart.getDescription().setText("Fréquence de jeu");
         barChart.animateY(2000);
 
     }

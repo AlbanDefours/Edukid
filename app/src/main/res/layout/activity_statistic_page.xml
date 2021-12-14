@@ -6,15 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".activities.StatisticPage">
 
+    <ImageView
+        android:id="@+id/arrow_previousPage"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_previous_page"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/title_StatisticPage"
-        android:layout_width="match_parent"
+        android:layout_width="258dp"
         android:layout_height="wrap_content"
         android:textAlignment="center"
-        android:textSize="25sp"
-        android:layout_marginTop="30dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout_button"
+        app:layout_constraintEnd_toStartOf="@+id/arrow_nextPage"
+        app:layout_constraintStart_toEndOf="@+id/arrow_previousPage"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
@@ -22,22 +30,66 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:src="@drawable/ic_next_page"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/arrow_previousPage"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@drawable/ic_previous_page"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/bar_chart"
+    <LinearLayout
+        android:id="@+id/linearLayout_button"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/arrow_nextPage">
+
+        <Button
+            android:id="@+id/buttonGeneral_statistics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="@string/general"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/buttonLettres_statistics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="@string/lettres"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/buttonChiffres_statistics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="@string/chiffres"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout_button">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/bar_chart"
+                android:layout_width="match_parent"
+                android:layout_height="250dp" />
+        </LinearLayout>
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
