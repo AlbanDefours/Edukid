@@ -9,13 +9,17 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
@@ -41,20 +45,21 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         if (!listUser.isEmpty())
             displayTitle();
 
-        createBarChart();
+        createBarChart(getGameFrequency());
     }
 
-    private void createBarChart() {
+    private void createBarChart(Map<Integer, Integer> mapData) {
         BarChart barChart = findViewById(R.id.bar_chart);
         List<BarEntry> data = new ArrayList<>();
 
-        for (int i = 0; i < 10; i++)
-            data.add(new BarEntry(2000 + i, 200 + 10*i));
+        for (Map.Entry<Integer, Integer> val : mapData.entrySet())
+            data.add(new BarEntry(val.getKey(), val.getValue()));
 
         BarDataSet barDataSet = new BarDataSet(data, "Data");
         barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         barDataSet.setValueTextColor(Color.BLACK);
         barDataSet.setValueTextSize(16f);
+        //barDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
 
         BarData barData = new BarData(barDataSet);
         barChart.setFitBars(true);
@@ -87,6 +92,12 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         verifPageLocation();
     }
 
+    private Map<Integer, Integer> getGameFrequency() {
+        Map<Integer, Integer> mapData = new HashMap<>();
+
+        return mapData;
+    }
+
 
     private void verifPageLocation() {
         if (page == 0)
@@ -111,6 +122,8 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
                 if (0 < page)
                     page--;
                 displayTitle();
+                break;
+            default:
                 break;
         }
     }

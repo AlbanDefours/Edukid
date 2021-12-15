@@ -18,6 +18,9 @@ public interface GameLogDao {
     @Query("SELECT * FROM GameLog")
     List<GameLog> getAllGameLog();
 
+    //@Query("SELECT * FROM GameLog WHERE userId = :userId AND ")
+    //List<GameLog> getGameLogByDate(int userId, long startDate);
+
 
     //For WordWithHoleData
     @Query("SELECT g.* FROM GameLog AS g NATURAL JOIN WordWithHoleData AS w WHERE w.userId = :userId")
