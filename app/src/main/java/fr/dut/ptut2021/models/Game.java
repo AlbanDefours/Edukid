@@ -1,65 +1,43 @@
 package fr.dut.ptut2021.models;
 
-import android.graphics.drawable.Drawable;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
-import java.util.ArrayList;
-
+@Entity
 public class Game {
-    private int id;
-    private String name;
-    private Drawable image;
-    private ArrayList<Theme> listTheme;
+
+    @PrimaryKey(autoGenerate = true)
+    private int gameId;
+    private String gameName;
+    private int gameImage;
 
     //Constructor
-    public Game(int id, String name, Drawable image, ArrayList<Theme> listTheme) {
-        this.id = id;
-        this.name = name;
-        this.image = image;
-        this.listTheme = listTheme;
-    }
-    public Game(int id, String name, Drawable image, Theme theme) {
-        this.id = id;
-        this.name = name;
-        this.image = image;
-        this.listTheme = new ArrayList<>();
-        this.listTheme.add(theme);
+    public Game(String gameName, int gameImage) {
+        this.gameName = gameName;
+        this.gameImage = gameImage;
     }
 
-    //Getter
-    public int getId() {
-        return id;
-    }
-    public String getName() {
-        return name;
-    }
-    public Drawable getImage() {
-        return image;
-    }
-    public ArrayList<Theme> getTheme() {
-        return listTheme;
+    public int getGameId() {
+        return gameId;
     }
 
-    //Setter
-    public void setId(int id) {
-        this.id = id;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public void setImage(Drawable image) {
-        this.image = image;
-    }
-    public void setTheme(ArrayList<Theme> listTheme) {
-        this.listTheme = listTheme;
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
     }
 
-    public Boolean checkTheme(String nameTheme) {
-        for (Theme theme : listTheme) {
-            if (nameTheme == theme.getName()) {
-                return true;
-            }
-        }
-        return false;
+    public String getGameName() {
+        return gameName;
     }
 
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
+    }
+
+    public int getGameImage() {
+        return gameImage;
+    }
+
+    public void setGameImage(int gameImage) {
+        this.gameImage = gameImage;
+    }
 }

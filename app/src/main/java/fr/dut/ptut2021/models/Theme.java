@@ -1,39 +1,43 @@
 package fr.dut.ptut2021.models;
 
-import android.graphics.drawable.Drawable;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+@Entity
 public class Theme {
-    private int id;
-    private String name;
-    private Drawable image;
+
+    @PrimaryKey(autoGenerate = true)
+    private int themeId;
+    private String themeName;
+    private int themeImage;
 
     //Constructor
-    public Theme(int id, String name, Drawable image) {
-        this.id = id;
-        this.name = name;
-        this.image = image;
+    public Theme(String themeName, int themeImage) {
+        this.themeName = themeName;
+        this.themeImage = themeImage;
     }
 
-    //Getter
-    public int getId() {
-        return id;
-    }
-    public String getName() {
-        return name;
-    }
-    public Drawable getImage() {
-        return image;
+    public int getThemeId() {
+        return themeId;
     }
 
-    //Setter
-    public void setId(int id) {
-        this.id = id;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public void setImage(Drawable image) {
-        this.image = image;
+    public void setThemeId(int themeId) {
+        this.themeId = themeId;
     }
 
+    public String getThemeName() {
+        return themeName;
+    }
+
+    public void setThemeName(String themeName) {
+        this.themeName = themeName;
+    }
+
+    public int getThemeImage() {
+        return themeImage;
+    }
+
+    public void setThemeImage(int themeImage) {
+        this.themeImage = themeImage;
+    }
 }

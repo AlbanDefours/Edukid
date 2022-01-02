@@ -1,19 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="fr.dut.ptut2021">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
+        android:name=".adapters.ApplicationPtut"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true"
         android:theme="@style/Theme.PTUT2021">
+        <activity
+            android:name=".game.DrawOnIt"
+            android:exported="false" />
+        <activity
+            android:name=".game.PlayWithSound"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ResultGamePage"
+            android:exported="false" />
+        <activity
+            android:name=".activities.UserResume"
+            android:exported="false" />
         <activity
             android:name=".activities.UserEdit"
             android:exported="false" />
         <activity
             android:name=".activities.StatisticPage"
+            android:exported="false" />
+        <activity
+            android:name=".game.WordWithHole"
             android:exported="false" />
         <activity
             android:name=".activities.LoadingPage"
@@ -24,6 +45,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".game.Memory"
+            android:exported="false" />
         <activity
             android:name=".activities.UserMenu"
             android:exported="false" />
