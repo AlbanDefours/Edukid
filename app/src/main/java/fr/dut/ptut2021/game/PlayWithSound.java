@@ -9,10 +9,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -44,9 +46,8 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private MediaPlayer mpGoodAnswer, mpWrongAnswer;
     private final Button[] listButton = new Button[3];
     private final int MAX_GAME_PLAYED = 5;
-    private int userId, gamePlayed = 1, nbTry = 0;
+    private int userId, gamePlayed = 1, nbTry = 0, answerFalse = 0, nbrStars = 0;
     private Random random = new Random();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -234,7 +235,13 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                 }
             } else {
                 Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
-                intent.putExtra("starsNumber", 3);
+                if(0 <= answerFalse && answerFalse < (MAX_GAME_PLAYED*2)/3)
+                    nbrStars = 3;
+                else if ((MAX_GAME_PLAYED*2)/3 <= answerFalse && answerFalse <= ((MAX_GAME_PLAYED*2)/3)*2)
+                    nbrStars = 2;
+                else
+                    nbrStars = 1;
+                intent.putExtra("starsNumber", nbrStars);
                 startActivity(intent);
                 finish();
             }
@@ -285,6 +292,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             replay();
         } else {
             answer.setBackgroundColor(Color.RED);
+            answerFalse++;
             setWordAndAddDelay();
             answer.setEnabled(false);
         }
