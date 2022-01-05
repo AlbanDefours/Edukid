@@ -6,67 +6,58 @@
     android:layout_height="match_parent"
     tools:context=".activities.ResultGamePage">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp"
-        android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent">
+    <ImageView
+        android:id="@+id/icon_star1"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="50dp"
+        android:src="@drawable/icon_star_disable"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/icon_star1"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:src="@drawable/icon_star1"
-            android:visibility="invisible"
-            android:layout_marginTop="45dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/icon_star2"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginBottom="120dp"
+        android:src="@drawable/icon_star_disable"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/icon_star2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/icon_star2"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <ImageView
-            android:id="@+id/icon_star3"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:src="@drawable/icon_star3"
-            android:visibility="invisible"
-            android:layout_marginTop="45dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:id="@+id/icon_star3"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="50dp"
+        android:src="@drawable/icon_star_disable"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_felicitation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="Félicitations !!"
-        android:textSize="35sp"
         android:layout_marginTop="100dp"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:text="Félicitations !!"
+        android:textAlignment="center"
+        android:textSize="35sp"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="125dp"
+        android:gravity="center"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="125dp"
-        android:orientation="horizontal"
-        android:gravity="center">
+        app:layout_constraintStart_toStartOf="parent">
 
         <ImageView
             android:id="@+id/retryButton_ResultPage"

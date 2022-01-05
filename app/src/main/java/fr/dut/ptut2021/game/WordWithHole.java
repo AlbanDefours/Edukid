@@ -25,8 +25,8 @@ import java.util.Random;
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.models.stats.GameLog;
-import fr.dut.ptut2021.models.stats.game.WordWithHoleData;
+import fr.dut.ptut2021.models.databse.stats.GameLog;
+import fr.dut.ptut2021.models.databse.stats.game.WordWithHoleData;
 
 public class WordWithHole extends AppCompatActivity implements View.OnClickListener {
 

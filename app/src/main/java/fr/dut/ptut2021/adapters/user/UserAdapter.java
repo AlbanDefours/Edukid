@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.models.User;
+import fr.dut.ptut2021.models.databse.User;
 
 public class UserAdapter extends RecyclerView.Adapter<MyViewHolderUser> {
 

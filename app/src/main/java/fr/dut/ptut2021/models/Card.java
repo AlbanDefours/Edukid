@@ -2,7 +2,7 @@ package fr.dut.ptut2021.models;
 
 public class Card {
     private String value;
-    private boolean hidden=true;
+    private boolean hidden = true;
     private int drawableImage;
 
 
@@ -37,5 +37,4 @@ public class Card {
     public void setValue(String value) {
         this.value = value;
     }
-
 }
