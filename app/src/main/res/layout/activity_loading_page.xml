@@ -10,7 +10,7 @@
         android:id="@+id/applicationName"
         android:layout_width="300dp"
         android:layout_height="300dp"
-        android:src="@drawable/kakid"
+        android:src="@drawable/edukid"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

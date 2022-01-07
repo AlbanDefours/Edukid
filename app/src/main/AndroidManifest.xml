@@ -5,9 +5,9 @@
     <application
         android:name=".adapters.ApplicationPtut"
         android:allowBackup="true"
-        android:icon="@mipmap/icon_kakid"
+        android:icon="@mipmap/icon_edukid"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/icon_kakid_round"
+        android:roundIcon="@mipmap/icon_edukid_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PTUT2021">
         <activity
