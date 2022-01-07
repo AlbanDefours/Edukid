@@ -1,8 +1,10 @@
 package fr.dut.ptut2021.activities;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,6 +33,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     private TextView title;
     private List<User> listUser;
     private CreateDatabase db = null;
+    private Button generalPage, lettresPage, chiffresPage;
     private ImageView nextPage, previousPage;
 
     @Override
@@ -39,13 +42,25 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_statistic_page);
 
         initViews();
-        createDbAndImportUsers();
         initOnClickViews();
+        createDbAndImportUsers();
 
         if (!listUser.isEmpty())
             displayTitle();
 
+        displayGeneralPage();
+    }
+
+    private void displayGeneralPage() {
         createBarChart(getGameFrequency());
+    }
+
+    private void displayChiffresPage() {
+
+    }
+
+    private void displayLettresPage() {
+
     }
 
     private void createBarChart(Map<Integer, Integer> mapData) {
@@ -69,12 +84,6 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     }
 
-    private void initViews() {
-        title = findViewById(R.id.title_StatisticPage);
-        nextPage = findViewById(R.id.arrow_nextPage);
-        previousPage = findViewById(R.id.arrow_previousPage);
-    }
-
     private void createDbAndImportUsers() {
         db = CreateDatabase.getInstance(StatisticPage.this);
         if (!db.appDao().tabUserIsEmpty()) {
@@ -82,9 +91,23 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    private void initViews() {
+        title = findViewById(R.id.title_StatisticPage);
+        generalPage = findViewById(R.id.buttonGeneral_statistics);
+        lettresPage = findViewById(R.id.buttonLettres_statistics);
+        chiffresPage = findViewById(R.id.buttonChiffres_statistics);
+        nextPage = findViewById(R.id.arrow_nextPage);
+        previousPage = findViewById(R.id.arrow_previousPage);
+    }
+
     private void initOnClickViews() {
+        generalPage.setOnClickListener(this);
+        lettresPage.setOnClickListener(this);
+        chiffresPage.setOnClickListener(this);
         nextPage.setOnClickListener(this);
         previousPage.setOnClickListener(this);
+
+        generalPage.setEnabled(false);
     }
 
     private void displayTitle() {
@@ -97,22 +120,40 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
         return mapData;
     }
-
-
+    
     private void verifPageLocation() {
+        previousPage.setAlpha(1f);
+        nextPage.setAlpha(1f);
         if (page == 0)
             previousPage.setAlpha(0.5f);
         if (page == listUser.size() - 1)
             nextPage.setAlpha(0.5f);
-        else {
-            previousPage.setAlpha(1f);
-            nextPage.setAlpha(1f);
-        }
     }
 
+    public void lockButton(Button button) {
+        generalPage.setEnabled(true);
+        lettresPage.setEnabled(true);
+        chiffresPage.setEnabled(true);
+        button.setEnabled(false);
+    }
+
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.buttonGeneral_statistics:
+                lockButton(generalPage);
+                displayGeneralPage();
+                break;
+            case R.id.buttonChiffres_statistics:
+                lockButton(chiffresPage);
+                displayChiffresPage();
+                break;
+            case R.id.buttonLettres_statistics:
+                lockButton(lettresPage);
+                displayLettresPage();
+                break;
+
             case R.id.arrow_nextPage:
                 if (page < listUser.size() - 1)
                     page++;
