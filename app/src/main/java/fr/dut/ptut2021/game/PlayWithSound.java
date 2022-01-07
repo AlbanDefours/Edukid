@@ -36,7 +36,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private CreateDatabase db;
     private ImageView btnSound;
     private TextView goodAnswer;
-    private boolean delay = false;
+    private boolean delay = false, isAnswerFalseWord = false;
     private List<String> listAnswer;
     private List<Integer> listChooseResult;
     private TextToSpeech textToSpeech;
@@ -46,7 +46,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private MediaPlayer mpGoodAnswer, mpWrongAnswer;
     private final Button[] listButton = new Button[3];
     private final int MAX_GAME_PLAYED = 5;
-    private int userId, gamePlayed = 1, nbTry = 0, answerFalse = 0, nbrStars = 0;
+    private int userId, gamePlayed = 1, nbTry = 0, answerFalse = 0, nbrStars = 0, answerFalseWord = 0;
     private Random random = new Random();
 
     @Override
@@ -76,16 +76,16 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
         String[] alphabetList = getResources().getStringArray(R.array.alphabet);
         for (String letter : alphabetList) {
-            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId()+1, userId, letter, "Lettres", 1, 0));
+            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId() + 1, userId, letter, "Lettres", 1, 0));
         }
 
         String[] syllableList = getResources().getStringArray(R.array.syllable);
         for (String syllable : syllableList) {
-            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId()+1, userId, syllable, "Lettres", 2, 0));
+            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId() + 1, userId, syllable, "Lettres", 2, 0));
         }
 
         for (int i = 1; i < 10; i++) {
-            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId()+1, userId, Integer.toString(i), "Chiffres", 1, 0));
+            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId() + 1, userId, Integer.toString(i), "Chiffres", 1, 0));
         }
     }
 
@@ -118,15 +118,13 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             if (!listDataNeverUsed.isEmpty() && !listChooseResult.contains(listDataNeverUsed.get(0))) {
                 listChooseResult.add(listDataNeverUsed.get(0));
                 listDataNeverUsed.remove(0);
-            }
-            else if (!listDataNotUsed.isEmpty()) {
+            } else if (!listDataNotUsed.isEmpty()) {
                 int rand = random.nextInt(listDataNotUsed.size());
                 if (!listChooseResult.contains(listDataNotUsed.get(rand))) {
                     listChooseResult.add(listDataNotUsed.get(rand));
                     listDataNotUsed.remove(rand);
                 }
-            }
-            else {
+            } else {
                 int rand = random.nextInt(listDataUsed.size());
                 if (!listChooseResult.contains(listDataUsed.get(rand))) {
                     listChooseResult.add(listDataUsed.get(rand));
@@ -139,15 +137,15 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
     private void readTheAnswer() {
         if (themeName.equals("Lettres"))
-            speak("Trouve la lettre : " + listData.get(listChooseResult.get(gamePlayed-1)).getResult());
+            speak("Trouve la lettre : " + listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
         else if (themeName.equals("Chiffres"))
-            speak("Trouve le chiffre : " + listData.get(listChooseResult.get(gamePlayed-1)).getResult());
+            speak("Trouve le chiffre : " + listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
     }
 
     private void initListAnswer() {
         listAnswer = new ArrayList<>();
 
-        listAnswer.add(listData.get(listChooseResult.get(gamePlayed-1)).getResult());
+        listAnswer.add(listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
         while (listAnswer.size() < 3) {
             int rand = random.nextInt(listData.size());
             if (!listAnswer.contains(listData.get(rand).getResult()))
@@ -207,11 +205,11 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void displayAnswer(boolean showAnswer){
-        if(showAnswer){
+    private void displayAnswer(boolean showAnswer) {
+        if (showAnswer) {
             btnSound.setVisibility(View.INVISIBLE);
             goodAnswer.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             btnSound.setVisibility(View.VISIBLE);
             goodAnswer.setVisibility(View.INVISIBLE);
         }
@@ -221,6 +219,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         playSound(true);
         updateDataInDb();
         gamePlayed++;
+        answerFalseWord=0;
         delay = true;
         displayAnswer(true);
         new Handler().postDelayed(() -> {
@@ -235,12 +234,12 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                 }
             } else {
                 Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
-                if(0 <= answerFalse && answerFalse < (MAX_GAME_PLAYED*2)/3)
+                if (0 <= answerFalse && answerFalse < 2)//Nombre etoile
                     nbrStars = 3;
-                else if ((MAX_GAME_PLAYED*2)/3 <= answerFalse && answerFalse <= ((MAX_GAME_PLAYED*2)/3)*2)
-                    nbrStars = 2;
-                else
+                else if (isAnswerFalseWord)
                     nbrStars = 1;
+                else
+                    nbrStars = 2;
                 intent.putExtra("starsNumber", nbrStars);
                 startActivity(intent);
                 finish();
@@ -251,8 +250,11 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private void speak(String texte) {
         HashMap<String, String> onlineSpeech = new HashMap<>();
         onlineSpeech.put(TextToSpeech.Engine.KEY_FEATURE_NETWORK_SYNTHESIS, "true");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            if(texte.equals("Trouve la lettre : Y") || texte.equals("Trouve la lettre : y"))
+                textToSpeech.speak("Trouve la lettre : igrec", TextToSpeech.QUEUE_FLUSH, null, null);
             textToSpeech.speak(texte, TextToSpeech.QUEUE_FLUSH, null, null);
+        }
         else
             textToSpeech.speak(texte, TextToSpeech.QUEUE_FLUSH, onlineSpeech);
     }
@@ -293,6 +295,10 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         } else {
             answer.setBackgroundColor(Color.RED);
             answerFalse++;
+            answerFalseWord++;
+            if(answerFalseWord == 2)
+                isAnswerFalseWord = true;
+            Log.d("WILL", "" + answerFalseWord);
             setWordAndAddDelay();
             answer.setEnabled(false);
         }
