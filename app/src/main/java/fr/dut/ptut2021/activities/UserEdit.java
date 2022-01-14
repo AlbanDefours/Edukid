@@ -1,16 +1,27 @@
 package fr.dut.ptut2021.activities;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -28,9 +39,14 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private Button valid, cancel, delete;
     private TextInputEditText textField_userName;
     private boolean isAddUser = false, tabUserIsEmpty = false;
+    private static final int CAMERA_REQUEST = 1888, MY_CAMERA_PERMISSION_CODE = 100;
+
+    private final static int REQUEST_CODE_ASK_PERMISSIONS = 1;
+    private static final String[] REQUIRED_SDK_PERMISSIONS = new String[]{
+            Manifest.permission.CAMERA};
 
     //TODO (a changer, pour le choix des images)
-    private int cpt= 0;
+    private int cpt = 0;
     private final int[] tableauImage = {R.drawable.a, R.drawable.b, R.drawable.c, R.drawable.d};
 
     @Override
@@ -77,7 +93,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
-    private void getUserAttribute(Bundle bundle){
+    private void getUserAttribute(Bundle bundle) {
         userName = bundle.getString("userName", "");
         userId = bundle.getInt("userId", 0);
         imageTmp = bundle.getInt("userImage", R.drawable.a);
@@ -132,10 +148,9 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                     if (wantToDelete) {
                         deleteGameData();
                         db.appDao().deleteUserById(userId);
-                        if (db.appDao().tabUserIsEmpty()){
+                        if (db.appDao().tabUserIsEmpty()) {
                             startUserMenuPage(true);
-                        }
-                        else
+                        } else
                             startUserResumePage();
                     } else
                         finish();
@@ -159,8 +174,27 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.userAvatar_editPage:
-                cpt= ++cpt% 4;
-                userAvatar.setImageResource(tableauImage[cpt]);
+                PopupMenu popupMenu = new PopupMenu(UserEdit.this, findViewById(R.id.userAvatar_editPage));
+                popupMenu.getMenuInflater().inflate(R.menu.menu_popup, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.M)
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.gallery_app:
+                                cpt = ++cpt % 4;
+                                userAvatar.setImageResource(tableauImage[cpt]);
+                                break;
+                            case R.id.gallery_tel:
+                                break;
+                            case R.id.camera:
+                                takePhoto();
+                                break;
+                        }
+                        return true;
+                    }
+                });
+                popupMenu.show();
                 break;
 
             case R.id.buttonValider_userEditPage:
@@ -182,6 +216,14 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
+    private void takePhoto() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+        } else
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+    }
+
     private void deleteGameData() {
         db.gameDao().deleteWWHDataByUser(userId);
         //TODO rajouter les fonctions de suppression des jeux à venir
@@ -189,7 +231,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
 
     private void startUserMenuPage(boolean force) {
         Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
-        if(force)
+        if (force)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
@@ -201,5 +243,36 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         startActivity(intent);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         finish();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MY_CAMERA_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                takePhoto();
+            else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    new AlertDialog.Builder(UserEdit.this)
+                            .setMessage("Vous devez accepter cette permission pour continuer.")
+                            .setPositiveButton("OK", (dialog, which) -> {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+                            })
+                            .setNegativeButton("Annuler", null)
+                            .create()
+                            .show();
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            userAvatar.setImageBitmap(photo);
+        }
     }
 }
