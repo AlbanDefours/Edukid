@@ -100,7 +100,6 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 }
             }
             else {
-
                 int rand = random.nextInt(listDataUsed.size());
                 if (!listChooseWord.contains(listDataUsed.get(rand))) {
                     listChooseWord.add(listDataUsed.get(rand));

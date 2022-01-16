@@ -14,11 +14,12 @@ import fr.dut.ptut2021.models.databse.Theme;
 import fr.dut.ptut2021.models.databse.ThemeGameCrossRef;
 import fr.dut.ptut2021.models.databse.User;
 import fr.dut.ptut2021.models.databse.stats.GameLog;
+import fr.dut.ptut2021.models.databse.stats.GameResultLog;
 import fr.dut.ptut2021.models.databse.stats.game.DrawOnItData;
 import fr.dut.ptut2021.models.databse.stats.game.PlayWithSoundData;
 import fr.dut.ptut2021.models.databse.stats.game.WordWithHoleData;
 
-@Database(entities = { User.class, Theme.class, Game.class, ThemeGameCrossRef.class, GameLog.class, WordWithHoleData.class, PlayWithSoundData.class, DrawOnItData.class}, version = 4, exportSchema = false)
+@Database(entities = { User.class, Theme.class, Game.class, ThemeGameCrossRef.class, GameLog.class, GameResultLog.class, WordWithHoleData.class, PlayWithSoundData.class, DrawOnItData.class}, version = 5, exportSchema = false)
 public abstract class CreateDatabase extends RoomDatabase {
 
     // --- SINGLETON ---

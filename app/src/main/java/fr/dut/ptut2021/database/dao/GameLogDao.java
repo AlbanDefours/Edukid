@@ -6,12 +6,23 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import fr.dut.ptut2021.models.databse.stats.GameLog;
+import fr.dut.ptut2021.models.databse.stats.GameResultLog;
 
 import java.util.List;
 
 @Dao
 public interface GameLogDao {
 
+    //GAME RESULT LOG
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertGameResultLog(GameResultLog gameResultLog);
+
+    @Query("SELECT * FROM GameResultLog")
+    List<GameResultLog> getAllGameResultLog();
+
+
+
+    //GAME LOG
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertGameLog(GameLog gameLog);
 
