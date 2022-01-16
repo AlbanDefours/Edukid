@@ -26,6 +26,7 @@ import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.databse.stats.GameLog;
+import fr.dut.ptut2021.models.databse.stats.GameResultLog;
 import fr.dut.ptut2021.models.databse.stats.game.WordWithHoleData;
 
 public class WordWithHole extends AppCompatActivity implements View.OnClickListener {
@@ -234,8 +235,10 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 word.setTextColor(Color.BLACK);
                 resetButton();
             } else {
+                int stars = starsNumber();
+                addGameResultLogInDb(stars);
                 Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
-                intent.putExtra("starsNumber", starsNumber());
+                intent.putExtra("starsNumber", stars);
                 startActivity(intent);
                 finish();
             }
@@ -279,6 +282,11 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 win,
                 nbTry);
         db.gameLogDao().insertGameLog(gameLog);
+    }
+
+    private void addGameResultLogInDb(int stars) {
+        GameResultLog gameResultLog = new GameResultLog("WordWithHole", userId, stars);
+        db.gameLogDao().insertGameResultLog(gameResultLog);
     }
 
     private void verifyAnswer(Button answer, int numAnswer) {

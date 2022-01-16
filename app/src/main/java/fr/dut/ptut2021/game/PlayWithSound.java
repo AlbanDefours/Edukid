@@ -29,6 +29,7 @@ import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.databse.stats.GameLog;
+import fr.dut.ptut2021.models.databse.stats.GameResultLog;
 import fr.dut.ptut2021.models.databse.stats.game.PlayWithSoundData;
 
 public class PlayWithSound extends AppCompatActivity implements View.OnClickListener, TextToSpeech.OnInitListener {
@@ -240,6 +241,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                     nbrStars = 1;
                 else
                     nbrStars = 2;
+                addGameResultLogInDb(nbrStars);
                 intent.putExtra("starsNumber", nbrStars);
                 startActivity(intent);
                 finish();
@@ -286,6 +288,11 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                 nbTry);
         db.gameLogDao().insertGameLog(gameLog);
 
+    }
+
+    private void addGameResultLogInDb(int stars) {
+        GameResultLog gameResultLog = new GameResultLog("PlayWithSound", userId, stars);
+        db.gameLogDao().insertGameResultLog(gameResultLog);
     }
 
     private void verifyAnswer(Button answer) {

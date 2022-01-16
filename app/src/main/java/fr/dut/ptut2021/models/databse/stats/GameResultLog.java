@@ -9,12 +9,12 @@ public class GameResultLog {
     @PrimaryKey(autoGenerate = true)
     private int gameResultLogId;
     private String gameName;
-    private int stars;
+    private int userId, stars;
     private long endGameDate;
 
-    public GameResultLog(int gameResultLogId, String gameName, int stars) {
-        this.gameResultLogId = gameResultLogId;
+    public GameResultLog(String gameName, int userId, int stars) {
         this.gameName = gameName;
+        this.userId = userId;
         this.stars = stars;
         this.endGameDate = System.currentTimeMillis();
         //java.sql.Date date=new java.sql.Date(creationDate);  TO CONVERT
@@ -26,6 +26,14 @@ public class GameResultLog {
 
     public void setGameResultLogId(int gameResultLogId) {
         this.gameResultLogId = gameResultLogId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getGameName() {
