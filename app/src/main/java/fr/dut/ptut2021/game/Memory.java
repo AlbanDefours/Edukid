@@ -32,20 +32,6 @@ public class Memory extends AppCompatActivity {
     private MediaPlayer mpWrongAnswer;
     private CreateDatabase db;
 
-
-    ArrayList<Integer> drawableImages = new ArrayList<>();
-
-    private void initDrawableImages(){
-        drawableImages.add(R.drawable.arbre);
-        drawableImages.add(R.drawable.chien);
-        drawableImages.add(R.drawable.ballon);
-    }
-
-   /* public Memory(ArrayList<Card> listCard){
-
-        display();
-    }*/
-
     private void shuffle(){
         Collections.shuffle(listCard);
         Collections.shuffle(listCard);
@@ -114,7 +100,7 @@ public class Memory extends AppCompatActivity {
         intent.putExtra("starsNumber", nbStar);
         startActivity(intent);
         finish();
-        }, 3000);
+        }, 2000);
 
         return true;
     }
@@ -143,10 +129,9 @@ public class Memory extends AppCompatActivity {
 
         mpGoodAnswer = MediaPlayer.create(this, R.raw.correct_answer);
         mpWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
-        initDrawableImages();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory);
-        System.out.println("test: "+(int)(Math.random()*drawableImages.size()));
         listCard = new ArrayList<>();
         listCard.add(new Card("1",R.drawable.one));
         listCard.add(new Card("2",R.drawable.two));
@@ -156,8 +141,9 @@ public class Memory extends AppCompatActivity {
         listCard.add(new Card("6",R.drawable.six));
 
         int size = listCard.size();
+        int sizeImage = db.appDao().getNbWords();
         for(int i=0;i<size;i++){
-            this.listCard.add( new Card(listCard.get(i).getValue(),drawableImages.get((int)(Math.random()*drawableImages.size()))));
+            this.listCard.add( new Card(listCard.get(i).getValue(),db.appDao().getWordById((int)(Math.random()*sizeImage)).getImage()));
         }
         shuffle();
 
