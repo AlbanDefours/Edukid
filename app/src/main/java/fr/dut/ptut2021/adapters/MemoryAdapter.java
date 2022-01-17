@@ -2,6 +2,7 @@ package fr.dut.ptut2021.adapters;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,7 +77,17 @@ public class MemoryAdapter extends BaseAdapter {
             holder.returnCard.setImageResource(R.drawable.imgreturn);
             holder.pattern.setImageResource(R.drawable.patternimg);
             holder.background.setImageResource(R.drawable.backgroundmemory);
-            holder.element.setImageResource(listCard.get(i).getDrawableImage());
+            SharedPreferences settings = context.getSharedPreferences("MyPref", 0);
+
+            String themeName = settings.getString("themeName", "");
+            if(themeName.equals("Chiffres") && !listCard.get(i).getValue().equals("1") && !isChiffre(listCard.get(i).getDrawableImage())){
+                for (int k=0;k<Integer.parseInt(listCard.get(i).getValue());k++){
+                    holder.elements.get(k).setImageResource(listCard.get(i).getDrawableImage());
+                }
+            }
+            else{
+                holder.elements.get(0).setImageResource(listCard.get(i).getDrawableImage());
+            }
 
             //
             double width = (1094.0 + 20) / numColumns;
@@ -90,7 +101,39 @@ public class MemoryAdapter extends BaseAdapter {
 
             layoutParams = new RelativeLayout.LayoutParams((int) sizeElement, (int) sizeElement);
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-            holder.element.setLayoutParams(layoutParams);
+            holder.interieurCard.setLayoutParams(layoutParams);
+
+
+            if(themeName.equals("Chiffres") && !listCard.get(i).getValue().equals("1") && !isChiffre(listCard.get(i).getDrawableImage())){
+                System.out.println("c'est VRAIIIIIIII");
+                switch (listCard.get(i).getValue()){
+                    case "2":
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement);
+                        holder.elements.get(0).setLayoutParams(layoutParams);
+
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement);
+                        layoutParams.setMargins((int)(sizeElement/2),0,0,0);
+                        holder.elements.get(1).setLayoutParams(layoutParams);
+                        break;
+                    case "3":
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/2);
+                        holder.elements.get(0).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/2);
+                        layoutParams.setMargins(0,(int)(sizeElement/2),0,0);
+                        holder.elements.get(1).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/2);
+                        layoutParams.setMargins((int)(sizeElement/2),(int)(sizeElement/2),0,0);
+                        holder.elements.get(2).setLayoutParams(layoutParams);
+                        break;
+                }
+            }
+            else{
+                System.out.println("c'est FAUUUUUUX");
+                layoutParams = new RelativeLayout.LayoutParams((int) sizeElement, (int) sizeElement);
+                layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+                holder.elements.get(0).setLayoutParams(layoutParams);
+            }
+
 
             holder.hidden = listCard.get(i).isHidden();
 
@@ -122,6 +165,14 @@ public class MemoryAdapter extends BaseAdapter {
 
     public void setCard(ArrayList<Integer> position){
         this.position = position;
+    }
+
+    private boolean isChiffre(int drawableImage){
+        if(drawableImage!= R.drawable.one && drawableImage!= R.drawable.two && drawableImage!= R.drawable.three && drawableImage!= R.drawable.four && drawableImage!= R.drawable.five && drawableImage!= R.drawable.six){
+            return false;
+        }
+        else
+            return true;
     }
 
 }

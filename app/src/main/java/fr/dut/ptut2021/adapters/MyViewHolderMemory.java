@@ -9,13 +9,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+
 import fr.dut.ptut2021.R;
 
 public class MyViewHolderMemory extends RecyclerView.ViewHolder {
 
     boolean hidden;
     View viewCard;
-    ImageView element;
+    View interieurCard;
+    ArrayList<ImageView> elements = new ArrayList<>();
     ImageView pattern;
     ImageView returnCard;
     ImageView background;
@@ -29,7 +32,17 @@ public class MyViewHolderMemory extends RecyclerView.ViewHolder {
     public MyViewHolderMemory(@NonNull View itemView) {
         super(itemView);
         viewCard = itemView.findViewById(R.id.viewCard);
-        element = itemView.findViewById(R.id.elementMemory);
+        interieurCard = itemView.findViewById(R.id.interieurCard);
+        elements.add(itemView.findViewById(R.id.elementMemory1));
+        elements.add(itemView.findViewById(R.id.elementMemory2));
+        elements.add(itemView.findViewById(R.id.elementMemory3));
+        elements.add(itemView.findViewById(R.id.elementMemory4));
+        elements.add(itemView.findViewById(R.id.elementMemory5));
+        elements.add(itemView.findViewById(R.id.elementMemory6));
+        elements.add(itemView.findViewById(R.id.elementMemory7));
+        elements.add(itemView.findViewById(R.id.elementMemory8));
+        elements.add(itemView.findViewById(R.id.elementMemory9));
+
         pattern = itemView.findViewById(R.id.patternImgMemory);
         background = itemView.findViewById(R.id.backgroundImgMemory);
         returnCard = itemView.findViewById(R.id.returnImgMemory);

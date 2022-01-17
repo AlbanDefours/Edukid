@@ -27,6 +27,14 @@ public class Memory extends AppCompatActivity {
     int numColumns;
     boolean isClicked=false;
 
+    ArrayList<Integer> drawableImages = new ArrayList<>();
+
+    private void initDrawableImages(){
+        drawableImages.add(R.drawable.arbre);
+        drawableImages.add(R.drawable.chien);
+        drawableImages.add(R.drawable.ballon);
+    }
+
    /* public Memory(ArrayList<Card> listCard){
 
         display();
@@ -121,9 +129,10 @@ public class Memory extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        initDrawableImages();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory);
-
+        System.out.println("test: "+(int)(Math.random()*drawableImages.size()));
         listCard = new ArrayList<>();
         listCard.add(new Card("1",R.drawable.one));
         listCard.add(new Card("2",R.drawable.two));
@@ -134,7 +143,7 @@ public class Memory extends AppCompatActivity {
 
         int size = listCard.size();
         for(int i=0;i<size;i++){
-            this.listCard.add( new Card(listCard.get(i)));
+            this.listCard.add( new Card(listCard.get(i).getValue(),drawableImages.get((int)(Math.random()*drawableImages.size()))));
         }
         shuffle();
 
