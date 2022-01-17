@@ -4,20 +4,19 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity (primaryKeys = {"userId", "word", "syllable"})
+@Entity (primaryKeys = {"userId", "result"})
 public class WordWithHoleData {
 
     private int dataId, userId;
     @NonNull
-    private String word, syllable;
-    private int image, win, winStreak, lose, loseStreak, lastUsed;
+    private String result;
+    private int difficulty, win, winStreak, lose, loseStreak, lastUsed;
 
-    public WordWithHoleData(int dataId, int userId, @NonNull String word, @NonNull String syllable, int image) {
+    public WordWithHoleData(int dataId, int userId, @NonNull String result, int difficulty) {
         this.dataId = dataId;
         this.userId = userId;
-        this.word = word;
-        this.syllable = syllable;
-        this.image = image;
+        this.result = result;
+        this.difficulty = difficulty;
         this.win = 0;
         this.winStreak = 0;
         this.lose = 0;
@@ -41,26 +40,18 @@ public class WordWithHoleData {
     }
 
     @NonNull
-    public String getWord() {
-        return word;
+    public String getResult() {
+        return result;
     }
-    public void setWord(@NonNull String word) {
-        this.word = word;
-    }
-
-    @NonNull
-    public String getSyllable() {
-        return syllable;
-    }
-    public void setSyllable(@NonNull String syllable) {
-        this.syllable = syllable;
+    public void setResult(@NonNull String result) {
+        this.result = result;
     }
 
-    public int getImage() {
-        return image;
+    public int getDifficulty() {
+        return difficulty;
     }
-    public void setImage(int image) {
-        this.image = image;
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
     }
 
     public int getWin() {

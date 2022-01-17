@@ -1,14 +1,21 @@
 package fr.dut.ptut2021.database.dao;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import org.checkerframework.checker.units.qual.A;
+
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
+import fr.dut.ptut2021.game.WordWithHole;
 import fr.dut.ptut2021.models.databse.stats.game.DrawOnItData;
 import fr.dut.ptut2021.models.databse.stats.game.PlayWithSoundData;
 import fr.dut.ptut2021.models.databse.stats.game.WordWithHoleData;
@@ -29,21 +36,43 @@ public interface GameDao {
     @Query("UPDATE WordWithHoleData SET lastUsed = 0 WHERE userId = :userId AND lastUsed = 1")
     void updateAllWWHDataLastUsed(int userId);
 
-    @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId AND word = :word AND syllable = :syllable")
-    WordWithHoleData getWWHDataByData(int userId, String word, String syllable);
+    @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId AND result = :result")
+    WordWithHoleData getWWHDataByData(int userId, String result);
 
     @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId")
     List<WordWithHoleData> getAllWWHData(int userId);
 
-    default List<Integer> getAllWWHDataLastUsed(List<WordWithHoleData> listData, int lastUsed) {
-        List<Integer> listInt = new ArrayList<>();
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    default List<String> getAllWWHDataLastUsed(List<WordWithHoleData> listData, int difficulty, int lastUsed) {
+        List<String> listRes = new ArrayList<>();
+        List<WordWithHoleData> listDataSort = new ArrayList<>();
+        List<WordWithHoleData> listSortLose = new ArrayList<>();
+        List<WordWithHoleData> listSortWin = new ArrayList<>();
+        List<WordWithHoleData> listNeverUsed = new ArrayList<>();
+
 
         for (int i = 0; i < listData.size(); i++) {
-            if (listData.get(i).getLastUsed() == lastUsed) {
-                listInt.add(i);
+            if (listData.get(i).getLoseStreak() > 0)
+                listSortLose.add(listData.get(i));
+            else if (listData.get(i).getWinStreak() > 0)
+                listSortWin.add(listData.get(i));
+            else
+                listNeverUsed.add(listData.get(i));
+        }
+        listSortLose.sort(Comparator.comparing(WordWithHoleData::getLoseStreak).reversed());
+        listSortWin.sort(Comparator.comparing(WordWithHoleData::getLoseStreak));
+
+        listDataSort.addAll(listSortLose);
+        listDataSort.addAll(listNeverUsed);
+        listDataSort.addAll(listSortWin);
+
+        for (int i = 0; i < listDataSort.size(); i++) {
+            if (listDataSort.get(i).getLastUsed() == lastUsed && listDataSort.get(i).getDifficulty() == difficulty) {
+                listRes.add(listDataSort.get(i).getResult());
             }
         }
-        return  listInt;
+        return listRes;
     }
 
     @Query("DELETE FROM WordWithHoleData WHERE userId = :userId")

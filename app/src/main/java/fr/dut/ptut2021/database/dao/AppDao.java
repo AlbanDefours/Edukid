@@ -12,6 +12,7 @@ import fr.dut.ptut2021.models.databse.Game;
 import fr.dut.ptut2021.models.databse.Theme;
 import fr.dut.ptut2021.models.databse.ThemeGameCrossRef;
 import fr.dut.ptut2021.models.databse.User;
+import fr.dut.ptut2021.models.databse.Word;
 
 @Dao
 public interface AppDao {
@@ -110,5 +111,20 @@ public interface AppDao {
 
     default boolean tabUserIsEmpty() {
         return getAllUsers().isEmpty();
+    }
+
+
+    //Word
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertWord(Word word);
+
+    @Query("SELECT * FROM Word")
+    List<Word> getAllWords();
+
+    @Query("SELECT * FROM Word WHERE word LIKE :str")
+    Word getWordsIfContain(String str);
+
+    default boolean tabWordIsEmpty() {
+        return getAllWords().isEmpty();
     }
 }

@@ -14,6 +14,7 @@ import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.databse.Game;
 import fr.dut.ptut2021.models.databse.Theme;
 import fr.dut.ptut2021.models.databse.ThemeGameCrossRef;
+import fr.dut.ptut2021.models.databse.Word;
 
 public class LoadingPage extends AppCompatActivity {
 
@@ -48,6 +49,7 @@ public class LoadingPage extends AppCompatActivity {
         createThemes();
         createGames();
         createThemeGamesCross();
+        createWords();
     }
 
     //Here to add/update/delete Theme
@@ -79,6 +81,17 @@ public class LoadingPage extends AppCompatActivity {
             db.appDao().insertThemeGame(new ThemeGameCrossRef("Ecoute", "Chiffres"));
             db.appDao().insertThemeGame(new ThemeGameCrossRef("Ecoute", "Lettres"));
         }
+    }
+
+    //Here to add Words with images
+    private void createWords() {
+        db.appDao().insertWord(new Word("AVION", R.drawable.image_avion));
+        db.appDao().insertWord(new Word("MAISON", R.drawable.image_maison));
+        db.appDao().insertWord(new Word("POULE", R.drawable.image_poule));
+        db.appDao().insertWord(new Word("BOUCHE", R.drawable.image_bouche));
+        db.appDao().insertWord(new Word("LIVRE", R.drawable.image_livre));
+        db.appDao().insertWord(new Word("VACHE", R.drawable.image_vache));
+        db.appDao().insertWord(new Word("TOMATE", R.drawable.image_tomate));
     }
 
     private void openUserMenuPage() {

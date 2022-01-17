@@ -1,18 +1,39 @@
 package fr.dut.ptut2021.activities;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
@@ -20,23 +41,28 @@ import fr.dut.ptut2021.models.databse.User;
 
 public class UserEdit extends AppCompatActivity implements View.OnClickListener {
 
+    private Vibrator vibe;
     private TextView title;
-    private String userName;
     private ImageView userAvatar;
-    private int userId, imageTmp;
     private CreateDatabase db = null;
-    private Button valid, cancel, delete;
+    private Button valid, cancel, delete, inport;
     private TextInputEditText textField_userName;
+    private String userName, imageLocation = null;
+    private int userId, imageTmp, userImageType = 0;
     private boolean isAddUser = false, tabUserIsEmpty = false;
+    private static final int CAMERA_REQUEST = 20, MY_CAMERA_PERMISSION_CODE = 200;
+    private static final int GALLERY_REQUEST = 30, MY_STORAGE_PERMISSION_CODE = 300;
 
-    //TODO (a changer, pour le choix des images)
-    private int cpt= 0;
+    private int cpt = 0;
     private final int[] tableauImage = {R.drawable.a, R.drawable.b, R.drawable.c, R.drawable.d};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_edit);
+
+        vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        imageLocation = String.valueOf(tableauImage[0]);
 
         getDb();
         initializeLayout();
@@ -56,6 +82,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         valid = findViewById(R.id.buttonValider_userEditPage);
         cancel = findViewById(R.id.buttonCancel_userEditPage);
         delete = findViewById(R.id.buttonDelete_userEditPage);
+        inport = findViewById(R.id.buttonImport_userEditPage);
     }
 
     private void checkIfAddOrUpdateUser() {
@@ -77,7 +104,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
-    private void getUserAttribute(Bundle bundle){
+    private void getUserAttribute(Bundle bundle) {
         userName = bundle.getString("userName", "");
         userId = bundle.getInt("userId", 0);
         imageTmp = bundle.getInt("userImage", R.drawable.a);
@@ -100,24 +127,21 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         valid.setOnClickListener(this);
         cancel.setOnClickListener(this);
         delete.setOnClickListener(this);
+        inport.setOnClickListener(this);
     }
 
     private void createUser() {
-        if (isAddUser && isCorrect()) {
-            if (db.appDao().tabUserIsEmpty()) {
-                db.appDao().insertUser(new User(textField_userName.getText().toString(), tableauImage[cpt]));
-                startUserMenuPage(false);
-            } else {
-                db.appDao().insertUser(new User(textField_userName.getText().toString(), tableauImage[cpt]));
-                startUserResumePage();
-            }
-        } else if (!isAddUser && isCorrect()) {
+        if (isAddUser && isDataCorrect()) {
+            db.appDao().insertUser(new User(textField_userName.getText().toString(), imageLocation, userImageType));
+            startUserMenuPage(false);
+        } else if (!isAddUser && isDataCorrect()) {
             User user = db.appDao().getUserById(userId);
             user.setUserName(textField_userName.getText().toString());
-            user.setUserImage(tableauImage[cpt]);
+            user.setUserImage(imageLocation);
+            user.setUserImageType(userImageType);
             db.appDao().updateUser(user);
             startUserResumePage();
-        } else if (!isCorrect()) {
+        } else if (!isDataCorrect()) {
             Toast.makeText(getApplicationContext(), "Veuillez saisir un prénom", Toast.LENGTH_SHORT).show();
         }
     }
@@ -130,13 +154,11 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                 (dialog, which) -> {
                     dialog.dismiss();
                     if (wantToDelete) {
-                        deleteGameData();
+                        //File file = new File(db.appDao().getUserById(userId).getUserImage());
+                        //file.delete(); //TODO a verif, ca supprimes la mauvaise on dirait
+                        deleteGameData(); //TODO delete all stats
                         db.appDao().deleteUserById(userId);
-                        if (db.appDao().tabUserIsEmpty()){
-                            startUserMenuPage(true);
-                        }
-                        else
-                            startUserResumePage();
+                        startUserMenuPage(db.appDao().tabUserIsEmpty());
                     } else
                         finish();
                 });
@@ -145,21 +167,18 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         alertDialog.show();
     }
 
-    //TODO (verify image is correct)
-    private boolean isCorrect() {
-        return !isUserNameEmpty();
-    }
-
-    private boolean isUserNameEmpty() {
-        return textField_userName.getText().toString().isEmpty();
+    private boolean isDataCorrect() {
+        return !textField_userName.getText().toString().isEmpty() && imageLocation != null;
     }
 
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
+        vibrate();
         switch (v.getId()) {
             case R.id.userAvatar_editPage:
-                cpt= ++cpt% 4;
+                cpt = ++cpt % 4;
+                imageLocation = String.valueOf(tableauImage[cpt]);
                 userAvatar.setImageResource(tableauImage[cpt]);
                 break;
 
@@ -177,9 +196,73 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
             case R.id.buttonDelete_userEditPage:
                 showMesageDialog("Suppression d'un utilisateur", "Voulez-vous vraiment supprimer \"" + userName + "\" ?", true);
                 break;
+
+            case R.id.buttonImport_userEditPage:
+                PopupMenu popupMenu = new PopupMenu(UserEdit.this, findViewById(R.id.userAvatar_editPage));
+                popupMenu.inflate(R.menu.menu_popup);
+                popupMenu.setOnMenuItemClickListener(item -> {
+                    switch (item.getItemId()) {
+                        case R.id.gallery_tel:
+                            getPhotoFromGallery();
+                            break;
+                        case R.id.camera:
+                            takePhoto();
+                            break;
+                    }
+                    return true;
+                });
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    popupMenu.setForceShowIcon(true);
+                } else {
+                    try {
+                        Field[] fields = popupMenu.getClass().getDeclaredFields();
+                        for (Field field : fields) {
+                            if ("mPopup".equals(field.getName())) {
+                                field.setAccessible(true);
+                                Object menuPopupHelper = field.get(popupMenu);
+                                Class<?> classPopupHelper = Class.forName(menuPopupHelper
+                                        .getClass().getName());
+                                Method setForceIcons = classPopupHelper.getMethod(
+                                        "setForceShowIcon", boolean.class);
+                                setForceIcons.invoke(menuPopupHelper, true);
+                                break;
+                            }
+                        }
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                }
+                popupMenu.show();
+                break;
             default:
                 break;
         }
+    }
+
+    public void vibrate() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            vibe.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
+        else
+            vibe.vibrate(35);
+    }
+
+    private void getPhotoFromGallery() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            String[] mimeTypes = {"image/jpeg", "image/png", "image/jpg"};
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+            startActivityForResult(intent, GALLERY_REQUEST);
+        } else
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_STORAGE_PERMISSION_CODE);
+    }
+
+    private void takePhoto() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+        } else
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
     }
 
     private void deleteGameData() {
@@ -189,7 +272,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
 
     private void startUserMenuPage(boolean force) {
         Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
-        if(force)
+        if (force)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
@@ -201,5 +284,92 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         startActivity(intent);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         finish();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MY_CAMERA_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                takePhoto();
+            else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    new AlertDialog.Builder(UserEdit.this)
+                            .setMessage("Vous devez accepter cette permission pour continuer.")
+                            .setPositiveButton("OK", (dialog, which) -> {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+                            })
+                            .setNegativeButton("Annuler", null)
+                            .create()
+                            .show();
+                }
+            }
+        }
+        if (requestCode == MY_STORAGE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                getPhotoFromGallery();
+            else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                Toast.makeText(getApplicationContext(), "Permission non accordée !", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK)
+            switch (requestCode) {
+                case GALLERY_REQUEST:
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                    Cursor cursor = getContentResolver().query(data.getData(), filePathColumn, null, null, null);
+                    cursor.moveToFirst();
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    imageLocation = cursor.getString(columnIndex);
+                    cursor.close();
+                    Bitmap bitmap = BitmapFactory.decodeFile(imageLocation);
+                    if (bitmap.getWidth() < bitmap.getHeight())
+                        bitmap = Bitmap.createBitmap(bitmap, 0, (bitmap.getHeight() - bitmap.getWidth()) / 2, bitmap.getWidth(), bitmap.getWidth());
+                    else if (bitmap.getWidth() > bitmap.getHeight())
+                        bitmap = Bitmap.createBitmap(bitmap, (bitmap.getWidth() - bitmap.getHeight()) / 2, 0, bitmap.getHeight(), bitmap.getHeight());
+                    if (bitmap.getWidth() > 150)
+                        bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, false);
+                    imageLocation = saveToInternalStorage(bitmap);
+                    userImageType = GALLERY_REQUEST;
+                    userAvatar.setImageBitmap(bitmap);
+                    break;
+
+                case CAMERA_REQUEST:
+                    Bitmap photo = (Bitmap) data.getExtras().get("data");
+                    if (photo.getWidth() < photo.getHeight())
+                        photo = Bitmap.createBitmap(photo, 0, (photo.getHeight() - photo.getWidth()) / 2, photo.getWidth(), photo.getWidth());
+                    else if (photo.getWidth() > photo.getHeight())
+                        photo = Bitmap.createBitmap(photo, (photo.getWidth() - photo.getHeight()) / 2, 0, photo.getHeight(), photo.getHeight());
+                    imageLocation = saveToInternalStorage(photo);
+                    userImageType = CAMERA_REQUEST;
+                    userAvatar.setImageBitmap(photo);
+                    break;
+            }
+    }
+
+    private String saveToInternalStorage(Bitmap bitmapImage) {
+        int id = db.appDao().getAllUsers().size() + 1;
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        File mypath = new File(directory, "userimage" + id + ".jpg");
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mypath);
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 80, fos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return mypath.getAbsolutePath();
     }
 }
