@@ -117,6 +117,7 @@ public class MemoryAdapter extends BaseAdapter {
                         break;
                     case "3":
                         layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/2);
+                        layoutParams.setMargins((int)(sizeElement/4),0,0,0);
                         holder.elements.get(0).setLayoutParams(layoutParams);
                         layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/2);
                         layoutParams.setMargins(0,(int)(sizeElement/2),0,0);
@@ -124,6 +125,140 @@ public class MemoryAdapter extends BaseAdapter {
                         layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/2);
                         layoutParams.setMargins((int)(sizeElement/2),(int)(sizeElement/2),0,0);
                         holder.elements.get(2).setLayoutParams(layoutParams);
+                        break;
+                    case "4":
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/2);
+                        holder.elements.get(0).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/2);
+                        layoutParams.setMargins((int)(sizeElement/2),0,0,0);
+                        holder.elements.get(1).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/2);
+                        layoutParams.setMargins(0,(int)(sizeElement/2),0,0);
+                        holder.elements.get(2).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/2);
+                        layoutParams.setMargins((int)(sizeElement/2),(int)(sizeElement/2),0,0);
+                        holder.elements.get(3).setLayoutParams(layoutParams);
+                        break;
+                    case "5":
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/3);
+                        holder.elements.get(0).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/3);
+                        layoutParams.setMargins((int)(sizeElement/2),0,0,0);
+                        holder.elements.get(1).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/3);
+                        layoutParams.setMargins((int)(sizeElement/4),(int)(sizeElement*0.33),0,0);
+                        holder.elements.get(2).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/3);
+                        layoutParams.setMargins(0,(int)(sizeElement*0.66),0,0);
+                        holder.elements.get(3).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/3);
+                        layoutParams.setMargins((int)(sizeElement/2),(int)(sizeElement*0.66),0,0);
+                        holder.elements.get(4).setLayoutParams(layoutParams);
+                        break;
+                    case "6":
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/3);
+                        holder.elements.get(0).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/3);
+                        layoutParams.setMargins((int)(sizeElement/2),0,0,0);
+                        holder.elements.get(1).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/3);
+                        layoutParams.setMargins(0,(int)(sizeElement*0.33),0,0);
+                        holder.elements.get(2).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/3);
+                        layoutParams.setMargins((int)(sizeElement/2),(int)(sizeElement*0.33),0,0);
+                        holder.elements.get(3).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/3);
+                        layoutParams.setMargins(0,(int)(sizeElement*0.66),0,0);
+                        holder.elements.get(4).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/3);
+                        layoutParams.setMargins((int)(sizeElement/2),(int)(sizeElement*0.66),0,0);
+                        holder.elements.get(5).setLayoutParams(layoutParams);
+                        break;
+                    case "7":
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) (sizeElement/3.5));
+                        holder.elements.get(0).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) (sizeElement/3.5));
+                        layoutParams.setMargins((int)(sizeElement/2),0,0,0);
+                        holder.elements.get(1).setLayoutParams(layoutParams);
+
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) (sizeElement/3.5));
+                        layoutParams.setMargins((int)(sizeElement/4),(int)(sizeElement*0.165),0,0);
+                        holder.elements.get(2).setLayoutParams(layoutParams);
+
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) (sizeElement/3.5));
+                        layoutParams.setMargins(0,(int)(sizeElement*0.33),0,0);
+                        holder.elements.get(3).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) (sizeElement/3.5));
+                        layoutParams.setMargins((int)(sizeElement/2),(int)(sizeElement*0.33),0,0);
+                        holder.elements.get(4).setLayoutParams(layoutParams);
+
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) (sizeElement/3.5));
+                        layoutParams.setMargins(0,(int)(sizeElement*0.66),0,0);
+                        holder.elements.get(5).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) (sizeElement/3.5));
+                        layoutParams.setMargins((int)(sizeElement/2),(int)(sizeElement*0.66),0,0);
+                        holder.elements.get(6).setLayoutParams(layoutParams);
+                        break;
+                    case "8":
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/4);
+                        holder.elements.get(0).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/4);
+                        layoutParams.setMargins((int)(sizeElement/2),0,0,0);
+                        holder.elements.get(1).setLayoutParams(layoutParams);
+
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/4);
+                        layoutParams.setMargins((int)(sizeElement/4),(int)(sizeElement*0.165),0,0);
+                        holder.elements.get(2).setLayoutParams(layoutParams);
+
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/4);
+                        layoutParams.setMargins(0,(int)(sizeElement*0.33),0,0);
+                        holder.elements.get(3).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/4);
+                        layoutParams.setMargins((int)(sizeElement/2),(int)(sizeElement*0.33),0,0);
+                        holder.elements.get(4).setLayoutParams(layoutParams);
+
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/4);
+                        layoutParams.setMargins((int)(sizeElement/4),(int)(sizeElement*0.495),0,0);
+                        holder.elements.get(5).setLayoutParams(layoutParams);
+
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/4);
+                        layoutParams.setMargins(0,(int)(sizeElement*0.66),0,0);
+                        holder.elements.get(6).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement/4);
+                        layoutParams.setMargins((int)(sizeElement/2),(int)(sizeElement*0.66),0,0);
+                        holder.elements.get(7).setLayoutParams(layoutParams);
+                        break;
+                    case "9":
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) (sizeElement/4.5));
+                        holder.elements.get(0).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) (sizeElement/4.5));
+                        layoutParams.setMargins((int)(sizeElement/2),0,0,0);
+                        holder.elements.get(1).setLayoutParams(layoutParams);
+
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) (sizeElement/4.5));
+                        layoutParams.setMargins(0,(int)(sizeElement*0.25),0,0);
+                        holder.elements.get(2).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) (sizeElement/4.5));
+                        layoutParams.setMargins((int)(sizeElement/2),(int)(sizeElement*0.25),0,0);
+                        holder.elements.get(3).setLayoutParams(layoutParams);
+
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) (sizeElement/4.5));
+                        layoutParams.setMargins((int)(sizeElement/4),(int)(sizeElement*0.375),0,0);
+                        holder.elements.get(4).setLayoutParams(layoutParams);
+
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) (sizeElement/4.5));
+                        layoutParams.setMargins(0,(int)(sizeElement*0.5),0,0);
+                        holder.elements.get(5).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) (sizeElement/4.5));
+                        layoutParams.setMargins((int)(sizeElement/2),(int)(sizeElement*0.5),0,0);
+                        holder.elements.get(6).setLayoutParams(layoutParams);
+
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) (sizeElement/4.5));
+                        layoutParams.setMargins(0,(int)(sizeElement*0.75),0,0);
+                        holder.elements.get(7).setLayoutParams(layoutParams);
+                        layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) (sizeElement/4.5));
+                        layoutParams.setMargins((int)(sizeElement/2),(int)(sizeElement*0.75),0,0);
+                        holder.elements.get(8).setLayoutParams(layoutParams);
                         break;
                 }
             }
