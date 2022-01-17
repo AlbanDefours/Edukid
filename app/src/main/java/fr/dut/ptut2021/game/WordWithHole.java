@@ -135,9 +135,9 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 if (mapChooseData.size() <= MAX_GAME_PLAYED) {
                     if (!mapChooseData.containsKey(list.get(j).get(k)) &&
                             (lastDifficulty || db.gameDao().getWWHDataByData(userId, list.get(j).get(k)).getWinStreak() < 3) &&
-                            db.appDao().getWordsIfContain('%' + list.get(j).get(k) + '%') != null
+                            db.appDao().getWordIfContain('%' + list.get(j).get(k) + '%') != null
                     ) {
-                        mapChooseData.put(list.get(j).get(k), db.appDao().getWordsIfContain('%' + list.get(j).get(k) + '%'));
+                        mapChooseData.put(list.get(j).get(k), db.appDao().getWordIfContain('%' + list.get(j).get(k) + '%'));
                         list.get(j).remove(k);
                     }
                 }

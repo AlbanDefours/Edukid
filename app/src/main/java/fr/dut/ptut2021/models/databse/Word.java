@@ -7,7 +7,8 @@ import androidx.room.PrimaryKey;
 @Entity
 public class Word {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    private int wordId;
     @NonNull
     private String word;
     private int image;
@@ -15,6 +16,13 @@ public class Word {
     public Word(String word, int image) {
         this.word = word;
         this.image = image;
+    }
+
+    public int getWordId() {
+        return wordId;
+    }
+    public void setWordId(int wordId) {
+        this.wordId = wordId;
     }
 
     public String getWord() {

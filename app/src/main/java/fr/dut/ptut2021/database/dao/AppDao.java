@@ -121,8 +121,14 @@ public interface AppDao {
     @Query("SELECT * FROM Word")
     List<Word> getAllWords();
 
+    @Query("SELECT COUNT(*) FROM Word")
+    int getNbWords();
+
+    @Query("SELECT * FROM Word WHERE wordId = :id ")
+    Word getWordWithId(int id);
+
     @Query("SELECT * FROM Word WHERE word LIKE :str")
-    Word getWordsIfContain(String str);
+    Word getWordIfContain(String str);
 
     default boolean tabWordIsEmpty() {
         return getAllWords().isEmpty();
