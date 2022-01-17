@@ -1,5 +1,7 @@
 package fr.dut.ptut2021.game;
 
+import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -10,7 +12,9 @@ import android.widget.GridView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import fr.dut.ptut2021.R;
+import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.adapters.MemoryAdapter;
+import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.Card;
 
 import java.io.IOException;
@@ -24,6 +28,18 @@ public class Memory extends AppCompatActivity {
     private int idLastCardReturn=-1;
     int numColumns;
     boolean isClicked=false;
+    private MediaPlayer mpGoodAnswer;
+    private MediaPlayer mpWrongAnswer;
+    private CreateDatabase db;
+
+
+    ArrayList<Integer> drawableImages = new ArrayList<>();
+
+    private void initDrawableImages(){
+        drawableImages.add(R.drawable.arbre);
+        drawableImages.add(R.drawable.chien);
+        drawableImages.add(R.drawable.ballon);
+    }
 
    /* public Memory(ArrayList<Card> listCard){
 
@@ -55,22 +71,52 @@ public class Memory extends AppCompatActivity {
                 } else {
                     new Handler().postDelayed(() -> {
                         if (idCard != idLastCardReturn && listCard.get(idLastCardReturn).getValue() == listCard.get(idCard).getValue()) {
-
+                            mpGoodAnswer.start();
                             idLastCardReturn = -1;
                         } else {
                             listCard.get(idCard).setHidden(true);
                             listCard.get(idLastCardReturn).setHidden(true);
+                            mpWrongAnswer.start();
                             returnableCards.add(idLastCardReturn);
                             memoryAdapter.setCard(returnableCards);
                             memoryAdapter.notifyDataSetChanged();
 
                             idLastCardReturn = -1;
                         }
-                        System.out.println("JE SUIS LA");
                         isClicked=false;
                     }, 1000);
                 }
         }
+    }
+
+    private boolean isWin(){
+        for(int i=0;i<listCard.size();i++){
+            if(listCard.get(i).isHidden()){
+                return false;
+            }
+        }
+        int ptMalus=0;
+        for(int i=0;i<listCard.size();i++){
+            if(listCard.get(i).getNbReturn()>0){
+                ptMalus+=listCard.get(i).getNbReturn()-1;
+            }
+        }
+        int nbStar;
+        if(ptMalus<=2)
+            nbStar=3;
+        else if(ptMalus<=5)
+            nbStar=2;
+        else
+            nbStar=1;
+
+        new Handler().postDelayed(() -> {
+        Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
+        intent.putExtra("starsNumber", nbStar);
+        startActivity(intent);
+        finish();
+        }, 3000);
+
+        return true;
     }
 
     public void display(MemoryAdapter memoryAdapter) throws IOException, InterruptedException {
@@ -93,9 +139,14 @@ public class Memory extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        db = CreateDatabase.getInstance(Memory.this);
+
+        mpGoodAnswer = MediaPlayer.create(this, R.raw.correct_answer);
+        mpWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
+        initDrawableImages();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory);
-
+        System.out.println("test: "+(int)(Math.random()*drawableImages.size()));
         listCard = new ArrayList<>();
         listCard.add(new Card("1",R.drawable.one));
         listCard.add(new Card("2",R.drawable.two));
@@ -106,7 +157,7 @@ public class Memory extends AppCompatActivity {
 
         int size = listCard.size();
         for(int i=0;i<size;i++){
-            this.listCard.add( new Card(listCard.get(i)));
+            this.listCard.add( new Card(listCard.get(i).getValue(),drawableImages.get((int)(Math.random()*drawableImages.size()))));
         }
         shuffle();
 
@@ -125,6 +176,8 @@ public class Memory extends AppCompatActivity {
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                 if(!isClicked) {
                     returnCard(position, memoryAdapter);
+
+                    isWin();
                 }
             }
         });

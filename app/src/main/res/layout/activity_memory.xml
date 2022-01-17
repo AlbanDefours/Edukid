@@ -8,11 +8,31 @@
     android:layout_height="match_parent"
     tools:context=".game.Memory">
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="15dp"
+        android:fontFamily="@font/magimt"
+        android:text="MEMORY"
+        android:textAlignment="center"
+        android:textColor="#00BCD4"
+        android:textSize="48sp" />
+
 
     <GridView
-        android:stretchMode="columnWidth"
         android:id="@+id/gridview_memory"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:stretchMode="columnWidth"></GridView>
 </RelativeLayout>
 
