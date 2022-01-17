@@ -1,6 +1,7 @@
 package fr.dut.ptut2021.game;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -8,6 +9,8 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -51,6 +54,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private boolean delay = false;
     private MediaPlayer mpGoodAnswer, mpWrongAnswer;
     private Random random = new Random();
+    private Vibrator vibe;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -89,6 +93,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initGame() {
+        vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         listData = new ArrayList<>(db.gameDao().getAllWWHData(userId));
         mapChooseData = new HashMap<>();
         List<List<String>> listDataDif1 = new ArrayList<>();
@@ -197,6 +202,14 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             mpGoodAnswer.start();
         else
             mpWrongAnswer.start();
+    }
+
+
+    public void vibrate() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            vibe.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
+        else
+            vibe.vibrate(35);
     }
 
     private String concatWrongAnswer(int indAnswer) {
@@ -327,6 +340,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void verifyAnswer(Button answer, int numAnswer) {
+        vibrate();
         if (answer.getText() == goodAnswer) {
             answer.setBackgroundColor(Color.GREEN);
             replay();
