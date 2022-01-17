@@ -125,7 +125,7 @@ public interface AppDao {
     int getNbWords();
 
     @Query("SELECT * FROM Word WHERE wordId = :id ")
-    Word getWordWithId(int id);
+    Word getWordById(int id);
 
     @Query("SELECT * FROM Word WHERE word LIKE :str")
     Word getWordIfContain(String str);
