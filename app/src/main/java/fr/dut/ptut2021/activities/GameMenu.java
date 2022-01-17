@@ -16,10 +16,11 @@ import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.game.GameAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.game.DrawOnIt;
 import fr.dut.ptut2021.game.Memory;
 import fr.dut.ptut2021.game.PlayWithSound;
 import fr.dut.ptut2021.game.WordWithHole;
-import fr.dut.ptut2021.models.Game;
+import fr.dut.ptut2021.models.databse.Game;
 
 public class GameMenu extends AppCompatActivity {
 
@@ -75,17 +76,19 @@ public class GameMenu extends AppCompatActivity {
         recyclerViewListGame.setAdapter(new GameAdapter(getApplicationContext(), gameList));
     }
 
-    //TODO A mettre les jeux développer
     private void findWhichGame(int position) {
         switch (gameList.get(position).getGameName()) {
-            case "Mot à trou":
-                startActivity(new Intent().setClass(getApplicationContext(), WordWithHole.class));
+            case "Ecoute":
+                startActivity(new Intent().setClass(getApplicationContext(), PlayWithSound.class));
+                break;
+            case "Dessine":
+                startActivity(new Intent().setClass(getApplicationContext(), DrawOnIt.class));
                 break;
             case "Memory":
                 startActivity(new Intent().setClass(getApplicationContext(), Memory.class));
                 break;
-            case "Ecoute":
-                startActivity(new Intent().setClass(getApplicationContext(), PlayWithSound.class));
+            case "Mot à trou":
+                startActivity(new Intent().setClass(getApplicationContext(), WordWithHole.class));
                 break;
         }
     }

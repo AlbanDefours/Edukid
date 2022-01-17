@@ -2,6 +2,7 @@ package fr.dut.ptut2021.models;
 
 public class Card {
     private String value;
+
     private boolean hidden=true;
     private int nbReturn=0;
     private int drawableImage;
@@ -46,3 +47,5 @@ public class Card {
         return nbReturn;
     }
 }
+
+

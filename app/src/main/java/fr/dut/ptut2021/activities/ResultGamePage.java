@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,13 +13,11 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 
 import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.game.Memory;
-import fr.dut.ptut2021.game.PlayWithSound;
-import fr.dut.ptut2021.game.WordWithHole;
+import fr.dut.ptut2021.game.*;
 
 public class ResultGamePage extends AppCompatActivity {
 
-    private int starsNb;
+    private int starsNb = 0;
     private String gameName, themeName;
     private MediaPlayer mpNiceTry;
     private ImageView star1, star2, star3, exit, replay;
@@ -50,9 +47,10 @@ public class ResultGamePage extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
 
         if (bundle != null)
-            starsNb = bundle.getInt("starsNumber", 2);
-        else
-            starsNb = 3;
+            starsNb = bundle.getInt("starsNumber", 0);
+
+        if(starsNb > 3 || starsNb < 1)
+            starsNb = 2;
     }
 
     private void getGameThemeName() {
@@ -80,7 +78,7 @@ public class ResultGamePage extends AppCompatActivity {
         for (int i = 0; i < 3; i++) {
             int finalI = i;
             new Handler().postDelayed(() -> {
-                tabStars[finalI].setVisibility(View.VISIBLE);
+                tabStars[finalI].setImageResource(R.drawable.icon_star);
                 YoYo.with(Techniques.Swing).duration(800).playOn(tabStars[finalI]);
             }, 800L * i);
         }
@@ -88,17 +86,16 @@ public class ResultGamePage extends AppCompatActivity {
         new Handler().postDelayed(() -> {
             YoYo.with(Techniques.Tada).duration(1000).repeat(2).playOn(findViewById(R.id.text_felicitation));
             mpNiceTry.start();
-        }, 600L * nbStars + 500);
+        }, 800L * nbStars + 200);
     }
 
     private void findGame() {
-        System.out.println(gameName);
         switch (gameName) {
             case "Ecoute":
                 startActivity(new Intent().setClass(getApplicationContext(), PlayWithSound.class));
                 break;
             case "Dessine":
-                //startActivity(new Intent().setClass(getApplicationContext(), DrawOnIt.class));
+                startActivity(new Intent().setClass(getApplicationContext(), DrawOnIt.class));
                 break;
             case "Memory":
                 startActivity(new Intent().setClass(getApplicationContext(), Memory.class));

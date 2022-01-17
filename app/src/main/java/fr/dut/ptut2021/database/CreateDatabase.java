@@ -9,14 +9,14 @@ import androidx.room.RoomDatabase;
 import fr.dut.ptut2021.database.dao.AppDao;
 import fr.dut.ptut2021.database.dao.GameDao;
 import fr.dut.ptut2021.database.dao.GameLogDao;
-import fr.dut.ptut2021.models.Game;
-import fr.dut.ptut2021.models.Theme;
-import fr.dut.ptut2021.models.ThemeGameCrossRef;
-import fr.dut.ptut2021.models.User;
-import fr.dut.ptut2021.models.stats.GameLog;
-import fr.dut.ptut2021.models.stats.game.DrawOnItData;
-import fr.dut.ptut2021.models.stats.game.PlayWithSoundData;
-import fr.dut.ptut2021.models.stats.game.WordWithHoleData;
+import fr.dut.ptut2021.models.databse.Game;
+import fr.dut.ptut2021.models.databse.Theme;
+import fr.dut.ptut2021.models.databse.ThemeGameCrossRef;
+import fr.dut.ptut2021.models.databse.User;
+import fr.dut.ptut2021.models.databse.stats.GameLog;
+import fr.dut.ptut2021.models.databse.stats.game.DrawOnItData;
+import fr.dut.ptut2021.models.databse.stats.game.PlayWithSoundData;
+import fr.dut.ptut2021.models.databse.stats.game.WordWithHoleData;
 
 @Database(entities = { User.class, Theme.class, Game.class, ThemeGameCrossRef.class, GameLog.class, WordWithHoleData.class, PlayWithSoundData.class, DrawOnItData.class}, version = 4, exportSchema = false)
 public abstract class CreateDatabase extends RoomDatabase {

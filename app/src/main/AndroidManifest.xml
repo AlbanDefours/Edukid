@@ -5,11 +5,14 @@
     <application
         android:name=".adapters.ApplicationPtut"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/icon_edukid"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/icon_edukid_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PTUT2021">
+        <activity
+            android:name=".game.DrawOnIt"
+            android:exported="false" />
         <activity
             android:name=".game.PlayWithSound"
             android:exported="false" />

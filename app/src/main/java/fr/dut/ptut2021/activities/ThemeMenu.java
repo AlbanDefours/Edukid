@@ -16,7 +16,7 @@ import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.theme.ThemeAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.models.Theme;
+import fr.dut.ptut2021.models.databse.Theme;
 
 public class ThemeMenu extends AppCompatActivity {
 
