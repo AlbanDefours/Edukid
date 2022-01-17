@@ -30,6 +30,8 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -47,8 +49,8 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private CreateDatabase db = null;
     private Button valid, cancel, delete, inport;
     private TextInputEditText textField_userName;
-    private String userName, imageLocation = null;
-    private int userId, imageTmp, userImageType = 0;
+    private String userName, imageLocation = null, imageTmp;
+    private int userId, userImageType = 0, imageAvatarType = -1;
     private boolean isAddUser = false, tabUserIsEmpty = false;
     private static final int CAMERA_REQUEST = 20, MY_CAMERA_PERMISSION_CODE = 200;
     private static final int GALLERY_REQUEST = 30, MY_STORAGE_PERMISSION_CODE = 300;
@@ -107,18 +109,29 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private void getUserAttribute(Bundle bundle) {
         userName = bundle.getString("userName", "");
         userId = bundle.getInt("userId", 0);
-        imageTmp = bundle.getInt("userImage", R.drawable.a);
+        imageTmp = bundle.getString("userImage", String.valueOf(R.drawable.a));
+        imageAvatarType = bundle.getInt("userImageType", -1);
     }
 
     private void findCurrentImageUser() {
-        for (int i = 0; i < tableauImage.length; i++) {
-            if (tableauImage[i] == imageTmp)
-                cpt = i;
+        if(imageAvatarType == 0){
+            for (int i = 0; i < tableauImage.length; i++) {
+                if (tableauImage[i] == Integer.parseInt(imageTmp))
+                    cpt = i;
+            }
+            userAvatar.setImageResource(Integer.parseInt(imageTmp));
+        } else {
+            try {
+                File f = new File(imageTmp);
+                Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
+                userAvatar.setImageBitmap(b);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     private void fillInFields() {
-        userAvatar.setImageResource(imageTmp);
         textField_userName.setText(userName);
     }
 
