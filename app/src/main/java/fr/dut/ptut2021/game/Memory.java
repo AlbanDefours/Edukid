@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.adapters.MemoryAdapter;
+import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.Card;
 
 import java.io.IOException;
@@ -29,6 +30,8 @@ public class Memory extends AppCompatActivity {
     boolean isClicked=false;
     private MediaPlayer mpGoodAnswer;
     private MediaPlayer mpWrongAnswer;
+    private CreateDatabase db;
+
 
     ArrayList<Integer> drawableImages = new ArrayList<>();
 
@@ -136,6 +139,8 @@ public class Memory extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        db = CreateDatabase.getInstance(Memory.this);
+
         mpGoodAnswer = MediaPlayer.create(this, R.raw.correct_answer);
         mpWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
         initDrawableImages();
