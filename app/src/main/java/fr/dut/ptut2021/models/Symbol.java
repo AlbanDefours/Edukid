@@ -144,7 +144,7 @@ public class Symbol {
 
     public boolean pointIsInRectangle(Point p, Point[] rect){
         int somme = 0;
-        for(int i = 0; i < 3; i++){
+        for(int i = 0; i < 4; i++){
             somme += PointIsOnTheUpperRightSideOfTheLine(p, rect[i], rect[(i + 1) % 4]);
             System.out.println(i + " " + (i + 1) % 4);
         }
@@ -168,20 +168,6 @@ public class Symbol {
         rect[1] = new Point(p1.getX() - x, p1.getY() + y);
         rect[2] = new Point(p1.getX() + x, p1.getY() + y);
         rect[3] = new Point(p1.getX() - x, p1.getY() + y);
-
-        /*
-        rect[0].setX(p1.getX() + x);
-        rect[0].setY(p1.getY() + y);
-
-        rect[1].setX(p1.getX() - x);
-        rect[1].setY(p1.getY() + y);
-
-        rect[2].setX(p2.getX() + x);
-        rect[2].setY(p2.getY() + y);
-
-        rect[3].setX(p2.getX() - x);
-        rect[3].setY(p2.getY() + y);
-        */
 
         return pointIsInRectangle(p, rect);
 
