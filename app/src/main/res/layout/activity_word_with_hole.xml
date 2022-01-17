@@ -25,7 +25,7 @@
         android:layout_width="411dp"
         android:layout_height="247dp"
         android:layout_marginBottom="104dp"
-        android:src="@drawable/wordwithhole_avion"
+        android:src="@drawable/image_avion"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

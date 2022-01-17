@@ -15,7 +15,6 @@ import fr.dut.ptut2021.models.databse.Game;
 import fr.dut.ptut2021.models.databse.Theme;
 import fr.dut.ptut2021.models.databse.ThemeGameCrossRef;
 import fr.dut.ptut2021.models.databse.Word;
-import fr.dut.ptut2021.models.databse.stats.game.WordWithHoleData;
 
 public class LoadingPage extends AppCompatActivity {
 
@@ -86,13 +85,13 @@ public class LoadingPage extends AppCompatActivity {
 
     //Here to add Words with images
     private void createWords() {
-        db.appDao().insertWord(new Word("AVION", R.drawable.wordwithhole_avion));
-        db.appDao().insertWord(new Word("MAISON", R.drawable.wordwithhole_maison));
-        db.appDao().insertWord(new Word("POULE", R.drawable.wordwithhole_poule));
-        db.appDao().insertWord(new Word("BOUCHE", R.drawable.wordwithhole_bouche));
-        db.appDao().insertWord(new Word("LIVRE", R.drawable.wordwithhole_livre));
-        db.appDao().insertWord(new Word("VACHE", R.drawable.wordwithhole_vache));
-        db.appDao().insertWord(new Word("TOMATE", R.drawable.wordwithhole_tomate));
+        db.appDao().insertWord(new Word("AVION", R.drawable.image_avion));
+        db.appDao().insertWord(new Word("MAISON", R.drawable.image_maison));
+        db.appDao().insertWord(new Word("POULE", R.drawable.image_poule));
+        db.appDao().insertWord(new Word("BOUCHE", R.drawable.image_bouche));
+        db.appDao().insertWord(new Word("LIVRE", R.drawable.image_livre));
+        db.appDao().insertWord(new Word("VACHE", R.drawable.image_vache));
+        db.appDao().insertWord(new Word("TOMATE", R.drawable.image_tomate));
     }
 
     private void openUserMenuPage() {
