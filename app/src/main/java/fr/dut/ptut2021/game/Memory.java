@@ -1,6 +1,7 @@
 package fr.dut.ptut2021.game;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -26,6 +27,8 @@ public class Memory extends AppCompatActivity {
     private int idLastCardReturn=-1;
     int numColumns;
     boolean isClicked=false;
+    private MediaPlayer mpGoodAnswer;
+    private MediaPlayer mpWrongAnswer;
 
     ArrayList<Integer> drawableImages = new ArrayList<>();
 
@@ -65,18 +68,18 @@ public class Memory extends AppCompatActivity {
                 } else {
                     new Handler().postDelayed(() -> {
                         if (idCard != idLastCardReturn && listCard.get(idLastCardReturn).getValue() == listCard.get(idCard).getValue()) {
-
+                            mpGoodAnswer.start();
                             idLastCardReturn = -1;
                         } else {
                             listCard.get(idCard).setHidden(true);
                             listCard.get(idLastCardReturn).setHidden(true);
+                            mpWrongAnswer.start();
                             returnableCards.add(idLastCardReturn);
                             memoryAdapter.setCard(returnableCards);
                             memoryAdapter.notifyDataSetChanged();
 
                             idLastCardReturn = -1;
                         }
-                        System.out.println("JE SUIS LA");
                         isClicked=false;
                     }, 1000);
                 }
@@ -102,10 +105,14 @@ public class Memory extends AppCompatActivity {
             nbStar=2;
         else
             nbStar=1;
+
+        new Handler().postDelayed(() -> {
         Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
         intent.putExtra("starsNumber", nbStar);
         startActivity(intent);
         finish();
+        }, 3000);
+
         return true;
     }
 
@@ -129,6 +136,8 @@ public class Memory extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mpGoodAnswer = MediaPlayer.create(this, R.raw.correct_answer);
+        mpWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
         initDrawableImages();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory);
