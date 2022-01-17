@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/gallery_app" android:title="Application" android:icon="@drawable/ic_phone"/>
-    <item android:id="@+id/gallery_tel" android:title="Galerie" android:icon="@drawable/ic_image"/>
-    <item android:id="@+id/camera" android:title="Appareil photo" android:icon="@drawable/ic_camera"/>
+    <item android:id="@+id/gallery_tel" android:title="Depuis la galerie" android:icon="@drawable/ic_image"/>
+    <item android:id="@+id/camera" android:title="Prendre une photo" android:icon="@drawable/ic_camera"/>
 </menu>

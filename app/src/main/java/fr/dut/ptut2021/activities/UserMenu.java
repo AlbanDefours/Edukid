@@ -1,8 +1,12 @@
 package fr.dut.ptut2021.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -21,6 +25,7 @@ import fr.dut.ptut2021.models.databse.User;
 
 public class UserMenu extends AppCompatActivity {
 
+    private Vibrator vibe;
     private UserAdapter adapter;
     private CreateDatabase db = null;
     private RecyclerView recyclerView;
@@ -32,6 +37,8 @@ public class UserMenu extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_menu);
 
+        vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
         initializeFindView();
         hideAddUserImage();
 
@@ -39,8 +46,9 @@ public class UserMenu extends AppCompatActivity {
             new RecyclerItemClickListener(getApplicationContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
+                    vibrate();
                     saveUserNameSahredPref(position);
-                    startThemeMenu(position);
+                    startThemeMenu();
                 }
 
                 @Override
@@ -52,6 +60,13 @@ public class UserMenu extends AppCompatActivity {
         settings.setOnClickListener(v -> startSettingPage());
 
         adultProfile.setOnClickListener(v -> startStatisticPage());
+    }
+
+    public void vibrate(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            vibe.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
+        else
+            vibe.vibrate(35);
     }
 
     @Override
@@ -101,23 +116,26 @@ public class UserMenu extends AppCompatActivity {
     }
 
     private void startSettingPage() {
+        vibrate();
         Intent intent = new Intent().setClass(getApplicationContext(), UserResume.class);
         startActivity(intent);
     }
 
     private void startStatisticPage() {
+        vibrate();
         Intent intent = new Intent().setClass(getApplicationContext(), StatisticPage.class);
         startActivity(intent);
     }
 
     private void startAddUserPage() {
+        vibrate();
         Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
         intent.putExtra("addUser", true);
         startActivity(intent);
         finish();
     }
 
-    private void startThemeMenu(int position) {
+    private void startThemeMenu() {
         Intent intent = new Intent().setClass(getApplicationContext(), ThemeMenu.class);
         startActivity(intent);
     }

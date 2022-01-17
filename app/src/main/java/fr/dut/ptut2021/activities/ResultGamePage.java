@@ -1,10 +1,14 @@
 package fr.dut.ptut2021.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +21,7 @@ import fr.dut.ptut2021.game.*;
 
 public class ResultGamePage extends AppCompatActivity {
 
+    private Vibrator vibe;
     private int starsNb = 0;
     private String gameName, themeName;
     private MediaPlayer mpNiceTry;
@@ -27,6 +32,8 @@ public class ResultGamePage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_game_page);
 
+        vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
         getNbStars();
         getGameThemeName();
         initializeView();
@@ -34,12 +41,21 @@ public class ResultGamePage extends AppCompatActivity {
         starsNumber(starsNb);
 
         exit.setOnClickListener(v -> {
+            vibrate();
             finish();
         });
 
         replay.setOnClickListener(v -> {
+            vibrate();
             findGame();
         });
+    }
+
+    public void vibrate(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            vibe.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
+        else
+            vibe.vibrate(35);
     }
 
     private void getNbStars() {
