@@ -8,6 +8,7 @@
     <string name="lettres">Lettres</string>
     <string name="general">Général</string>
     <string name="chiffres">Chiffres</string>
+    <string name="importer">Importer</string>
 
     <string-array name="alphabet">
         <item>A</item>

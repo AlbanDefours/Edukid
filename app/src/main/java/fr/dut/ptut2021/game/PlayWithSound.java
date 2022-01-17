@@ -1,6 +1,7 @@
 package fr.dut.ptut2021.game;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -8,6 +9,8 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +36,7 @@ import fr.dut.ptut2021.models.databse.stats.game.PlayWithSoundData;
 
 public class PlayWithSound extends AppCompatActivity implements View.OnClickListener, TextToSpeech.OnInitListener {
 
+    private Vibrator vibe;
     private CreateDatabase db;
     private ImageView btnSound;
     private TextView goodAnswer;
@@ -54,6 +58,8 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_with_sound);
 
+        vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
         getSharedPref();
         initDatabase();
         initializeLayout();
@@ -63,6 +69,13 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         addOnClickListener();
 
         textToSpeech = new TextToSpeech(this, this);
+    }
+
+    public void vibrate() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            vibe.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
+        else
+            vibe.vibrate(35);
     }
 
     private void getSharedPref() {
@@ -329,6 +342,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         if (!delay) {
+            vibrate();
             switch (v.getId()) {
                 case R.id.buttonAnswer1_playWithSound:
                     verifyAnswer(answer1);
