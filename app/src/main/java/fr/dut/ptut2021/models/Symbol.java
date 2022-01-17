@@ -130,12 +130,23 @@ public class Symbol {
     }
 
     private int PointIsOnTheUpperRightSideOfTheLine(Point p, Point p1, Point p2){
-        double m = (p2.getY() - p1.getY())/(p2.getX() - p1.getX());
+        double m;
+
+        if(p2.getX() - p1.getX() == 0){
+            m = 0;
+        }else{
+            m = (p2.getY() - p1.getY())/(p2.getX() - p1.getX());
+        }
+
         double b = p1.getY() - (m * p1.getX());
 
-        if(m * p.getX() + b < 0){
+        System.out.print("  p1_x " + p1.getX() + " p1_y " + p1.getY());
+        System.out.print(" p2_x " + p2.getX() + " p2_y " + p2.getY());
+        System.out.println(" y = " + (m * p.getX() + b) + " ");
+
+        if(m * p.getX() + b > 0){
             return 1;
-        }else if(m * p.getX() + b > 0){
+        }else if(m * p.getX() + b < 0){
             return -1;
         }else {
             return 0;
@@ -146,7 +157,7 @@ public class Symbol {
         int somme = 0;
         for(int i = 0; i < 4; i++){
             somme += PointIsOnTheUpperRightSideOfTheLine(p, rect[i], rect[(i + 1) % 4]);
-            System.out.println(i + " " + (i + 1) % 4);
+            //System.out.print(PointIsOnTheUpperRightSideOfTheLine(p, rect[i], rect[(i + 1) % 4]));
         }
 
         if(somme == 0){
@@ -159,18 +170,62 @@ public class Symbol {
     public boolean isInArea2(Point p, Point p1, Point p2){
         Point[] rect = new Point[4];
 
+        System.out.print("ref_x " + p.getX() + " ref_y " + p.getY());
+
         double coef = (tolerance/getDistanceBetweenTwoPoints(p1, p2));
 
         double x = coef * (p1.getX()-p2.getX());
         double y = coef * (p1.getY()-p2.getY());
 
-        rect[0] = new Point(p1.getX() + x, p1.getY() + y);
+        rect[0] = new Point(p1.getX() + x, p1.getY() - y);
         rect[1] = new Point(p1.getX() - x, p1.getY() + y);
-        rect[2] = new Point(p1.getX() + x, p1.getY() + y);
-        rect[3] = new Point(p1.getX() - x, p1.getY() + y);
+        rect[2] = new Point(p2.getX() + x, p2.getY() - y);
+        rect[3] = new Point(p2.getX() - x, p2.getY() + y);
 
         return pointIsInRectangle(p, rect);
 
+    }
+
+    public boolean isInArea3(Point point, Point p1, Point p2){
+
+        Point inter;
+        double m, b, m2, b2, x;
+
+        if(p2.getX() - p1.getX() == 0){
+            m = 0;
+            m2 = 0;
+        }else{
+            m = (p2.getY() - p1.getY())/(p2.getX() - p1.getX());
+            m2 = 1 / (m * (-1));
+        }
+        b = p1.getY() - (m * p1.getX());
+        b2 = point.getY() - (m2 * point.getX());
+
+        if(m - m2 == 0){
+            x = b2 - b;
+        }else{
+            x = (b2 - b) / (m - m2);
+        }
+
+        //System.out.println("y1 = " + (m*x+b) + " y2 = " + (m2*x+b2));
+
+        /*
+        if(m*x+b != m2*x+b2){
+            System.out.println("---------------------------------------------");
+            System.out.println("Erreur lors du calcul du point d'intersection");
+            System.out.println("---------------------------------------------");
+            return false;
+        }
+        */
+
+        inter = new Point(x, (m*x+b));
+
+        if(getDistanceBetweenTwoPoints(inter, point) <= tolerance){
+            if(getDistanceBetweenTwoPoints(point, p1) < getDistanceBetweenTwoPoints(p1, p2) + tolerance && getDistanceBetweenTwoPoints(point, p2) < getDistanceBetweenTwoPoints(p1, p2) + tolerance){
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isInSymbol(Point point){
@@ -183,7 +238,7 @@ public class Symbol {
 
         if(idNearestPoint >= 1) {
             //System.out.println("c1");
-            if(isInArea(point, points.get(idNearestPoint - 1), points.get(idNearestPoint))){
+            if(isInArea3(point, points.get(idNearestPoint - 1), points.get(idNearestPoint))){
 
                 //System.out.println("c1 1");
 
@@ -194,7 +249,7 @@ public class Symbol {
         if(idNearestPoint + 1 < points.size()){
 
             //System.out.println("c2");
-            if(isInArea(point, points.get(idNearestPoint), points.get(idNearestPoint + 1))){
+            if(isInArea3(point, points.get(idNearestPoint), points.get(idNearestPoint + 1))){
             //System.out.println("c2 1");
 
                 return true;

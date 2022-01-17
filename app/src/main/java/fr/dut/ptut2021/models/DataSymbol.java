@@ -9,9 +9,9 @@ public final class DataSymbol {
     public static ArrayList<Point> cinq = new ArrayList<>();
 
     public static void init(int width, int height) {
-        cinq.add(new Point(0.7314453, 0.29090223));
-        cinq.add(new Point(0.6638489, 0.29386008));
-        cinq.add(new Point(0.5610657, 0.29386008));
+
+        cinq.add(new Point(0.65, 0.2938));
+        cinq.add(new Point(0.5610657, 0.2939));
         cinq.add(new Point(0.41384888, 0.2997758));
         cinq.add(new Point(0.27035522, 0.3071867));
         cinq.add(new Point(0.26480103, 0.38064557));

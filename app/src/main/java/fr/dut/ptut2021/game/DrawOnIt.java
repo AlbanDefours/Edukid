@@ -66,7 +66,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
 
         DataSymbol.init(dm.widthPixels, dm.heightPixels);
 
-        s = new Symbol(DataSymbol.cinq, 40); // dm.widthPixels/10
+        s = new Symbol(DataSymbol.cinq, dm.widthPixels/20);
 
 
         image = findViewById(R.id.idImage_drawOnIt);
@@ -79,7 +79,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         bitmap = Bitmap.createBitmap((int) largeur, (int) hauteur, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
         paint = new Paint();
-        paint.setColor(Color.RED); //YELLOW
+        paint.setColor(Color.YELLOW);
         paint.setStrokeWidth(0.02f*largeur);
         paint.setAntiAlias(true);
         paint.setStrokeCap(Paint.Cap.ROUND);
@@ -87,14 +87,26 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
 
         //canvas.drawLine(0.25f*dw, 0.25f*dh, 0.5f*dw, 0.5f*dh, paint);
 
-        //canvas.drawPoints(getFloats(), paint);
+        canvas.drawPoints(getFloats(), paint);
 
+
+        /*
         canvas.drawPoint(400, 900, paint);
         canvas.drawPoint(600, 1100, paint);
 
         System.out.println("//////////////");
         System.out.println(s.isInArea2(new Point(500,1000), new Point(400, 900), new Point(600, 1100)));
         System.out.println("//////////////");
+
+
+        for(int i = 300; i <= 700; i++){
+            for(int j = 800; j <= 1200; j++){
+                if(!s.isInArea2(new Point(i,j), new Point(400, 900), new Point(600, 1100))){
+                    canvas.drawPoint(i, j, paint);
+                }
+            }
+        }
+        */
 
         System.out.println("c'est bon");
 
