@@ -92,7 +92,7 @@ public class MemoryAdapter extends BaseAdapter {
             //
             double width = (1094.0 + 20) / numColumns;
             double height = width * (1684.0 / 1094) + 20;
-            double sizeElement = width * (800.0 / 1094);
+            double sizeElement = width -50;
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) width, (int) height);
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
             holder.viewCard.setLayoutParams(layoutParams);
