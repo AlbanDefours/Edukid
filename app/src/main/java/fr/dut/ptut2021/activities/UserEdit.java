@@ -90,7 +90,6 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private void checkIfAddOrUpdateUser() {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-
         if (bundle != null) {
             isAddUser = bundle.getBoolean("addUser", false);
             if (!isAddUser) {
@@ -110,16 +109,18 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         userName = bundle.getString("userName", "");
         userId = bundle.getInt("userId", 0);
         imageTmp = bundle.getString("userImage", String.valueOf(R.drawable.a));
+        imageLocation = imageTmp;
         imageAvatarType = bundle.getInt("userImageType", -1);
     }
 
     private void findCurrentImageUser() {
         if(imageAvatarType == 0){
             for (int i = 0; i < tableauImage.length; i++) {
-                if (tableauImage[i] == Integer.parseInt(imageTmp))
+                if (tableauImage[i] == Integer.parseInt(imageTmp)){
                     cpt = i;
+                    userAvatar.setImageResource(tableauImage[cpt]);
+                }
             }
-            userAvatar.setImageResource(Integer.parseInt(imageTmp));
         } else {
             try {
                 File f = new File(imageTmp);
@@ -167,8 +168,8 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                 (dialog, which) -> {
                     dialog.dismiss();
                     if (wantToDelete) {
-                        //File file = new File(db.appDao().getUserById(userId).getUserImage());
-                        //file.delete(); //TODO a verif, ca supprimes la mauvaise on dirait
+                        File file = new File(db.appDao().getUserById(userId).getUserImage());
+                        file.delete(); //TODO a verif, ca supprimes la mauvaise on dirait
                         deleteGameData(); //TODO delete all stats
                         db.appDao().deleteUserById(userId);
                         startUserMenuPage(db.appDao().tabUserIsEmpty());
@@ -365,7 +366,10 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     }
 
     private String saveToInternalStorage(Bitmap bitmapImage) {
-        int id = db.appDao().getAllUsers().size() + 1;
+        String name = db.appDao().getUserImageMaxInt();
+        int id = 0;
+        if(name != null)
+            id = Integer.parseInt(name.substring(name.indexOf(".jpg")-1, name.indexOf(".jpg"))) + 1;
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
         File mypath = new File(directory, "userimage" + id + ".jpg");
