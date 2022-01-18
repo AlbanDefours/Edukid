@@ -24,7 +24,7 @@ public class ResultGamePage extends AppCompatActivity {
     private Vibrator vibe;
     private int starsNb = 0;
     private String gameName, themeName;
-    private MediaPlayer mpNiceTry, mpStars;
+    private MediaPlayer mpNiceTry, starsSound;
     private ImageView star1, star2, star3, exit, replay;
 
     @Override
@@ -85,25 +85,23 @@ public class ResultGamePage extends AppCompatActivity {
 
     private void initSoundEffect() {
         mpNiceTry = MediaPlayer.create(this, R.raw.kids_cheering);
-    }
-
-    /*TODO Faire en sorte que les etoiles grises soit afficher de base, et que les jaunes les remplaces
-       (en fct du nb d'étoiles) en faisant l'animation que si elle devient jaune*/
-    private void starsNumber(int nbStars) {
-        ImageView[] tabStars = {star1, star2, star3};
-        switch (nbStars) {
+        switch (starsNb){
             case 1:
-                mpStars = MediaPlayer.create(this, R.raw.one_star);
+                starsSound = MediaPlayer.create(this, R.raw.one_star);
                 break;
             case 2:
-                mpStars = MediaPlayer.create(this, R.raw.two_stars);
+                starsSound = MediaPlayer.create(this, R.raw.two_stars);
                 break;
-            default:
-                mpStars = MediaPlayer.create(this, R.raw.three_stars);
+            case 3:
+                starsSound = MediaPlayer.create(this, R.raw.three_stars);
                 break;
         }
-        mpStars.start();
-        for (int i = 0; i < 3; i++) {
+    }
+
+    private void starsNumber(int nbStars) {
+        ImageView[] tabStars = {star1, star2, star3};
+        starsSound.start();
+        for (int i = 0; i < nbStars; i++) {
             int finalI = i;
             new Handler().postDelayed(() -> {
                 tabStars[finalI].setImageResource(R.drawable.icon_star);
@@ -118,6 +116,7 @@ public class ResultGamePage extends AppCompatActivity {
     }
 
     private void findGame() {
+        mpNiceTry.stop();
         switch (gameName) {
             case "Ecoute":
                 startActivity(new Intent().setClass(getApplicationContext(), PlayWithSound.class));

@@ -146,7 +146,6 @@ public class UserMenu extends AppCompatActivity {
         editor.putString("userName", listUser.get(position).getUserName());
         editor.putInt("userId", listUser.get(position).getUserId());
         editor.putString("userImage", listUser.get(position).getUserImage());
-        editor.putInt("userImageType", listUser.get(position).getUserImageType());
         editor.commit();
     }
 }

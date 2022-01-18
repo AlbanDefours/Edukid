@@ -110,6 +110,7 @@ public class UserResume extends AppCompatActivity {
         intent.putExtra("userName", listUser.get(position).getUserName());
         intent.putExtra("userId", listUser.get(position).getUserId());
         intent.putExtra("userImage", listUser.get(position).getUserImage());
+        intent.putExtra("userImageType", listUser.get(position).getUserImageType());
         startActivity(intent);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         finish();
