@@ -13,8 +13,8 @@ public class MemoryData {
 
     public MemoryData(int userId) {
         this.userId = userId;
-        this.difficultyChiffres = 0;
-        this.difficultyLettres = 0;
+        this.difficultyChiffres = 1;
+        this.difficultyLettres = 1;
         this.winStreak = 0;
         this.loseStreak = 0;
     }

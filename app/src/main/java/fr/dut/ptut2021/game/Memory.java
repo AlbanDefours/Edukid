@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -17,6 +18,7 @@ import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.adapters.MemoryAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.Card;
+import fr.dut.ptut2021.models.database.game.MemoryData;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -92,12 +94,20 @@ public class Memory extends AppCompatActivity {
             }
         }
         int nbStar;
-        if(ptMalus<=2)
-            nbStar=3;
-        else if(ptMalus<=5)
-            nbStar=2;
-        else
+        if(ptMalus<=2) {
+            nbStar = 3;
+            db.gameDao().getMemoryData(userId).setWinStreak(db.gameDao().getMemoryData(userId).getWinStreak()+1);
+            db.gameDao().getMemoryData(userId).setLoseStreak(0);
+        }
+        else if(ptMalus<=5) {
+            nbStar = 2;
+            db.gameDao().resetAllMemoryDataStreak(userId);
+        }
+        else{
             nbStar=1;
+            db.gameDao().getMemoryData(userId).setLoseStreak(db.gameDao().getMemoryData(userId).getLoseStreak()+1);
+            db.gameDao().getMemoryData(userId).setWinStreak(0);
+        }
 
         new Handler().postDelayed(() -> {
         Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
@@ -127,9 +137,14 @@ public class Memory extends AppCompatActivity {
         }
     }
 
+    private void initDB(){
+        db = CreateDatabase.getInstance(Memory.this);
+        db.gameDao().insertMemoryData(new MemoryData(userId));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        db = CreateDatabase.getInstance(Memory.this);
+        initDB();
 
         mpGoodAnswer = MediaPlayer.create(this, R.raw.correct_answer);
         mpWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
@@ -141,7 +156,9 @@ public class Memory extends AppCompatActivity {
         String themeName = settings.getString("themeName", "");
         userId = settings.getInt("userId", 0);
         if(themeName.equals("Chiffres") ){
+            difficulty = db.gameDao().getMemoryData(userId).getDifficultyChiffres();
             initCardChiffre(getNbCard());
+            System.out.println("TEST : "+listCard);
         }
 
         shuffle();
@@ -187,20 +204,28 @@ public class Memory extends AppCompatActivity {
     }
 
     private void initCardChiffre(int nbCard){
-
+        System.out.println("Nombre de cartes : "+nbCard);
         listCard = new ArrayList<>();
         if(nbCard>9){nbCard=9;}
         int value,nbChoice=0;
         boolean isUsed=false;
 
-        //int nbAlreadyUsed = nbCard-db.gameDao().
-
+        int nbCardUsedToUse = nbCard-db.gameDao().getMemoryDataCardNbNotUsed(userId);
+        if(nbCardUsedToUse<0){nbCardUsedToUse=0;}
+        int nbCardNotUsedToUse = nbCard-nbCardUsedToUse;
         while(nbChoice!=nbCard){
             value =(int) (Math.random()*9)+1;
             for (int j=0;j<listCard.size();j++){
-                if(String.valueOf(value)==listCard.get(j).getValue() || db.gameDao().getMemoryDataCardUsed(userId,String.valueOf(value))){
-                    isUsed=true;
-                    break;
+                if(nbChoice<nbCardNotUsedToUse) {
+                    if(String.valueOf(value)==listCard.get(j).getValue() || db.gameDao().getMemoryDataCardUsed(userId,String.valueOf(value))) {
+                        isUsed = true;
+                        break;
+                    }
+                }else{
+                    if(String.valueOf(value)==listCard.get(j).getValue()) {
+                        isUsed = true;
+                        break;
+                    }
                 }
             }
             if(!isUsed) {
@@ -225,6 +250,21 @@ public class Memory extends AppCompatActivity {
         }
     }
 
+    private void changeDifficulty(){
+        if( db.gameDao().getMemoryData(userId).getWinStreak() >= 1 && db.gameDao().getMemoryDataCardNbNotUsed(userId)==0 && difficulty+1<=16){
+            System.out.println("Monte au niveau "+(difficulty+1));
+            db.gameDao().increaseMemoryDataDifficultyChiffres(userId);
+            db.gameDao().resetAllMemoryDataStreak(userId);
+            db.gameDao().resetAllMemoryDataCardUsed(userId);
+        }
+        if(db.gameDao().getMemoryData(userId).getLoseStreak()>=1 && difficulty-1>=1){
+            System.out.println("Baisse au niveau "+(difficulty-1));
+            db.gameDao().decreaseMemoryDataDifficultyChiffres(userId);
+            db.gameDao().resetAllMemoryDataStreak(userId);
+            db.gameDao().resetAllMemoryDataCardUsed(userId);
+        }
+    }
+
     private int getNbCard(){
         if(difficulty==1 || difficulty==4)
             return 2;
@@ -242,7 +282,7 @@ public class Memory extends AppCompatActivity {
             return 8;
         if(difficulty==14 || difficulty==16)
             return 9;
-        return 0;
+        return 1;
     }
 
     private boolean isOnlyChiffres(){
