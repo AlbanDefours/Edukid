@@ -33,6 +33,7 @@ public class Memory extends AppCompatActivity {
     private MediaPlayer mpGoodAnswer;
     private MediaPlayer mpWrongAnswer;
     private CreateDatabase db;
+    private int difficulty;
 
     private void shuffle(){
         Collections.shuffle(listCard);
@@ -219,6 +220,7 @@ public class Memory extends AppCompatActivity {
         int size = listCard.size();
         int sizeImage = db.appDao().getNbWords();
         for(int i=0;i<size;i++){
+           // if(difficulty>)
             this.listCard.add( new Card(listCard.get(i).getValue(),db.appDao().getWordById((int)(Math.random()*sizeImage)).getImage()));
         }
     }
