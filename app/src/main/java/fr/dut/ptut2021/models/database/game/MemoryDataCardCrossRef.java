@@ -9,13 +9,12 @@ public class MemoryDataCardCrossRef {
     @NonNull
     private String cardValue;
     private int userId;
-    //TODO Changer le boolean en int
-    private boolean used;
+    private int used;
 
     public MemoryDataCardCrossRef(String cardValue, int userId) {
         this.cardValue = cardValue;
         this.userId = userId;
-        this.used = false;
+        this.used = 0;
     }
 
     @NonNull
@@ -35,11 +34,11 @@ public class MemoryDataCardCrossRef {
         this.userId = userId;
     }
 
-    public boolean isUsed() {
+    public int getUsed() {
         return used;
     }
 
-    public void setUsed(boolean used) {
+    public void setUsed(int used) {
         this.used = used;
     }
 }

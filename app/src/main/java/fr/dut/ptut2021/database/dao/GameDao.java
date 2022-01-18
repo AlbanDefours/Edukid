@@ -206,8 +206,9 @@ public interface GameDao {
     @Query("SELECT * FROM MemoryDataCardCrossRef WHERE userId = :userId AND cardValue LIKE :cardValue")
     MemoryDataCardCrossRef getMemoryDataCard(int userId, String cardValue);
 
+    //TODO Y a des trucs à changer pour used
     @Query("SELECT used FROM MemoryDataCardCrossRef WHERE userId = :userId AND cardValue LIKE :cardValue")
-    boolean getMemoryDataCardUsed(int userId, String cardValue);
+    int getMemoryDataCardUsed(int userId, String cardValue);
 
     @Query("SELECT * FROM MemoryDataCardCrossRef")
     List<MemoryDataCardCrossRef> getAllMemoryDataCard();
