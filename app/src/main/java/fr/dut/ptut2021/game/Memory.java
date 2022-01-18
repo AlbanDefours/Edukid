@@ -34,6 +34,7 @@ public class Memory extends AppCompatActivity {
     private MediaPlayer mpWrongAnswer;
     private CreateDatabase db;
     private int difficulty;
+    private int userId;
 
     private void shuffle(){
         Collections.shuffle(listCard);
@@ -138,8 +139,9 @@ public class Memory extends AppCompatActivity {
 
         SharedPreferences settings = getSharedPreferences("MyPref", 0);
         String themeName = settings.getString("themeName", "");
+        userId = settings.getInt("userId", 0);
         if(themeName.equals("Chiffres") ){
-            initCardChiffre(9);
+            initCardChiffre(getNbCard());
         }
 
         shuffle();
@@ -185,43 +187,68 @@ public class Memory extends AppCompatActivity {
     }
 
     private void initCardChiffre(int nbCard){
-        ArrayList<Integer> listChiffre = new ArrayList<>();
-        listChiffre.add(R.drawable.one);
-        listChiffre.add(R.drawable.two);
-        listChiffre.add(R.drawable.three);
-        listChiffre.add(R.drawable.four);
-        listChiffre.add(R.drawable.five);
-        listChiffre.add(R.drawable.six);
-        listChiffre.add(R.drawable.seven);
-        listChiffre.add(R.drawable.eight);
-        listChiffre.add(R.drawable.nine);
 
         listCard = new ArrayList<>();
         if(nbCard>9){nbCard=9;}
         int value,nbChoice=0;
-        boolean isUse=false;
-        while(nbChoice!=nbCard){
+        boolean isUsed=false;
 
-            value =(int) (Math.random()*9);
+        //int nbAlreadyUsed = nbCard-db.gameDao().
+
+        while(nbChoice!=nbCard){
+            value =(int) (Math.random()*9)+1;
             for (int j=0;j<listCard.size();j++){
-                if(String.valueOf(value+1)==listCard.get(j).getValue()){
-                    isUse=true;
+                if(String.valueOf(value)==listCard.get(j).getValue() || db.gameDao().getMemoryDataCardUsed(userId,String.valueOf(value))){
+                    isUsed=true;
                     break;
                 }
             }
-            if(!isUse) {
+            if(!isUsed) {
                 nbChoice++;
-                System.out.println("------- "+String.valueOf(value+1)+" -------");
-                listCard.add(new Card(String.valueOf(value + 1), listChiffre.get(value)));
+                System.out.println("------- "+String.valueOf(value)+" -------");
+                listCard.add(new Card(String.valueOf(value),db.gameDao().getMemoryCard(String.valueOf(value)).getDrawableImage()));
+                db.gameDao().updateMemoryDataCardUsed(userId,String.valueOf(value),true);
             }
-            isUse=false;
+            isUsed=false;
         }
 
         int size = listCard.size();
         int sizeImage = db.appDao().getNbWords();
-        for(int i=0;i<size;i++){
-           // if(difficulty>)
-            this.listCard.add( new Card(listCard.get(i).getValue(),db.appDao().getWordById((int)(Math.random()*sizeImage)).getImage()));
+        if(isOnlyChiffres()){
+            for(int i=0;i<size;i++){
+                this.listCard.add( new Card(listCard.get(i)));
+            }
+        }else {
+            for (int i = 0; i < size; i++) {
+                this.listCard.add(new Card(listCard.get(i).getValue(), db.appDao().getWordById((int) (Math.random() * sizeImage)).getImage()));
+            }
         }
+    }
+
+    private int getNbCard(){
+        if(difficulty==1 || difficulty==4)
+            return 2;
+        if(difficulty==2 || difficulty==5)
+            return 3;
+        if(difficulty==3 || difficulty==6)
+            return 4;
+        if(difficulty==7 || difficulty==10)
+            return 5;
+        if(difficulty==8 || difficulty==11)
+            return 6;
+        if(difficulty==9 || difficulty==12)
+            return 7;
+        if(difficulty==13 || difficulty==15)
+            return 8;
+        if(difficulty==14 || difficulty==16)
+            return 9;
+        return 0;
+    }
+
+    private boolean isOnlyChiffres(){
+        if(difficulty==1 || difficulty==2 || difficulty==3 || difficulty==7 || difficulty==8 || difficulty==9 || difficulty==13 || difficulty==14)
+            return true;
+        else
+            return false;
     }
 }
