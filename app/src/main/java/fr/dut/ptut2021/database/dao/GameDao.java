@@ -201,7 +201,7 @@ public interface GameDao {
     @Query("SELECT * FROM MemoryCard")
     List<MemoryCard> getAllMemoryCard();
 
-
+//TODO Quand on change la difficulté mettre tout les used à false
 //MemoryDataCardCrossRef
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertMemoryDataCard(MemoryDataCardCrossRef memoryDataCardCrossRef);
