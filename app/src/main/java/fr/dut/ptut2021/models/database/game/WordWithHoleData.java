@@ -1,8 +1,7 @@
-package fr.dut.ptut2021.models.databse.stats.game;
+package fr.dut.ptut2021.models.database.game;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 
 @Entity (primaryKeys = {"userId", "result"})
 public class WordWithHoleData {

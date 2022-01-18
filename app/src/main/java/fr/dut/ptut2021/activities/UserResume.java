@@ -19,7 +19,7 @@ import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.user.UserAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.models.databse.User;
+import fr.dut.ptut2021.models.database.app.User;
 
 public class UserResume extends AppCompatActivity {
 

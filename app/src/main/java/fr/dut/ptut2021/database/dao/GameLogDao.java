@@ -5,8 +5,8 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import fr.dut.ptut2021.models.databse.stats.log.GameLog;
-import fr.dut.ptut2021.models.databse.stats.log.GameResultLog;
+import fr.dut.ptut2021.models.database.log.GameLog;
+import fr.dut.ptut2021.models.database.log.GameResultLog;
 
 import java.util.List;
 

@@ -30,9 +30,9 @@ import java.util.Random;
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.models.databse.stats.log.GameLog;
-import fr.dut.ptut2021.models.databse.stats.log.GameResultLog;
-import fr.dut.ptut2021.models.databse.stats.game.PlayWithSoundData;
+import fr.dut.ptut2021.models.database.log.GameLog;
+import fr.dut.ptut2021.models.database.log.GameResultLog;
+import fr.dut.ptut2021.models.database.game.PlayWithSoundData;
 
 public class PlayWithSound extends AppCompatActivity implements View.OnClickListener, TextToSpeech.OnInitListener {
 

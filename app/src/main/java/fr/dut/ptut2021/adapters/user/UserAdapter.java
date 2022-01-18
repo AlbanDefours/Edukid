@@ -16,7 +16,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.models.databse.User;
+import fr.dut.ptut2021.models.database.app.User;
 
 public class UserAdapter extends RecyclerView.Adapter<MyViewHolderUser> {
 

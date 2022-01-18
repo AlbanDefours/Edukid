@@ -9,21 +9,22 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import org.checkerframework.checker.units.qual.A;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import fr.dut.ptut2021.game.WordWithHole;
-import fr.dut.ptut2021.models.databse.stats.game.DrawOnItData;
-import fr.dut.ptut2021.models.databse.stats.game.PlayWithSoundData;
-import fr.dut.ptut2021.models.databse.stats.game.WordWithHoleData;
+import fr.dut.ptut2021.models.database.game.DrawOnItData;
+import fr.dut.ptut2021.models.database.game.MemoryCard;
+import fr.dut.ptut2021.models.database.game.MemoryData;
+import fr.dut.ptut2021.models.database.game.MemoryDataCardCrossRef;
+import fr.dut.ptut2021.models.database.game.PlayWithSoundData;
+import fr.dut.ptut2021.models.database.game.WordWithHoleData;
 
 @Dao
 public interface GameDao {
+    //TODO supprimer toutes les données quand on supprime un utilisateur
 
-    //WordWithHoleData
+//WordWithHoleData
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertWWHData(WordWithHoleData wordWithHoleStats);
 
@@ -79,8 +80,7 @@ public interface GameDao {
     void deleteWWHDataByUser(int userId);
 
 
-
-    //PlayWithSoundData
+//PlayWithSoundData
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertPWSData(PlayWithSoundData playWithSoundData);
 
@@ -114,7 +114,7 @@ public interface GameDao {
     void deletePWSDataByUser(int userId);
 
 
-    //DrawOnItData
+//DrawOnItData
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertDOIData(DrawOnItData drawOnItData);
 
@@ -151,5 +151,77 @@ public interface GameDao {
 
     @Query("DELETE FROM DrawOnItData WHERE userId = :userId")
     void deleteDOIDataByUser(int userId);
+
+
+//MemoryData
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertMemoryData(MemoryData memoryData);
+
+    @Update
+    void updateMemoryData(MemoryData memoryData);
+
+    @Query("UPDATE MemoryData SET difficultyChiffres = (difficultyChiffres +1) WHERE userId = :userId")
+    void increaseMemoryDataDifficultyChiffres(int userId);
+
+    @Query("UPDATE MemoryData SET difficultyChiffres = (difficultyChiffres -1) WHERE userId = :userId")
+    void decreaseMemoryDataDifficultyChiffres(int userId);
+
+    @Query("UPDATE MemoryData SET difficultyLettres = (difficultyLettres +1) WHERE userId = :userId")
+    void increaseMemoryDataDifficultyLettres(int userId);
+
+    @Query("UPDATE MemoryData SET difficultyLettres = (difficultyLettres -1) WHERE userId = :userId")
+    void decreaseMemoryDataDifficultyLettres(int userId);
+
+    @Query("SELECT * FROM MemoryData WHERE userId = :userId")
+    MemoryData getMemoryData(int userId);
+
+    @Query("SELECT difficultyChiffres FROM MemoryData WHERE userId = :userId")
+    int getMemoryDataDifficultyChiffres(int userId);
+
+    @Query("SELECT difficultyLettres FROM MemoryData WHERE userId = :userId")
+    int getMemoryDataDifficultyLettres(int userId);
+
+    @Query("SELECT * FROM MemoryData")
+    List<MemoryData> getAllMemoryData();
+
+
+//MemoryCard
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertMemoryCard(MemoryCard memoryCard);
+
+    @Update
+    void updateMemoryCard(MemoryCard memoryCard);
+
+    @Query("SELECT * FROM MemoryCard WHERE cardValue LIKE :cardValue")
+    MemoryCard getMemoryCard(String cardValue);
+
+    @Query("SELECT drawableImage FROM MemoryCard WHERE cardValue LIKE :cardValue")
+    int getMemoryCardDrawableImage(String cardValue);
+
+    @Query("SELECT * FROM MemoryCard")
+    List<MemoryCard> getAllMemoryCard();
+
+
+//MemoryDataCardCrossRef
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertMemoryDataCard(MemoryDataCardCrossRef memoryDataCardCrossRef);
+
+    @Update
+    void updateMemoryDataCard(MemoryDataCardCrossRef memoryDataCardCrossRef);
+
+    @Query("SELECT * FROM MemoryDataCardCrossRef WHERE userId = :userId AND cardValue LIKE :cardValue")
+    MemoryDataCardCrossRef getMemoryDataCard(int userId, String cardValue);
+
+    @Query("SELECT used FROM MemoryDataCardCrossRef WHERE userId = :userId AND cardValue LIKE :cardValue")
+    boolean getMemoryDataCardUsed(int userId, String cardValue);
+
+    @Query("UPDATE MemoryDataCardCrossRef SET used = :used WHERE userId = :userId AND cardValue LIKE :cardValue")
+    void updateMemoryDataCardUsed(int userId, String cardValue, boolean used);
+
+    @Query("SELECT * FROM MemoryDataCardCrossRef")
+    List<MemoryDataCardCrossRef> getAllMemoryDataCard();
+
+    @Query("SELECT * FROM MemoryDataCardCrossRef WHERE userId = :userId")
+    List<MemoryDataCardCrossRef> getAllMemoryDataCardByUserId(int userId);
 
 }

@@ -11,10 +11,10 @@ import com.daimajia.androidanimations.library.YoYo;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.models.databse.Game;
-import fr.dut.ptut2021.models.databse.Theme;
-import fr.dut.ptut2021.models.databse.ThemeGameCrossRef;
-import fr.dut.ptut2021.models.databse.Word;
+import fr.dut.ptut2021.models.database.app.Game;
+import fr.dut.ptut2021.models.database.app.Theme;
+import fr.dut.ptut2021.models.database.app.ThemeGameCrossRef;
+import fr.dut.ptut2021.models.database.app.Word;
 
 public class LoadingPage extends AppCompatActivity {
 
