@@ -1,6 +1,7 @@
 package fr.dut.ptut2021.game;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +21,7 @@ import fr.dut.ptut2021.models.Card;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 
 public class Memory extends AppCompatActivity {
@@ -132,19 +134,13 @@ public class Memory extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory);
-        listCard = new ArrayList<>();
-        listCard.add(new Card("1",R.drawable.one));
-        listCard.add(new Card("2",R.drawable.two));
-        listCard.add(new Card("3",R.drawable.three));
-        listCard.add(new Card("4",R.drawable.four));
-        listCard.add(new Card("5",R.drawable.five));
-        listCard.add(new Card("6",R.drawable.six));
 
-        int size = listCard.size();
-        int sizeImage = db.appDao().getNbWords();
-        for(int i=0;i<size;i++){
-            this.listCard.add( new Card(listCard.get(i).getValue(),db.appDao().getWordById((int)(Math.random()*sizeImage)).getImage()));
+        SharedPreferences settings = getSharedPreferences("MyPref", 0);
+        String themeName = settings.getString("themeName", "");
+        if(themeName.equals("Chiffres") ){
+            initCardChiffre(9);
         }
+
         shuffle();
 
 
@@ -171,7 +167,7 @@ public class Memory extends AppCompatActivity {
         recyclerView.setAdapter(new MemoryAdapter(getApplicationContext(), listCard));*/
     }
 
-    void calculatesNbColumns(){
+    private void calculatesNbColumns(){
         numColumns = (int) Math.sqrt(listCard.size());
 
         DisplayMetrics metrics = new DisplayMetrics();
@@ -182,10 +178,48 @@ public class Memory extends AppCompatActivity {
 
         double screenHeight = metrics.heightPixels;
         int nbRows = (int) ((listCard.size()+ numColumns - 1) / numColumns);
-        System.out.println("Nombre de Ligne : "+nbRows);
-        System.out.println("Hauteur Ecran : "+ screenHeight);
         if(cardHeight*nbRows>screenHeight){
             numColumns++;
+        }
+    }
+
+    private void initCardChiffre(int nbCard){
+        ArrayList<Integer> listChiffre = new ArrayList<>();
+        listChiffre.add(R.drawable.one);
+        listChiffre.add(R.drawable.two);
+        listChiffre.add(R.drawable.three);
+        listChiffre.add(R.drawable.four);
+        listChiffre.add(R.drawable.five);
+        listChiffre.add(R.drawable.six);
+        listChiffre.add(R.drawable.seven);
+        listChiffre.add(R.drawable.eight);
+        listChiffre.add(R.drawable.nine);
+
+        listCard = new ArrayList<>();
+        if(nbCard>9){nbCard=9;}
+        int value,nbChoice=0;
+        boolean isUse=false;
+        while(nbChoice!=nbCard){
+
+            value =(int) (Math.random()*9);
+            for (int j=0;j<listCard.size();j++){
+                if(String.valueOf(value+1)==listCard.get(j).getValue()){
+                    isUse=true;
+                    break;
+                }
+            }
+            if(!isUse) {
+                nbChoice++;
+                System.out.println("------- "+String.valueOf(value+1)+" -------");
+                listCard.add(new Card(String.valueOf(value + 1), listChiffre.get(value)));
+            }
+            isUse=false;
+        }
+
+        int size = listCard.size();
+        int sizeImage = db.appDao().getNbWords();
+        for(int i=0;i<size;i++){
+            this.listCard.add( new Card(listCard.get(i).getValue(),db.appDao().getWordById((int)(Math.random()*sizeImage)).getImage()));
         }
     }
 }

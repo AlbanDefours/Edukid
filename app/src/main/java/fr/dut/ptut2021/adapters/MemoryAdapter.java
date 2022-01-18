@@ -303,7 +303,7 @@ public class MemoryAdapter extends BaseAdapter {
     }
 
     private boolean isChiffre(int drawableImage){
-        if(drawableImage!= R.drawable.one && drawableImage!= R.drawable.two && drawableImage!= R.drawable.three && drawableImage!= R.drawable.four && drawableImage!= R.drawable.five && drawableImage!= R.drawable.six){
+        if(drawableImage!= R.drawable.one && drawableImage!= R.drawable.two && drawableImage!= R.drawable.three && drawableImage!= R.drawable.four && drawableImage!= R.drawable.five && drawableImage!= R.drawable.six && drawableImage!= R.drawable.seven && drawableImage!= R.drawable.eight && drawableImage!= R.drawable.nine){
             return false;
         }
         else
