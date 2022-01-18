@@ -27,7 +27,7 @@ import java.util.HashMap;
 
 
 public class Memory extends AppCompatActivity {
-
+/*
     private ArrayList<Card> listCard;
     private int idLastCardReturn=-1;
     int numColumns;
@@ -183,8 +183,11 @@ public class Memory extends AppCompatActivity {
                 }
             }
         });
+
+ */
         /*recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new MemoryAdapter(getApplicationContext(), listCard));*/
+    /*
     }
 
     private void calculatesNbColumns(){
@@ -231,7 +234,7 @@ public class Memory extends AppCompatActivity {
             if(!isUsed) {
                 nbChoice++;
                 System.out.println("------- "+String.valueOf(value)+" -------");
-                listCard.add(new Card(String.valueOf(value),db.gameDao().getMemoryCard(String.valueOf(value)).getDrawableImage()));
+                listCard.add(new Card(String.valueOf(value),db.gameDao().getCard(String.valueOf(value)).getDrawableImage()));
                 db.gameDao().updateMemoryDataCardUsed(userId,String.valueOf(value),true);
             }
             isUsed=false;
@@ -291,4 +294,5 @@ public class Memory extends AppCompatActivity {
         else
             return false;
     }
+    */
 }

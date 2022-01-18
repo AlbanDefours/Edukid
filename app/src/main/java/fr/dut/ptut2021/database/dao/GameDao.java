@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import fr.dut.ptut2021.models.database.game.Card;
 import fr.dut.ptut2021.models.database.game.DrawOnItData;
-import fr.dut.ptut2021.models.database.game.MemoryCard;
 import fr.dut.ptut2021.models.database.game.MemoryData;
 import fr.dut.ptut2021.models.database.game.MemoryDataCardCrossRef;
 import fr.dut.ptut2021.models.database.game.PlayWithSoundData;
@@ -160,49 +160,40 @@ public interface GameDao {
     @Update
     void updateMemoryData(MemoryData memoryData);
 
-    @Query("UPDATE MemoryData SET difficultyChiffres = (difficultyChiffres +1) WHERE userId = :userId")
-    void increaseMemoryDataDifficultyChiffres(int userId);
+    @Query("UPDATE MemoryData SET difficulty = (difficulty +1) WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
+    void increaseMemoryDataDifficulty(int userId, String category, int subCategory);
 
-    @Query("UPDATE MemoryData SET difficultyChiffres = (difficultyChiffres -1) WHERE userId = :userId")
-    void decreaseMemoryDataDifficultyChiffres(int userId);
+    @Query("UPDATE MemoryData SET difficulty = (difficulty -1) WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
+    void decreaseMemoryDataDifficulty(int userId, String category, int subCategory);
 
-    @Query("UPDATE MemoryData SET difficultyLettres = (difficultyLettres +1) WHERE userId = :userId")
-    void increaseMemoryDataDifficultyLettres(int userId);
+    @Query("SELECT * FROM MemoryData WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
+    MemoryData getMemoryData(int userId, String category, int subCategory);
 
-    @Query("UPDATE MemoryData SET difficultyLettres = (difficultyLettres -1) WHERE userId = :userId")
-    void decreaseMemoryDataDifficultyLettres(int userId);
+    @Query("SELECT difficulty FROM MemoryData WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
+    int getMemoryDataDifficultyChiffres(int userId, String category, int subCategory);
 
-    @Query("SELECT * FROM MemoryData WHERE userId = :userId")
-    MemoryData getMemoryData(int userId);
-
-    @Query("SELECT difficultyChiffres FROM MemoryData WHERE userId = :userId")
-    int getMemoryDataDifficultyChiffres(int userId);
-
-    @Query("SELECT difficultyLettres FROM MemoryData WHERE userId = :userId")
-    int getMemoryDataDifficultyLettres(int userId);
-
-    @Query("UPDATE MemoryData SET winStreak = 0, loseStreak = 0 WHERE userId = :userId")
-    void resetAllMemoryDataStreak(int userId);
+    @Query("UPDATE MemoryData SET winStreak = 0, loseStreak = 0 WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
+    void resetAllMemoryDataStreak(int userId, String category, int subCategory);
 
     @Query("SELECT * FROM MemoryData")
     List<MemoryData> getAllMemoryData();
 
 
-//MemoryCard
+//Card
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insertMemoryCard(MemoryCard memoryCard);
+    void insertCard(Card memoryCard);
 
     @Update
-    void updateMemoryCard(MemoryCard memoryCard);
+    void updateCard(Card memoryCard);
 
-    @Query("SELECT * FROM MemoryCard WHERE cardValue LIKE :cardValue")
-    MemoryCard getMemoryCard(String cardValue);
+    @Query("SELECT * FROM Card WHERE cardValue LIKE :cardValue")
+    Card getCard(String cardValue);
 
-    @Query("SELECT drawableImage FROM MemoryCard WHERE cardValue LIKE :cardValue")
-    int getMemoryCardDrawableImage(String cardValue);
+    @Query("SELECT drawableImage FROM Card WHERE cardValue LIKE :cardValue")
+    int getCardDrawableImage(String cardValue);
 
-    @Query("SELECT * FROM MemoryCard")
-    List<MemoryCard> getAllMemoryCard();
+    @Query("SELECT * FROM Card")
+    List<Card> getAllCard();
 
 
 //MemoryDataCardCrossRef

@@ -13,7 +13,7 @@ import fr.dut.ptut2021.models.database.app.Game;
 import fr.dut.ptut2021.models.database.app.Theme;
 import fr.dut.ptut2021.models.database.app.ThemeGameCrossRef;
 import fr.dut.ptut2021.models.database.app.User;
-import fr.dut.ptut2021.models.database.game.MemoryCard;
+import fr.dut.ptut2021.models.database.game.Card;
 import fr.dut.ptut2021.models.database.game.MemoryData;
 import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.MemoryDataCardCrossRef;
@@ -29,7 +29,7 @@ import fr.dut.ptut2021.models.database.game.WordWithHoleData;
         Game.class,
         ThemeGameCrossRef.class,
         Word.class,
-        MemoryCard.class,
+        Card.class,
         GameLog.class,
         GameResultLog.class,
         WordWithHoleData.class,

@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 import java.lang.annotation.Native;
 
 @Entity
-public class MemoryCard {
+public class Card {
 
     @PrimaryKey
     @NonNull
@@ -15,7 +15,7 @@ public class MemoryCard {
     private String type;
     private int drawableImage;
 
-    public MemoryCard(String cardValue, String type, int drawableImage) {
+    public Card(String cardValue, String type, int drawableImage) {
         this.cardValue = cardValue;
         this.type = type;
         this.drawableImage = drawableImage;

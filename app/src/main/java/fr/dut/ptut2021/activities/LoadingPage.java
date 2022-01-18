@@ -15,7 +15,7 @@ import fr.dut.ptut2021.models.database.app.Game;
 import fr.dut.ptut2021.models.database.app.Theme;
 import fr.dut.ptut2021.models.database.app.ThemeGameCrossRef;
 import fr.dut.ptut2021.models.database.app.Word;
-import fr.dut.ptut2021.models.database.game.MemoryCard;
+import fr.dut.ptut2021.models.database.game.Card;
 
 public class LoadingPage extends AppCompatActivity {
 
@@ -100,15 +100,15 @@ public class LoadingPage extends AppCompatActivity {
     }
 
     private void createCards(){
-        db.gameDao().insertMemoryCard(new MemoryCard("1","Chiffres",R.drawable.one));
-        db.gameDao().insertMemoryCard(new MemoryCard("2","Chiffres",R.drawable.two));
-        db.gameDao().insertMemoryCard(new MemoryCard("3","Chiffres",R.drawable.three));
-        db.gameDao().insertMemoryCard(new MemoryCard("4","Chiffres",R.drawable.four));
-        db.gameDao().insertMemoryCard(new MemoryCard("5","Chiffres",R.drawable.five));
-        db.gameDao().insertMemoryCard(new MemoryCard("6","Chiffres",R.drawable.six));
-        db.gameDao().insertMemoryCard(new MemoryCard("7","Chiffres",R.drawable.seven));
-        db.gameDao().insertMemoryCard(new MemoryCard("8","Chiffres",R.drawable.eight));
-        db.gameDao().insertMemoryCard(new MemoryCard("9","Chiffres",R.drawable.nine));
+        db.gameDao().insertCard(new Card("1","Chiffres",R.drawable.one));
+        db.gameDao().insertCard(new Card("2","Chiffres",R.drawable.two));
+        db.gameDao().insertCard(new Card("3","Chiffres",R.drawable.three));
+        db.gameDao().insertCard(new Card("4","Chiffres",R.drawable.four));
+        db.gameDao().insertCard(new Card("5","Chiffres",R.drawable.five));
+        db.gameDao().insertCard(new Card("6","Chiffres",R.drawable.six));
+        db.gameDao().insertCard(new Card("7","Chiffres",R.drawable.seven));
+        db.gameDao().insertCard(new Card("8","Chiffres",R.drawable.eight));
+        db.gameDao().insertCard(new Card("9","Chiffres",R.drawable.nine));
     }
 
     private void openUserMenuPage() {
