@@ -210,18 +210,18 @@ public interface GameDao {
     void updateMemoryDataCard(MemoryDataCardCrossRef memoryDataCardCrossRef);
 
     @Query("SELECT * FROM MemoryDataCardCrossRef WHERE userId = :userId AND cardValue LIKE :cardValue")
-    MemoryCard getMemoryDataCard(int userId, String cardValue);
+    MemoryDataCardCrossRef getMemoryDataCard(int userId, String cardValue);
 
     @Query("SELECT used FROM MemoryDataCardCrossRef WHERE userId = :userId AND cardValue LIKE :cardValue")
     boolean getMemoryDataCardUsed(int userId, String cardValue);
 
-    @Query("UPDATE MemoryDataCardCrossRef SET used = :used WHERE userId = :userId")
+    @Query("UPDATE MemoryDataCardCrossRef SET used = :used WHERE userId = :userId AND cardValue LIKE :cardValue")
     void updateMemoryDataCardUsed(int userId, String cardValue, boolean used);
 
     @Query("SELECT * FROM MemoryDataCardCrossRef")
-    List<MemoryCard> getAllMemoryDataCard();
+    List<MemoryDataCardCrossRef> getAllMemoryDataCard();
 
     @Query("SELECT * FROM MemoryDataCardCrossRef WHERE userId = :userId")
-    List<MemoryCard> getAllMemoryDataCardByUserId(int userId);
+    List<MemoryDataCardCrossRef> getAllMemoryDataCardByUserId(int userId);
 
 }

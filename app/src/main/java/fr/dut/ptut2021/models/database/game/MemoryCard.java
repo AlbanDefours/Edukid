@@ -1,11 +1,16 @@
 package fr.dut.ptut2021.models.database.game;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+
+import java.lang.annotation.Native;
 
 @Entity
 public class MemoryCard {
 
+    @PrimaryKey
+    @NonNull
     private String cardValue;
     private String type;
     private int drawableImage;
