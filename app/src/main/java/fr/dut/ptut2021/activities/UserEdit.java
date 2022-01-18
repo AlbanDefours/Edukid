@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -50,7 +51,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private Button valid, cancel, delete, inport;
     private TextInputEditText textField_userName;
     private String userName, imageLocation = null, imageTmp;
-    private int userId, userImageType = 0, imageAvatarType = -1;
+    private int userId, userImageType = 0;
     private boolean isAddUser = false, tabUserIsEmpty = false;
     private static final int CAMERA_REQUEST = 20, MY_CAMERA_PERMISSION_CODE = 200;
     private static final int GALLERY_REQUEST = 30, MY_STORAGE_PERMISSION_CODE = 300;
@@ -90,7 +91,6 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private void checkIfAddOrUpdateUser() {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-
         if (bundle != null) {
             isAddUser = bundle.getBoolean("addUser", false);
             if (!isAddUser) {
@@ -110,16 +110,18 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         userName = bundle.getString("userName", "");
         userId = bundle.getInt("userId", 0);
         imageTmp = bundle.getString("userImage", String.valueOf(R.drawable.a));
-        imageAvatarType = bundle.getInt("userImageType", -1);
+        imageLocation = imageTmp;
+        userImageType = bundle.getInt("userImageType", -1);
     }
 
     private void findCurrentImageUser() {
-        if(imageAvatarType == 0){
+        if(userImageType == 0){
             for (int i = 0; i < tableauImage.length; i++) {
-                if (tableauImage[i] == Integer.parseInt(imageTmp))
+                if (tableauImage[i] == Integer.parseInt(imageTmp)){
                     cpt = i;
+                    userAvatar.setImageResource(tableauImage[cpt]);
+                }
             }
-            userAvatar.setImageResource(Integer.parseInt(imageTmp));
         } else {
             try {
                 File f = new File(imageTmp);
@@ -144,6 +146,13 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void createUser() {
+        if(imageLocation.indexOf(".jpg")> 0){
+            userImageType = 30;
+            Log.e("WILLY", "pas app");
+        }else{
+            userImageType = 0;
+            Log.e("WILLY", "app");
+        }
         if (isAddUser && isDataCorrect()) {
             db.appDao().insertUser(new User(textField_userName.getText().toString(), imageLocation, userImageType));
             startUserMenuPage(false);
@@ -167,9 +176,9 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                 (dialog, which) -> {
                     dialog.dismiss();
                     if (wantToDelete) {
-                        //File file = new File(db.appDao().getUserById(userId).getUserImage());
-                        //file.delete(); //TODO a verif, ca supprimes la mauvaise on dirait
-                        deleteGameData(); //TODO delete all stats
+                        File file = new File(db.appDao().getUserById(userId).getUserImage());
+                        file.delete(); //TODO (pas delete si on modifie l'image par une de l'ap)
+                        deleteGameData();
                         db.appDao().deleteUserById(userId);
                         startUserMenuPage(db.appDao().tabUserIsEmpty());
                     } else
@@ -365,7 +374,10 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     }
 
     private String saveToInternalStorage(Bitmap bitmapImage) {
-        int id = db.appDao().getAllUsers().size() + 1;
+        String name = db.appDao().getUserImageMaxInt();
+        int id = 0;
+        if(name != null && name.indexOf(".jpg")-1 > 0)
+            id = Integer.parseInt(name.substring(name.indexOf(".jpg")-1, name.indexOf(".jpg"))) + 1;
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
         File mypath = new File(directory, "userimage" + id + ".jpg");

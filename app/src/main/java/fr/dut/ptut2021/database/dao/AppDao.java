@@ -100,6 +100,9 @@ public interface AppDao {
     @Query("SELECT * FROM User WHERE userName = :userName")
     User getUserByName(String userName);
 
+    @Query("SELECT userImage FROM User WHERE userImageType != 0 ORDER BY userImage DESC LIMIT 1")
+    String getUserImageMaxInt();
+
     @Update
     void updateUser(User user);
 

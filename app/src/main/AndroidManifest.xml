@@ -17,45 +17,56 @@
         android:theme="@style/Theme.PTUT2021">
         <activity
             android:name=".activities.LoadingPage"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".game.DrawOnIt"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".game.PlayWithSound"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".activities.ResultGamePage"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".activities.UserResume"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".activities.UserEdit"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".activities.StatisticPage"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".game.WordWithHole"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".game.Memory"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".activities.UserMenu"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".activities.ThemeMenu"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".activities.GameMenu"
+            android:screenOrientation="portrait"
             android:exported="false" />
     </application>
 

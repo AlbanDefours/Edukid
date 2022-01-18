@@ -30,7 +30,7 @@ import fr.dut.ptut2021.models.databse.stats.game.WordWithHoleData;
         WordWithHoleData.class,
         PlayWithSoundData.class,
         DrawOnItData.class
-}, version = 8, exportSchema = false)
+}, version = 9, exportSchema = false)
 
 public abstract class CreateDatabase extends RoomDatabase {
 
