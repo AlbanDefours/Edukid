@@ -24,7 +24,7 @@ public class ResultGamePage extends AppCompatActivity {
     private Vibrator vibe;
     private int starsNb = 0;
     private String gameName, themeName;
-    private MediaPlayer mpNiceTry;
+    private MediaPlayer mpNiceTry, mpStars;
     private ImageView star1, star2, star3, exit, replay;
 
     @Override
@@ -91,6 +91,18 @@ public class ResultGamePage extends AppCompatActivity {
        (en fct du nb d'étoiles) en faisant l'animation que si elle devient jaune*/
     private void starsNumber(int nbStars) {
         ImageView[] tabStars = {star1, star2, star3};
+        switch (nbStars) {
+            case 1:
+                mpStars = MediaPlayer.create(this, R.raw.one_star);
+                break;
+            case 2:
+                mpStars = MediaPlayer.create(this, R.raw.two_stars);
+                break;
+            default:
+                mpStars = MediaPlayer.create(this, R.raw.three_stars);
+                break;
+        }
+        mpStars.start();
         for (int i = 0; i < 3; i++) {
             int finalI = i;
             new Handler().postDelayed(() -> {
