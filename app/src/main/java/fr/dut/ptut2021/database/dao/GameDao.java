@@ -181,6 +181,9 @@ public interface GameDao {
     @Query("SELECT difficultyLettres FROM MemoryData WHERE userId = :userId")
     int getMemoryDataDifficultyLettres(int userId);
 
+    @Query("UPDATE MemoryData SET winStreak = 0, loseStreak = 0 WHERE userId = :userId")
+    void resetAllMemoryDataStreak(int userId);
+
     @Query("SELECT * FROM MemoryData")
     List<MemoryData> getAllMemoryData();
 
@@ -201,7 +204,7 @@ public interface GameDao {
     @Query("SELECT * FROM MemoryCard")
     List<MemoryCard> getAllMemoryCard();
 
-//TODO Quand on change la difficulté mettre tout les used à false
+
 //MemoryDataCardCrossRef
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertMemoryDataCard(MemoryDataCardCrossRef memoryDataCardCrossRef);
@@ -215,9 +218,6 @@ public interface GameDao {
     @Query("SELECT used FROM MemoryDataCardCrossRef WHERE userId = :userId AND cardValue LIKE :cardValue")
     boolean getMemoryDataCardUsed(int userId, String cardValue);
 
-    @Query("UPDATE MemoryDataCardCrossRef SET used = :used WHERE userId = :userId AND cardValue LIKE :cardValue")
-    void updateMemoryDataCardUsed(int userId, String cardValue, boolean used);
-
     @Query("SELECT * FROM MemoryDataCardCrossRef")
     List<MemoryDataCardCrossRef> getAllMemoryDataCard();
 
@@ -226,5 +226,11 @@ public interface GameDao {
 
     @Query("SELECT COUNT(*) FROM MemoryDataCardCrossRef WHERE userId = :userId AND used = 0")
     int getMemoryDataCardNbNotUsed(int userId);
+
+    @Query("UPDATE MemoryDataCardCrossRef SET used = :used WHERE userId = :userId AND cardValue LIKE :cardValue")
+    void updateMemoryDataCardUsed(int userId, String cardValue, boolean used);
+
+    @Query("UPDATE MemoryDataCardCrossRef SET used = 0 WHERE userId = :userId")
+    void resetAllMemoryDataCardUsed(int userId);
 
 }
