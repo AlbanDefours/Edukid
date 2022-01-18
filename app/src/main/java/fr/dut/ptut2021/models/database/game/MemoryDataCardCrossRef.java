@@ -9,6 +9,7 @@ public class MemoryDataCardCrossRef {
     @NonNull
     private String cardValue;
     private int userId;
+    //TODO Changer le boolean en int
     private boolean used;
 
     public MemoryDataCardCrossRef(String cardValue, int userId) {

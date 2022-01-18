@@ -1,5 +1,6 @@
 package fr.dut.ptut2021.models.database.game;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -7,6 +8,7 @@ import androidx.room.PrimaryKey;
 public class MemoryData {
 
     private int userId;
+    @NonNull
     private String category;
     private int subCategory;
     private int difficulty;

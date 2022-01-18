@@ -93,13 +93,13 @@ public interface AppDao {
     void insertSubGame(SubGame subGame);
 
     @Query("SELECT * FROM SubGame")
-    List<Game> getAllSubGames();
+    List<SubGame> getAllSubGames();
 
     @Query("SELECT * FROM SubGame WHERE subGameId = :subGameId")
-    Game getSubGameById(int subGameId);
+    SubGame getSubGameById(int subGameId);
 
     @Query("SELECT * FROM SubGame WHERE subGameName = :subGameName")
-    Game getSubGameByName(String subGameName);
+    SubGame getSubGameByName(String subGameName);
 
     @Update
     void updateSubGame(SubGame subGame);
@@ -117,9 +117,9 @@ public interface AppDao {
 
     //GameSubGameCrossRef
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertThemeGame(GameSubGameCrossRef gameSubGameCrossRef);
+    void insertGameSubGame(GameSubGameCrossRef gameSubGameCrossRef);
 
-    @Query("SELECT * FROM ThemeGameCrossRef")
+    @Query("SELECT * FROM GameSubGameCrossRef")
     List<GameSubGameCrossRef> getAllGameSubGame();
 
     default boolean tabGameSubGameIsEmpty() {
