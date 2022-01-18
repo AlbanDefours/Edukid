@@ -47,7 +47,8 @@ public class ResultGamePage extends AppCompatActivity {
 
         replay.setOnClickListener(v -> {
             vibrate();
-            findGame();
+            new ClasseMere(ResultGamePage.this).findGame(gameName);
+            finish();
         });
     }
 
@@ -113,24 +114,5 @@ public class ResultGamePage extends AppCompatActivity {
             YoYo.with(Techniques.Tada).duration(1000).repeat(2).playOn(findViewById(R.id.text_felicitation));
             mpNiceTry.start();
         }, 800L * nbStars + 200);
-    }
-
-    private void findGame() {
-        mpNiceTry.stop();
-        switch (gameName) {
-            case "Ecoute":
-                startActivity(new Intent().setClass(getApplicationContext(), PlayWithSound.class));
-                break;
-            case "Dessine":
-                startActivity(new Intent().setClass(getApplicationContext(), DrawOnIt.class));
-                break;
-            case "Memory":
-                startActivity(new Intent().setClass(getApplicationContext(), Memory.class));
-                break;
-            case "Mot à trou":
-                startActivity(new Intent().setClass(getApplicationContext(), WordWithHole.class));
-                break;
-        }
-        finish();
     }
 }
