@@ -91,7 +91,7 @@ public class ResultGamePage extends AppCompatActivity {
        (en fct du nb d'étoiles) en faisant l'animation que si elle devient jaune*/
     private void starsNumber(int nbStars) {
         ImageView[] tabStars = {star1, star2, star3};
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < nbStars; i++) {
             int finalI = i;
             new Handler().postDelayed(() -> {
                 tabStars[finalI].setImageResource(R.drawable.icon_star);
