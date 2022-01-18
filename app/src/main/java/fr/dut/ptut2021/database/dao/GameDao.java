@@ -224,4 +224,7 @@ public interface GameDao {
     @Query("SELECT * FROM MemoryDataCardCrossRef WHERE userId = :userId")
     List<MemoryDataCardCrossRef> getAllMemoryDataCardByUserId(int userId);
 
+    @Query("SELECT COUNT(*) FROM MemoryDataCardCrossRef WHERE userId = :userId AND used = 0")
+    int getMemoryDataCardNbNotUsed(int userId);
+
 }
