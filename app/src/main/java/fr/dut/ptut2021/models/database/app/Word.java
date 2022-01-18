@@ -1,4 +1,4 @@
-package fr.dut.ptut2021.models.databse;
+package fr.dut.ptut2021.models.database.app;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;

@@ -8,11 +8,11 @@ import androidx.room.Update;
 
 import java.util.List;
 
-import fr.dut.ptut2021.models.databse.Game;
-import fr.dut.ptut2021.models.databse.Theme;
-import fr.dut.ptut2021.models.databse.ThemeGameCrossRef;
-import fr.dut.ptut2021.models.databse.User;
-import fr.dut.ptut2021.models.databse.Word;
+import fr.dut.ptut2021.models.database.app.Game;
+import fr.dut.ptut2021.models.database.app.Theme;
+import fr.dut.ptut2021.models.database.app.ThemeGameCrossRef;
+import fr.dut.ptut2021.models.database.app.User;
+import fr.dut.ptut2021.models.database.app.Word;
 
 @Dao
 public interface AppDao {

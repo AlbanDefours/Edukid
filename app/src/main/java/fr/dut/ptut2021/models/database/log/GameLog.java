@@ -1,4 +1,4 @@
-package fr.dut.ptut2021.models.databse.stats.log;
+package fr.dut.ptut2021.models.database.log;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;

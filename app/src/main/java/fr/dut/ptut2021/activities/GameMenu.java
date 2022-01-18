@@ -24,7 +24,7 @@ import fr.dut.ptut2021.game.DrawOnIt;
 import fr.dut.ptut2021.game.Memory;
 import fr.dut.ptut2021.game.PlayWithSound;
 import fr.dut.ptut2021.game.WordWithHole;
-import fr.dut.ptut2021.models.databse.Game;
+import fr.dut.ptut2021.models.database.app.Game;
 
 public class GameMenu extends AppCompatActivity {
 

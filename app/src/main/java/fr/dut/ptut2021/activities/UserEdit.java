@@ -39,7 +39,7 @@ import java.lang.reflect.Method;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.models.databse.User;
+import fr.dut.ptut2021.models.database.app.User;
 
 public class UserEdit extends AppCompatActivity implements View.OnClickListener {
 

@@ -1,6 +1,5 @@
 package fr.dut.ptut2021.activities;
 
-import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.content.Context;
 import android.os.Build;
@@ -15,11 +14,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
@@ -29,7 +26,7 @@ import java.util.Map;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.models.databse.User;
+import fr.dut.ptut2021.models.database.app.User;
 
 public class StatisticPage extends AppCompatActivity implements View.OnClickListener {
 
