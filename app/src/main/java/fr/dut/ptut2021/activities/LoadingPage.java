@@ -11,6 +11,7 @@ import com.daimajia.androidanimations.library.YoYo;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.game.DrawOnIt;
 import fr.dut.ptut2021.game.WordWithHole;
 import fr.dut.ptut2021.models.Game;
 import fr.dut.ptut2021.models.Theme;
@@ -83,13 +84,13 @@ public class LoadingPage extends AppCompatActivity {
     }
 
     private void openUserMenuPage() {
-        Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
+        Intent intent = new Intent().setClass(getApplicationContext(), DrawOnIt.class);
         startActivity(intent);
         finish();
     }
 
     private void openUserEditPage() {
-        Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
+        Intent intent = new Intent().setClass(getApplicationContext(), DrawOnIt.class);
         intent.putExtra("addUser", true);
         startActivity(intent);
         finish();

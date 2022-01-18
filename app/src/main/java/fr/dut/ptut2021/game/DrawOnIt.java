@@ -12,10 +12,10 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import fr.dut.ptut2021.R;
@@ -30,7 +30,12 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
     private Canvas canvas;
     private Paint paint;
     private DisplayMetrics dm;
-    private float largeur = 0, hauteur = 0, downx = 0, downy = 0, upx = 0, upy = 0;
+    private float largeur = 0, hauteur = 0, downx = 0, downy = 0, upx = 0, upy = 0, oldUpx = 0, oldUpy = 0;
+    Boolean canDraw = false, hasDraw = false, warning = false, error = false;
+    private int nbEssai = 3;
+    private float nbErreur = 0;
+
+    float tolerance, toleranceLarge;
 
     private Symbol s;
 
@@ -60,56 +65,46 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw_on_it);
-
         
         dm = getResources().getDisplayMetrics();
 
         DataSymbol.init(dm.widthPixels, dm.heightPixels);
 
-        s = new Symbol(DataSymbol.cinq, dm.widthPixels/20);
+        tolerance = dm.widthPixels/15;
+        s = new Symbol(DataSymbol.cinq, tolerance);
 
+        toleranceLarge = (float) (tolerance * 2);
 
         image = findViewById(R.id.idImage_drawOnIt);
         imageVide = findViewById(R.id.idImageVide_drawOnIt);
 
         Display currentDisplay = getWindowManager().getDefaultDisplay();
-        float largeur = currentDisplay.getWidth();
-        float hauteur = currentDisplay.getHeight();
+        largeur = currentDisplay.getWidth();
+        hauteur = currentDisplay.getHeight();
 
         bitmap = Bitmap.createBitmap((int) largeur, (int) hauteur, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
         paint = new Paint();
-        paint.setColor(Color.YELLOW);
-        paint.setStrokeWidth(0.02f*largeur);
+        paint.setColor(Color.GREEN);
+        paint.setStrokeWidth(0.15f*largeur);
         paint.setAntiAlias(true);
         paint.setStrokeCap(Paint.Cap.ROUND);
         imageVide.setImageBitmap(bitmap);
 
-        //canvas.drawLine(0.25f*dw, 0.25f*dh, 0.5f*dw, 0.5f*dh, paint);
+        //canvas.drawPoints(getFloats(), paint);
 
-        canvas.drawPoints(getFloats(), paint);
+        paint.setStrokeWidth(15);
+        paint.setStyle(Paint.Style.STROKE);
+        canvas.drawCircle((float) s.getFirstPoint().getX(),(float) s.getFirstPoint().getY(), s.getTolerance(), paint);
 
+        paint.setColor(Color.RED);
+        canvas.drawCircle((float) s.getLastPoint().getX(),(float) s.getLastPoint().getY(), s.getTolerance(), paint);
 
-        /*
-        canvas.drawPoint(400, 900, paint);
-        canvas.drawPoint(600, 1100, paint);
-
-        System.out.println("//////////////");
-        System.out.println(s.isInArea2(new Point(500,1000), new Point(400, 900), new Point(600, 1100)));
-        System.out.println("//////////////");
-
-
-        for(int i = 300; i <= 700; i++){
-            for(int j = 800; j <= 1200; j++){
-                if(!s.isInArea2(new Point(i,j), new Point(400, 900), new Point(600, 1100))){
-                    canvas.drawPoint(i, j, paint);
-                }
-            }
-        }
-        */
+        paint.setColor(Color.GREEN);
+        paint.setStrokeWidth(0.15f*largeur);
+        paint.setStyle(Paint.Style.FILL);
 
         System.out.println("c'est bon");
-
 
         imageVide.setOnTouchListener(this);
     }
@@ -121,25 +116,71 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
             case MotionEvent.ACTION_DOWN:
                 downx = event.getX();
                 downy = event.getY();
+                if(s.getDistanceBetweenTwoPoints(s.getFirstPoint(),new Point(downx, downy)) <= s.getTolerance() && !hasDraw){
+                    canDraw = true;
+                }
                 //System.out.println("cinq.add(new Point(" + downx/dm.widthPixels + ", " + downy/dm.heightPixels + "));");
                 break;
             case MotionEvent.ACTION_MOVE:
-                //System.out.println("la");
                 upx = event.getX();
                 upy = event.getY();
-                if(s.isInSymbol(new Point(upx, upy))) {
-                    canvas.drawPoint(upx, upy, paint);
+                if(canDraw && !hasDraw) {
+                    if(oldUpx != 0 && oldUpy != 0){
+                        paint.setStrokeWidth(0.15f*largeur);
+                        canvas.drawLine(upx, upy, oldUpx, oldUpy, paint);
+                    }else{
+                        canvas.drawPoint(upx, upy, paint);
+                    }
+                    oldUpx = upx;
+                    oldUpy = upy;
                 }
                 imageVide.invalidate();
-                //System.out.println("Coordonnes : " + upx + " " + upy);
-                //System.out.println("             " + dm.widthPixels + " " + dm.heightPixels);
                 if(!s.isInSymbol(new Point(upx, upy))){
-                    //canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.MULTIPLY); //ligne de william, met tous le canvas en transparent
-                    //canvas.drawColor(Color.TRANSPARENT, Mode.CLEAR); // ou elle
+                    if(!s.isInSymbol(new Point(upx, upy), toleranceLarge)){
+                        paint.setColor(Color.RED);
+                        error = true;
+                    }else {
+                        paint.setColor(Color.argb(255,255,200,0));
+                        warning = true;
+                    }
+                }else{
+                    paint.setColor(Color.GREEN);
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                //System.out.println("ACTION_UP");
+                System.out.println("ACTION_UP");
+                if(s.getDistanceBetweenTwoPoints(s.getLastPoint(),new Point(event.getX(), event.getY())) > s.getTolerance() && !hasDraw && canDraw){
+                    canDraw = true;
+                    nbEssai--;
+                    nbErreur++;
+
+                    reDraw();
+
+                }else{
+                    if(error){
+                        nbEssai--;
+                        nbErreur++;
+
+                        reDraw();
+
+                    }else if(warning){
+                        nbEssai--;
+                        nbErreur += 0.5;
+                    }
+                    canDraw = false;
+                    hasDraw = true;
+                }
+                error = false;
+                warning = false;
+
+                Toast.makeText(getApplicationContext(), "Essai : " + nbEssai + " | Erreur : " + nbErreur, Toast.LENGTH_LONG).show();
+
+                if(nbEssai <= 0){
+                    //TODO passer au chiffre suivant
+                    return true;
+                }
+                oldUpx = 0;
+                oldUpy = 0;
                 break;
             case MotionEvent.ACTION_CANCEL:
                 break;
@@ -149,27 +190,19 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         return true;
     }
 
-    //Permet afficher point du clic
-    /*@Override
-    public boolean onTouch(View view, MotionEvent event) {
-        int action = event.getAction();
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                downx = event.getX();
-                downy = event.getY();
-                canvas.drawPoint(downx, downy, paint);
-                imageVide.invalidate();
-                System.out.println(downx/largeur + " " + downy/hauteur);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                break;
-            case MotionEvent.ACTION_UP:
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                break;
-            default:
-                break;
-        }
-        return true;
-    }*/
+    public void reDraw(){
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.MULTIPLY);
+
+        paint.setStrokeWidth(15);
+        paint.setColor(Color.GREEN);
+        paint.setStyle(Paint.Style.STROKE);
+        canvas.drawCircle((float) s.getFirstPoint().getX(),(float) s.getFirstPoint().getY(),s.getTolerance(), paint);
+
+        paint.setColor(Color.RED);
+        canvas.drawCircle((float) s.getLastPoint().getX(),(float) s.getLastPoint().getY(), s.getTolerance(), paint);
+
+        paint.setColor(Color.GREEN);
+        paint.setStrokeWidth(0.15f*largeur);
+        paint.setStyle(Paint.Style.FILL);
+    }
 }
