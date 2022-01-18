@@ -92,6 +92,9 @@ public class LoadingPage extends AppCompatActivity {
         db.appDao().insertWord(new Word("LIVRE", R.drawable.image_livre));
         db.appDao().insertWord(new Word("VACHE", R.drawable.image_vache));
         db.appDao().insertWord(new Word("TOMATE", R.drawable.image_tomate));
+        db.appDao().insertWord(new Word("CHIEN", R.drawable.image_chien));
+        db.appDao().insertWord(new Word("ARBRE", R.drawable.image_arbre));
+        db.appDao().insertWord(new Word("BALLON", R.drawable.image_ballon));
     }
 
     private void openUserMenuPage() {

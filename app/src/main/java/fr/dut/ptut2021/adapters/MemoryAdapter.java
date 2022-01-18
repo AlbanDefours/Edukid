@@ -92,7 +92,7 @@ public class MemoryAdapter extends BaseAdapter {
             //
             double width = (1094.0 + 20) / numColumns;
             double height = width * (1684.0 / 1094) + 20;
-            double sizeElement = width * (800.0 / 1094);
+            double sizeElement = width -50;
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) width, (int) height);
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
             holder.viewCard.setLayoutParams(layoutParams);
@@ -303,7 +303,7 @@ public class MemoryAdapter extends BaseAdapter {
     }
 
     private boolean isChiffre(int drawableImage){
-        if(drawableImage!= R.drawable.one && drawableImage!= R.drawable.two && drawableImage!= R.drawable.three && drawableImage!= R.drawable.four && drawableImage!= R.drawable.five && drawableImage!= R.drawable.six){
+        if(drawableImage!= R.drawable.one && drawableImage!= R.drawable.two && drawableImage!= R.drawable.three && drawableImage!= R.drawable.four && drawableImage!= R.drawable.five && drawableImage!= R.drawable.six && drawableImage!= R.drawable.seven && drawableImage!= R.drawable.eight && drawableImage!= R.drawable.nine){
             return false;
         }
         else
