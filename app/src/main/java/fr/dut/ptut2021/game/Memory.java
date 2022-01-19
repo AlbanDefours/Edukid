@@ -34,6 +34,7 @@ public class Memory extends AppCompatActivity {
     private CreateDatabase db;
     private int difficulty;
     private int userId;
+    private int subCat;
 
     private void shuffle(){
         Collections.shuffle(listMemoryCard);
@@ -136,7 +137,23 @@ public class Memory extends AppCompatActivity {
 
     private void initDB(){
         db = CreateDatabase.getInstance(Memory.this);
-        db.gameDao().insertMemoryData(new MemoryData(userId));
+        SharedPreferences settings = getSharedPreferences("MyPref", 0);
+        String subGame = settings.getString("subGameName", "");
+        switch(subGame){
+            case "Image / Image":
+                subCat=1;
+                break;
+            case "Image / Image différente":
+                subCat=2;
+                break;
+            case "Chiffre / Chiffre":
+                subCat=3;
+                break;
+            case "Image / Chiffre":
+                subCat=4;
+                break;
+        }
+        db.gameDao().insertMemoryData(new MemoryData(userId,"Chiffres",subCat));
     }
 
     @Override
@@ -152,10 +169,17 @@ public class Memory extends AppCompatActivity {
         SharedPreferences settings = getSharedPreferences("MyPref", 0);
         String themeName = settings.getString("themeName", "");
         userId = settings.getInt("userId", 0);
+        difficulty = db.gameDao().getMemoryData(userId,themeName,subCat).getDifficulty();
+
         if(themeName.equals("Chiffres") ){
-            difficulty = db.gameDao().getMemoryData(userId).getDifficultyChiffres();
             initCardChiffre(getNbCard());
+<<<<<<< HEAD
             System.out.println("TEST : "+ listMemoryCard);
+=======
+        }
+        else{
+
+>>>>>>> 088e22056569e18f2cc7fdc8e9b80163569cdb23
         }
 
         shuffle();
@@ -207,14 +231,17 @@ public class Memory extends AppCompatActivity {
         int value,nbChoice=0;
         boolean isUsed=false;
 
-        int nbCardUsedToUse = nbCard-db.gameDao().getMemoryDataCardNbNotUsed(userId);
-        if(nbCardUsedToUse<0){nbCardUsedToUse=0;}
-        int nbCardNotUsedToUse = nbCard-nbCardUsedToUse;
         while(nbChoice!=nbCard){
             value =(int) (Math.random()*9)+1;
+
             for (int j = 0; j< listMemoryCard.size(); j++){
                 if(nbChoice<nbCardNotUsedToUse) {
                     if(String.valueOf(value)== listMemoryCard.get(j).getValue() || db.gameDao().getMemoryDataCardUsed(userId,String.valueOf(value))) {
+
+            for (int j=0;j<listCard.size();j++){
+                if(nbChoice<db.gameDao().getMemoryDataCardNbNotUsed(userId)) {
+                    if(String.valueOf(value)==listCard.get(j).getValue() || db.gameDao().getMemoryDataCardUsed(userId,String.valueOf(value)) == db.gameDao().getMemoryMaxUsed()) {
+
                         isUsed = true;
                         break;
                     }
