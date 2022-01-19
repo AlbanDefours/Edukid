@@ -111,7 +111,6 @@ public class LoadingPage extends AppCompatActivity {
 
     //Here to add Words with images
     private void createWords() {
-        if (db.appDao().tabWordIsEmpty()) {
             db.appDao().insertWord(new Word("AVION", R.drawable.image_avion));
             db.appDao().insertWord(new Word("MAISON", R.drawable.image_maison));
             db.appDao().insertWord(new Word("POULE", R.drawable.image_poule));
@@ -122,7 +121,17 @@ public class LoadingPage extends AppCompatActivity {
             db.appDao().insertWord(new Word("CHIEN", R.drawable.image_chien));
             db.appDao().insertWord(new Word("ARBRE", R.drawable.image_arbre));
             db.appDao().insertWord(new Word("BALLON", R.drawable.image_ballon));
-        }
+            db.appDao().insertWord(new Word("BATEAU", R.drawable.image_bateau));
+            db.appDao().insertWord(new Word("BOUTEILLE", R.drawable.image_bouteille));
+            db.appDao().insertWord(new Word("CAROTTE", R.drawable.image_carotte));
+            db.appDao().insertWord(new Word("CHAISE", R.drawable.image_chaise));
+            db.appDao().insertWord(new Word("CHEVAL", R.drawable.image_cheval));
+            db.appDao().insertWord(new Word("LION", R.drawable.image_lion));
+            db.appDao().insertWord(new Word("POMME", R.drawable.image_pomme));
+            db.appDao().insertWord(new Word("SOLEIL", R.drawable.image_soleil));
+            db.appDao().insertWord(new Word("TÉLÉPHONE", R.drawable.image_telephone));
+            db.appDao().insertWord(new Word("VOITURE", R.drawable.image_voiture));
+            db.appDao().insertWord(new Word("ZÈBRE", R.drawable.image_zebre));
     }
 
     private void createCards(){

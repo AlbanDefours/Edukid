@@ -22,6 +22,7 @@ import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.adapters.MemoryAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.MemoryCard;
+import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.MemoryData;
 
 
@@ -93,21 +94,26 @@ public class Memory extends AppCompatActivity {
                 ptMalus+= listMemoryCard.get(i).getNbReturn()-1;
             }
         }
+        MemoryData memoData = db.gameDao().getMemoryData(userId,category,subCat);
         int nbStar;
         if(ptMalus<=2) {
             nbStar = 3;
-            db.gameDao().getMemoryData(userId,category,subCat).setWinStreak(db.gameDao().getMemoryData(userId,category,subCat).getWinStreak()+1);
-            db.gameDao().getMemoryData(userId,category,subCat).setLoseStreak(0);
+            memoData.setWinStreak(db.gameDao().getMemoryData(userId,category,subCat).getWinStreak()+1);
+            memoData.setLoseStreak(0);
         }
         else if(ptMalus<=5) {
             nbStar = 2;
-            db.gameDao().resetAllMemoryDataStreak(userId,category,subCat);
+            memoData.setWinStreak(0);
+            memoData.setLoseStreak(0);
         }
         else{
             nbStar=1;
-            db.gameDao().getMemoryData(userId,category,subCat).setLoseStreak(db.gameDao().getMemoryData(userId,category,subCat).getLoseStreak()+1);
-            db.gameDao().getMemoryData(userId,category,subCat).setWinStreak(0);
+            memoData.setWinStreak(0);
+            memoData.setLoseStreak(db.gameDao().getMemoryData(userId,category,subCat).getLoseStreak()+1);
         }
+        db.gameDao().updateMemoryData(memoData);
+        Log.e("memory","WinStreak : "+db.gameDao().getMemoryData(userId,category,subCat).getWinStreak());
+        Log.e("memory","LoseStreak : "+db.gameDao().getMemoryData(userId,category,subCat).getLoseStreak());
         changeDifficulty();
 
         new Handler().postDelayed(() -> {
@@ -157,12 +163,15 @@ public class Memory extends AppCompatActivity {
                 break;
         }
         db.gameDao().insertMemoryData(new MemoryData(userId,category,subCat));
+        difficulty = db.gameDao().getMemoryData(userId,category,subCat).getDifficulty();
         Log.e("memory","BD initialisé");
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_memory);
+        Log.e("memory","debut Création du memory");
 
         SharedPreferences settings = getSharedPreferences("MyPref", 0);
         category = settings.getString("themeName", "");
@@ -171,10 +180,6 @@ public class Memory extends AppCompatActivity {
 
         mpGoodAnswer = MediaPlayer.create(this, R.raw.correct_answer);
         mpWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_memory);
-        difficulty = db.gameDao().getMemoryData(userId,category,subCat).getDifficulty();
 
         if(category.equals("Chiffres") ){
             initCardChiffre(getNbCard());
@@ -226,7 +231,6 @@ public class Memory extends AppCompatActivity {
     }
 
     private void initCardChiffre(int nbCard){
-        System.out.println("Nombre de cartes : "+nbCard);
         listMemoryCard = new ArrayList<>();
         if(nbCard>9){nbCard=9;}
         int value,nbChoice=0;
@@ -311,7 +315,7 @@ public class Memory extends AppCompatActivity {
             case 1:
             case 2:
             case 4:
-                return db.appDao().getWordById((int) (Math.random() * sizeImage)).getImage();
+                return getImageNotUse();
             case 3:
                 return db.gameDao().getCard(String.valueOf(value)).getDrawableImage();
         }
@@ -324,16 +328,34 @@ public class Memory extends AppCompatActivity {
             case 3:
                 return image1;
             case 2:
-                int img=image1;
-                while(img==image1){
-                    img = db.appDao().getWordById((int) (Math.random() * sizeImage)).getImage();
-                }
-                Log.e("memory","Image 2 = "+img);
-                return img;
+                return getImageNotUse();
             case 4:
                 return db.gameDao().getCard(String.valueOf(value)).getDrawableImage();
         }
         return 0;
     }
 
+    private int getImageNotUse(){
+        int sizeImage = db.appDao().getNbWords();
+        ArrayList<Word> words = (ArrayList<Word>) db.appDao().getAllWords();
+        if(listMemoryCard!=null && !listMemoryCard.isEmpty() ) {
+            int img = listMemoryCard.get(0).getDrawableImage();
+            while (!isImageNotUse(img)) {
+                img = words.get((int) (Math.random() * sizeImage)).getImage();
+            }
+            return img;
+        }
+        else{
+            return words.get((int) (Math.random() * sizeImage)).getImage();
+        }
+    }
+
+    private boolean isImageNotUse(int img){
+        for (int i=0;i<listMemoryCard.size();i++){
+            if(img == listMemoryCard.get(i).getDrawableImage()){
+                return false;
+            }
+        }
+        return true;
+    }
 }
