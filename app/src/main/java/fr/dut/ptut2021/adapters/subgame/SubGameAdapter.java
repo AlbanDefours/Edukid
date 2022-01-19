@@ -11,13 +11,14 @@ import java.util.List;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.models.database.app.Game;
+import fr.dut.ptut2021.models.database.app.SubGame;
 
 public class SubGameAdapter extends RecyclerView.Adapter<MyViewHolderSubGame> {
 
     Context  context;
-    List<Game> listGame;
+    List<SubGame> listGame;
 
-    public SubGameAdapter(Context context, List<Game> listGame) {
+    public SubGameAdapter(Context context, List<SubGame> listGame) {
         this.context = context;
         this.listGame = listGame;
     }
@@ -30,8 +31,8 @@ public class SubGameAdapter extends RecyclerView.Adapter<MyViewHolderSubGame> {
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolderSubGame holder, int position) {
-        holder.name.setText(listGame.get(position).getGameName());
-        holder.image.setImageResource(listGame.get(position).getGameImage());
+        holder.name.setText(listGame.get(position).getSubGameName());
+        holder.image.setImageResource(listGame.get(position).getSubGameImage());
     }
 
     @Override

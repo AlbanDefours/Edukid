@@ -49,13 +49,7 @@ public class ThemeMenu extends AppCompatActivity {
 
     private void createAndGetDatabase() {
         db = CreateDatabase.getInstance(ThemeMenu.this);
-
-        if (!db.appDao().tabThemeIsEmpty()) {
-            listTheme = db.appDao().getAllThemes();
-        } else {
-            db.appDao().insertTheme(new Theme("Lettres", R.drawable.lettres));
-            db.appDao().insertTheme(new Theme("Chiffres", R.drawable.chiffres));
-        }
+        listTheme = db.appDao().getAllThemes();
     }
 
     private void createRecyclerView() {

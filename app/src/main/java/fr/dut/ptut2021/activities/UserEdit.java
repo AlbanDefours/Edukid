@@ -55,7 +55,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private static final int GALLERY_REQUEST = 30, MY_STORAGE_PERMISSION_CODE = 300;
 
     private int cpt = 0;
-    private final int[] tableauImage = {R.drawable.a, R.drawable.b, R.drawable.c, R.drawable.d};
+    private final int[] tableauImage = {R.drawable.user_image_a, R.drawable.user_image_b, R.drawable.user_image_c, R.drawable.user_image_d};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +98,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                 title.setText("Modification du profil de " + bundle.getString("userName", ""));
             } else {
                 title.setText("Créer votre session");
-                userAvatar.setImageResource(R.drawable.a);
+                userAvatar.setImageResource(R.drawable.user_image_a);
             }
         }
     }
@@ -106,7 +106,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private void getUserAttribute(Bundle bundle) {
         userName = bundle.getString("userName", "");
         userId = bundle.getInt("userId", 0);
-        imageTmp = bundle.getString("userImage", String.valueOf(R.drawable.a));
+        imageTmp = bundle.getString("userImage", String.valueOf(R.drawable.user_image_a));
         imageLocation = imageTmp;
         userImageType = bundle.getInt("userImageType", -1);
     }
