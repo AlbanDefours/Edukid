@@ -24,6 +24,7 @@ import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.MemoryCard;
 import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.MemoryData;
+import fr.dut.ptut2021.models.database.game.MemoryDataCardCrossRef;
 
 
 public class Memory extends AppCompatActivity {
@@ -165,6 +166,9 @@ public class Memory extends AppCompatActivity {
         db.gameDao().insertMemoryData(new MemoryData(userId,category,subCat));
         difficulty = db.gameDao().getMemoryData(userId,category,subCat).getDifficulty();
         Log.e("memory","BD initialisé");
+        for (int i=0;i<9;i++){
+            db.gameDao().insertMemoryDataCard(new MemoryDataCardCrossRef(String.valueOf(i+1),userId,category,subCat));
+        }
     }
 
     @Override
@@ -239,17 +243,14 @@ public class Memory extends AppCompatActivity {
         while(nbChoice!=nbCard){
             value =(int) (Math.random()*9)+1;
             for (int j = 0; j< listMemoryCard.size(); j++){
-                if(nbChoice<db.gameDao().getMemoryDataCardNbNotMaxUsed(userId,category,subCat,db.gameDao().getMemoryDataCardMaxUsed(userId,category,subCat))) {
-                    if(String.valueOf(value)==listMemoryCard.get(j).getValue() || db.gameDao().getMemoryDataCardUsed(userId,category,subCat,String.valueOf(value)) == db.gameDao().getMemoryDataCardMaxUsed(userId,category,subCat)) {
+                    Log.e("memoryB","Le max est "+db.gameDao().getMemoryDataCardMaxUsed(userId,category,subCat));
+                    if(String.valueOf(value)==listMemoryCard.get(j).getValue()) {
                         isUsed = true;
                         break;
                     }
-                }else{
-                    if(String.valueOf(value)== listMemoryCard.get(j).getValue()) {
-                        isUsed = true;
-                        break;
-                    }
-                }
+            }
+            if(nbChoice<db.gameDao().getMemoryDataCardNbNotMaxUsed(userId,category,subCat,db.gameDao().getMemoryDataCardMaxUsed(userId,category,subCat)) && db.gameDao().getMemoryDataCard(userId, category, subCat, String.valueOf(value)).getUsed() == db.gameDao().getMemoryDataCardMaxUsed(userId, category, subCat)) {
+                isUsed=true;
             }
             if(!isUsed) {
                 nbChoice++;
@@ -279,15 +280,28 @@ public class Memory extends AppCompatActivity {
         Log.e("memory","Jeu de carte initialisé : "+listMemoryCard);
     }
 
+    private int NbCardUsedLessThan(int valeur){
+        int compteur=0;
+        for (int i=0;i<db.gameDao().getMemoryDataCardNbTotal(userId,category,subCat);i++){
+            Log.e("memoryB","CARTE "+(i+1)+" à étais utilisé : "+db.gameDao().getMemoryDataCard(userId,category,subCat,String.valueOf(i+1)).getUsed());
+            if(db.gameDao().getMemoryDataCard(userId,category,subCat,String.valueOf(i+1)).getUsed()<valeur){
+                compteur++;
+
+            }
+        }
+        return compteur;
+    }
+
     private void changeDifficulty(){
         Log.e("memory","La difficulté est analysé");
-        if( db.gameDao().getMemoryData(userId,category,subCat).getWinStreak() >= 1 && db.gameDao().getMemoryDataCardNbTotal(userId,category,subCat)-db.gameDao().getMemoryDataCardNbUsedMoreThan(userId,category,subCat,3)==0 && difficulty+1<=5){
+        Log.e("memory","Nombre de carte en dessous de 3 : "+NbCardUsedLessThan(3));
+        if( db.gameDao().getMemoryData(userId,category,subCat).getWinStreak() >= 2 && NbCardUsedLessThan(3)==0 && difficulty+1<=5){
             Log.e("memory","Monte au niveau "+(difficulty+1));
             db.gameDao().increaseMemoryDataDifficulty(userId,category,subCat);
             db.gameDao().resetAllMemoryDataStreak(userId,category,subCat);
             db.gameDao().resetAllMemoryDataCardUsed(userId,category,subCat);
         }
-        if(db.gameDao().getMemoryData(userId,category,subCat).getLoseStreak()>=1 && difficulty-1>=1){
+        if(db.gameDao().getMemoryData(userId,category,subCat).getLoseStreak()>=3 && difficulty-1>=1){
             Log.e("memory","Baisse au niveau "+(difficulty-1));
             db.gameDao().decreaseMemoryDataDifficulty(userId,category,subCat);
             db.gameDao().resetAllMemoryDataStreak(userId,category,subCat);
@@ -310,7 +324,6 @@ public class Memory extends AppCompatActivity {
     }
 
     private int getImage1(int value){
-        int sizeImage = db.appDao().getNbWords();
         switch(subCat){
             case 1:
             case 2:
@@ -322,7 +335,6 @@ public class Memory extends AppCompatActivity {
         return 0;
     }
     private int getImage2(int image1,int value){
-        int sizeImage = db.appDao().getNbWords();
         switch(subCat){
             case 1:
             case 3:

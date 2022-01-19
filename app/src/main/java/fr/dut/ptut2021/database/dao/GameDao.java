@@ -231,8 +231,8 @@ public interface GameDao {
     @Query("SELECT MAX(used) FROM MemoryDataCardCrossRef WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
     int getMemoryDataCardMaxUsed(int userId, String category, int subCategory);
 
-    @Query("SELECT COUNT(*) FROM MemoryDataCardCrossRef WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory AND used >= :value")
-    int getMemoryDataCardNbUsedMoreThan(int userId, String category, int subCategory, int value);
+    @Query("SELECT COUNT(*) FROM MemoryDataCardCrossRef WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory AND used <= (:value-1)")
+    int getMemoryDataCardNbUsedLessThan(int userId, String category, int subCategory, int value);
 
     @Query("SELECT COUNT(*) FROM MemoryDataCardCrossRef WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
     int getMemoryDataCardNbTotal(int userId, String category, int subCategory);
