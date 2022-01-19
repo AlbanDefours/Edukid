@@ -160,20 +160,20 @@ public interface GameDao {
     @Update
     void updateMemoryData(MemoryData memoryData);
 
-    @Query("UPDATE MemoryData SET difficulty = (difficulty +1) WHERE userId = :userId AND category LIKE :category AND subCategory LIKE :subCategory")
-    void increaseMemoryDataDifficulty(int userId, String category, String subCategory);
+    @Query("UPDATE MemoryData SET difficulty = (difficulty +1) WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
+    void increaseMemoryDataDifficulty(int userId, String category, int subCategory);
 
-    @Query("UPDATE MemoryData SET difficulty = (difficulty -1) WHERE userId = :userId AND category LIKE :category AND subCategory LIKE :subCategory")
-    void decreaseMemoryDataDifficulty(int userId, String category, String subCategory);
+    @Query("UPDATE MemoryData SET difficulty = (difficulty -1) WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
+    void decreaseMemoryDataDifficulty(int userId, String category, int subCategory);
 
-    @Query("SELECT * FROM MemoryData WHERE userId = :userId AND category LIKE :category AND subCategory LIKE :subCategory")
-    MemoryData getMemoryData(int userId, String category, String subCategory);
+    @Query("SELECT * FROM MemoryData WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
+    MemoryData getMemoryData(int userId, String category, int subCategory);
 
-    @Query("SELECT difficulty FROM MemoryData WHERE userId = :userId AND category LIKE :category AND subCategory LIKE :subCategory")
-    int getMemoryDataDifficultyChiffres(int userId, String category, String subCategory);
+    @Query("SELECT difficulty FROM MemoryData WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
+    int getMemoryDataDifficultyChiffres(int userId, String category, int subCategory);
 
-    @Query("UPDATE MemoryData SET winStreak = 0, loseStreak = 0 WHERE userId = :userId AND category LIKE :category AND subCategory LIKE :subCategory")
-    void resetAllMemoryDataStreak(int userId, String category, String subCategory);
+    @Query("UPDATE MemoryData SET winStreak = 0, loseStreak = 0 WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
+    void resetAllMemoryDataStreak(int userId, String category, int subCategory);
 
     @Query("SELECT * FROM MemoryData")
     List<MemoryData> getAllMemoryData();
