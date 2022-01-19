@@ -8,11 +8,13 @@ import androidx.room.Update;
 
 import java.util.List;
 
-import fr.dut.ptut2021.models.databse.Game;
-import fr.dut.ptut2021.models.databse.Theme;
-import fr.dut.ptut2021.models.databse.ThemeGameCrossRef;
-import fr.dut.ptut2021.models.databse.User;
-import fr.dut.ptut2021.models.databse.Word;
+import fr.dut.ptut2021.models.database.app.Game;
+import fr.dut.ptut2021.models.database.app.GameSubGameCrossRef;
+import fr.dut.ptut2021.models.database.app.SubGame;
+import fr.dut.ptut2021.models.database.app.Theme;
+import fr.dut.ptut2021.models.database.app.ThemeGameCrossRef;
+import fr.dut.ptut2021.models.database.app.User;
+import fr.dut.ptut2021.models.database.app.Word;
 
 @Dao
 public interface AppDao {
@@ -85,6 +87,47 @@ public interface AppDao {
     default boolean tabGameIsEmpty() {
         return getAllGames().isEmpty();
     }
+
+    //SubGame
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertSubGame(SubGame subGame);
+
+    @Query("SELECT * FROM SubGame")
+    List<SubGame> getAllSubGames();
+
+    @Query("SELECT * FROM SubGame WHERE subGameId = :subGameId")
+    SubGame getSubGameById(int subGameId);
+
+    @Query("SELECT * FROM SubGame WHERE subGameName = :subGameName")
+    SubGame getSubGameByName(String subGameName);
+
+    @Update
+    void updateSubGame(SubGame subGame);
+
+    @Query("DELETE FROM SubGame WHERE subGameId = :subGameId")
+    void deleteSubGameById(int subGameId);
+
+    @Query("DELETE FROM SubGame")
+    void deleteAllSubGames();
+
+    default boolean tabSubGameIsEmpty() {
+        return getAllSubGames().isEmpty();
+    }
+
+
+    //GameSubGameCrossRef
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertGameSubGame(GameSubGameCrossRef gameSubGameCrossRef);
+
+    @Query("SELECT * FROM GameSubGameCrossRef")
+    List<GameSubGameCrossRef> getAllGameSubGame();
+
+    default boolean tabGameSubGameIsEmpty() {
+        return getAllGameSubGame().isEmpty();
+    }
+
+    @Query("SELECT SubGame.* FROM SubGame NATURAL JOIN GameSubGameCrossRef WHERE gameName = :gameName")
+    List<SubGame> getAllSubGamesByGame(String gameName);
 
 
     //UserDao

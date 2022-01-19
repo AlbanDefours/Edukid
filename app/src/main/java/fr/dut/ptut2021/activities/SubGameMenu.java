@@ -14,10 +14,8 @@ import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.game.GameAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.models.databse.Game;
-import fr.dut.ptut2021.utils.GlobalUtils;
-import fr.dut.ptut2021.utils.MySharedPreferences;
-import fr.dut.ptut2021.utils.MyVibrator;
+import fr.dut.ptut2021.models.database.app.Game;
+import fr.dut.ptut2021.utils.*;
 
 public class SubGameMenu extends AppCompatActivity {
 
@@ -34,10 +32,10 @@ public class SubGameMenu extends AppCompatActivity {
         themeName = MySharedPreferences.getThemeName(SubGameMenu.this);
         createRecyclerView();
 
-        subgameList.add(new Game("Chiffre1", R.drawable.memory_icon));
-        subgameList.add(new Game("Chiffre2", R.drawable.memory_icon));
-        subgameList.add(new Game("Chiffre3", R.drawable.memory_icon));
-        subgameList.add(new Game("Chiffre4", R.drawable.memory_icon));
+        subgameList.add(new Game("Image / Image", R.drawable.img_img));
+        subgameList.add(new Game("Image / Image différente", R.drawable.img_imgdiff));
+        subgameList.add(new Game("Chiffre / Chiffre", R.drawable.chiffre_chiffre));
+        subgameList.add(new Game("Image / Chiffre", R.drawable.img_chiffre));
 
         recyclerViewListGame.addOnItemTouchListener(
                 new RecyclerItemClickListener(getApplicationContext(), recyclerViewListGame, new RecyclerItemClickListener.OnItemClickListener() {

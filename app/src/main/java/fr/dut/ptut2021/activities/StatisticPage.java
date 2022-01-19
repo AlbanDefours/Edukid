@@ -22,7 +22,7 @@ import java.util.Map;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.models.databse.User;
+import fr.dut.ptut2021.models.database.app.User;
 import fr.dut.ptut2021.utils.MyVibrator;
 
 public class StatisticPage extends AppCompatActivity implements View.OnClickListener {

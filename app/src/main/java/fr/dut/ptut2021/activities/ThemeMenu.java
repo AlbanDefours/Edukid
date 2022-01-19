@@ -14,10 +14,8 @@ import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.theme.ThemeAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.models.databse.Theme;
-import fr.dut.ptut2021.utils.GlobalUtils;
-import fr.dut.ptut2021.utils.MySharedPreferences;
-import fr.dut.ptut2021.utils.MyVibrator;
+import fr.dut.ptut2021.models.database.app.Theme;
+import fr.dut.ptut2021.utils.*;
 
 public class ThemeMenu extends AppCompatActivity {
 
@@ -39,7 +37,7 @@ public class ThemeMenu extends AppCompatActivity {
                     public void onItemClick(View view, int position) {
                         MyVibrator.vibrate(ThemeMenu.this, 35);
                         saveUserNameSahredPref(position);
-                        GlobalUtils.startGame(ThemeMenu.this, "GameMenu");
+                        GlobalUtils.startPage(ThemeMenu.this, "GameMenu", false, false);
                     }
 
                     @Override
