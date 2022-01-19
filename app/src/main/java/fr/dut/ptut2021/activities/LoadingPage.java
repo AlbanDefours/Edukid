@@ -69,10 +69,10 @@ public class LoadingPage extends AppCompatActivity {
     //Here to add/update/delete Game
     private void createGames() {
         if (db.appDao().tabGameIsEmpty()) {
-            db.appDao().insertGame(new Game("Memory", R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Dessine", R.drawable.memory_icon));
+            db.appDao().insertGame(new Game("Memory", R.drawable.logo_memory));
+            db.appDao().insertGame(new Game("Dessine", R.drawable.logo_drawonit));
             db.appDao().insertGame(new Game("Mot à trou", R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Ecoute", R.drawable.memory_icon));
+            db.appDao().insertGame(new Game("Ecoute", R.drawable.logo_playwithsound));
         }
     }
 
@@ -92,10 +92,10 @@ public class LoadingPage extends AppCompatActivity {
     //Here to add SubGame
     private void createSubGames() {
         if (db.appDao().tabSubGameIsEmpty()) {
-            db.appDao().insertSubGame(new SubGame("Memory1", R.drawable.memory_icon));
-            db.appDao().insertSubGame(new SubGame("Memory2", R.drawable.memory_icon));
-            db.appDao().insertSubGame(new SubGame("Memory3", R.drawable.memory_icon));
-            db.appDao().insertSubGame(new SubGame("Memory4", R.drawable.memory_icon));
+            db.appDao().insertSubGame(new SubGame("Memory1", R.drawable.img_img));
+            db.appDao().insertSubGame(new SubGame("Memory2", R.drawable.img_imgdiff));
+            db.appDao().insertSubGame(new SubGame("Memory3", R.drawable.chiffre_chiffre));
+            db.appDao().insertSubGame(new SubGame("Memory4", R.drawable.img_chiffre));
         }
     }
 

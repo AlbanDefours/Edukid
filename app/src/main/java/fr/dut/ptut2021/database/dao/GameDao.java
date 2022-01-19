@@ -170,7 +170,7 @@ public interface GameDao {
     MemoryData getMemoryData(int userId, String category, int subCategory);
 
     @Query("SELECT difficulty FROM MemoryData WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
-    int getMemoryDataDifficultyChiffres(int userId, String category, int subCategory);
+    int getMemoryDataDifficulty(int userId, String category, int subCategory);
 
     @Query("UPDATE MemoryData SET winStreak = 0, loseStreak = 0 WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
     void resetAllMemoryDataStreak(int userId, String category, int subCategory);
