@@ -41,7 +41,7 @@ import fr.dut.ptut2021.models.database.game.WordWithHoleData;
         DrawOnItData.class,
         MemoryData.class,
         MemoryDataCardCrossRef.class
-}, version = 14, exportSchema = false)
+}, version = 15, exportSchema = false)
 
 
 public abstract class CreateDatabase extends RoomDatabase {
