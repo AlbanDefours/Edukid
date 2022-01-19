@@ -1,24 +1,41 @@
 package fr.dut.ptut2021.activities;
 
+import android.graphics.Color;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.models.User;
+import fr.dut.ptut2021.models.database.app.User;
 
 public class StatisticPage extends AppCompatActivity implements View.OnClickListener {
 
+    private Vibrator vibe;
     private int page = 0;
     private TextView title;
     private List<User> listUser;
     private CreateDatabase db = null;
+    private Button generalPage, lettresPage, chiffresPage;
     private ImageView nextPage, previousPage;
 
     @Override
@@ -26,18 +43,49 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistic_page);
 
+            vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
         initViews();
-        createDbAndImportUsers();
         initOnClickViews();
+        createDbAndImportUsers();
 
         if (!listUser.isEmpty())
             displayTitle();
+
+        displayGeneralPage();
     }
 
-    private void initViews() {
-        title = findViewById(R.id.title_StatisticPage);
-        nextPage = findViewById(R.id.arrow_nextPage);
-        previousPage = findViewById(R.id.arrow_previousPage);
+    private void displayGeneralPage() {
+        createBarChart(getGameFrequency());
+    }
+
+    private void displayChiffresPage() {
+
+    }
+
+    private void displayLettresPage() {
+
+    }
+
+    private void createBarChart(Map<Integer, Integer> mapData) {
+        BarChart barChart = findViewById(R.id.bar_chart);
+        List<BarEntry> data = new ArrayList<>();
+
+        for (Map.Entry<Integer, Integer> val : mapData.entrySet())
+            data.add(new BarEntry(val.getKey(), val.getValue()));
+
+        BarDataSet barDataSet = new BarDataSet(data, "Data");
+        barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        barDataSet.setValueTextColor(Color.BLACK);
+        barDataSet.setValueTextSize(16f);
+        //barDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+
+        BarData barData = new BarData(barDataSet);
+        barChart.setFitBars(true);
+        barChart.setData(barData);
+        barChart.getDescription().setText("Fréquence de jeu");
+        barChart.animateY(2000);
+
     }
 
     private void createDbAndImportUsers() {
@@ -47,9 +95,23 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    private void initViews() {
+        title = findViewById(R.id.title_StatisticPage);
+        generalPage = findViewById(R.id.buttonGeneral_statistics);
+        lettresPage = findViewById(R.id.buttonLettres_statistics);
+        chiffresPage = findViewById(R.id.buttonChiffres_statistics);
+        nextPage = findViewById(R.id.arrow_nextPage);
+        previousPage = findViewById(R.id.arrow_previousPage);
+    }
+
     private void initOnClickViews() {
+        generalPage.setOnClickListener(this);
+        lettresPage.setOnClickListener(this);
+        chiffresPage.setOnClickListener(this);
         nextPage.setOnClickListener(this);
         previousPage.setOnClickListener(this);
+
+        generalPage.setEnabled(false);
     }
 
     private void displayTitle() {
@@ -57,30 +119,66 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         verifPageLocation();
     }
 
+    private Map<Integer, Integer> getGameFrequency() {
+        Map<Integer, Integer> mapData = new HashMap<>();
 
+        return mapData;
+    }
+    
     private void verifPageLocation() {
+        previousPage.setAlpha(1f);
+        nextPage.setAlpha(1f);
         if (page == 0)
             previousPage.setAlpha(0.5f);
         if (page == listUser.size() - 1)
             nextPage.setAlpha(0.5f);
-        else {
-            previousPage.setAlpha(1f);
-            nextPage.setAlpha(1f);
-        }
+    }
+
+    public void lockButton(Button button) {
+        generalPage.setEnabled(true);
+        lettresPage.setEnabled(true);
+        chiffresPage.setEnabled(true);
+        button.setEnabled(false);
+    }
+
+    public void vibrate() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            vibe.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
+        else
+            vibe.vibrate(35);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.buttonGeneral_statistics:
+                lockButton(generalPage);
+                displayGeneralPage();
+                break;
+            case R.id.buttonChiffres_statistics:
+                lockButton(chiffresPage);
+                displayChiffresPage();
+                break;
+            case R.id.buttonLettres_statistics:
+                lockButton(lettresPage);
+                displayLettresPage();
+                break;
+
             case R.id.arrow_nextPage:
-                if (page < listUser.size() - 1)
+                if (page < listUser.size() - 1) {
+                    vibrate();
                     page++;
+                }
                 displayTitle();
                 break;
             case R.id.arrow_previousPage:
-                if (0 < page)
+                if (0 < page) {
+                    vibrate();
                     page--;
+                }
                 displayTitle();
+                break;
+            default:
                 break;
         }
     }

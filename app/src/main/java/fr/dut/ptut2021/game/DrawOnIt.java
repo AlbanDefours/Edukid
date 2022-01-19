@@ -19,12 +19,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 
 import fr.dut.ptut2021.R;
+import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.DataSymbol;
 import fr.dut.ptut2021.models.Point;
 import fr.dut.ptut2021.models.Symbol;
 
 public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener {
 
+    private CreateDatabase db;
     private ImageView image, imageVide;
     private Bitmap bitmap;
     private Canvas canvas;
@@ -68,6 +70,8 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         
         dm = getResources().getDisplayMetrics();
 
+        db = CreateDatabase.getInstance(DrawOnIt.this);
+
         DataSymbol.init(dm.widthPixels, dm.heightPixels);
 
         tolerance = dm.widthPixels/15;
@@ -78,7 +82,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         image = findViewById(R.id.idImage_drawOnIt);
         imageVide = findViewById(R.id.idImageVide_drawOnIt);
 
-
+        //db.gameDao().get
 
         Display currentDisplay = getWindowManager().getDefaultDisplay();
         largeur = currentDisplay.getWidth();

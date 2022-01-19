@@ -8,10 +8,13 @@ import androidx.room.Update;
 
 import java.util.List;
 
-import fr.dut.ptut2021.models.Game;
-import fr.dut.ptut2021.models.Theme;
-import fr.dut.ptut2021.models.ThemeGameCrossRef;
-import fr.dut.ptut2021.models.User;
+import fr.dut.ptut2021.models.database.app.Game;
+import fr.dut.ptut2021.models.database.app.GameSubGameCrossRef;
+import fr.dut.ptut2021.models.database.app.SubGame;
+import fr.dut.ptut2021.models.database.app.Theme;
+import fr.dut.ptut2021.models.database.app.ThemeGameCrossRef;
+import fr.dut.ptut2021.models.database.app.User;
+import fr.dut.ptut2021.models.database.app.Word;
 
 @Dao
 public interface AppDao {
@@ -85,6 +88,47 @@ public interface AppDao {
         return getAllGames().isEmpty();
     }
 
+    //SubGame
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertSubGame(SubGame subGame);
+
+    @Query("SELECT * FROM SubGame")
+    List<SubGame> getAllSubGames();
+
+    @Query("SELECT * FROM SubGame WHERE subGameId = :subGameId")
+    SubGame getSubGameById(int subGameId);
+
+    @Query("SELECT * FROM SubGame WHERE subGameName = :subGameName")
+    SubGame getSubGameByName(String subGameName);
+
+    @Update
+    void updateSubGame(SubGame subGame);
+
+    @Query("DELETE FROM SubGame WHERE subGameId = :subGameId")
+    void deleteSubGameById(int subGameId);
+
+    @Query("DELETE FROM SubGame")
+    void deleteAllSubGames();
+
+    default boolean tabSubGameIsEmpty() {
+        return getAllSubGames().isEmpty();
+    }
+
+
+    //GameSubGameCrossRef
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertGameSubGame(GameSubGameCrossRef gameSubGameCrossRef);
+
+    @Query("SELECT * FROM GameSubGameCrossRef")
+    List<GameSubGameCrossRef> getAllGameSubGame();
+
+    default boolean tabGameSubGameIsEmpty() {
+        return getAllGameSubGame().isEmpty();
+    }
+
+    @Query("SELECT SubGame.* FROM SubGame NATURAL JOIN GameSubGameCrossRef WHERE gameName = :gameName")
+    List<SubGame> getAllSubGamesByGame(String gameName);
+
 
     //UserDao
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -99,6 +143,9 @@ public interface AppDao {
     @Query("SELECT * FROM User WHERE userName = :userName")
     User getUserByName(String userName);
 
+    @Query("SELECT userImage FROM User WHERE userImageType != 0 ORDER BY userImage DESC LIMIT 1")
+    String getUserImageMaxInt();
+
     @Update
     void updateUser(User user);
 
@@ -110,5 +157,26 @@ public interface AppDao {
 
     default boolean tabUserIsEmpty() {
         return getAllUsers().isEmpty();
+    }
+
+
+    //Word
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertWord(Word word);
+
+    @Query("SELECT * FROM Word")
+    List<Word> getAllWords();
+
+    @Query("SELECT COUNT(*) FROM Word")
+    int getNbWords();
+
+    @Query("SELECT * FROM Word WHERE wordId = :id ")
+    Word getWordById(int id);
+
+    @Query("SELECT * FROM Word WHERE word LIKE :str")
+    Word getWordIfContain(String str);
+
+    default boolean tabWordIsEmpty() {
+        return getAllWords().isEmpty();
     }
 }

@@ -19,7 +19,7 @@ public class Symbol {
         this.points = new ArrayList<>();
         this.tolerance = tolerance;
     }
-    
+
     public Symbol(ArrayList<Point> points){
         this.points = points;
         this.tolerance = 10;
@@ -116,7 +116,7 @@ public class Symbol {
 
             //System.out.println("c2");
             if(isInArea(point, points.get(idNearestPoint), points.get(idNearestPoint + 1))){
-            //System.out.println("c2 1");
+                //System.out.println("c2 1");
 
                 return true;
             }

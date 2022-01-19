@@ -1,8 +1,11 @@
 package fr.dut.ptut2021.activities;
 
-import android.content.Intent;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,11 +19,9 @@ import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.game.GameAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.game.DrawOnIt;
-import fr.dut.ptut2021.game.Memory;
-import fr.dut.ptut2021.game.PlayWithSound;
-import fr.dut.ptut2021.game.WordWithHole;
-import fr.dut.ptut2021.models.Game;
+import fr.dut.ptut2021.game.ClasseMere;
+import fr.dut.ptut2021.models.database.app.Game;
+
 
 public class GameMenu extends AppCompatActivity {
 
@@ -42,8 +43,13 @@ public class GameMenu extends AppCompatActivity {
                 new RecyclerItemClickListener(getApplicationContext(), recyclerViewListGame, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
+                        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                            v.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
+                        else
+                            v.vibrate(35);
                         saveGameName(position);
-                        findWhichGame(position);
+                        new ClasseMere(GameMenu.this).findGame(gameList.get(position).getGameName());
                     }
 
                     @Override
@@ -74,23 +80,5 @@ public class GameMenu extends AppCompatActivity {
         recyclerViewListGame = findViewById(R.id.recyclerview_game);
         recyclerViewListGame.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewListGame.setAdapter(new GameAdapter(getApplicationContext(), gameList));
-    }
-
-    //TODO A mettre les jeux développer
-    private void findWhichGame(int position) {
-        switch (gameList.get(position).getGameName()) {
-            case "Mot à trou":
-                startActivity(new Intent().setClass(getApplicationContext(), WordWithHole.class));
-                break;
-            case "Memory":
-                startActivity(new Intent().setClass(getApplicationContext(), Memory.class));
-                break;
-            case "Ecoute":
-                startActivity(new Intent().setClass(getApplicationContext(), PlayWithSound.class));
-                break;
-            case "Dessine":
-                startActivity(new Intent().setClass(getApplicationContext(), DrawOnIt.class));
-                break;
-        }
     }
 }

@@ -1,10 +1,14 @@
 <resources>
-    <string name="app_name">PTUT2021</string>
+    <string name="app_name">EDUKID</string>
     <string name="enterName">Prénom</string>
     <string name="valid">Valider</string>
     <string name="applicationName">Kakid</string>
     <string name="cancel">Annuler</string>
-    <string name="delete">SUPPRIMER</string>
+    <string name="delete">Supprimer</string>
+    <string name="lettres">Lettres</string>
+    <string name="general">Général</string>
+    <string name="chiffres">Chiffres</string>
+    <string name="importer">Importer</string>
 
     <string-array name="alphabet">
         <item>A</item>

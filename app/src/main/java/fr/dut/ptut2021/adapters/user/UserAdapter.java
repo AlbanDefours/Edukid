@@ -1,6 +1,8 @@
 package fr.dut.ptut2021.adapters.user;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -8,14 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.models.User;
+import fr.dut.ptut2021.models.database.app.User;
 
 public class UserAdapter extends RecyclerView.Adapter<MyViewHolderUser> {
 
-    Context  context;
+    Context context;
     boolean isInSetting;
     List<User> listUser;
 
@@ -34,7 +39,18 @@ public class UserAdapter extends RecyclerView.Adapter<MyViewHolderUser> {
     @Override
     public void onBindViewHolder(@NonNull MyViewHolderUser holder, int position) {
         holder.name.setText(listUser.get(position).getUserName());
-        holder.avatar.setImageResource(listUser.get(position).getUserImage());
+
+        if (listUser.get(position).getUserImageType() == 0) {
+            holder.avatar.setImageResource(Integer.parseInt(listUser.get(position).getUserImage()));
+        } else {
+            try {
+                File f = new File(listUser.get(position).getUserImage());
+                Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
+                holder.avatar.setImageBitmap(b);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
         holder.settingIcon.setColorFilter(ContextCompat.getColor(context, R.color.black));
     }
 

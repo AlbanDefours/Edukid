@@ -2,7 +2,9 @@ package fr.dut.ptut2021.models;
 
 public class Card {
     private String value;
+
     private boolean hidden=true;
+    private int nbReturn=0;
     private int drawableImage;
 
 
@@ -29,6 +31,9 @@ public class Card {
 
     //setter
     public void setHidden(boolean hidden) {
+        if(hidden){
+            nbReturn++;
+        }
         this.hidden = hidden;
     }
     public void setDrawableImage(int drawableImage) {
@@ -38,4 +43,9 @@ public class Card {
         this.value = value;
     }
 
+    public int getNbReturn() {
+        return nbReturn;
+    }
 }
+
+

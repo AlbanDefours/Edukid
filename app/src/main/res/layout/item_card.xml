@@ -15,12 +15,51 @@
             android:layout_centerInParent="true"
             android:layout_margin="10px"
             app:srcCompat="@drawable/backgroundmemory" />
-
-        <ImageView
-            android:id="@+id/elementMemory"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/interieurCard"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_centerInParent="true" />
+            android:layout_centerInParent="true">
+
+            <ImageView
+                android:id="@+id/elementMemory1"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+
+            <ImageView
+                android:id="@+id/elementMemory2"
+                android:layout_width="0dp"
+                android:layout_height="0dp"/>
+            <ImageView
+                android:id="@+id/elementMemory3"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+            <ImageView
+                android:id="@+id/elementMemory4"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+            <ImageView
+                android:id="@+id/elementMemory5"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+            <ImageView
+                android:id="@+id/elementMemory6"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+            <ImageView
+                android:id="@+id/elementMemory7"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+            <ImageView
+                android:id="@+id/elementMemory8"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+            <ImageView
+                android:id="@+id/elementMemory9"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/patternImgMemory"

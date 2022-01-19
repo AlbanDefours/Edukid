@@ -11,11 +11,16 @@ import com.daimajia.androidanimations.library.YoYo;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
+
 import fr.dut.ptut2021.game.DrawOnIt;
-import fr.dut.ptut2021.game.WordWithHole;
-import fr.dut.ptut2021.models.Game;
-import fr.dut.ptut2021.models.Theme;
-import fr.dut.ptut2021.models.ThemeGameCrossRef;
+import fr.dut.ptut2021.models.database.app.Game;
+import fr.dut.ptut2021.models.database.app.GameSubGameCrossRef;
+import fr.dut.ptut2021.models.database.app.SubGame;
+import fr.dut.ptut2021.models.database.app.Theme;
+import fr.dut.ptut2021.models.database.app.ThemeGameCrossRef;
+import fr.dut.ptut2021.models.database.app.Word;
+import fr.dut.ptut2021.models.database.game.Card;
+
 
 public class LoadingPage extends AppCompatActivity {
 
@@ -50,6 +55,10 @@ public class LoadingPage extends AppCompatActivity {
         createThemes();
         createGames();
         createThemeGamesCross();
+        createSubGames();
+        createGameSubGamesCross();
+        createWords();
+        createCards();
     }
 
     //Here to add/update/delete Theme
@@ -81,6 +90,54 @@ public class LoadingPage extends AppCompatActivity {
             db.appDao().insertThemeGame(new ThemeGameCrossRef("Ecoute", "Chiffres"));
             db.appDao().insertThemeGame(new ThemeGameCrossRef("Ecoute", "Lettres"));
         }
+    }
+
+    //Here to add SubGame
+    private void createSubGames() {
+        if (db.appDao().tabSubGameIsEmpty()) {
+            db.appDao().insertSubGame(new SubGame("Memory1", R.drawable.memory_icon));
+            db.appDao().insertSubGame(new SubGame("Memory2", R.drawable.memory_icon));
+            db.appDao().insertSubGame(new SubGame("Memory3", R.drawable.memory_icon));
+            db.appDao().insertSubGame(new SubGame("Memory4", R.drawable.memory_icon));
+        }
+    }
+
+    //Here to set Game to SubGame
+    private void createGameSubGamesCross() {
+        if (db.appDao().tabGameSubGameIsEmpty()) {
+            db.appDao().insertGameSubGame(new GameSubGameCrossRef("Memory", "Memory1"));
+            db.appDao().insertGameSubGame(new GameSubGameCrossRef("Memory", "Memory2"));
+            db.appDao().insertGameSubGame(new GameSubGameCrossRef("Memory", "Memory3"));
+            db.appDao().insertGameSubGame(new GameSubGameCrossRef("Memory", "Memory4"));
+        }
+    }
+
+    //Here to add Words with images
+    private void createWords() {
+        if (db.appDao().tabWordIsEmpty()) {
+            db.appDao().insertWord(new Word("AVION", R.drawable.image_avion));
+            db.appDao().insertWord(new Word("MAISON", R.drawable.image_maison));
+            db.appDao().insertWord(new Word("POULE", R.drawable.image_poule));
+            db.appDao().insertWord(new Word("BOUCHE", R.drawable.image_bouche));
+            db.appDao().insertWord(new Word("LIVRE", R.drawable.image_livre));
+            db.appDao().insertWord(new Word("VACHE", R.drawable.image_vache));
+            db.appDao().insertWord(new Word("TOMATE", R.drawable.image_tomate));
+            db.appDao().insertWord(new Word("CHIEN", R.drawable.image_chien));
+            db.appDao().insertWord(new Word("ARBRE", R.drawable.image_arbre));
+            db.appDao().insertWord(new Word("BALLON", R.drawable.image_ballon));
+        }
+    }
+
+    private void createCards(){
+        db.gameDao().insertCard(new Card("1","Chiffres",R.drawable.one));
+        db.gameDao().insertCard(new Card("2","Chiffres",R.drawable.two));
+        db.gameDao().insertCard(new Card("3","Chiffres",R.drawable.three));
+        db.gameDao().insertCard(new Card("4","Chiffres",R.drawable.four));
+        db.gameDao().insertCard(new Card("5","Chiffres",R.drawable.five));
+        db.gameDao().insertCard(new Card("6","Chiffres",R.drawable.six));
+        db.gameDao().insertCard(new Card("7","Chiffres",R.drawable.seven));
+        db.gameDao().insertCard(new Card("8","Chiffres",R.drawable.eight));
+        db.gameDao().insertCard(new Card("9","Chiffres",R.drawable.nine));
     }
 
     private void openUserMenuPage() {

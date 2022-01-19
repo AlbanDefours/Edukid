@@ -1,6 +1,7 @@
 package fr.dut.ptut2021.game;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -8,7 +9,10 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,53 +20,62 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.models.stats.GameLog;
-import fr.dut.ptut2021.models.stats.game.PlayWithSoundData;
-import fr.dut.ptut2021.models.stats.game.WordWithHoleData;
+import fr.dut.ptut2021.models.database.log.GameLog;
+import fr.dut.ptut2021.models.database.log.GameResultLog;
+import fr.dut.ptut2021.models.database.game.PlayWithSoundData;
 
 public class PlayWithSound extends AppCompatActivity implements View.OnClickListener, TextToSpeech.OnInitListener {
 
+    private Vibrator vibe;
     private CreateDatabase db;
     private ImageView btnSound;
     private TextView goodAnswer;
-    private boolean delay = false;
+    private boolean delay = false, isAnswerFalseWord = false;
     private List<String> listAnswer;
     private List<Integer> listChooseResult;
     private TextToSpeech textToSpeech;
     private List<PlayWithSoundData> listData;
     private Button answer1, answer2, answer3;
-    private String goodAnswerString, themeName;
+    private String themeName;
     private MediaPlayer mpGoodAnswer, mpWrongAnswer;
     private final Button[] listButton = new Button[3];
     private final int MAX_GAME_PLAYED = 5;
-    private int userId, gamePlayed = 1, nbTry = 0;
-
+    private int userId, gamePlayed = 1, nbTry = 0, answerFalse = 0, nbrStars = 0, answerFalseWord = 0;
+    private Random random = new Random();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_with_sound);
 
+        vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
         getSharedPref();
         initDatabase();
         initializeLayout();
-        initGame(themeName, 1);
+        fillListChooseResult(themeName);
+        initGame();
         initSoundEffect();
         addOnClickListener();
 
         textToSpeech = new TextToSpeech(this, this);
+    }
+
+    public void vibrate() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            vibe.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
+        else
+            vibe.vibrate(35);
     }
 
     private void getSharedPref() {
@@ -76,16 +89,16 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
         String[] alphabetList = getResources().getStringArray(R.array.alphabet);
         for (String letter : alphabetList) {
-            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId(), userId, letter, "Lettres", 1, 0));
+            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId() + 1, userId, letter, "Lettres", 1, 0));
         }
 
         String[] syllableList = getResources().getStringArray(R.array.syllable);
         for (String syllable : syllableList) {
-            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId(), userId, syllable, "Lettres", 2, 0));
+            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId() + 1, userId, syllable, "Lettres", 2, 0));
         }
 
         for (int i = 1; i < 10; i++) {
-            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId(), userId, Integer.toString(i), "Chiffres", 1, 0));
+            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId() + 1, userId, Integer.toString(i), "Chiffres", 1, 0));
         }
     }
 
@@ -100,61 +113,54 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         listButton[2] = answer3;
     }
 
-    private void initGame(String theme, int difficulty) {
-        /*
-        listData = db.gameDao().getAllPWSData(userId, theme, difficulty);
-        indWordChoose = (int) (Math.random() * listData.size());
-        goodAnswerString = listData.get(indWordChoose).getResult();
-         */
-        fillListChooseResult(theme);
+    private void initGame() {
         initListAnswer();
         setLayoutContent();
         new Handler().postDelayed(this::readTheAnswer, 1200);
     }
 
-    //TODO A adapter en fonction de la difficulté
+    //TODO Choisi pour le moment Result uniquement en fonction de LastUsed
     private void fillListChooseResult(String theme) {
-        listData = new ArrayList<>();
-        listData.addAll(db.gameDao().getAllPWSDataByTheme(userId, theme));
+        listData = new ArrayList<>(db.gameDao().getAllPWSDataByTheme(userId, theme, 1));
         listChooseResult = new ArrayList<>();
-        List<Integer> listDataNotUsed = db.gameDao().getAllPWSDataLastUsed(listData, false);
+        List<Integer> listDataNeverUsed = db.gameDao().getAllPWSDataLastUsed(listData, -1);
+        List<Integer> listDataNotUsed = db.gameDao().getAllPWSDataLastUsed(listData, 0);
+        List<Integer> listDataUsed = db.gameDao().getAllPWSDataLastUsed(listData, 1);
 
-        //Remplit les listChooseResult avec les indices (de listData) des Result avec un lastUsed = false
-        if (listDataNotUsed.size() > MAX_GAME_PLAYED) {
-            while (listChooseResult.size() < MAX_GAME_PLAYED) {
-                int rand = (int) (Math.random() * listDataNotUsed.size());
+        for (int i = 0; i < MAX_GAME_PLAYED; i++) {
+            if (!listDataNeverUsed.isEmpty() && !listChooseResult.contains(listDataNeverUsed.get(0))) {
+                listChooseResult.add(listDataNeverUsed.get(0));
+                listDataNeverUsed.remove(0);
+            } else if (!listDataNotUsed.isEmpty()) {
+                int rand = random.nextInt(listDataNotUsed.size());
                 if (!listChooseResult.contains(listDataNotUsed.get(rand))) {
                     listChooseResult.add(listDataNotUsed.get(rand));
+                    listDataNotUsed.remove(rand);
                 }
-            }
-        } else {
-            List<Integer> listDataUsed = db.gameDao().getAllPWSDataLastUsed(listData, true);
-            listChooseResult.addAll(listDataNotUsed);
-            for (int i = listChooseResult.size(); i < MAX_GAME_PLAYED; i++) {
-                int rand = (int) (Math.random() * listDataUsed.size());
+            } else {
+                int rand = random.nextInt(listDataUsed.size());
                 if (!listChooseResult.contains(listDataUsed.get(rand))) {
                     listChooseResult.add(listDataUsed.get(rand));
+                    listDataUsed.remove(rand);
                 }
             }
         }
-        //Erreur si il n'y a pas assez de données dans la database
-
         db.gameDao().updateAllPWSDataLastUsed(userId);
     }
 
     private void readTheAnswer() {
         if (themeName.equals("Lettres"))
-            speak("Trouve la lettre : " + goodAnswerString);
+            speak("Trouve la lettre : " + listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
         else if (themeName.equals("Chiffres"))
-            speak("Trouve le chiffre : " + goodAnswerString);
+            speak("Trouve le chiffre : " + listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
     }
 
     private void initListAnswer() {
         listAnswer = new ArrayList<>();
 
-        listAnswer.add(goodAnswerString);
+        listAnswer.add(listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
         while (listAnswer.size() < 3) {
-            int rand = (int) (Math.random() * listData.size());
+            int rand = random.nextInt(listData.size());
             if (!listAnswer.contains(listData.get(rand).getResult()))
                 listAnswer.add(listData.get(rand).getResult());
         }
@@ -189,7 +195,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             mpWrongAnswer.start();
     }
 
-    private void setWordAndAddDelay(int indWrongAnswer) {
+    private void setWordAndAddDelay() {
         delay = true;
         playSound(false);
 
@@ -212,11 +218,11 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void displayAnswer(boolean showAnswer){
-        if(showAnswer){
+    private void displayAnswer(boolean showAnswer) {
+        if (showAnswer) {
             btnSound.setVisibility(View.INVISIBLE);
             goodAnswer.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             btnSound.setVisibility(View.VISIBLE);
             goodAnswer.setVisibility(View.INVISIBLE);
         }
@@ -224,7 +230,9 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
     private void replay() {
         playSound(true);
+        updateDataInDb();
         gamePlayed++;
+        answerFalseWord=0;
         delay = true;
         displayAnswer(true);
         new Handler().postDelayed(() -> {
@@ -232,12 +240,21 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             if (gamePlayed <= MAX_GAME_PLAYED) {
                 nbTry = 0;
                 displayAnswer(false);
-                initGame(themeName, 1);
-                for (int i = 0; i < 3; i++)
+                initGame();
+                for (int i = 0; i < 3; i++) {
                     listButton[i].setBackgroundColor(Color.parseColor("#00BCD4"));
+                    listButton[i].setEnabled(true);
+                }
             } else {
                 Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
-                intent.putExtra("starsNumber", 3);
+                if (0 <= answerFalse && answerFalse < 2)//Nombre etoile
+                    nbrStars = 3;
+                else if (isAnswerFalseWord)
+                    nbrStars = 1;
+                else
+                    nbrStars = 2;
+                addGameResultLogInDb(nbrStars);
+                intent.putExtra("starsNumber", nbrStars);
                 startActivity(intent);
                 finish();
             }
@@ -247,33 +264,62 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private void speak(String texte) {
         HashMap<String, String> onlineSpeech = new HashMap<>();
         onlineSpeech.put(TextToSpeech.Engine.KEY_FEATURE_NETWORK_SYNTHESIS, "true");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            if(texte.equals("Trouve la lettre : Y") || texte.equals("Trouve la lettre : y"))
+                textToSpeech.speak("Trouve la lettre : igrec", TextToSpeech.QUEUE_FLUSH, null, null);
             textToSpeech.speak(texte, TextToSpeech.QUEUE_FLUSH, null, null);
+        }
         else
             textToSpeech.speak(texte, TextToSpeech.QUEUE_FLUSH, onlineSpeech);
     }
 
-    //TODO remplir les tables PlayWithSound et GameLog
     private void updateDataInDb() {
-/*
-        boolean win = false;
-        if (nbTry == 0) win = true;
+
+        PlayWithSoundData data = db.gameDao().getPWSDataByResult(
+                userId,
+                listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
+        data.setLastUsed(1);
+        boolean win;
+        if (nbTry == 0) {
+            data.setWin(data.getWin() + 1);
+            data.setWinStreak(data.getWinStreak() + 1);
+            data.setLoseStreak(0);
+            win = true;
+        } else {
+            data.setLose(data.getLose() + 1);
+            data.setLoseStreak(data.getLoseStreak() + 1);
+            data.setWinStreak(0);
+            win = false;
+        }
+        db.gameDao().updatePWSData(data);
+
         GameLog gameLog = new GameLog(
-                "WordWithHole",
+                "PlayWithSound",
                 data.getDataId(),
                 win,
                 nbTry);
         db.gameLogDao().insertGameLog(gameLog);
-*/
+
     }
 
-    private void verifyAnswer(Button answer, int nbAnswer) {
-        if (answer.getText() == goodAnswerString) {
+    private void addGameResultLogInDb(int stars) {
+        GameResultLog gameResultLog = new GameResultLog("PlayWithSound", userId, stars);
+        db.gameLogDao().insertGameResultLog(gameResultLog);
+    }
+
+    private void verifyAnswer(Button answer) {
+        if (answer.getText() == listData.get(listChooseResult.get(gamePlayed - 1)).getResult()) {
             answer.setBackgroundColor(Color.GREEN);
             replay();
         } else {
             answer.setBackgroundColor(Color.RED);
-            setWordAndAddDelay(nbAnswer);
+            answerFalse++;
+            answerFalseWord++;
+            if(answerFalseWord == 2)
+                isAnswerFalseWord = true;
+            Log.d("WILL", "" + answerFalseWord);
+            setWordAndAddDelay();
+            answer.setEnabled(false);
         }
     }
 
@@ -296,21 +342,24 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         if (!delay) {
+            vibrate();
             switch (v.getId()) {
                 case R.id.buttonAnswer1_playWithSound:
-                    verifyAnswer(answer1, 1);
+                    verifyAnswer(answer1);
                     break;
 
                 case R.id.buttonAnswer2_playWithSound:
-                    verifyAnswer(answer2, 2);
+                    verifyAnswer(answer2);
                     break;
 
                 case R.id.buttonAnswer3_playWithSound:
-                    verifyAnswer(answer3, 3);
+                    verifyAnswer(answer3);
                     break;
 
                 case R.id.btnSound_playWithSound:
                     readTheAnswer();
+                    break;
+                default:
                     break;
             }
         }

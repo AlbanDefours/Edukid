@@ -1,11 +1,14 @@
 package fr.dut.ptut2021.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,22 +17,22 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 
 import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.game.DrawOnIt;
-import fr.dut.ptut2021.game.Memory;
-import fr.dut.ptut2021.game.PlayWithSound;
-import fr.dut.ptut2021.game.WordWithHole;
+import fr.dut.ptut2021.game.*;
 
 public class ResultGamePage extends AppCompatActivity {
 
-    private int starsNb;
+    private Vibrator vibe;
+    private int starsNb = 0;
     private String gameName, themeName;
-    private MediaPlayer mpNiceTry;
+    private MediaPlayer mpNiceTry, starsSound;
     private ImageView star1, star2, star3, exit, replay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_game_page);
+
+        vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         getNbStars();
         getGameThemeName();
@@ -38,12 +41,22 @@ public class ResultGamePage extends AppCompatActivity {
         starsNumber(starsNb);
 
         exit.setOnClickListener(v -> {
+            vibrate();
             finish();
         });
 
         replay.setOnClickListener(v -> {
-            findGame();
+            vibrate();
+            new ClasseMere(ResultGamePage.this).findGame(gameName);
+            finish();
         });
+    }
+
+    public void vibrate(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            vibe.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
+        else
+            vibe.vibrate(35);
     }
 
     private void getNbStars() {
@@ -51,9 +64,10 @@ public class ResultGamePage extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
 
         if (bundle != null)
-            starsNb = bundle.getInt("starsNumber", 2);
-        else
-            starsNb = 3;
+            starsNb = bundle.getInt("starsNumber", 0);
+
+        if(starsNb > 3 || starsNb < 1)
+            starsNb = 2;
     }
 
     private void getGameThemeName() {
@@ -72,14 +86,26 @@ public class ResultGamePage extends AppCompatActivity {
 
     private void initSoundEffect() {
         mpNiceTry = MediaPlayer.create(this, R.raw.kids_cheering);
+        switch (starsNb){
+            case 1:
+                starsSound = MediaPlayer.create(this, R.raw.one_star);
+                break;
+            case 2:
+                starsSound = MediaPlayer.create(this, R.raw.two_stars);
+                break;
+            case 3:
+                starsSound = MediaPlayer.create(this, R.raw.three_stars);
+                break;
+        }
     }
 
     private void starsNumber(int nbStars) {
         ImageView[] tabStars = {star1, star2, star3};
+        starsSound.start();
         for (int i = 0; i < nbStars; i++) {
             int finalI = i;
             new Handler().postDelayed(() -> {
-                tabStars[finalI].setVisibility(View.VISIBLE);
+                tabStars[finalI].setImageResource(R.drawable.icon_star);
                 YoYo.with(Techniques.Swing).duration(800).playOn(tabStars[finalI]);
             }, 800L * i);
         }
@@ -87,25 +113,6 @@ public class ResultGamePage extends AppCompatActivity {
         new Handler().postDelayed(() -> {
             YoYo.with(Techniques.Tada).duration(1000).repeat(2).playOn(findViewById(R.id.text_felicitation));
             mpNiceTry.start();
-        }, 600L * nbStars + 500);
-    }
-
-    private void findGame() {
-        System.out.println(gameName);
-        switch (gameName) {
-            case "Ecoute":
-                startActivity(new Intent().setClass(getApplicationContext(), PlayWithSound.class));
-                break;
-            case "Dessine":
-                startActivity(new Intent().setClass(getApplicationContext(), DrawOnIt.class));
-                break;
-            case "Memory":
-                startActivity(new Intent().setClass(getApplicationContext(), Memory.class));
-                break;
-            case "Mot à trou":
-                startActivity(new Intent().setClass(getApplicationContext(), WordWithHole.class));
-                break;
-        }
-        finish();
+        }, 800L * nbStars + 200);
     }
 }
