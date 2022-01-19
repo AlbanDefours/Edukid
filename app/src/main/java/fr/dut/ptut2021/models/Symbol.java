@@ -30,6 +30,10 @@ public class Symbol {
         this.tolerance = t;
     }
 
+    public ArrayList<Point> getPoints() {
+        return points;
+    }
+
     private int findIdOfNearestPoint(Point point){
         int idNearestPoint;
         if(points.isEmpty()){

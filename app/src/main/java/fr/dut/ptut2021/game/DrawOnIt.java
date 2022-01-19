@@ -68,6 +68,16 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         return pointsF;
     }
 
+    private float[] getPointsToDraw(){
+        System.out.println("here");
+        float[] tab = new float[s.getPoints().size() * 2];
+        for(int i = 0; i < s.getPoints().size() * 2; i+=2){
+            tab[i] = (float) s.getPoints().get(i/2).getX();
+            tab[i + 1] = (float) s.getPoints().get(i/2).getY();
+        }
+        return tab;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +85,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         
         dm = getResources().getDisplayMetrics();
 
-        tolerance = dm.widthPixels/15;
+        tolerance = dm.widthPixels/15; // essaye avec 18
 
         toleranceLarge = tolerance * 2;
 
@@ -105,9 +115,11 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
             carte[i] = listCard.get(numRand[i]).getDrawableImage();
         }
 
-        image.setImageResource(carte[0]);
-        DataSymbol.initPts(Integer.parseInt(listCard.get(numRand[0]).getCardValue()), dm.widthPixels, dm.heightPixels);
+        int c = 1;
+        image.setImageResource(listCard.get(c - 1).getDrawableImage()); //carte[0]
+        DataSymbol.initPts(c, dm.widthPixels, dm.heightPixels); //Integer.parseInt(listCard.get(numRand[0]).getCardValue())
         s = new Symbol(DataSymbol.getPts(), tolerance);
+
 
         Display currentDisplay = getWindowManager().getDefaultDisplay();
         largeur = currentDisplay.getWidth();
@@ -122,7 +134,9 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         paint.setStrokeCap(Paint.Cap.ROUND);
         imageVide.setImageBitmap(bitmap);
 
-        //canvas.drawPoints(getFloats(), paint);
+        //paint.setStrokeWidth(15);
+        canvas.drawPoints(getFloats(), paint);
+        //canvas.drawPoints(getPointsToDraw(), paint);
 
         paint.setStrokeWidth(15);
         paint.setStyle(Paint.Style.STROKE);
@@ -222,6 +236,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                 }
                 oldUpx = 0;
                 oldUpy = 0;
+
                 break;
             case MotionEvent.ACTION_CANCEL:
                 break;
@@ -245,5 +260,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         paint.setColor(Color.GREEN);
         paint.setStrokeWidth(0.15f*largeur);
         paint.setStyle(Paint.Style.FILL);
+
+
     }
 }
