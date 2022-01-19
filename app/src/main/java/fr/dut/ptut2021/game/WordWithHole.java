@@ -127,16 +127,23 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void fillMapChooseWord(List<List<String>> list, boolean lastDifficulty) {
+        List<Word> words = new ArrayList<>();
 
         for (int j = 0; j < list.size(); j++) {
-
             for (int k = 0; k < list.get(j).size(); k++) {
+
                 if (mapChooseData.size() <= MAX_GAME_PLAYED) {
                     if (!mapChooseData.containsKey(list.get(j).get(k)) &&
                             (lastDifficulty || db.gameDao().getWWHDataByData(userId, list.get(j).get(k)).getWinStreak() < 3) &&
-                            db.appDao().getWordIfContain('%' + list.get(j).get(k) + '%') != null
-                    ) {
-                        mapChooseData.put(list.get(j).get(k), db.appDao().getWordIfContain('%' + list.get(j).get(k) + '%'));
+                            db.appDao().getWordIfContain('%' + list.get(j).get(k) + '%').size() > 0) {
+
+                        words = db.appDao().getWordIfContain('%' + list.get(j).get(k) + '%');
+                        for (int i = 0; i < 3; i++)
+                            Collections.shuffle(words);
+                        int rand = random.nextInt(words.size());
+
+                        mapChooseData.put(list.get(j).get(k), words.get(rand));
+                        words.clear();
                         list.get(j).remove(k);
                     }
                 }
