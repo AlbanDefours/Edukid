@@ -73,6 +73,9 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         answer1.setOnClickListener(this);
         answer2.setOnClickListener(this);
         answer3.setOnClickListener(this);
+
+        //TODO Lire la consigne si nécessaire et mettre un handler
+        readText("");
     }
 
     private void fillDatabase() {
