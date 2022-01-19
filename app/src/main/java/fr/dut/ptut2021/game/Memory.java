@@ -27,7 +27,6 @@ import java.util.HashMap;
 
 
 public class Memory extends AppCompatActivity {
-/*
     private ArrayList<Card> listCard;
     private int idLastCardReturn=-1;
     int numColumns;
@@ -183,11 +182,8 @@ public class Memory extends AppCompatActivity {
                 }
             }
         });
-
- */
         /*recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new MemoryAdapter(getApplicationContext(), listCard));*/
-    /*
     }
 
     private void calculatesNbColumns(){
@@ -242,7 +238,7 @@ public class Memory extends AppCompatActivity {
 
         int size = listCard.size();
         int sizeImage = db.appDao().getNbWords();
-        if(isOnlyChiffres()){
+        if(){
             for(int i=0;i<size;i++){
                 this.listCard.add( new Card(listCard.get(i)));
             }
@@ -269,30 +265,17 @@ public class Memory extends AppCompatActivity {
     }
 
     private int getNbCard(){
-        if(difficulty==1 || difficulty==4)
+        if(difficulty==1 )
             return 2;
-        if(difficulty==2 || difficulty==5)
+        if(difficulty==2 )
             return 3;
-        if(difficulty==3 || difficulty==6)
+        if(difficulty==3 )
             return 4;
-        if(difficulty==7 || difficulty==10)
+        if(difficulty==4 )
             return 5;
-        if(difficulty==8 || difficulty==11)
+        if(difficulty==5 )
             return 6;
-        if(difficulty==9 || difficulty==12)
-            return 7;
-        if(difficulty==13 || difficulty==15)
-            return 8;
-        if(difficulty==14 || difficulty==16)
-            return 9;
         return 1;
     }
 
-    private boolean isOnlyChiffres(){
-        if(difficulty==1 || difficulty==2 || difficulty==3 || difficulty==7 || difficulty==8 || difficulty==9 || difficulty==13 || difficulty==14)
-            return true;
-        else
-            return false;
-    }
-    */
 }
