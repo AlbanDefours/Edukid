@@ -10,16 +10,17 @@ public class MyTextToSpeech {
     static TextToSpeech textToSpeech;
 
     public static void speachText(Context context, String text) {
+        if(text.contains("Y") || text.contains("y"))
+            text = "Trouve la lettre igrec";
+        String finalText = text;
         textToSpeech = new TextToSpeech(context, status -> {
             if(status != TextToSpeech.ERROR) {
                 textToSpeech.setLanguage(Locale.FRANCE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                    if(text.equals("Trouve la lettre : Y") || text.equals("Trouve la lettre : y"))
-                        textToSpeech.speak("Trouve la lettre : igrec", TextToSpeech.QUEUE_FLUSH, null, null);
-                    textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+                    textToSpeech.speak(finalText, TextToSpeech.QUEUE_FLUSH, null, null);
                 }
                 else
-                    textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                    textToSpeech.speak(finalText, TextToSpeech.QUEUE_FLUSH, null);
             }
         });
     }

@@ -95,7 +95,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private void initGame() {
         initListAnswer();
         setLayoutContent();
-        new Handler().postDelayed(this::readTheAnswer, 1200);
+        new Handler().postDelayed(this::readTheAnswer, 200);
     }
 
     //TODO Choisi pour le moment Result uniquement en fonction de LastUsed
@@ -128,7 +128,8 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     }
 
     private void readTheAnswer() {
-        MyTextToSpeech.speachText(this, "Trouve le " + themeName.toLowerCase() + " : " + listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
+        String s = themeName.equals("Chiffres") ? " le " : " la ";
+        MyTextToSpeech.speachText(this, "Trouve" + s + themeName.toLowerCase() + " : " + listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
     }
 
     private void initListAnswer() {
@@ -170,11 +171,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         delay = true;
         playSound(false);
 
-        new Handler().postDelayed(() -> {
-            delay = false;
-            readTheAnswer();
-        }, 2000);
-
+        delay = false;
         nbTry++;
         int MAX_TRY = 2;
         if (nbTry >= MAX_TRY) {
@@ -186,7 +183,8 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                 }
                 replay();
             }, 2000);
-        }
+        }else
+            new Handler().postDelayed(this::readTheAnswer, 500);
     }
 
     private void displayAnswer(boolean showAnswer) {
