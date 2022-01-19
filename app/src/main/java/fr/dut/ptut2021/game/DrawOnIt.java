@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,12 +18,14 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.DataSymbol;
 import fr.dut.ptut2021.models.Point;
 import fr.dut.ptut2021.models.Symbol;
+import fr.dut.ptut2021.models.database.game.Card;
 
 public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener {
 
@@ -36,6 +39,8 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
     Boolean canDraw = false, hasDraw = false, warning = false, error = false;
     private int nbEssai = 3, nbGame = 3;
     private float nbErreur = 0;
+    private int[] carte;
+
 
     float tolerance, toleranceLarge;
 
@@ -70,19 +75,39 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         
         dm = getResources().getDisplayMetrics();
 
-        db = CreateDatabase.getInstance(DrawOnIt.this);
-
-        DataSymbol.init(dm.widthPixels, dm.heightPixels);
-
         tolerance = dm.widthPixels/15;
-        s = new Symbol(DataSymbol.cinq, tolerance);
 
         toleranceLarge = tolerance * 2;
 
         image = findViewById(R.id.idImage_drawOnIt);
         imageVide = findViewById(R.id.idImageVide_drawOnIt);
 
-        //db.gameDao().get
+        carte = new int[nbGame];
+
+
+        db = CreateDatabase.getInstance(DrawOnIt.this);
+
+        int[] numRand = new int[nbGame];
+
+        List<Card> listCard = db.gameDao().getAllCard();
+
+        for(int i = 0; i < nbGame; i++){
+            numRand[i] = (int) (Math.random() * listCard.size());
+            for(int j = 0; j < i; j++){
+                if(numRand[i] == numRand[j]){
+                    j = i;
+                    i--;
+                }
+            }
+        }
+
+        for(int i = 0; i < nbGame; i++){
+            carte[i] = listCard.get(numRand[i]).getDrawableImage();
+        }
+
+        image.setImageResource(carte[0]);
+        DataSymbol.initPts(Integer.parseInt(listCard.get(numRand[0]).getCardValue()), dm.widthPixels, dm.heightPixels);
+        s = new Symbol(DataSymbol.getPts(), tolerance);
 
         Display currentDisplay = getWindowManager().getDefaultDisplay();
         largeur = currentDisplay.getWidth();
@@ -125,7 +150,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                 if(s.getDistanceBetweenTwoPoints(s.getFirstPoint(),new Point(downx, downy)) <= s.getTolerance() && !hasDraw){
                     canDraw = true;
                 }
-                //System.out.println("cinq.add(new Point(" + downx/dm.widthPixels + ", " + downy/dm.heightPixels + "));");
+                Log.e("Axel","cinq.add(new Point(" + downx/dm.widthPixels + ", " + downy/dm.heightPixels + "));");
                 break;
             case MotionEvent.ACTION_MOVE:
                 upx = event.getX();

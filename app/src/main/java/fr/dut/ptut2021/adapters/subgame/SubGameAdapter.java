@@ -10,7 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.models.databse.Game;
+import fr.dut.ptut2021.models.database.app.Game;
+//import fr.dut.ptut2021.models.databse.Game;
 
 public class SubGameAdapter extends RecyclerView.Adapter<MyViewHolderSubGame> {
 

@@ -1,3 +1,4 @@
+/*
 package fr.dut.ptut2021.game;
 
 import android.content.Intent;
@@ -184,6 +185,7 @@ public class Memory extends AppCompatActivity {
         });
         /*recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new MemoryAdapter(getApplicationContext(), listCard));*/
+/*
     }
 
     private void calculatesNbColumns(){
@@ -238,7 +240,7 @@ public class Memory extends AppCompatActivity {
 
         int size = listCard.size();
         int sizeImage = db.appDao().getNbWords();
-        if(){
+/*        if(){
             for(int i=0;i<size;i++){
                 this.listCard.add( new Card(listCard.get(i)));
             }
@@ -247,7 +249,10 @@ public class Memory extends AppCompatActivity {
                 this.listCard.add(new Card(listCard.get(i).getValue(), db.appDao().getWordById((int) (Math.random() * sizeImage)).getImage()));
             }
         }
+
+ *//*
     }
+
 
     private void changeDifficulty(){
         if( db.gameDao().getMemoryData(userId).getWinStreak() >= 1 && db.gameDao().getMemoryDataCardNbNotUsed(userId)==0 && difficulty+1<=16){
@@ -279,3 +284,4 @@ public class Memory extends AppCompatActivity {
     }
 
 }
+*/

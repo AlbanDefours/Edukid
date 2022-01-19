@@ -25,7 +25,7 @@ public class ClasseMere {
                 context.startActivity(new Intent().setClass(context, SubGameMenu.class));
                 break;
             case "SubMemory":
-                context.startActivity(new Intent().setClass(context, Memory.class));
+                //context.startActivity(new Intent().setClass(context, Memory.class));
                 break;
             case "Mot à trou":
                 context.startActivity(new Intent().setClass(context, WordWithHole.class));

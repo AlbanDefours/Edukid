@@ -20,7 +20,8 @@ import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.game.GameAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.game.ClasseMere;
-import fr.dut.ptut2021.models.databse.Game;
+import fr.dut.ptut2021.models.database.app.Game;
+//import fr.dut.ptut2021.models.databse.Game;
 
 public class SubGameMenu extends AppCompatActivity {
 
