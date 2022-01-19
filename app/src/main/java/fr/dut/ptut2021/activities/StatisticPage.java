@@ -1,5 +1,6 @@
 package fr.dut.ptut2021.activities;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.content.Context;
 import android.os.Build;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -22,6 +24,9 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,36 +36,44 @@ import java.util.Map;
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.database.app.User;
+import fr.dut.ptut2021.models.database.log.GameResultLog;
 
 public class StatisticPage extends AppCompatActivity implements View.OnClickListener {
 
     private Vibrator vibe;
-    private int page = 0;
+    private int pageUser = 0, pageCategory = 0;
     private TextView title;
     private List<User> listUser;
     private CreateDatabase db = null;
     private Button generalPage, lettresPage, chiffresPage;
     private ImageView nextPage, previousPage;
+    private long startWeekTime;
+    private final long DAY_MILLIS = 24*3600*1000;
+    private final int NB_DAY = 7;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistic_page);
 
-            vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         initViews();
         initOnClickViews();
         createDbAndImportUsers();
 
-        if (!listUser.isEmpty())
-            displayTitle();
+        startWeekTime = getStartWeekTime();
+        displayNewUserPage();
+    }
 
+    private void displayNewUserPage() {
+        if (!listUser.isEmpty()) displayTitle();
         displayGeneralPage();
     }
 
     private void displayGeneralPage() {
-        createBarChart(getGameFrequency());
+        createBarChart(getGameFrequencyData());
     }
 
     private void displayChiffresPage() {
@@ -89,7 +102,6 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         barChart.setData(barData);
         barChart.getDescription().setText("Fréquence de jeu");
         barChart.animateY(2000);
-
     }
 
     private void createDbAndImportUsers() {
@@ -119,30 +131,49 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     }
 
     private void displayTitle() {
-        title.setText(listUser.get(page).getUserName());
-        verifPageLocation();
+        title.setText(listUser.get(pageUser).getUserName());
+        verifyPageUserLocation();
     }
 
-    private Map<Integer, Integer> getGameFrequency() {
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private long getStartWeekTime() {
+        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+        Date currentDate = new Date();
+
+        String str = df.format(currentDate) + " 00:00:00";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime ldt = LocalDateTime.parse(str, formatter);
+
+        return ldt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - (6* DAY_MILLIS);
+    }
+
+    private Map<Integer, Integer> getGameFrequencyData() {
         Map<Integer, Integer> mapData = new HashMap<>();
 
-        long currentTime = System.currentTimeMillis();
-        Date currentDate =  new Date(currentTime);
-        Log.e("MYLOG", "" + currentDate);
+        List<GameResultLog> listLog = db.gameLogDao().getAllGameResultLogAfterTime(listUser.get(pageUser).getUserId(), startWeekTime);
+        Log.e("APPLOG", "Size listLog : " + listLog.size());
 
-        DateFormat df = new SimpleDateFormat("dd/MM/yy");
-        Date now = new Date();
-        Log.e("APPLOG", "" + df.format(now));
+        for (int i = 0; i < NB_DAY; i++) {
+            mapData.put(i, 0);
+        }
 
+        for (int i = 0; i < listLog.size(); i++) {
+            long gameTime = listLog.get(i).getEndGameDate();
+            for (int j = 0; j < NB_DAY; j++) {
+                if (startWeekTime + (DAY_MILLIS *j) <= gameTime && gameTime < startWeekTime + (DAY_MILLIS *(j+1))) {
+                    mapData.put(j, mapData.get(j)+1);
+                }
+            }
+        }
         return mapData;
     }
     
-    private void verifPageLocation() {
+    private void verifyPageUserLocation() {
         previousPage.setAlpha(1f);
         nextPage.setAlpha(1f);
-        if (page == 0)
+        if (pageUser == 0)
             previousPage.setAlpha(0.5f);
-        if (page == listUser.size() - 1)
+        if (pageUser == listUser.size() - 1)
             nextPage.setAlpha(0.5f);
     }
 
@@ -160,35 +191,39 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
             vibe.vibrate(35);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttonGeneral_statistics:
                 lockButton(generalPage);
+                pageCategory = 0;
                 displayGeneralPage();
                 break;
             case R.id.buttonChiffres_statistics:
                 lockButton(chiffresPage);
+                pageCategory = 1;
                 displayChiffresPage();
                 break;
             case R.id.buttonLettres_statistics:
                 lockButton(lettresPage);
+                pageCategory = 2;
                 displayLettresPage();
                 break;
 
             case R.id.arrow_nextPage:
-                if (page < listUser.size() - 1) {
+                if (pageUser < listUser.size() - 1) {
                     vibrate();
-                    page++;
+                    pageUser++;
                 }
-                displayTitle();
+                displayNewUserPage();
                 break;
             case R.id.arrow_previousPage:
-                if (0 < page) {
+                if (0 < pageUser) {
                     vibrate();
-                    page--;
+                    pageUser--;
                 }
-                displayTitle();
+                displayNewUserPage();
                 break;
             default:
                 break;

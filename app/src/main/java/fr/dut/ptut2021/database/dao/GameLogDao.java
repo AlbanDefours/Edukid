@@ -20,6 +20,8 @@ public interface GameLogDao {
     @Query("SELECT * FROM GameResultLog")
     List<GameResultLog> getAllGameResultLog();
 
+    @Query("SELECT * FROM GameResultLog WHERE userId = :userId AND endGameDate >= :minTime")
+    List<GameResultLog> getAllGameResultLogAfterTime(int userId, long minTime);
 
 
     //GAME LOG
