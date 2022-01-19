@@ -44,6 +44,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private final int MAX_GAME_PLAYED = 5;
     private int userId, gamePlayed = 1, nbTry = 0, answerFalse = 0, nbrStars = 0, answerFalseWord = 0;
     private Random random = new Random();
+    private String articleTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,10 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_play_with_sound);
 
         getSharedPref();
+        articleTheme = themeName.equals("Chiffres") ? "le " : "la ";
+        String s = themeName.equals("Chiffres") ? "un " : "une ";
+        MyTextToSpeech.speachText(getApplicationContext(), "Dans cet exercice tu vas entendre " + s + themeName.toLowerCase() + " et tu dois " + articleTheme + " retrouver");
+
         initDatabase();
         initializeLayout();
         fillListChooseResult(themeName);
@@ -128,7 +133,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     }
 
     private void readTheAnswer() {
-        MyTextToSpeech.speachText(this, "Trouve le " + themeName.toLowerCase() + " : " + listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
+        MyTextToSpeech.speachText(this, "Trouve " + articleTheme + themeName.toLowerCase() + " : " + listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
     }
 
     private void initListAnswer() {
