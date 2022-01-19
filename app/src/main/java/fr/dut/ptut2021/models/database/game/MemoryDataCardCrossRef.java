@@ -9,7 +9,9 @@ public class MemoryDataCardCrossRef {
     @NonNull
     private String cardValue;
     private int userId;
-    private String category;
+    @NonNull
+    private String category ;
+    @NonNull
     private int subCategory;
     private int used;
 

@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -34,6 +35,7 @@ public class Memory extends AppCompatActivity {
     private CreateDatabase db;
     private int difficulty;
     private int userId;
+    private String category;
     private int subCat;
 
     private void shuffle(){
@@ -94,18 +96,19 @@ public class Memory extends AppCompatActivity {
         int nbStar;
         if(ptMalus<=2) {
             nbStar = 3;
-            db.gameDao().getMemoryData(userId).setWinStreak(db.gameDao().getMemoryData(userId).getWinStreak()+1);
-            db.gameDao().getMemoryData(userId).setLoseStreak(0);
+            db.gameDao().getMemoryData(userId,category,subCat).setWinStreak(db.gameDao().getMemoryData(userId,category,subCat).getWinStreak()+1);
+            db.gameDao().getMemoryData(userId,category,subCat).setLoseStreak(0);
         }
         else if(ptMalus<=5) {
             nbStar = 2;
-            db.gameDao().resetAllMemoryDataStreak(userId);
+            db.gameDao().resetAllMemoryDataStreak(userId,category,subCat);
         }
         else{
             nbStar=1;
-            db.gameDao().getMemoryData(userId).setLoseStreak(db.gameDao().getMemoryData(userId).getLoseStreak()+1);
-            db.gameDao().getMemoryData(userId).setWinStreak(0);
+            db.gameDao().getMemoryData(userId,category,subCat).setLoseStreak(db.gameDao().getMemoryData(userId,category,subCat).getLoseStreak()+1);
+            db.gameDao().getMemoryData(userId,category,subCat).setWinStreak(0);
         }
+        changeDifficulty();
 
         new Handler().postDelayed(() -> {
         Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
@@ -153,11 +156,17 @@ public class Memory extends AppCompatActivity {
                 subCat=4;
                 break;
         }
-        db.gameDao().insertMemoryData(new MemoryData(userId,"Chiffres",subCat));
+        db.gameDao().insertMemoryData(new MemoryData(userId,category,subCat));
+        Log.e("memory","BD initialisé");
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+        SharedPreferences settings = getSharedPreferences("MyPref", 0);
+        category = settings.getString("themeName", "");
+        userId = settings.getInt("userId", 0);
         initDB();
 
         mpGoodAnswer = MediaPlayer.create(this, R.raw.correct_answer);
@@ -165,13 +174,9 @@ public class Memory extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory);
+        difficulty = db.gameDao().getMemoryData(userId,category,subCat).getDifficulty();
 
-        SharedPreferences settings = getSharedPreferences("MyPref", 0);
-        String themeName = settings.getString("themeName", "");
-        userId = settings.getInt("userId", 0);
-        difficulty = db.gameDao().getMemoryData(userId,themeName,subCat).getDifficulty();
-
-        if(themeName.equals("Chiffres") ){
+        if(category.equals("Chiffres") ){
             initCardChiffre(getNbCard());
         }
         else{
@@ -229,10 +234,9 @@ public class Memory extends AppCompatActivity {
 
         while(nbChoice!=nbCard){
             value =(int) (Math.random()*9)+1;
-
             for (int j = 0; j< listMemoryCard.size(); j++){
-                if(nbChoice<db.gameDao().getMemoryDataCardNbNotUsed(userId,subCat)) {
-                    if(String.valueOf(value)==listCard.get(j).getValue() || db.gameDao().getMemoryDataCardUsed(userId,subCat,String.valueOf(value)) == db.gameDao().getMemoryDataCardMaxUsed(userId,subCat)) {
+                if(nbChoice<db.gameDao().getMemoryDataCardNbNotMaxUsed(userId,category,subCat,db.gameDao().getMemoryDataCardMaxUsed(userId,category,subCat))) {
+                    if(String.valueOf(value)==listMemoryCard.get(j).getValue() || db.gameDao().getMemoryDataCardUsed(userId,category,subCat,String.valueOf(value)) == db.gameDao().getMemoryDataCardMaxUsed(userId,category,subCat)) {
                         isUsed = true;
                         break;
                     }
@@ -245,38 +249,45 @@ public class Memory extends AppCompatActivity {
             }
             if(!isUsed) {
                 nbChoice++;
-                System.out.println("------- "+String.valueOf(value)+" -------");
-                listMemoryCard.add(new MemoryCard(String.valueOf(value),db.gameDao().getCard(String.valueOf(value)).getDrawableImage()));
-                db.gameDao().updateMemoryDataCardUsed(userId,String.valueOf(value),true);
+                listMemoryCard.add(new MemoryCard(String.valueOf(value),getImage1(value)));
+                db.gameDao().updateMemoryDataCardUsed(userId,
+                        category,
+                        subCat,
+                        String.valueOf(value),
+                        db.gameDao().getMemoryDataCardUsed(userId,
+                                category,
+                                subCat,
+                                String.valueOf(value))+1);
+
+                Log.e("memory","Carte ajouté: "+value);
             }
             isUsed=false;
         }
 
-        int size = listMemoryCard.size();
-        int sizeImage = db.appDao().getNbWords();
-        if(){
-            for(int i=0;i<size;i++){
-                this.listMemoryCard.add( new MemoryCard(listMemoryCard.get(i)));
-            }
-        }else {
-            for (int i = 0; i < size; i++) {
-                this.listMemoryCard.add(new MemoryCard(listMemoryCard.get(i).getValue(), db.appDao().getWordById((int) (Math.random() * sizeImage)).getImage()));
-            }
+        Log.e("memory","Les valeurs sont choisis. La taille de la liste est de "+listMemoryCard.size());
+        int size= listMemoryCard.size();
+        for(int i=0;i<size;i++){
+            this.listMemoryCard.add( new MemoryCard(listMemoryCard.get(i).getValue(),getImage2(listMemoryCard.get(i).getDrawableImage(),Integer.parseInt(listMemoryCard.get(i).getValue()))));
+
+            Log.e("memory","Création du double de la carte "+(i+1));
         }
+
+        Log.e("memory","Jeu de carte initialisé : "+listMemoryCard);
     }
 
     private void changeDifficulty(){
-        if( db.gameDao().getMemoryData(userId).getWinStreak() >= 1 && db.gameDao().getMemoryDataCardNbNotUsed(userId)==0 && difficulty+1<=16){
-            System.out.println("Monte au niveau "+(difficulty+1));
-            db.gameDao().increaseMemoryDataDifficultyChiffres(userId);
-            db.gameDao().resetAllMemoryDataStreak(userId);
-            db.gameDao().resetAllMemoryDataCardUsed(userId);
+        Log.e("memory","La difficulté est analysé");
+        if( db.gameDao().getMemoryData(userId,category,subCat).getWinStreak() >= 1 && db.gameDao().getMemoryDataCardNbTotal(userId,category,subCat)-db.gameDao().getMemoryDataCardNbUsedMoreThan(userId,category,subCat,3)==0 && difficulty+1<=5){
+            Log.e("memory","Monte au niveau "+(difficulty+1));
+            db.gameDao().increaseMemoryDataDifficulty(userId,category,subCat);
+            db.gameDao().resetAllMemoryDataStreak(userId,category,subCat);
+            db.gameDao().resetAllMemoryDataCardUsed(userId,category,subCat);
         }
-        if(db.gameDao().getMemoryData(userId).getLoseStreak()>=1 && difficulty-1>=1){
-            System.out.println("Baisse au niveau "+(difficulty-1));
-            db.gameDao().decreaseMemoryDataDifficultyChiffres(userId);
-            db.gameDao().resetAllMemoryDataStreak(userId);
-            db.gameDao().resetAllMemoryDataCardUsed(userId);
+        if(db.gameDao().getMemoryData(userId,category,subCat).getLoseStreak()>=1 && difficulty-1>=1){
+            Log.e("memory","Baisse au niveau "+(difficulty-1));
+            db.gameDao().decreaseMemoryDataDifficulty(userId,category,subCat);
+            db.gameDao().resetAllMemoryDataStreak(userId,category,subCat);
+            db.gameDao().resetAllMemoryDataCardUsed(userId,category,subCat);
         }
     }
 
@@ -313,14 +324,16 @@ public class Memory extends AppCompatActivity {
             case 3:
                 return image1;
             case 2:
-                int img=0;
+                int img=image1;
                 while(img==image1){
-                    db.appDao().getWordById((int) (Math.random() * sizeImage)).getImage();
+                    img = db.appDao().getWordById((int) (Math.random() * sizeImage)).getImage();
                 }
+                Log.e("memory","Image 2 = "+img);
                 return img;
             case 4:
                 return db.gameDao().getCard(String.valueOf(value)).getDrawableImage();
         }
+        return 0;
     }
 
 }

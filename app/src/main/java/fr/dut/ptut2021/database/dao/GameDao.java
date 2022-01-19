@@ -225,8 +225,8 @@ public interface GameDao {
     @Query("UPDATE MemoryDataCardCrossRef SET used = 0 WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
     void resetAllMemoryDataCardUsed(int userId, String category, int subCategory);
 
-    @Query("SELECT COUNT(*) FROM MemoryDataCardCrossRef WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory AND max(used) != used")
-    int getMemoryDataCardNbNotMaxUsed(int userId, String category, int subCategory);
+    @Query("SELECT COUNT(*) FROM MemoryDataCardCrossRef WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory AND :maxUsed != used")
+    int getMemoryDataCardNbNotMaxUsed(int userId, String category, int subCategory,int maxUsed);
 
     @Query("SELECT MAX(used) FROM MemoryDataCardCrossRef WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
     int getMemoryDataCardMaxUsed(int userId, String category, int subCategory);
@@ -235,6 +235,6 @@ public interface GameDao {
     int getMemoryDataCardNbUsedMoreThan(int userId, String category, int subCategory, int value);
 
     @Query("SELECT COUNT(*) FROM MemoryDataCardCrossRef WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
-    int getMemoryDataCardNbTotal(int userId, String category, int subCategory, int value);
+    int getMemoryDataCardNbTotal(int userId, String category, int subCategory);
 
 }
