@@ -1,6 +1,6 @@
 package fr.dut.ptut2021.models;
 
-public class Card {
+public class MemoryCard {
     private String value;
 
     private boolean hidden=true;
@@ -8,14 +8,14 @@ public class Card {
     private int drawableImage;
 
 
-    public Card(String value,int drawableImage){
+    public MemoryCard(String value, int drawableImage){
         this.value = value;
         this.drawableImage = drawableImage;
     }
 
-    public Card(Card card){
-        this.value = card.getValue();
-        this.drawableImage = card.getDrawableImage();
+    public MemoryCard(MemoryCard memoryCard){
+        this.value = memoryCard.getValue();
+        this.drawableImage = memoryCard.getDrawableImage();
     }
 
     //getter
