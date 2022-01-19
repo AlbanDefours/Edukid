@@ -34,6 +34,7 @@ import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.WordWithHoleData;
 import fr.dut.ptut2021.models.database.log.GameLog;
 import fr.dut.ptut2021.models.database.log.GameResultLog;
+import fr.dut.ptut2021.utils.MyMediaPlayer;
 import fr.dut.ptut2021.utils.MyTextToSpeech;
 import fr.dut.ptut2021.utils.MyVibrator;
 
@@ -41,6 +42,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
     private CreateDatabase db;
     private TextView word;
+    private ImageView image;
     private Button answer1, answer2, answer3;
     private List<WordWithHoleData> listData;
     private Map<String, Word> mapChooseData;
@@ -50,7 +52,6 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private final int MAX_GAME_PLAYED = 4;
     private int userId, gamePlayed = 1, nbTry = 0, nbWin = 0;
     private boolean delay = false;
-    private MediaPlayer mpGoodAnswer, mpWrongAnswer;
     private Random random = new Random();
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -64,12 +65,10 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         userId = settings.getInt("userId", 0);
         fillDatabase();
 
-        mpGoodAnswer = MediaPlayer.create(this, R.raw.correct_answer);
-        mpWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
-
         initGame();
         initListAnswer();
-        setLayoutContent();
+        initLayoutContent();
+        setLayoutContentAndReadWord();
 
         answer1.setOnClickListener(this);
         answer2.setOnClickListener(this);
@@ -86,11 +85,6 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         for (String syllable : syllableTab) {
             db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, syllable, 2));
         }
-    }
-
-    //TODO (mettre le texte a lire et appeler la fonction ou tu en as besoin)
-    private void readTheAnswer() {
-        MyTextToSpeech.speachText(this, "Trouve ...");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -173,24 +167,29 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
-
-        for (int i = 0; i < 4; i++) {
-            Collections.shuffle(listAnswer);
-        }
+        Collections.shuffle(listAnswer);
     }
 
-    private void setLayoutContent() {
+    private void initLayoutContent() {
         word = findViewById(R.id.word_wordWithHole);
-        ImageView image = findViewById(R.id.imageWord_wordWithHole);
+        image = findViewById(R.id.imageWord_wordWithHole);
         answer1 = findViewById(R.id.buttonAnswer1_wordWithHole);
         answer2 = findViewById(R.id.buttonAnswer2_wordWithHole);
         answer3 = findViewById(R.id.buttonAnswer3_wordWithHole);
+    }
 
+    private void setLayoutContentAndReadWord() {
         word.setText(holeTheWord());
         image.setImageResource(mapChooseData.get(goodAnswer).getImage());
         answer1.setText(listAnswer.get(0));
         answer2.setText(listAnswer.get(1));
         answer3.setText(listAnswer.get(2));
+
+        readText(mapChooseData.get(goodAnswer).getWord());
+    }
+
+    private void readText(String text) {
+        MyTextToSpeech.speachText(this, text);
     }
 
     private void textAnimation(boolean goodAnswer) {
@@ -207,11 +206,10 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
     private void playSound(boolean isGoodAnswer) {
         if (isGoodAnswer)
-            mpGoodAnswer.start();
+            MyMediaPlayer.playSound(this, R.raw.correct_answer);
         else
-            mpWrongAnswer.start();
+            MyMediaPlayer.playSound(this, R.raw.wrong_answer);
     }
-
 
     private String concatWrongAnswer(int indAnswer) {
         String s = mapChooseData.get(goodAnswer).getWord();
@@ -235,14 +233,15 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         playSound(false);
         textAnimation(false);
 
-        new Handler().postDelayed(() -> {
-            delay = false;
-            word.setText(holeTheWord());
-            word.setTextColor(Color.BLACK);
-        }, 2000);
-
         nbTry++;
-        if (nbTry >= 2) {
+        if (nbTry < 2) {
+            new Handler().postDelayed(() -> {
+                delay = false;
+                word.setText(holeTheWord());
+                word.setTextColor(Color.BLACK);
+                readText(mapChooseData.get(goodAnswer).getWord());
+            }, 2000);
+        }else {
             delay = true;
             new Handler().postDelayed(() -> {
                 colorIfGoodAnswer(answer1);
@@ -285,7 +284,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             if (gamePlayed <= MAX_GAME_PLAYED) {
                 nbTry = 0;
                 initListAnswer();
-                setLayoutContent();
+                setLayoutContentAndReadWord();
                 word.setTextColor(Color.BLACK);
                 resetButton();
             } else {
