@@ -232,8 +232,8 @@ public class Memory extends AppCompatActivity {
         while(nbChoice!=nbCard){
             value =(int) (Math.random()*9)+1;
             for (int j=0;j<listCard.size();j++){
-                if(nbChoice<db.gameDao().getMemoryDataCardNbNotUsed(userId)) {
-                    if(String.valueOf(value)==listCard.get(j).getValue() || db.gameDao().getMemoryDataCardUsed(userId,String.valueOf(value)) == db.gameDao().getMemoryMaxUsed()) {
+                if(nbChoice<db.gameDao().getMemoryDataCardNbNotUsed(userId,subCat)) {
+                    if(String.valueOf(value)==listCard.get(j).getValue() || db.gameDao().getMemoryDataCardUsed(userId,subCat,String.valueOf(value)) == db.gameDao().getMemoryDataCardMaxUsed(userId,subCat)) {
                         isUsed = true;
                         break;
                     }
@@ -293,6 +293,35 @@ public class Memory extends AppCompatActivity {
         if(difficulty==5 )
             return 6;
         return 1;
+    }
+
+    private int getImage1(int value){
+        int sizeImage = db.appDao().getNbWords();
+        switch(subCat){
+            case 1:
+            case 2:
+            case 4:
+                return db.appDao().getWordById((int) (Math.random() * sizeImage)).getImage();
+            case 3:
+                return db.gameDao().getCard(String.valueOf(value)).getDrawableImage();
+        }
+        return 0;
+    }
+    private int getImage2(int image1,int value){
+        int sizeImage = db.appDao().getNbWords();
+        switch(subCat){
+            case 1:
+            case 3:
+                return image1;
+            case 2:
+                int img=0;
+                while(img==image1){
+                    db.appDao().getWordById((int) (Math.random() * sizeImage)).getImage();
+                }
+                return img;
+            case 4:
+                return db.gameDao().getCard(String.valueOf(value)).getDrawableImage();
+        }
     }
 
 }
