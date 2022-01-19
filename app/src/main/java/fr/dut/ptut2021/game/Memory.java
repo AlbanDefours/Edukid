@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -17,17 +16,16 @@ import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.adapters.MemoryAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.models.Card;
+import fr.dut.ptut2021.models.MemoryCard;
 import fr.dut.ptut2021.models.database.game.MemoryData;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 
 
 public class Memory extends AppCompatActivity {
-    private ArrayList<Card> listCard;
+    private ArrayList<MemoryCard> listMemoryCard;
     private int idLastCardReturn=-1;
     int numColumns;
     boolean isClicked=false;
@@ -39,19 +37,19 @@ public class Memory extends AppCompatActivity {
     private int subCat;
 
     private void shuffle(){
-        Collections.shuffle(listCard);
-        Collections.shuffle(listCard);
-        Collections.shuffle(listCard);
-        Collections.shuffle(listCard);
-        Collections.shuffle(listCard);
-        Collections.shuffle(listCard);
+        Collections.shuffle(listMemoryCard);
+        Collections.shuffle(listMemoryCard);
+        Collections.shuffle(listMemoryCard);
+        Collections.shuffle(listMemoryCard);
+        Collections.shuffle(listMemoryCard);
+        Collections.shuffle(listMemoryCard);
     }
 
     public void returnCard(int idCard,MemoryAdapter memoryAdapter) {
-        if(listCard.get(idCard).isHidden()){
+        if(listMemoryCard.get(idCard).isHidden()){
             ArrayList<Integer> returnableCards=new ArrayList<>();
             isClicked=true;
-            listCard.get(idCard).setHidden(false);
+            listMemoryCard.get(idCard).setHidden(false);
             returnableCards.add(idCard);
             memoryAdapter.setCard(returnableCards);
             memoryAdapter.notifyDataSetChanged();
@@ -62,12 +60,12 @@ public class Memory extends AppCompatActivity {
                     isClicked=false;
                 } else {
                     new Handler().postDelayed(() -> {
-                        if (idCard != idLastCardReturn && listCard.get(idLastCardReturn).getValue() == listCard.get(idCard).getValue()) {
+                        if (idCard != idLastCardReturn && listMemoryCard.get(idLastCardReturn).getValue() == listMemoryCard.get(idCard).getValue()) {
                             mpGoodAnswer.start();
                             idLastCardReturn = -1;
                         } else {
-                            listCard.get(idCard).setHidden(true);
-                            listCard.get(idLastCardReturn).setHidden(true);
+                            listMemoryCard.get(idCard).setHidden(true);
+                            listMemoryCard.get(idLastCardReturn).setHidden(true);
                             mpWrongAnswer.start();
                             returnableCards.add(idLastCardReturn);
                             memoryAdapter.setCard(returnableCards);
@@ -82,15 +80,15 @@ public class Memory extends AppCompatActivity {
     }
 
     private boolean isWin(){
-        for(int i=0;i<listCard.size();i++){
-            if(listCard.get(i).isHidden()){
+        for(int i = 0; i< listMemoryCard.size(); i++){
+            if(listMemoryCard.get(i).isHidden()){
                 return false;
             }
         }
         int ptMalus=0;
-        for(int i=0;i<listCard.size();i++){
-            if(listCard.get(i).getNbReturn()>0){
-                ptMalus+=listCard.get(i).getNbReturn()-1;
+        for(int i = 0; i< listMemoryCard.size(); i++){
+            if(listMemoryCard.get(i).getNbReturn()>0){
+                ptMalus+= listMemoryCard.get(i).getNbReturn()-1;
             }
         }
         int nbStar;
@@ -123,9 +121,9 @@ public class Memory extends AppCompatActivity {
         int compteur=1;
 
         System.out.println("Memory : ");
-        for (Card card : listCard){
-            if(!card.isHidden()){
-                System.out.print(card.getValue()+" ");
+        for (MemoryCard memoryCard : listMemoryCard){
+            if(!memoryCard.isHidden()){
+                System.out.print(memoryCard.getValue()+" ");
             }
             else
                 System.out.print("X ");
@@ -188,7 +186,7 @@ public class Memory extends AppCompatActivity {
         calculatesNbColumns();
         gridView.setNumColumns(numColumns);
 
-        MemoryAdapter memoryAdapter = new MemoryAdapter(getApplicationContext(), listCard,numColumns);
+        MemoryAdapter memoryAdapter = new MemoryAdapter(getApplicationContext(), listMemoryCard,numColumns);
         gridView.setAdapter(memoryAdapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -207,7 +205,7 @@ public class Memory extends AppCompatActivity {
     }
 
     private void calculatesNbColumns(){
-        numColumns = (int) Math.sqrt(listCard.size());
+        numColumns = (int) Math.sqrt(listMemoryCard.size());
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -216,7 +214,7 @@ public class Memory extends AppCompatActivity {
         double cardHeight = cardWidth* (1684.0 / 1094) + 20;
 
         double screenHeight = metrics.heightPixels;
-        int nbRows = (int) ((listCard.size()+ numColumns - 1) / numColumns);
+        int nbRows = (int) ((listMemoryCard.size()+ numColumns - 1) / numColumns);
         if(cardHeight*nbRows>screenHeight){
             numColumns++;
         }
@@ -224,21 +222,22 @@ public class Memory extends AppCompatActivity {
 
     private void initCardChiffre(int nbCard){
         System.out.println("Nombre de cartes : "+nbCard);
-        listCard = new ArrayList<>();
+        listMemoryCard = new ArrayList<>();
         if(nbCard>9){nbCard=9;}
         int value,nbChoice=0;
         boolean isUsed=false;
 
         while(nbChoice!=nbCard){
             value =(int) (Math.random()*9)+1;
-            for (int j=0;j<listCard.size();j++){
+
+            for (int j = 0; j< listMemoryCard.size(); j++){
                 if(nbChoice<db.gameDao().getMemoryDataCardNbNotUsed(userId,subCat)) {
                     if(String.valueOf(value)==listCard.get(j).getValue() || db.gameDao().getMemoryDataCardUsed(userId,subCat,String.valueOf(value)) == db.gameDao().getMemoryDataCardMaxUsed(userId,subCat)) {
                         isUsed = true;
                         break;
                     }
                 }else{
-                    if(String.valueOf(value)==listCard.get(j).getValue()) {
+                    if(String.valueOf(value)== listMemoryCard.get(j).getValue()) {
                         isUsed = true;
                         break;
                     }
@@ -247,21 +246,21 @@ public class Memory extends AppCompatActivity {
             if(!isUsed) {
                 nbChoice++;
                 System.out.println("------- "+String.valueOf(value)+" -------");
-                listCard.add(new Card(String.valueOf(value),db.gameDao().getCard(String.valueOf(value)).getDrawableImage()));
+                listMemoryCard.add(new MemoryCard(String.valueOf(value),db.gameDao().getCard(String.valueOf(value)).getDrawableImage()));
                 db.gameDao().updateMemoryDataCardUsed(userId,String.valueOf(value),true);
             }
             isUsed=false;
         }
 
-        int size = listCard.size();
+        int size = listMemoryCard.size();
         int sizeImage = db.appDao().getNbWords();
         if(){
             for(int i=0;i<size;i++){
-                this.listCard.add( new Card(listCard.get(i)));
+                this.listMemoryCard.add( new MemoryCard(listMemoryCard.get(i)));
             }
         }else {
             for (int i = 0; i < size; i++) {
-                this.listCard.add(new Card(listCard.get(i).getValue(), db.appDao().getWordById((int) (Math.random() * sizeImage)).getImage()));
+                this.listMemoryCard.add(new MemoryCard(listMemoryCard.get(i).getValue(), db.appDao().getWordById((int) (Math.random() * sizeImage)).getImage()));
             }
         }
     }
