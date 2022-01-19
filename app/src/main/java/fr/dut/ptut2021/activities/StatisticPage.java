@@ -1,8 +1,9 @@
 package fr.dut.ptut2021.activities;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
@@ -15,11 +16,17 @@ import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.text.DateFormat;
@@ -92,16 +99,38 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
             data.add(new BarEntry(val.getKey(), val.getValue()));
 
         BarDataSet barDataSet = new BarDataSet(data, "Data");
-        barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        barDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
         barDataSet.setValueTextColor(Color.BLACK);
-        barDataSet.setValueTextSize(16f);
-        //barDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+        barDataSet.setDrawValues(false);
+
+        String[] days = {"Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"};
+        XAxis axis = barChart.getXAxis();
+        axis.setTypeface(Typeface.MONOSPACE);
+        axis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        axis.setTextSize(15f);
+        axis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getAxisLabel(float value, AxisBase axis) {
+                return days[(int) value];
+            }
+        });
+
+        AxisBase axisBase = barChart.getAxis(YAxis.AxisDependency.LEFT);
+        axisBase.setGranularity(1f);
+        axisBase.setTextSize(15f);
+        axisBase.setAxisMinimum(0f);
+        axisBase.setTypeface(Typeface.MONOSPACE);
+        barChart.getAxis(YAxis.AxisDependency.RIGHT).setEnabled(false);
 
         BarData barData = new BarData(barDataSet);
         barChart.setFitBars(true);
         barChart.setData(barData);
-        barChart.getDescription().setText("Fréquence de jeu");
-        barChart.animateY(2000);
+        barChart.getDescription().setEnabled(false);
+        barChart.animateY(1000);
+        barChart.setTouchEnabled(false);
+        barChart.setNoDataText("Commencer a jouer !");
+        barChart.getLegend().setEnabled(false);
+        barChart.setExtraOffsets(0,0,0,5);
     }
 
     private void createDbAndImportUsers() {
