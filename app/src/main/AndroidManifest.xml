@@ -68,6 +68,10 @@
             android:name=".activities.GameMenu"
             android:screenOrientation="portrait"
             android:exported="false" />
+        <activity
+            android:name=".activities.SubGameMenu"
+            android:screenOrientation="portrait"
+            android:exported="false" />
     </application>
 
 </manifest>
