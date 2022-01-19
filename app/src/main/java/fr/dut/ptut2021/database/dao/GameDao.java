@@ -203,26 +203,32 @@ public interface GameDao {
     @Update
     void updateMemoryDataCard(MemoryDataCardCrossRef memoryDataCardCrossRef);
 
-    @Query("SELECT * FROM MemoryDataCardCrossRef WHERE userId = :userId AND cardValue LIKE :cardValue")
-    MemoryDataCardCrossRef getMemoryDataCard(int userId, String cardValue);
+    @Query("SELECT * FROM MemoryDataCardCrossRef WHERE userId = :userId AND subCategory = :subCategory AND cardValue LIKE :cardValue")
+    MemoryDataCardCrossRef getMemoryDataCard(int userId, int subCategory, String cardValue);
 
     //TODO Y a des trucs à changer pour used
-    @Query("SELECT used FROM MemoryDataCardCrossRef WHERE userId = :userId AND cardValue LIKE :cardValue")
-    int getMemoryDataCardUsed(int userId, String cardValue);
+    @Query("SELECT used FROM MemoryDataCardCrossRef WHERE userId = :userId AND subCategory = :subCategory AND cardValue LIKE :cardValue")
+    int getMemoryDataCardUsed(int userId, int subCategory, String cardValue);
 
     @Query("SELECT * FROM MemoryDataCardCrossRef")
     List<MemoryDataCardCrossRef> getAllMemoryDataCard();
 
-    @Query("SELECT * FROM MemoryDataCardCrossRef WHERE userId = :userId")
-    List<MemoryDataCardCrossRef> getAllMemoryDataCardByUserId(int userId);
+    @Query("SELECT * FROM MemoryDataCardCrossRef WHERE userId = :userId AND subCategory = :subCategory")
+    List<MemoryDataCardCrossRef> getAllMemoryDataCardByUser(int userId, int subCategory);
 
-    @Query("SELECT COUNT(*) FROM MemoryDataCardCrossRef WHERE userId = :userId AND used = 0")
-    int getMemoryDataCardNbNotUsed(int userId);
+    @Query("SELECT COUNT(*) FROM MemoryDataCardCrossRef WHERE userId = :userId AND subCategory = :subCategory AND used = 0")
+    int getMemoryDataCardNbNotUsed(int userId, int subCategory);
 
-    @Query("UPDATE MemoryDataCardCrossRef SET used = :used WHERE userId = :userId AND cardValue LIKE :cardValue")
-    void updateMemoryDataCardUsed(int userId, String cardValue, boolean used);
+    @Query("UPDATE MemoryDataCardCrossRef SET used = :used WHERE userId = :userId AND subCategory = :subCategory AND cardValue LIKE :cardValue")
+    void updateMemoryDataCardUsed(int userId, int subCategory, String cardValue, int used);
 
-    @Query("UPDATE MemoryDataCardCrossRef SET used = 0 WHERE userId = :userId")
-    void resetAllMemoryDataCardUsed(int userId);
+    @Query("UPDATE MemoryDataCardCrossRef SET used = 0 WHERE userId = :userId AND subCategory = :subCategory")
+    void resetAllMemoryDataCardUsed(int userId, int subCategory);
+
+    @Query("SELECT count(*) FROM MemoryDataCardCrossRef WHERE userId = :userId AND subCategory = :subCategory AND max(used) != used")
+    int getMemoryDataCardNbNotMaxUsed(int userId, int subCategory);
+
+    @Query("SELECT max(used) FROM MemoryDataCardCrossRef WHERE userId = :userId AND subCategory = :subCategory")
+    int getMemoryDataCardMaxUsed(int userId, int subCategory);
 
 }
