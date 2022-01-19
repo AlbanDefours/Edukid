@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -42,14 +41,13 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     private Vibrator vibe;
     private int pageUser = 0, pageCategory = 0;
-    private TextView title;
+    private TextView userTitle, barChartTitle, statTitle1, statTitle2;
     private List<User> listUser;
     private CreateDatabase db = null;
-    private Button generalPage, lettresPage, chiffresPage;
+    private Button generalButton, lettresButton, chiffresButton;
     private ImageView nextPage, previousPage;
     private long startWeekTime;
     private final long DAY_MILLIS = 24*3600*1000;
-    private final int NB_DAY = 7;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -68,19 +66,22 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     }
 
     private void displayNewUserPage() {
-        if (!listUser.isEmpty()) displayTitle();
-        displayGeneralPage();
+        if (!listUser.isEmpty()) displayUserTitle();
+        displaygeneralButton();
     }
 
-    private void displayGeneralPage() {
+    private void displaygeneralButton() {
+        barChartTitle.setText("Fréquence de jeu");
+        statTitle1.setText("Jeu récent");
+        statTitle2.setText("Jeu ancien");
         createBarChart(getGameFrequencyData());
     }
 
-    private void displayChiffresPage() {
+    private void displaychiffresButton() {
 
     }
 
-    private void displayLettresPage() {
+    private void displaylettresButton() {
 
     }
 
@@ -100,8 +101,8 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         BarData barData = new BarData(barDataSet);
         barChart.setFitBars(true);
         barChart.setData(barData);
-        barChart.getDescription().setText("Fréquence de jeu");
-        barChart.animateY(2000);
+        barChart.getDescription().setText(" ");
+        barChart.animateY(500);
     }
 
     private void createDbAndImportUsers() {
@@ -112,26 +113,30 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     }
 
     private void initViews() {
-        title = findViewById(R.id.title_StatisticPage);
-        generalPage = findViewById(R.id.buttonGeneral_statistics);
-        lettresPage = findViewById(R.id.buttonLettres_statistics);
-        chiffresPage = findViewById(R.id.buttonChiffres_statistics);
+        userTitle = findViewById(R.id.title_StatisticPage);
+        generalButton = findViewById(R.id.buttonGeneral_statistics);
+        lettresButton = findViewById(R.id.buttonLettres_statistics);
+        chiffresButton = findViewById(R.id.buttonChiffres_statistics);
         nextPage = findViewById(R.id.arrow_nextPage);
         previousPage = findViewById(R.id.arrow_previousPage);
+
+        barChartTitle = findViewById(R.id.title_bar_chart);
+        statTitle1 = findViewById(R.id.title_stat1);
+        statTitle2 = findViewById(R.id.title_stat2);
     }
 
     private void initOnClickViews() {
-        generalPage.setOnClickListener(this);
-        lettresPage.setOnClickListener(this);
-        chiffresPage.setOnClickListener(this);
+        generalButton.setOnClickListener(this);
+        lettresButton.setOnClickListener(this);
+        chiffresButton.setOnClickListener(this);
         nextPage.setOnClickListener(this);
         previousPage.setOnClickListener(this);
 
-        generalPage.setEnabled(false);
+        generalButton.setEnabled(false);
     }
 
-    private void displayTitle() {
-        title.setText(listUser.get(pageUser).getUserName());
+    private void displayUserTitle() {
+        userTitle.setText(listUser.get(pageUser).getUserName());
         verifyPageUserLocation();
     }
 
@@ -149,10 +154,9 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     private Map<Integer, Integer> getGameFrequencyData() {
         Map<Integer, Integer> mapData = new HashMap<>();
-
         List<GameResultLog> listLog = db.gameLogDao().getAllGameResultLogAfterTime(listUser.get(pageUser).getUserId(), startWeekTime);
-        Log.e("APPLOG", "Size listLog : " + listLog.size());
 
+        final int NB_DAY = 7;
         for (int i = 0; i < NB_DAY; i++) {
             mapData.put(i, 0);
         }
@@ -178,9 +182,9 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     }
 
     public void lockButton(Button button) {
-        generalPage.setEnabled(true);
-        lettresPage.setEnabled(true);
-        chiffresPage.setEnabled(true);
+        generalButton.setEnabled(true);
+        lettresButton.setEnabled(true);
+        chiffresButton.setEnabled(true);
         button.setEnabled(false);
     }
 
@@ -196,19 +200,19 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttonGeneral_statistics:
-                lockButton(generalPage);
+                lockButton(generalButton);
                 pageCategory = 0;
-                displayGeneralPage();
+                displaygeneralButton();
                 break;
             case R.id.buttonChiffres_statistics:
-                lockButton(chiffresPage);
+                lockButton(chiffresButton);
                 pageCategory = 1;
-                displayChiffresPage();
+                displaychiffresButton();
                 break;
             case R.id.buttonLettres_statistics:
-                lockButton(lettresPage);
+                lockButton(lettresButton);
                 pageCategory = 2;
-                displayLettresPage();
+                displaylettresButton();
                 break;
 
             case R.id.arrow_nextPage:
