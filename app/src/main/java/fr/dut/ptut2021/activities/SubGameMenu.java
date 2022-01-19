@@ -1,11 +1,6 @@
 package fr.dut.ptut2021.activities;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,8 +14,10 @@ import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.game.GameAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.game.ClasseMere;
 import fr.dut.ptut2021.models.databse.Game;
+import fr.dut.ptut2021.utils.GlobalUtils;
+import fr.dut.ptut2021.utils.MySharedPreferences;
+import fr.dut.ptut2021.utils.MyVibrator;
 
 public class SubGameMenu extends AppCompatActivity {
 
@@ -34,7 +31,7 @@ public class SubGameMenu extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subgame_menu);
 
-        getThemeName();
+        themeName = MySharedPreferences.getThemeName(SubGameMenu.this);
         createRecyclerView();
 
         subgameList.add(new Game("Chiffre1", R.drawable.memory_icon));
@@ -46,13 +43,9 @@ public class SubGameMenu extends AppCompatActivity {
                 new RecyclerItemClickListener(getApplicationContext(), recyclerViewListGame, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                            v.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
-                        else
-                            v.vibrate(35);
+                        MyVibrator.vibrate(SubGameMenu.this, 35);
                         saveGameName(position);
-                        new ClasseMere(SubGameMenu.this).findGame("SubMemory");
+                        GlobalUtils.startGame(SubGameMenu.this, "SubMemory");
                     }
 
                     @Override
@@ -62,16 +55,9 @@ public class SubGameMenu extends AppCompatActivity {
         );
     }
 
-    private void getThemeName(){
-        SharedPreferences settings = getSharedPreferences("MyPref", 0);
-        themeName = settings.getString("themeName", "");
-    }
-
     private void saveGameName(int position){
-        SharedPreferences settings = getSharedPreferences("MyPref", 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString("subGameName", subgameList.get(position).getGameName());
-        editor.commit();
+        MySharedPreferences.setSharedPreferencesString(SubGameMenu.this, "subGameName", subgameList.get(position).getGameName());
+        MySharedPreferences.commit();
     }
 
     private void createRecyclerView() {

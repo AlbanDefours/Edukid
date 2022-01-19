@@ -1,12 +1,7 @@
 package fr.dut.ptut2021.activities;
 
-import android.annotation.SuppressLint;
 import android.graphics.Color;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -15,11 +10,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
@@ -30,10 +23,10 @@ import java.util.Map;
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.databse.User;
+import fr.dut.ptut2021.utils.MyVibrator;
 
 public class StatisticPage extends AppCompatActivity implements View.OnClickListener {
 
-    private Vibrator vibe;
     private int page = 0;
     private TextView title;
     private List<User> listUser;
@@ -45,8 +38,6 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistic_page);
-
-            vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         initViews();
         initOnClickViews();
@@ -144,13 +135,6 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         button.setEnabled(false);
     }
 
-    public void vibrate() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            vibe.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
-        else
-            vibe.vibrate(35);
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -169,14 +153,14 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
             case R.id.arrow_nextPage:
                 if (page < listUser.size() - 1) {
-                    vibrate();
+                    MyVibrator.vibrate(StatisticPage.this, 35);
                     page++;
                 }
                 displayTitle();
                 break;
             case R.id.arrow_previousPage:
                 if (0 < page) {
-                    vibrate();
+                    MyVibrator.vibrate(StatisticPage.this, 35);
                     page--;
                 }
                 displayTitle();

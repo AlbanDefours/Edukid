@@ -15,6 +15,7 @@ import fr.dut.ptut2021.models.databse.Game;
 import fr.dut.ptut2021.models.databse.Theme;
 import fr.dut.ptut2021.models.databse.ThemeGameCrossRef;
 import fr.dut.ptut2021.models.databse.Word;
+import fr.dut.ptut2021.utils.GlobalUtils;
 
 public class LoadingPage extends AppCompatActivity {
 
@@ -29,11 +30,10 @@ public class LoadingPage extends AppCompatActivity {
         createDatabase();
 
         new Handler().postDelayed(() -> {
-            if (db.appDao().tabUserIsEmpty()) {
+            if (db.appDao().tabUserIsEmpty())
                 openUserEditPage();
-            } else {
-                openUserMenuPage();
-            }
+            else
+                GlobalUtils.startPage(this, "UserMenu", true, false);
         }, 1500);
     }
 
@@ -97,14 +97,8 @@ public class LoadingPage extends AppCompatActivity {
         db.appDao().insertWord(new Word("BALLON", R.drawable.image_ballon));
     }
 
-    private void openUserMenuPage() {
-        Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
-        startActivity(intent);
-        finish();
-    }
-
     private void openUserEditPage() {
-        Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
+        Intent intent = new Intent().setClass(getApplicationContext(), ResultGamePage.class);
         intent.putExtra("addUser", true);
         startActivity(intent);
         finish();

@@ -1,12 +1,7 @@
 package fr.dut.ptut2021.activities;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -22,10 +17,12 @@ import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.user.UserAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.databse.User;
+import fr.dut.ptut2021.utils.GlobalUtils;
+import fr.dut.ptut2021.utils.MySharedPreferences;
+import fr.dut.ptut2021.utils.MyVibrator;
 
 public class UserMenu extends AppCompatActivity {
 
-    private Vibrator vibe;
     private UserAdapter adapter;
     private CreateDatabase db = null;
     private RecyclerView recyclerView;
@@ -37,36 +34,33 @@ public class UserMenu extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_menu);
 
-        vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
         initializeFindView();
         hideAddUserImage();
 
         recyclerView.addOnItemTouchListener(
-            new RecyclerItemClickListener(getApplicationContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-                @Override
-                public void onItemClick(View view, int position) {
-                    vibrate();
-                    saveUserNameSahredPref(position);
-                    startThemeMenu();
-                }
+                new RecyclerItemClickListener(getApplicationContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        MyVibrator.vibrate(UserMenu.this, 35);
+                        saveUserNameSahredPref(position);
+                        GlobalUtils.startPage(UserMenu.this, "ThemeMenu", false, false);
+                    }
 
-                @Override
-                public void onLongItemClick(View view, int position) {
-                }
-            })
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+                    }
+                })
         );
 
-        settings.setOnClickListener(v -> startSettingPage());
+        settings.setOnClickListener(view -> {
+            MyVibrator.vibrate(UserMenu.this, 35);
+            GlobalUtils.startPage(UserMenu.this, "UserResume", false, false);
+        });
 
-        adultProfile.setOnClickListener(v -> startStatisticPage());
-    }
-
-    public void vibrate(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            vibe.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
-        else
-            vibe.vibrate(35);
+        adultProfile.setOnClickListener(view -> {
+            MyVibrator.vibrate(UserMenu.this, 35);
+            GlobalUtils.startPage(UserMenu.this, "StatisticPage", false, false);
+        });
     }
 
     @Override
@@ -82,7 +76,7 @@ public class UserMenu extends AppCompatActivity {
         getAllUser();
     }
 
-    private void initializeFindView(){
+    private void initializeFindView() {
         adultProfile = findViewById(R.id.adultProfile);
         settings = findViewById(R.id.settings);
         addUser = findViewById(R.id.addUser);
@@ -94,9 +88,9 @@ public class UserMenu extends AppCompatActivity {
     }
 
     private void getAllUser() {
-        if (!db.appDao().tabUserIsEmpty()) {
+        if (!db.appDao().tabUserIsEmpty())
             listUser = db.appDao().getAllUsers();
-        } else {
+        else {
             startAddUserPage();
             finish();
         }
@@ -115,37 +109,17 @@ public class UserMenu extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
-    private void startSettingPage() {
-        vibrate();
-        Intent intent = new Intent().setClass(getApplicationContext(), UserResume.class);
-        startActivity(intent);
-    }
-
-    private void startStatisticPage() {
-        vibrate();
-        Intent intent = new Intent().setClass(getApplicationContext(), StatisticPage.class);
-        startActivity(intent);
-    }
-
     private void startAddUserPage() {
-        vibrate();
         Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
         intent.putExtra("addUser", true);
         startActivity(intent);
         finish();
     }
 
-    private void startThemeMenu() {
-        Intent intent = new Intent().setClass(getApplicationContext(), ThemeMenu.class);
-        startActivity(intent);
-    }
-
-    private void saveUserNameSahredPref(int position){
-        SharedPreferences settings = getSharedPreferences("MyPref", 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString("userName", listUser.get(position).getUserName());
-        editor.putInt("userId", listUser.get(position).getUserId());
-        editor.putString("userImage", listUser.get(position).getUserImage());
-        editor.commit();
+    private void saveUserNameSahredPref(int position) {
+        MySharedPreferences.setSharedPreferencesString(UserMenu.this, "userName", listUser.get(position).getUserName());
+        MySharedPreferences.setSharedPreferencesInt(UserMenu.this, "userId", listUser.get(position).getUserId());
+        MySharedPreferences.setSharedPreferencesString(UserMenu.this, "userImage", listUser.get(position).getUserImage());
+        MySharedPreferences.commit();
     }
 }
