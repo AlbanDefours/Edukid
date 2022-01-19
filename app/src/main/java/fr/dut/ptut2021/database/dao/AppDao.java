@@ -18,7 +18,7 @@ import fr.dut.ptut2021.models.database.app.Word;
 public interface AppDao {
 
     //ThemeDao
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertTheme(Theme theme);
 
     @Query("SELECT * FROM Theme")
@@ -38,7 +38,7 @@ public interface AppDao {
 
 
     //GameDao
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertGame(Game game);
 
     @Query("SELECT * FROM Game")
@@ -62,9 +62,13 @@ public interface AppDao {
     @Query("DELETE FROM Game")
     void deleteAllGames();
 
+    default boolean tabGameIsEmpty() {
+        return getAllGames().isEmpty();
+    }
+
 
     //SubGame
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertSubGame(SubGame subGame);
 
     @Query("SELECT * FROM SubGame")
@@ -88,9 +92,13 @@ public interface AppDao {
     @Query("DELETE FROM SubGame")
     void deleteAllSubGames();
 
+    default boolean tabSubGameIsEmpty() {
+        return getAllSubGames().isEmpty();
+    }
+
 
     //UserDao
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertUser(User user);
 
     @Query("SELECT * FROM User")
@@ -120,7 +128,7 @@ public interface AppDao {
 
 
     //Word
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertWord(Word word);
 
     @Query("SELECT * FROM Word")
@@ -130,6 +138,6 @@ public interface AppDao {
     int getNbWords();
 
     @Query("SELECT * FROM Word WHERE word LIKE :str")
-    Word getWordIfContain(String str);
+    List<Word> getWordIfContain(String str);
 
 }
