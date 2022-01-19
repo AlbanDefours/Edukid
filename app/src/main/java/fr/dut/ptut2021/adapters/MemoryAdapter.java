@@ -105,7 +105,6 @@ public class MemoryAdapter extends BaseAdapter {
 
 
             if(themeName.equals("Chiffres") && !listMemoryCard.get(i).getValue().equals("1") && !isChiffre(listMemoryCard.get(i).getDrawableImage())){
-                System.out.println("c'est VRAIIIIIIII");
                 switch (listMemoryCard.get(i).getValue()){
                     case "2":
                         layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement);
@@ -263,7 +262,6 @@ public class MemoryAdapter extends BaseAdapter {
                 }
             }
             else{
-                System.out.println("c'est FAUUUUUUX");
                 layoutParams = new RelativeLayout.LayoutParams((int) sizeElement, (int) sizeElement);
                 layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
                 holder.elements.get(0).setLayoutParams(layoutParams);

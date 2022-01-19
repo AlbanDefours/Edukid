@@ -170,9 +170,6 @@ public interface AppDao {
     @Query("SELECT COUNT(*) FROM Word")
     int getNbWords();
 
-    @Query("SELECT * FROM Word WHERE wordId = :id ")
-    Word getWordById(int id);
-
     @Query("SELECT * FROM Word WHERE word LIKE :str")
     Word getWordIfContain(String str);
 
