@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -19,7 +20,10 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,6 +125,14 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     private Map<Integer, Integer> getGameFrequency() {
         Map<Integer, Integer> mapData = new HashMap<>();
+
+        long currentTime = System.currentTimeMillis();
+        Date currentDate =  new Date(currentTime);
+        Log.e("MYLOG", "" + currentDate);
+
+        DateFormat df = new SimpleDateFormat("dd/MM/yy");
+        Date now = new Date();
+        Log.e("APPLOG", "" + df.format(now));
 
         return mapData;
     }
