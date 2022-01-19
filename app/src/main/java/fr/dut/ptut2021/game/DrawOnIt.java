@@ -32,7 +32,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
     private DisplayMetrics dm;
     private float largeur = 0, hauteur = 0, downx = 0, downy = 0, upx = 0, upy = 0, oldUpx = 0, oldUpy = 0;
     Boolean canDraw = false, hasDraw = false, warning = false, error = false;
-    private int nbEssai = 3;
+    private int nbEssai = 3, nbGame = 3;
     private float nbErreur = 0;
 
     float tolerance, toleranceLarge;
@@ -73,10 +73,12 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         tolerance = dm.widthPixels/15;
         s = new Symbol(DataSymbol.cinq, tolerance);
 
-        toleranceLarge = (float) (tolerance * 2);
+        toleranceLarge = tolerance * 2;
 
         image = findViewById(R.id.idImage_drawOnIt);
         imageVide = findViewById(R.id.idImageVide_drawOnIt);
+
+
 
         Display currentDisplay = getWindowManager().getDefaultDisplay();
         largeur = currentDisplay.getWidth();
@@ -166,18 +168,28 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                     }else if(warning){
                         nbEssai--;
                         nbErreur += 0.5;
+                    }else{
+                        canDraw = false;
+                        hasDraw = true;
+                        nbEssai = 0;
                     }
-                    canDraw = false;
-                    hasDraw = true;
+
                 }
                 error = false;
                 warning = false;
 
-                Toast.makeText(getApplicationContext(), "Essai : " + nbEssai + " | Erreur : " + nbErreur, Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Essai : " + nbEssai + " | Erreur : " + nbErreur, Toast.LENGTH_LONG).show();
 
-                if(nbEssai <= 0){
-                    //TODO passer au chiffre suivant
-                    return true;
+                if(nbEssai <= 0){ //Manche terminé
+                    Toast.makeText(getApplicationContext(), "Symbol suivant", Toast.LENGTH_LONG).show();
+                    nbEssai = 3;
+                    nbGame--;
+                    canDraw = true;
+                    hasDraw = false;
+                    reDraw();
+                }
+                if(nbGame <= 0){ //Partie terminé
+                    //TODO animation de fni avec les etoiles et toute cette merde
                 }
                 oldUpx = 0;
                 oldUpy = 0;
