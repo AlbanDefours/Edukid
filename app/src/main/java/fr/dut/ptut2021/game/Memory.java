@@ -2,7 +2,6 @@ package fr.dut.ptut2021.game;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -13,7 +12,10 @@ import android.widget.GridView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.IOException;
+import com.kofigyan.stateprogressbar.StateProgressBar;
+import com.kofigyan.stateprogressbar.components.StateItem;
+import com.kofigyan.stateprogressbar.listeners.OnStateItemClickListener;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -25,20 +27,21 @@ import fr.dut.ptut2021.models.MemoryCard;
 import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.MemoryData;
 import fr.dut.ptut2021.models.database.game.MemoryDataCardCrossRef;
+import fr.dut.ptut2021.utils.MyMediaPlayer;
+import fr.dut.ptut2021.utils.MySharedPreferences;
 
 
-public class Memory extends AppCompatActivity {
+public class Memory extends AppCompatActivity implements OnStateItemClickListener {
     private ArrayList<MemoryCard> listMemoryCard;
     private int idLastCardReturn=-1;
     int numColumns;
     boolean isClicked=false;
-    private MediaPlayer mpGoodAnswer;
-    private MediaPlayer mpWrongAnswer;
     private CreateDatabase db;
     private int difficulty;
     private int userId;
     private String category;
     private int subCat;
+    String[] descriptionData = {"1", "2", "3", "4","5"};
 
     private void shuffle(){
         Collections.shuffle(listMemoryCard);
@@ -65,12 +68,12 @@ public class Memory extends AppCompatActivity {
                 } else {
                     new Handler().postDelayed(() -> {
                         if (idCard != idLastCardReturn && listMemoryCard.get(idLastCardReturn).getValue() == listMemoryCard.get(idCard).getValue()) {
-                            mpGoodAnswer.start();
+                            MyMediaPlayer.playSound(this,R.raw.correct_answer);
                             idLastCardReturn = -1;
                         } else {
                             listMemoryCard.get(idCard).setHidden(true);
                             listMemoryCard.get(idLastCardReturn).setHidden(true);
-                            mpWrongAnswer.start();
+                            MyMediaPlayer.playSound(this,R.raw.wrong_answer);
                             returnableCards.add(idLastCardReturn);
                             memoryAdapter.setCard(returnableCards);
                             memoryAdapter.notifyDataSetChanged();
@@ -127,24 +130,6 @@ public class Memory extends AppCompatActivity {
         return true;
     }
 
-    public void display(MemoryAdapter memoryAdapter) throws IOException, InterruptedException {
-        int compteur=1;
-
-        System.out.println("Memory : ");
-        for (MemoryCard memoryCard : listMemoryCard){
-            if(!memoryCard.isHidden()){
-                System.out.print(memoryCard.getValue()+" ");
-            }
-            else
-                System.out.print("X ");
-
-            if(compteur%numColumns ==0)
-                System.out.println("   __   "+compteur);
-
-            compteur++;
-        }
-    }
-
     private void initDB(){
         db = CreateDatabase.getInstance(Memory.this);
         SharedPreferences settings = getSharedPreferences("MyPref", 0);
@@ -171,19 +156,26 @@ public class Memory extends AppCompatActivity {
         }
     }
 
+    private void initProgresseBar(){
+        StateProgressBar stateProgressBar = (StateProgressBar) findViewById(R.id.progressBarMemory);
+        stateProgressBar.setStateDescriptionData(descriptionData);
+        for (int i=0;i<5;i++){
+            stateProgressBar.setOnStateItemClickListener(this){
+
+            };
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory);
         Log.e("memory","debut Création du memory");
+        initProgresseBar();
 
-        SharedPreferences settings = getSharedPreferences("MyPref", 0);
-        category = settings.getString("themeName", "");
-        userId = settings.getInt("userId", 0);
+        category = MySharedPreferences.getThemeName(this);
+        userId = MySharedPreferences.getUserId(this);
         initDB();
-
-        mpGoodAnswer = MediaPlayer.create(this, R.raw.correct_answer);
-        mpWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
 
         if(category.equals("Chiffres") ){
             initCardChiffre(getNbCard());
@@ -214,8 +206,6 @@ public class Memory extends AppCompatActivity {
                 }
             }
         });
-        /*recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new MemoryAdapter(getApplicationContext(), listCard));*/
     }
 
     private void calculatesNbColumns(){
@@ -369,5 +359,10 @@ public class Memory extends AppCompatActivity {
             }
         }
         return true;
+    }
+//TODO faire les bouton sur la progresse Bar avec max diffulté déjà atteinte
+    @Override
+    public void onStateItemClick(StateProgressBar stateProgressBar, StateItem stateItem, int stateNumber, boolean isCurrentState) {
+
     }
 }

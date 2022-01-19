@@ -9,7 +9,7 @@
     tools:context=".game.Memory">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/titleMemory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -23,16 +23,44 @@
         android:textSize="48sp" />
 
 
+    <TextView
+        android:id="@+id/labelDifficulty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:fontFamily="@font/magimt"
+        android:text="Difficulté :"
+        android:layout_below="@+id/titleMemory"
+        android:textColor="#708090"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="2dp"/>
+
+    <com.kofigyan.stateprogressbar.StateProgressBar
+        android:id="@+id/progressBarMemory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/labelDifficulty"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
+        app:spb_stateBackgroundColor="#DDDDDD"
+        app:spb_stateForegroundColor="#00BCD4"
+        app:spb_animateToCurrentProgressState="true"
+        app:spb_maxStateNumber="five"
+        android:progress="25" />
+
     <GridView
         android:id="@+id/gridview_memory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
+        android:layout_below="@+id/progressBarMemory"
         android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="0dp"
         android:gravity="center"
-        android:layout_centerInParent="true"
         android:stretchMode="columnWidth"></GridView>
+
 </RelativeLayout>
 
