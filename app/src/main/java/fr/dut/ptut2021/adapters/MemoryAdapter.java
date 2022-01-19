@@ -105,7 +105,6 @@ public class MemoryAdapter extends BaseAdapter {
 
 
             if(themeName.equals("Chiffres") && !listMemoryCard.get(i).getValue().equals("1") && !isChiffre(listMemoryCard.get(i).getDrawableImage())){
-                System.out.println("c'est VRAIIIIIIII");
                 switch (listMemoryCard.get(i).getValue()){
                     case "2":
                         layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement);
@@ -263,7 +262,6 @@ public class MemoryAdapter extends BaseAdapter {
                 }
             }
             else{
-                System.out.println("c'est FAUUUUUUX");
                 layoutParams = new RelativeLayout.LayoutParams((int) sizeElement, (int) sizeElement);
                 layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
                 holder.elements.get(0).setLayoutParams(layoutParams);
@@ -303,7 +301,7 @@ public class MemoryAdapter extends BaseAdapter {
     }
 
     private boolean isChiffre(int drawableImage){
-        if(drawableImage!= R.drawable.one && drawableImage!= R.drawable.two && drawableImage!= R.drawable.three && drawableImage!= R.drawable.four && drawableImage!= R.drawable.five && drawableImage!= R.drawable.six && drawableImage!= R.drawable.seven && drawableImage!= R.drawable.eight && drawableImage!= R.drawable.nine){
+        if(drawableImage!= R.drawable.number_one && drawableImage!= R.drawable.number_two && drawableImage!= R.drawable.number_three && drawableImage!= R.drawable.number_four && drawableImage!= R.drawable.number_five && drawableImage!= R.drawable.number_six && drawableImage!= R.drawable.number_seven && drawableImage!= R.drawable.number_eight && drawableImage!= R.drawable.number_nine){
             return false;
         }
         else

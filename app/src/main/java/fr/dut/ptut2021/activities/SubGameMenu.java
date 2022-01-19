@@ -13,37 +13,54 @@ import java.util.List;
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.game.GameAdapter;
+import fr.dut.ptut2021.adapters.subgame.SubGameAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.game.Memory;
 import fr.dut.ptut2021.models.database.app.Game;
+import fr.dut.ptut2021.models.database.app.SubGame;
 import fr.dut.ptut2021.utils.*;
 
 public class SubGameMenu extends AppCompatActivity {
 
-    private String themeName;
+    private String themeName, gameName;
     private CreateDatabase db = null;
     private RecyclerView recyclerViewListGame;
-    private List<Game> subgameList = new ArrayList<>();
+    private List<SubGame> subGameList;
+    private int userId;
+    private List<Boolean> subgamelocks = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subgame_menu);
+        db = CreateDatabase.getInstance(SubGameMenu.this);
 
+        db = CreateDatabase.getInstance(getApplicationContext());
         themeName = MySharedPreferences.getThemeName(SubGameMenu.this);
+        gameName = MySharedPreferences.getGameName(SubGameMenu.this);
         createRecyclerView();
 
-        subgameList.add(new Game("Image / Image", R.drawable.img_img));
-        subgameList.add(new Game("Image / Image différente", R.drawable.img_imgdiff));
-        subgameList.add(new Game("Chiffre / Chiffre", R.drawable.chiffre_chiffre));
-        subgameList.add(new Game("Image / Chiffre", R.drawable.img_chiffre));
+        subGameList = db.appDao().getAllSubGamesByGame(db.appDao().getGameId(gameName, themeName));
+
+        userId = MySharedPreferences.getUserId(SubGameMenu.this);
+        createRecyclerView();
+
+        for (int i=0;i<subGameList.size();i++){
+            subgamelocks.add(isLock(i));
+        }
 
         recyclerViewListGame.addOnItemTouchListener(
                 new RecyclerItemClickListener(getApplicationContext(), recyclerViewListGame, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        MyVibrator.vibrate(SubGameMenu.this, 35);
                         saveGameName(position);
-                        GlobalUtils.startGame(SubGameMenu.this, "SubMemory");
+                        if (!isLock(position)) {
+                            MyVibrator.vibrate(SubGameMenu.this, 35);
+                            GlobalUtils.startGame(SubGameMenu.this, "SubMemory");
+                        }else{
+                            MyVibrator.vibrate(SubGameMenu.this, 60);
+                            GlobalUtils.toast(SubGameMenu.this,"Atteint le niveau 4 dans le jeu "+subGameList.get(position-1).getSubGameName(),false);
+                        }
                     }
 
                     @Override
@@ -51,16 +68,46 @@ public class SubGameMenu extends AppCompatActivity {
                     }
                 })
         );
+
+    }
+
+    private boolean isLock(int position){
+        if(themeName.equals("Chiffres")) {
+            switch (position + 1) {
+                case 1:
+                    return false;
+                case 2:
+                    if (db.gameDao().getMemoryDataDifficulty(userId, themeName, 1) >= 4) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                case 3:
+                    if (db.gameDao().getMemoryDataDifficulty(userId, themeName, 2) >= 4) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                case 4:
+                    if (db.gameDao().getMemoryDataDifficulty(userId, themeName, 3) >= 4) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+            }
+        }
+        return true;
     }
 
     private void saveGameName(int position){
-        MySharedPreferences.setSharedPreferencesString(SubGameMenu.this, "subGameName", subgameList.get(position).getGameName());
+        MySharedPreferences.setSharedPreferencesString(SubGameMenu.this, "subGameName", subGameList.get(position).getSubGameName());
         MySharedPreferences.commit();
     }
 
     private void createRecyclerView() {
         recyclerViewListGame = findViewById(R.id.recyclerview_subgame);
         recyclerViewListGame.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewListGame.setAdapter(new GameAdapter(getApplicationContext(), subgameList));
+
+        recyclerViewListGame.setAdapter(new SubGameAdapter(getApplicationContext(), subGameList, subgamelocks));
     }
 }

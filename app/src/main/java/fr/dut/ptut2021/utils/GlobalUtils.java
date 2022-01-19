@@ -3,6 +3,7 @@ package fr.dut.ptut2021.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.activities.GameMenu;
@@ -79,5 +80,13 @@ public class GlobalUtils {
         if (wantToFinish)
             ((Activity) context).finish();
         return true;
+    }
+
+    public static void toast(Context context, String msg,boolean duration){
+        int dur = 0;
+        if(duration){
+            dur=1;
+        }
+        Toast.makeText(context,msg,dur).show();
     }
 }
