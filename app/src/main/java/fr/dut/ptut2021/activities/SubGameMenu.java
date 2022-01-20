@@ -12,13 +12,12 @@ import java.util.List;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
-import fr.dut.ptut2021.adapters.game.GameAdapter;
 import fr.dut.ptut2021.adapters.subgame.SubGameAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.game.Memory;
-import fr.dut.ptut2021.models.database.app.Game;
 import fr.dut.ptut2021.models.database.app.SubGame;
-import fr.dut.ptut2021.utils.*;
+import fr.dut.ptut2021.utils.GlobalUtils;
+import fr.dut.ptut2021.utils.MySharedPreferences;
+import fr.dut.ptut2021.utils.MyVibrator;
 
 public class SubGameMenu extends AppCompatActivity {
 
@@ -56,7 +55,7 @@ public class SubGameMenu extends AppCompatActivity {
                         saveGameName(position);
                         if (!isLock(position)) {
                             MyVibrator.vibrate(SubGameMenu.this, 35);
-                            GlobalUtils.startGame(SubGameMenu.this, "SubMemory");
+                            GlobalUtils.startGame(SubGameMenu.this, "SubMemory", false, false);
                         }else{
                             MyVibrator.vibrate(SubGameMenu.this, 60);
                             GlobalUtils.toast(SubGameMenu.this,"Atteint le niveau 4 dans le jeu "+subGameList.get(position-1).getSubGameName(),false);

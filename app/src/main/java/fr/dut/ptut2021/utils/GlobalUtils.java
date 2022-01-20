@@ -22,7 +22,7 @@ import fr.dut.ptut2021.game.WordWithHole;
 
 public class GlobalUtils {
 
-    public static void startGame(Context context, String gameName) {
+    public static void startGame(Context context, String gameName, boolean finish, boolean animation) {
         switch (gameName) {
             case "Ecoute":
                 context.startActivity(new Intent().setClass(context, PlayWithSound.class));
@@ -40,6 +40,17 @@ public class GlobalUtils {
                 context.startActivity(new Intent().setClass(context, WordWithHole.class));
                 break;
         }
+        if (animation)
+            ((Activity) context).overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+        if(finish)
+            ((Activity) context).finish();
+    }
+
+    public static void startEditPage(Context context){
+        Intent intent = new Intent().setClass(context, UserEdit.class);
+        intent.putExtra("addUser", true);
+        context.startActivity(intent);
+        ((Activity) context).finish();
     }
 
     public static boolean startPage(Context context, String className, boolean wantToFinish, boolean animation) {
@@ -75,18 +86,14 @@ public class GlobalUtils {
             default:
                 return false;
         }
-        if(animation)
+        if (animation)
             ((Activity) context).overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         if (wantToFinish)
             ((Activity) context).finish();
         return true;
     }
 
-    public static void toast(Context context, String msg,boolean duration){
-        int dur = 0;
-        if(duration){
-            dur=1;
-        }
-        Toast.makeText(context,msg,dur).show();
+    public static void toast(Context context, String msg, boolean wantLong) {
+        Toast.makeText(context, msg, Boolean.compare(wantLong, false)).show();
     }
 }
