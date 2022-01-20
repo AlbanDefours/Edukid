@@ -1,16 +1,19 @@
 package fr.dut.ptut2021.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 
 import java.util.Locale;
 
+import fr.dut.ptut2021.game.PlayWithSound;
+
 public class MyTextToSpeech {
     static TextToSpeech textToSpeech;
 
     public static void speachText(Context context, String text) {
-        if(text.contains("Y") || text.contains("y"))
+        if(text.contains("Y") || text.contains("y") && context.getClass() == PlayWithSound.class)
             text = "Trouve la lettre igrec";
         String finalText = text;
         textToSpeech = new TextToSpeech(context, status -> {

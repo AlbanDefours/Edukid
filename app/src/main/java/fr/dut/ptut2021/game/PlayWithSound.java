@@ -42,7 +42,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private String themeName;
     private final Button[] listButton = new Button[3];
     private final int MAX_GAME_PLAYED = 5;
-    private int userId, gamePlayed = 1, nbTry = 0, answerFalse = 0, nbrStars = 0, answerFalseWord = 0;
+    private int userId, gameId, gamePlayed = 1, nbTry = 0, answerFalse = 0, nbrStars = 0, answerFalseWord = 0;
     private Random random = new Random();
     private String articleTheme;
 
@@ -55,6 +55,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         articleTheme = themeName.equals("Chiffres") ? "le " : "la ";
         String s = themeName.equals("Chiffres") ? "un " : "une ";
         MyTextToSpeech.speachText(getApplicationContext(), "Dans cet exercice tu vas entendre " + s + themeName.toLowerCase() + " et tu dois " + articleTheme + " retrouver");
+        gameId = db.appDao().getGameId("PlayWithSound", "Lettres");
 
         initDatabase();
         initializeLayout();
@@ -252,12 +253,12 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         }
         db.gameDao().updatePWSData(data);
 
-        GameLog gameLog = new GameLog("PlayWithSound", data.getDataId(), win, nbTry);
+        GameLog gameLog = new GameLog(gameId, -1, data.getDataId(), win, nbTry);
         db.gameLogDao().insertGameLog(gameLog);
     }
 
     private void addGameResultLogInDb(int stars) {
-        GameResultLog gameResultLog = new GameResultLog("PlayWithSound", userId, stars);
+        GameResultLog gameResultLog = new GameResultLog(gameId, -1, userId, stars);
         db.gameLogDao().insertGameResultLog(gameResultLog);
     }
 
