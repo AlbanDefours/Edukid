@@ -2,9 +2,12 @@ package fr.dut.ptut2021.game;
 
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -26,19 +29,21 @@ import fr.dut.ptut2021.models.DataSymbol;
 import fr.dut.ptut2021.models.Point;
 import fr.dut.ptut2021.models.Symbol;
 import fr.dut.ptut2021.models.database.game.Card;
+import fr.dut.ptut2021.utils.MyMediaPlayer;
 
 public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener {
 
     private CreateDatabase db;
     private ImageView image, imageVide;
-    private Bitmap bitmap;
+    private Bitmap bitmap, bitmapFleche;
     private Canvas canvas;
     private Paint paint;
     private DisplayMetrics dm;
     private float largeur = 0, hauteur = 0, downx = 0, downy = 0, upx = 0, upy = 0, oldUpx = 0, oldUpy = 0;
     private Boolean canDraw = false, hasDraw = false, warning = false, error = false, next = false;
 
-    private static final int NBESSAI = 3, NBGAME = 3;
+    private static final int NBESSAI = 3, NBGAME = 9;
+
     private int numEssai = 0, numGame = 0;
     private float nbErreur = 0;
     private Card[] carte;
@@ -117,7 +122,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
             carte[i] = listCard.get(numRand[i]);
         }
 
-        int c = 1;
+        int c = 8;
         image.setImageResource(carte[0].getDrawableImage()); //carte[0]
         DataSymbol.initPts(Integer.parseInt(carte[0].getCardValue()), dm.widthPixels, dm.heightPixels); //Integer.parseInt(carte[0].getCardValue())
         s = new Symbol(DataSymbol.getPts(), tolerance);
@@ -141,6 +146,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         //canvas.drawPoints(getFloats(), paint); // dessine tout les point compris dans la zone qui est calculé par l'algo
         //canvas.drawPoints(getPointsToDraw(), paint); // dessine les points enregistré pour le symbole selectionner
 
+        /*
         paint.setStrokeWidth(15);
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawCircle((float) s.getFirstPoint().getX(),(float) s.getFirstPoint().getY(), s.getTolerance(), paint);
@@ -151,6 +157,12 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         paint.setColor(Color.GREEN);
         paint.setStrokeWidth(0.15f*largeur);
         paint.setStyle(Paint.Style.FILL);
+        */
+
+        bitmapFleche = BitmapFactory.decodeResource(getResources(), R.drawable.fleche);
+        bitmapFleche = Bitmap.createScaledBitmap(bitmapFleche, 100, 70, false);
+
+        reDraw();
 
         System.out.println("c'est bon");
         Log.e("axel", "c'est bon");
@@ -180,6 +192,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                     }else{
                         canvas.drawPoint(upx, upy, paint);
                     }
+                    Log.e("dernier", "" + s.getLastId() + "  " + s.getPoints().size());
                     oldUpx = upx;
                     oldUpy = upy;
                 }
@@ -199,15 +212,15 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
             case MotionEvent.ACTION_UP:
                 System.out.println("ACTION_UP");
                 if(canDraw) {
-                    if (s.getDistanceBetweenTwoPoints(s.getLastPoint(), new Point(event.getX(), event.getY())) > s.getTolerance() && !hasDraw) {
+                    if (s.getDistanceBetweenTwoPoints(s.getLastPoint(), new Point(event.getX(), event.getY())) > s.getTolerance() || s.getLastId() != s.getPoints().size() - 1 || !s.isPastByTheMiddle()) {
                         numEssai++;
                         nbErreur++;
 
-                        Toast.makeText(getApplicationContext(), "pas arriver au dernier point", Toast.LENGTH_SHORT);
+                        Toast.makeText(getApplicationContext(), "Passe par tous les points", Toast.LENGTH_SHORT).show();
 
                         Log.e("axel", "pas arriver au dernier point");
 
-                        reDraw();
+                        //reDraw();
 
                     } else {
                         if (error) {
@@ -217,7 +230,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                             Log.e("axel", "Beacoup depassé");
                             Toast.makeText(getApplicationContext(), "Beacoup depassé", Toast.LENGTH_SHORT);
 
-                            reDraw();
+                            //reDraw();
 
                         } else if (warning) {
                             nbErreur += 0.5;
@@ -246,7 +259,10 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                         //TODO animation de fni avec les etoiles et toute cette merde
                     } else if (next) {
                         nextSymbol();
+                        
                         next = false;
+                    }else{
+                        reDraw();
                     }
                     oldUpx = 0;
                     oldUpy = 0;
@@ -277,33 +293,22 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         paint.setStyle(Paint.Style.FILL);
 
         Point p, p2;
-        float deltaX, deltaY, m, b, m2, b2;
+        float deltaX, deltaY, m, b, m2, b2, x1_1, x1_2, x2_1, x2_2;
         paint.setColor(Color.RED);
         paint.setStrokeWidth(10);
         double tailleFleche = 0;
-        for(int i = 0; i < s.getPoints().size(); i+=2){
-            tailleFleche = s.getDistanceBetweenTwoPoints(s.getPoints().get(i), s.getPoints().get(i+1)) * 10/100;
-            paint.setColor(Color.RED);
-            canvas.drawLine((float) s.getPoints().get(i).getX(), (float) s.getPoints().get(i).getY(), (float) s.getPoints().get(i + 1).getX(), (float) s.getPoints().get(i + 1).getY(), paint);
-            deltaX = (float) (s.getPoints().get(i + 1).getX() - s.getPoints().get(i).getX());
-            deltaY = (float) (s.getPoints().get(i + 1).getY() - s.getPoints().get(i).getY());
-            m = deltaY / deltaX;
-            b = (float) ((-m * s.getPoints().get(i+1).getX()) + s.getPoints().get(i+1).getY());
-            p = new Point(s.getPoints().get(i+1).getX() - tailleFleche, ((s.getPoints().get(i+1).getX() - tailleFleche) * m) + b);
 
-            m2 = -1/m;
-            b2 = (float) ((-m2 * p.getX()) + p.getY());
-
-            p2 = new Point(p.getX() + (tailleFleche/2), ((p.getX() + (tailleFleche/2)) * m2) + b2);
-
-
-            paint.setColor(Color.BLUE);
-            canvas.drawPoint((float) p.getX(),(float) p.getY(), paint);
-            paint.setColor(Color.GREEN);
-            canvas.drawPoint((float) p2.getX(),(float) p2.getY(), paint);
-            Log.e("point", "px " + p.getX() + ", py " + p.getY() + ", p2x " + p2.getX() + ", p2y " + p2.getY());
-            canvas.drawLine((float) s.getPoints().get(i + 1).getX(), (float) s.getPoints().get(i + 1).getY(), (float) p2.getX(), (float) p2.getY(), paint);
+        for(int i = 0; i < s.getPoints().size() - 1; i+=2) {
+            float degres = (float) Math.toDegrees(Math.atan((s.getPoints().get(i + 1).getY()-s.getPoints().get(i).getY())/(s.getPoints().get(i + 1).getX()-s.getPoints().get(i).getX())));
+            Log.e("deg", "1 " + (s.getPoints().get(i).getY() - s.getPoints().get(i+1).getY())/(s.getPoints().get(i).getX() - s.getPoints().get(i+1).getX()));
+            Log.e("deg", "2 " + (s.getPoints().get(i).getX() < s.getPoints().get(i + 1).getX()));
+            if(s.getPoints().get(i).getX() > s.getPoints().get(i + 1).getX()){
+                degres += 180;
+            }
+            canvas.drawBitmap(getRotateFleche(degres),(float) s.getPoints().get(i).getX() - bitmapFleche.getWidth()/2,(float) s.getPoints().get(i).getY() - bitmapFleche.getHeight()/2, paint);
         }
+
+        s.clearAllLastId();
 
     }
 
@@ -326,4 +331,44 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         Log.e("axel", "fin nextSymbol");
     }
 
+    private Bitmap getRotateFleche(float degre){
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degre);
+
+        return Bitmap.createBitmap(bitmapFleche, 0, 0, bitmapFleche.getWidth(), bitmapFleche.getHeight(), matrix, true);
+    }
+
 }
+
+/*
+for(int i = 0; i < s.getPoints().size(); i+=2){
+            tailleFleche = s.getDistanceBetweenTwoPoints(s.getPoints().get(i), s.getPoints().get(i+1)) * 10/100;
+            paint.setColor(Color.RED);
+            canvas.drawLine((float) s.getPoints().get(i).getX(), (float) s.getPoints().get(i).getY(), (float) s.getPoints().get(i + 1).getX(), (float) s.getPoints().get(i + 1).getY(), paint);
+            deltaX = (float) (s.getPoints().get(i + 1).getX() - s.getPoints().get(i).getX());
+            deltaY = (float) (s.getPoints().get(i + 1).getY() - s.getPoints().get(i).getY());
+
+            m = deltaY / deltaX;
+            b = (float) ((-m * s.getPoints().get(i+1).getX()) + s.getPoints().get(i+1).getY());
+
+            x1_1 = (float)( (-2*b*m) - Math.sqrt((Math.pow(2*b*m, 2))-(4 * (1+(m*m)) * (tailleFleche*tailleFleche) - (b*b)))/(2*(1+(m*m))));
+            x1_2 = (float)( (-2*b*m) + Math.sqrt((Math.pow(2*b*m, 2))-(4 * (1+(m*m)) * (tailleFleche*tailleFleche) - (b*b)))/(2*(1+(m*m))));
+
+            p = new Point(s.getPoints().get(i+1).getX() + x1_1, ((s.getPoints().get(i+1).getX() + x1_1) * m) + b);
+
+            m2 = -1/m;
+            b2 = (float) ((-m2 * p.getX()) + p.getY());
+
+            x2_1 = (float)( (-2*b2*m2) - Math.sqrt((Math.pow(2*b2*m2, 2))-(4 * (1+(m2*m2)) * (tailleFleche*tailleFleche) - (b2*b2)))/(2*(1+(m2*m2))));
+            x2_2 = (float)( (-2*b2*m2) + Math.sqrt((Math.pow(2*b2*m2, 2))-(4 * (1+(m2*m2)) * (tailleFleche*tailleFleche) - (b2*b2)))/(2*(1+(m2*m2))));
+
+            p2 = new Point(p.getX() + x2_1, ((p.getX() + x2_1) * m2) + b2);
+
+
+            paint.setColor(Color.BLUE);
+            canvas.drawPoint((float) p.getX(),(float) p.getY(), paint);
+            paint.setColor(Color.RED);
+            canvas.drawPoint((float) p2.getX(),(float) p2.getY(), paint);
+            Log.e("point", "px " + p.getX() + ", py " + p.getY() + ", p2x " + p2.getX() + ", p2y " + p2.getY());
+            canvas.drawLine((float) s.getPoints().get(i + 1).getX(), (float) s.getPoints().get(i + 1).getY(), (float) p2.getX(), (float) p2.getY(), paint);
+        }*/

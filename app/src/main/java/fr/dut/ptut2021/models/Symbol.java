@@ -7,6 +7,9 @@ public class Symbol {
 
     private ArrayList<Point> points;
     private float tolerance;
+    private int lastId = -1;
+    private int lastIdCustom = -1;
+    private boolean isPastByTheMiddle = false;
 
     //private Point[] cinq = { new Point(773,561), new Point(280,614), new Point(468,877), new Point(597,872), new Point(758,971), new Point(761,1225), new Point(606,1358), new Point(344,1305) };
 
@@ -30,9 +33,7 @@ public class Symbol {
         this.tolerance = t;
     }
 
-    public ArrayList<Point> getPoints() {
-        return points;
-    }
+
 
     private int findIdOfNearestPoint(Point point){
         int idNearestPoint;
@@ -100,7 +101,18 @@ public class Symbol {
 
     public boolean isInSymbol(Point point){
         int idNearestPoint = findIdOfNearestPoint(point);
-        int maxId = 0;
+
+        if(lastId == -1){
+            lastId = idNearestPoint;
+        }else if(lastId != idNearestPoint - 1 && lastId != idNearestPoint){
+            return false;
+        }
+
+        if(idNearestPoint == points.size()/2){
+            isPastByTheMiddle = true;
+        }
+
+        lastId = idNearestPoint;
 
         if(idNearestPoint == -1){
             return false;
@@ -164,7 +176,18 @@ public class Symbol {
     //surchage pour avoir la tolerance customisé
     public boolean isInSymbol(Point point, float tol){
         int idNearestPoint = findIdOfNearestPoint(point);
-        int maxId = 0;
+
+        if(lastIdCustom == -1){
+            lastIdCustom = idNearestPoint;
+        }else if(lastIdCustom != idNearestPoint - 1 && lastIdCustom != idNearestPoint){
+            return false;
+        }
+
+        lastIdCustom = idNearestPoint;
+
+        if(idNearestPoint == points.size()/2){
+            isPastByTheMiddle = true;
+        }
 
         if(idNearestPoint == -1){
             return false;
@@ -193,6 +216,12 @@ public class Symbol {
         return false;
     }
 
+    public void clearAllLastId(){
+        lastId = -1;
+        lastIdCustom = -1;
+        isPastByTheMiddle = false;
+    }
+
     public Point getFirstPoint(){
         return points.get(0);
     }
@@ -200,8 +229,19 @@ public class Symbol {
         return points.get(points.size() - 1);
     }
 
+    public boolean isPastByTheMiddle(){
+        return isPastByTheMiddle;
+    }
+
     public float getTolerance(){
         return tolerance;
     }
+
+    public ArrayList<Point> getPoints() {
+        return points;
+    }
+
+    public int getLastId(){return lastId;}
+    public int getLastIdCustom(){return lastIdCustom;}
 
 }
