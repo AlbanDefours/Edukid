@@ -27,4 +27,9 @@ public class MyTextToSpeech {
             }
         });
     }
+
+    public static void stop(){
+        textToSpeech.stop();
+        textToSpeech.shutdown();
+    }
 }

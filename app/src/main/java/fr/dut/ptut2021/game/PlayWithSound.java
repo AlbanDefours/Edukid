@@ -24,6 +24,7 @@ import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.database.game.PlayWithSoundData;
 import fr.dut.ptut2021.models.database.log.GameLog;
 import fr.dut.ptut2021.models.database.log.GameResultLog;
+import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
 import fr.dut.ptut2021.utils.MySharedPreferences;
 import fr.dut.ptut2021.utils.MyTextToSpeech;
@@ -50,6 +51,8 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_with_sound);
+
+        GlobalUtils.verifyIfSoundIsOn(this);
 
         getSharedPref();
         articleTheme = themeName.equals("Chiffres") ? "le " : "la ";
@@ -303,5 +306,12 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                     break;
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MyMediaPlayer.stop();
+        MyTextToSpeech.stop();
     }
 }

@@ -21,11 +21,15 @@ public class ResultGamePage extends AppCompatActivity {
     private int starsNb = 0;
     private String gameName, themeName;
     private ImageView star1, star2, star3, exit, replay;
+    private Handler handlerStars, handlerTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_game_page);
+
+        handlerStars = new Handler();
+        handlerTitle = new Handler();
 
         getNbStars();
         getGameThemeName();
@@ -33,17 +37,23 @@ public class ResultGamePage extends AppCompatActivity {
         starsNumber(starsNb);
 
         exit.setOnClickListener(v -> {
-            MyMediaPlayer.stop();
+            stopAllHandler();
             MyVibrator.vibrate(this, 35);
             finish();
         });
 
         replay.setOnClickListener(v -> {
-            MyMediaPlayer.stop();
+            stopAllHandler();
             MyVibrator.vibrate(this, 35);
-            GlobalUtils.startGame(this, gameName);
+            GlobalUtils.startGame(this, gameName, false, false);
             finish();
         });
+    }
+
+    private void stopAllHandler(){
+        handlerStars.removeCallbacksAndMessages(null);
+        handlerTitle.removeCallbacksAndMessages(null);
+        MyMediaPlayer.stop();
     }
 
     private void getNbStars() {
@@ -60,7 +70,7 @@ public class ResultGamePage extends AppCompatActivity {
     private void getGameThemeName() {
         themeName = MySharedPreferences.getThemeName(this);
         gameName = MySharedPreferences.getGameName(this);
-        if(gameName.equals("Memory"))
+        if (gameName.equals("Memory"))
             gameName = "SubMemory";
     }
 
@@ -88,15 +98,21 @@ public class ResultGamePage extends AppCompatActivity {
 
         for (int i = 0; i < nbStars; i++) {
             int finalI = i;
-            new Handler().postDelayed(() -> {
+            handlerStars.postDelayed(() -> {
                 tabStars[finalI].setImageResource(R.drawable.icon_star);
                 YoYo.with(Techniques.Swing).duration(800).playOn(tabStars[finalI]);
             }, 800L * i);
         }
 
-        new Handler().postDelayed(() -> {
+        handlerTitle.postDelayed(() -> {
             YoYo.with(Techniques.Tada).duration(1000).repeat(2).playOn(findViewById(R.id.text_felicitation));
             MyMediaPlayer.playSound(this, R.raw.kids_cheering);
         }, 800L * nbStars + 200);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopAllHandler();
     }
 }

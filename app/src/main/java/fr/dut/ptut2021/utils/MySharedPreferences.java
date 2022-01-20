@@ -20,6 +20,14 @@ public class MySharedPreferences {
         return getSharedPreferencesString(context, "gameName");
     }
 
+    public static int getGameId(Context context){
+        return getSharedPreferencesInt(context, "gameId");
+    }
+
+    public static int getSubGameId(Context context){
+        return getSharedPreferencesInt(context, "subGameId");
+    }
+
     public static String getSubGameName(Context context){
         return getSharedPreferencesString(context, "subGameName");
     }
