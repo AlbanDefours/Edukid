@@ -43,7 +43,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
     private float largeur = 0, hauteur = 0, downx = 0, downy = 0, upx = 0, upy = 0, oldUpx = 0, oldUpy = 0;
     private Boolean canDraw = false, hasDraw = false, warning = false, error = false, next = false;
 
-    private static final int NBESSAI = 3, NBGAME = 9;
+    private static final int NBESSAI = 3, NBGAME = 4;
 
     private int numEssai = 0, numGame = 0;
     private float nbErreur = 0;
@@ -123,17 +123,17 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
             carte[i] = listCard.get(numRand[i]);
         }
 
-
+        /*
         int c = 5;
-        image.setImageResource(2131230912); //carte[0]
+        image.setImageResource(listCard.get(c - 1).getDrawableImage()); //carte[0]
         DataSymbol.initPts(c, dm.widthPixels, dm.heightPixels); //Integer.parseInt(carte[0].getCardValue())
         s = new Symbol(DataSymbol.getPts(), tolerance);
+        */
 
-        /*
         image.setImageResource(carte[0].getDrawableImage()); //carte[0]
         DataSymbol.initPts(Integer.parseInt(carte[0].getCardValue()), dm.widthPixels, dm.heightPixels); //Integer.parseInt(carte[0].getCardValue())
         s = new Symbol(DataSymbol.getPts(), tolerance);
-        */
+
 
 
         Display currentDisplay = getWindowManager().getDefaultDisplay();
