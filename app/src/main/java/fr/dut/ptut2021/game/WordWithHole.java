@@ -34,6 +34,7 @@ import fr.dut.ptut2021.models.database.game.WordWithHoleData;
 import fr.dut.ptut2021.models.database.log.GameLog;
 import fr.dut.ptut2021.models.database.log.GameResultLog;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
+import fr.dut.ptut2021.utils.MySharedPreferences;
 import fr.dut.ptut2021.utils.MyTextToSpeech;
 import fr.dut.ptut2021.utils.MyVibrator;
 
@@ -60,9 +61,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_word_with_hole);
 
         db = CreateDatabase.getInstance(WordWithHole.this);
-        SharedPreferences settings = getSharedPreferences("MyPref", 0);
-        userId = settings.getInt("userId", 0);
-        gameId = db.appDao().getGameId("WordWithHole", "Lettres");
+        getSharedPref();
 
         fillDatabase();
         initGame();
@@ -75,6 +74,11 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         answer2.setOnClickListener(this);
         answer3.setOnClickListener(this);
         help.setOnClickListener(this);
+    }
+
+    private void getSharedPref() {
+        userId = MySharedPreferences.getUserId(this);
+        gameId = MySharedPreferences.getGameId(this);
     }
 
     private void fillDatabase() {

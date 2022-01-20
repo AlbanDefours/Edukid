@@ -33,7 +33,7 @@ import fr.dut.ptut2021.utils.MyVibrator;
 public class PlayWithSound extends AppCompatActivity implements View.OnClickListener {
 
     private CreateDatabase db;
-    private ImageView btnSound;
+    private ImageView btnSound, help;
     private TextView goodAnswer;
     private boolean delay = false, isAnswerFalseWord = false;
     private List<String> listAnswer;
@@ -55,11 +55,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         GlobalUtils.verifyIfSoundIsOn(this);
 
         getSharedPref();
-        articleTheme = themeName.equals("Chiffres") ? "le " : "la ";
-        String s = themeName.equals("Chiffres") ? "un " : "une ";
-        MyTextToSpeech.speachText(getApplicationContext(), "Dans cet exercice tu vas entendre " + s + themeName.toLowerCase() + " et tu dois " + articleTheme + " retrouver");
-        gameId = db.appDao().getGameId("PlayWithSound", "Lettres");
-
+        readInstruction();
         initDatabase();
         initializeLayout();
         fillListChooseResult(themeName);
@@ -70,6 +66,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private void getSharedPref() {
         userId = MySharedPreferences.getUserId(this);
         themeName = MySharedPreferences.getThemeName(this);
+        gameId = MySharedPreferences.getGameId(this);
     }
 
     private void initDatabase() {
@@ -96,6 +93,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         answer1 = findViewById(R.id.buttonAnswer1_playWithSound);
         answer2 = findViewById(R.id.buttonAnswer2_playWithSound);
         answer3 = findViewById(R.id.buttonAnswer3_playWithSound);
+        help = findViewById(R.id.ic_help_playWithSound);
         listButton[0] = answer1;
         listButton[1] = answer2;
         listButton[2] = answer3;
@@ -140,6 +138,16 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         MyTextToSpeech.speachText(this, "Trouve " + articleTheme + themeName.toLowerCase() + " : " + listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
     }
 
+    private void readInstruction() {
+        delay = true;
+        articleTheme = themeName.equals("Chiffres") ? "le " : "la ";
+        String s = themeName.equals("Chiffres") ? "un " : "une ";
+        MyTextToSpeech.speachText(getApplicationContext(), "Dans cet exercice tu vas entendre " + s + themeName.toLowerCase() + " et tu dois " + articleTheme + " retrouver");
+        new Handler().postDelayed(() -> {
+            delay = false;
+        }, 3000);
+    }
+
     private void initListAnswer() {
         listAnswer = new ArrayList<>();
 
@@ -166,6 +174,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         btnSound.setOnClickListener(this);
         for (int i = 0; i < 3; i++)
             listButton[i].setOnClickListener(this);
+        help.setOnClickListener(this);
     }
 
     private void playSound(boolean isGoodAnswer) {
@@ -302,6 +311,11 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                 case R.id.btnSound_playWithSound:
                     readTheAnswer();
                     break;
+
+                case R.id.ic_help_playWithSound:
+                    readInstruction();
+                    break;
+
                 default:
                     break;
             }

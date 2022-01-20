@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".game.PlayWithSound">
 
+    <ImageView
+        android:id="@+id/ic_help_playWithSound"
+        android:layout_width="64dp"
+        android:layout_height="59dp"
+        android:src="@drawable/ic_help"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="2dp" />
+
     <TextView
         android:id="@+id/goodAnswer_playWithSound"
         android:layout_width="match_parent"
