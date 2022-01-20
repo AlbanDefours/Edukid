@@ -1,27 +1,20 @@
 package fr.dut.ptut2021.activities;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.view.View;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.game.GameAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.game.ClasseMere;
+import fr.dut.ptut2021.utils.GlobalUtils;
+import fr.dut.ptut2021.utils.MySharedPreferences;
+import fr.dut.ptut2021.utils.MyVibrator;
 import fr.dut.ptut2021.models.database.app.Game;
-
 
 public class GameMenu extends AppCompatActivity {
 
@@ -43,13 +36,9 @@ public class GameMenu extends AppCompatActivity {
                 new RecyclerItemClickListener(getApplicationContext(), recyclerViewListGame, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                            v.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
-                        else
-                            v.vibrate(35);
+                        MyVibrator.vibrate(GameMenu.this, 35);
                         saveGameName(position);
-                        new ClasseMere(GameMenu.this).findGame(gameList.get(position).getGameName());
+                        GlobalUtils.startGame(GameMenu.this, gameList.get(position).getGameName(), false, false);
                     }
 
                     @Override
@@ -60,15 +49,13 @@ public class GameMenu extends AppCompatActivity {
     }
 
     private void getThemeName(){
-        SharedPreferences settings = getSharedPreferences("MyPref", 0);
-        themeName = settings.getString("themeName", "");
+        themeName = MySharedPreferences.getThemeName(this);
     }
 
     private void saveGameName(int position){
-        SharedPreferences settings = getSharedPreferences("MyPref", 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString("gameName", gameList.get(position).getGameName());
-        editor.commit();
+        MySharedPreferences.setSharedPreferencesString(this, "gameName", gameList.get(position).getGameName());
+        MySharedPreferences.setSharedPreferencesInt(this, "gameId", gameList.get(position).getGameId());
+        MySharedPreferences.commit();
     }
 
     private void createDatabaseAndImportGames() {

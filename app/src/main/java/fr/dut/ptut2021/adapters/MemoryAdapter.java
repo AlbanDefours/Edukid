@@ -14,21 +14,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.models.Card;
+import fr.dut.ptut2021.models.MemoryCard;
 
 public class MemoryAdapter extends BaseAdapter {
 
     Context  context;
-    List<Card> listCard;
+    List<MemoryCard> listMemoryCard;
     ArrayList<Integer> position;
     int numColumns;
     MyViewHolderMemory holder;
 
 
 
-    public MemoryAdapter(Context context, List<Card> listCard, int numColumns) {
+    public MemoryAdapter(Context context, List<MemoryCard> listMemoryCard, int numColumns) {
         this.context = context;
-        this.listCard = listCard;
+        this.listMemoryCard = listMemoryCard;
         this.numColumns = numColumns;
     }
 
@@ -51,12 +51,12 @@ public class MemoryAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return listCard.size();
+        return listMemoryCard.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return listCard.get(i);
+        return listMemoryCard.get(i);
     }
 
     @Override
@@ -80,19 +80,19 @@ public class MemoryAdapter extends BaseAdapter {
             SharedPreferences settings = context.getSharedPreferences("MyPref", 0);
 
             String themeName = settings.getString("themeName", "");
-            if(themeName.equals("Chiffres") && !listCard.get(i).getValue().equals("1") && !isChiffre(listCard.get(i).getDrawableImage())){
-                for (int k=0;k<Integer.parseInt(listCard.get(i).getValue());k++){
-                    holder.elements.get(k).setImageResource(listCard.get(i).getDrawableImage());
+            if(themeName.equals("Chiffres") && !listMemoryCard.get(i).getValue().equals("1") && !isChiffre(listMemoryCard.get(i).getDrawableImage())){
+                for (int k = 0; k<Integer.parseInt(listMemoryCard.get(i).getValue()); k++){
+                    holder.elements.get(k).setImageResource(listMemoryCard.get(i).getDrawableImage());
                 }
             }
             else{
-                holder.elements.get(0).setImageResource(listCard.get(i).getDrawableImage());
+                holder.elements.get(0).setImageResource(listMemoryCard.get(i).getDrawableImage());
             }
 
             //
             double width = (1094.0 + 20) / numColumns;
-            double height = width * (1684.0 / 1094) + 20;
-            double sizeElement = width -50;
+            double height = width * 1.36 + 20;
+            double sizeElement = width -80;
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) width, (int) height);
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
             holder.viewCard.setLayoutParams(layoutParams);
@@ -101,12 +101,12 @@ public class MemoryAdapter extends BaseAdapter {
 
             layoutParams = new RelativeLayout.LayoutParams((int) sizeElement, (int) sizeElement);
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-            holder.interieurCard.setLayoutParams(layoutParams);
+            holder.interieurCardChiffre.setLayoutParams(layoutParams);
+            holder.interieurCardLettre.setLayoutParams(layoutParams);
 
 
-            if(themeName.equals("Chiffres") && !listCard.get(i).getValue().equals("1") && !isChiffre(listCard.get(i).getDrawableImage())){
-                System.out.println("c'est VRAIIIIIIII");
-                switch (listCard.get(i).getValue()){
+            if(themeName.equals("Chiffres") && !listMemoryCard.get(i).getValue().equals("1") && !isChiffre(listMemoryCard.get(i).getDrawableImage())){
+                switch (listMemoryCard.get(i).getValue()){
                     case "2":
                         layoutParams = new RelativeLayout.LayoutParams((int) sizeElement/2, (int) sizeElement);
                         holder.elements.get(0).setLayoutParams(layoutParams);
@@ -263,19 +263,18 @@ public class MemoryAdapter extends BaseAdapter {
                 }
             }
             else{
-                System.out.println("c'est FAUUUUUUX");
                 layoutParams = new RelativeLayout.LayoutParams((int) sizeElement, (int) sizeElement);
                 layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
                 holder.elements.get(0).setLayoutParams(layoutParams);
             }
 
 
-            holder.hidden = listCard.get(i).isHidden();
+            holder.hidden = listMemoryCard.get(i).isHidden();
 
 
         if(position== null || position.isEmpty()){
 
-            if (listCard.get(i).isHidden()) {
+            if (listMemoryCard.get(i).isHidden()) {
                 holder.showImageReturnCard();
 
             }else{
@@ -286,7 +285,7 @@ public class MemoryAdapter extends BaseAdapter {
         else {
             for (int j=0;j<position.size();j++){
                 if(position.get(j) == i) {
-                    if (listCard.get(i).isHidden()) {
+                    if (listMemoryCard.get(i).isHidden()) {
                         holder.viewCard.startAnimation(holder.sato0);
 
                     } else {
@@ -303,7 +302,7 @@ public class MemoryAdapter extends BaseAdapter {
     }
 
     private boolean isChiffre(int drawableImage){
-        if(drawableImage!= R.drawable.one && drawableImage!= R.drawable.two && drawableImage!= R.drawable.three && drawableImage!= R.drawable.four && drawableImage!= R.drawable.five && drawableImage!= R.drawable.six && drawableImage!= R.drawable.seven && drawableImage!= R.drawable.eight && drawableImage!= R.drawable.nine){
+        if(drawableImage!= R.drawable.number_one && drawableImage!= R.drawable.number_two && drawableImage!= R.drawable.number_three && drawableImage!= R.drawable.number_four && drawableImage!= R.drawable.number_five && drawableImage!= R.drawable.number_six && drawableImage!= R.drawable.number_seven && drawableImage!= R.drawable.number_eight && drawableImage!= R.drawable.number_nine){
             return false;
         }
         else

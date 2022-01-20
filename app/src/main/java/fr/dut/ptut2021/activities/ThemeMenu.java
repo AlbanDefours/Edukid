@@ -1,12 +1,6 @@
 package fr.dut.ptut2021.activities;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +15,7 @@ import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.theme.ThemeAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.database.app.Theme;
+import fr.dut.ptut2021.utils.*;
 
 public class ThemeMenu extends AppCompatActivity {
 
@@ -40,13 +35,9 @@ public class ThemeMenu extends AppCompatActivity {
                 new RecyclerItemClickListener(getApplicationContext(), recyclerViewListTheme, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                            v.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
-                        else
-                            v.vibrate(35);
+                        MyVibrator.vibrate(ThemeMenu.this, 35);
                         saveUserNameSahredPref(position);
-                        startGameMenu(position);
+                        GlobalUtils.startPage(ThemeMenu.this, "GameMenu", false, false);
                     }
 
                     @Override
@@ -58,13 +49,7 @@ public class ThemeMenu extends AppCompatActivity {
 
     private void createAndGetDatabase() {
         db = CreateDatabase.getInstance(ThemeMenu.this);
-
-        if (!db.appDao().tabThemeIsEmpty()) {
-            listTheme = db.appDao().getAllThemes();
-        } else {
-            db.appDao().insertTheme(new Theme("Lettres", R.drawable.lettres));
-            db.appDao().insertTheme(new Theme("Chiffres", R.drawable.chiffres));
-        }
+        listTheme = db.appDao().getAllThemes();
     }
 
     private void createRecyclerView() {
@@ -73,15 +58,8 @@ public class ThemeMenu extends AppCompatActivity {
         recyclerViewListTheme.setAdapter(new ThemeAdapter(getApplicationContext(), listTheme));
     }
 
-    private void startGameMenu(int position) {
-        Intent intent = new Intent().setClass(getApplicationContext(), GameMenu.class);
-        startActivity(intent);
-    }
-
-    private void saveUserNameSahredPref(int position){
-        SharedPreferences settings = getSharedPreferences("MyPref", 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString("themeName", listTheme.get(position).getThemeName());
-        editor.commit();
+    private void saveUserNameSahredPref(int position) {
+        MySharedPreferences.setSharedPreferencesString(this, "themeName", listTheme.get(position).getThemeName());
+        MySharedPreferences.commit();
     }
 }

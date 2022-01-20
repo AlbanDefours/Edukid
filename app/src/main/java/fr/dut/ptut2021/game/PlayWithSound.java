@@ -1,17 +1,10 @@
 package fr.dut.ptut2021.game;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
-import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,66 +15,58 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.models.database.game.PlayWithSoundData;
 import fr.dut.ptut2021.models.database.log.GameLog;
 import fr.dut.ptut2021.models.database.log.GameResultLog;
-import fr.dut.ptut2021.models.database.game.PlayWithSoundData;
+import fr.dut.ptut2021.utils.GlobalUtils;
+import fr.dut.ptut2021.utils.MyMediaPlayer;
+import fr.dut.ptut2021.utils.MySharedPreferences;
+import fr.dut.ptut2021.utils.MyTextToSpeech;
+import fr.dut.ptut2021.utils.MyVibrator;
 
-public class PlayWithSound extends AppCompatActivity implements View.OnClickListener, TextToSpeech.OnInitListener {
+public class PlayWithSound extends AppCompatActivity implements View.OnClickListener {
 
-    private Vibrator vibe;
     private CreateDatabase db;
-    private ImageView btnSound;
+    private ImageView btnSound, help;
     private TextView goodAnswer;
     private boolean delay = false, isAnswerFalseWord = false;
     private List<String> listAnswer;
     private List<Integer> listChooseResult;
-    private TextToSpeech textToSpeech;
     private List<PlayWithSoundData> listData;
     private Button answer1, answer2, answer3;
     private String themeName;
-    private MediaPlayer mpGoodAnswer, mpWrongAnswer;
     private final Button[] listButton = new Button[3];
     private final int MAX_GAME_PLAYED = 5;
-    private int userId, gamePlayed = 1, nbTry = 0, answerFalse = 0, nbrStars = 0, answerFalseWord = 0;
+    private int userId, gameId, gamePlayed = 1, nbTry = 0, answerFalse = 0, nbrStars = 0, answerFalseWord = 0;
     private Random random = new Random();
+    private String articleTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_with_sound);
 
-        vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        GlobalUtils.verifyIfSoundIsOn(this);
 
         getSharedPref();
+        readInstruction();
         initDatabase();
         initializeLayout();
         fillListChooseResult(themeName);
         initGame();
-        initSoundEffect();
         addOnClickListener();
-
-        textToSpeech = new TextToSpeech(this, this);
-    }
-
-    public void vibrate() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            vibe.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
-        else
-            vibe.vibrate(35);
     }
 
     private void getSharedPref() {
-        SharedPreferences settings = getSharedPreferences("MyPref", 0);
-        userId = settings.getInt("userId", 0);
-        themeName = settings.getString("themeName", "");
+        userId = MySharedPreferences.getUserId(this);
+        themeName = MySharedPreferences.getThemeName(this);
+        gameId = MySharedPreferences.getGameId(this);
     }
 
     private void initDatabase() {
@@ -108,6 +93,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         answer1 = findViewById(R.id.buttonAnswer1_playWithSound);
         answer2 = findViewById(R.id.buttonAnswer2_playWithSound);
         answer3 = findViewById(R.id.buttonAnswer3_playWithSound);
+        help = findViewById(R.id.ic_help_playWithSound);
         listButton[0] = answer1;
         listButton[1] = answer2;
         listButton[2] = answer3;
@@ -116,7 +102,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private void initGame() {
         initListAnswer();
         setLayoutContent();
-        new Handler().postDelayed(this::readTheAnswer, 1200);
+        new Handler().postDelayed(this::readTheAnswer, 200);
     }
 
     //TODO Choisi pour le moment Result uniquement en fonction de LastUsed
@@ -149,10 +135,17 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     }
 
     private void readTheAnswer() {
-        if (themeName.equals("Lettres"))
-            speak("Trouve la lettre : " + listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
-        else if (themeName.equals("Chiffres"))
-            speak("Trouve le chiffre : " + listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
+        MyTextToSpeech.speachText(this, "Trouve " + articleTheme + themeName.toLowerCase() + " : " + listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
+    }
+
+    private void readInstruction() {
+        delay = true;
+        articleTheme = themeName.equals("Chiffres") ? "le " : "la ";
+        String s = themeName.equals("Chiffres") ? "un " : "une ";
+        MyTextToSpeech.speachText(getApplicationContext(), "Dans cet exercice tu vas entendre " + s + themeName.toLowerCase() + " et tu dois " + articleTheme + " retrouver");
+        new Handler().postDelayed(() -> {
+            delay = false;
+        }, 3000);
     }
 
     private void initListAnswer() {
@@ -177,33 +170,25 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             listButton[i].setText(listAnswer.get(i));
     }
 
-    private void initSoundEffect() {
-        mpGoodAnswer = MediaPlayer.create(this, R.raw.correct_answer);
-        mpWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
-    }
-
     private void addOnClickListener() {
         btnSound.setOnClickListener(this);
         for (int i = 0; i < 3; i++)
             listButton[i].setOnClickListener(this);
+        help.setOnClickListener(this);
     }
 
     private void playSound(boolean isGoodAnswer) {
         if (isGoodAnswer)
-            mpGoodAnswer.start();
+            MyMediaPlayer.playSound(this, R.raw.correct_answer);
         else
-            mpWrongAnswer.start();
+            MyMediaPlayer.playSound(this, R.raw.wrong_answer);
     }
 
     private void setWordAndAddDelay() {
         delay = true;
         playSound(false);
 
-        new Handler().postDelayed(() -> {
-            delay = false;
-            readTheAnswer();
-        }, 2000);
-
+        delay = false;
         nbTry++;
         int MAX_TRY = 2;
         if (nbTry >= MAX_TRY) {
@@ -215,7 +200,8 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                 }
                 replay();
             }, 2000);
-        }
+        }else
+            new Handler().postDelayed(this::readTheAnswer, 500);
     }
 
     private void displayAnswer(boolean showAnswer) {
@@ -232,7 +218,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         playSound(true);
         updateDataInDb();
         gamePlayed++;
-        answerFalseWord=0;
+        answerFalseWord = 0;
         delay = true;
         displayAnswer(true);
         new Handler().postDelayed(() -> {
@@ -261,22 +247,8 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         }, 3000);
     }
 
-    private void speak(String texte) {
-        HashMap<String, String> onlineSpeech = new HashMap<>();
-        onlineSpeech.put(TextToSpeech.Engine.KEY_FEATURE_NETWORK_SYNTHESIS, "true");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            if(texte.equals("Trouve la lettre : Y") || texte.equals("Trouve la lettre : y"))
-                textToSpeech.speak("Trouve la lettre : igrec", TextToSpeech.QUEUE_FLUSH, null, null);
-            textToSpeech.speak(texte, TextToSpeech.QUEUE_FLUSH, null, null);
-        }
-        else
-            textToSpeech.speak(texte, TextToSpeech.QUEUE_FLUSH, onlineSpeech);
-    }
-
     private void updateDataInDb() {
-
-        PlayWithSoundData data = db.gameDao().getPWSDataByResult(
-                userId,
+        PlayWithSoundData data = db.gameDao().getPWSDataByResult(userId,
                 listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
         data.setLastUsed(1);
         boolean win;
@@ -293,17 +265,12 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         }
         db.gameDao().updatePWSData(data);
 
-        GameLog gameLog = new GameLog(
-                "PlayWithSound",
-                data.getDataId(),
-                win,
-                nbTry);
+        GameLog gameLog = new GameLog(gameId, -1, data.getDataId(), win, nbTry);
         db.gameLogDao().insertGameLog(gameLog);
-
     }
 
     private void addGameResultLogInDb(int stars) {
-        GameResultLog gameResultLog = new GameResultLog("PlayWithSound", userId, stars);
+        GameResultLog gameResultLog = new GameResultLog(gameId, -1, userId, stars);
         db.gameLogDao().insertGameResultLog(gameResultLog);
     }
 
@@ -315,7 +282,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             answer.setBackgroundColor(Color.RED);
             answerFalse++;
             answerFalseWord++;
-            if(answerFalseWord == 2)
+            if (answerFalseWord == 2)
                 isAnswerFalseWord = true;
             Log.d("WILL", "" + answerFalseWord);
             setWordAndAddDelay();
@@ -323,26 +290,11 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    @Override
-    public void onDestroy() {
-        if (textToSpeech != null) {
-            textToSpeech.stop();
-            textToSpeech.shutdown();
-        }
-        super.onDestroy();
-    }
-
-    @Override
-    public void onInit(int status) {
-        if (status == TextToSpeech.SUCCESS)
-            textToSpeech.setLanguage(Locale.FRANCE);
-    }
-
     @SuppressLint({"NonConstantResourceId", "SetTextI18n"})
     @Override
     public void onClick(View v) {
         if (!delay) {
-            vibrate();
+            MyVibrator.vibrate(PlayWithSound.this, 35);
             switch (v.getId()) {
                 case R.id.buttonAnswer1_playWithSound:
                     verifyAnswer(answer1);
@@ -359,9 +311,21 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                 case R.id.btnSound_playWithSound:
                     readTheAnswer();
                     break;
+
+                case R.id.ic_help_playWithSound:
+                    readInstruction();
+                    break;
+
                 default:
                     break;
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MyMediaPlayer.stop();
+        MyTextToSpeech.stop();
     }
 }

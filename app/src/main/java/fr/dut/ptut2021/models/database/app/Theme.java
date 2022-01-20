@@ -1,13 +1,14 @@
 package fr.dut.ptut2021.models.database.app;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity
 public class Theme {
 
-    @PrimaryKey(autoGenerate = true)
-    private int themeId;
+    @PrimaryKey
+    @NonNull
     private String themeName;
     private int themeImage;
 
@@ -15,14 +16,6 @@ public class Theme {
     public Theme(String themeName, int themeImage) {
         this.themeName = themeName;
         this.themeImage = themeImage;
-    }
-
-    public int getThemeId() {
-        return themeId;
-    }
-
-    public void setThemeId(int themeId) {
-        this.themeId = themeId;
     }
 
     public String getThemeName() {

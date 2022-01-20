@@ -11,7 +11,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0"
+        versionName "2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -60,4 +60,5 @@ dependencies {
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
     //GRAPHIQUE
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    implementation 'com.kofigyan.stateprogressbar:stateprogressbar:1.0.0'
 }

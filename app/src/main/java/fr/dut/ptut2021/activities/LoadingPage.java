@@ -1,6 +1,5 @@
 package fr.dut.ptut2021.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -12,19 +11,11 @@ import com.daimajia.androidanimations.library.YoYo;
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
 
-import fr.dut.ptut2021.game.DrawOnIt;
-import fr.dut.ptut2021.models.database.app.Game;
-import fr.dut.ptut2021.models.database.app.GameSubGameCrossRef;
-import fr.dut.ptut2021.models.database.app.SubGame;
-import fr.dut.ptut2021.models.database.app.Theme;
-import fr.dut.ptut2021.models.database.app.ThemeGameCrossRef;
-import fr.dut.ptut2021.models.database.app.Word;
-import fr.dut.ptut2021.models.database.game.Card;
+import fr.dut.ptut2021.utils.GlobalUtils;
+import fr.dut.ptut2021.utils.MyDatabaseInsert;
 
 
 public class LoadingPage extends AppCompatActivity {
-
-    private CreateDatabase db = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,124 +23,21 @@ public class LoadingPage extends AppCompatActivity {
         setContentView(R.layout.activity_loading_page);
 
         textAnimation();
-        createDatabase();
+        CreateDatabase db = CreateDatabase.getInstance(getApplicationContext());
+        MyDatabaseInsert.ajoutDatabase(this);
 
         new Handler().postDelayed(() -> {
-            if (db.appDao().tabUserIsEmpty()) {
-                openUserEditPage();
-            } else {
-                openUserMenuPage();
-            }
+            if (db.appDao().tabUserIsEmpty())
+                GlobalUtils.startEditPage(this);
+            else
+                GlobalUtils.startPage(this, "UserMenu", true, false);
         }, 1500);
     }
 
     //TODO Faire bing bing bing bing de la gauche et TADA !
     private void textAnimation() {
-        YoYo.with(Techniques.Tada)
-                .duration(1000)
-                .playOn(findViewById(R.id.applicationName));
-    }
 
-    private void createDatabase() {
-        db = CreateDatabase.getInstance(getApplicationContext());
-        createThemes();
-        createGames();
-        createThemeGamesCross();
-        createSubGames();
-        createGameSubGamesCross();
-        createWords();
-        createCards();
-    }
+        YoYo.with(Techniques.Tada).duration(1000).playOn(findViewById(R.id.applicationName));
 
-    //Here to add/update/delete Theme
-    private void createThemes() {
-        if (db.appDao().tabThemeIsEmpty()) {
-            db.appDao().insertTheme(new Theme("Lettres", R.drawable.lettres));
-            db.appDao().insertTheme(new Theme("Chiffres", R.drawable.chiffres));
-        }
-    }
-
-    //Here to add/update/delete Game
-    private void createGames() {
-        if (db.appDao().tabGameIsEmpty()) {
-            db.appDao().insertGame(new Game("Memory", R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Dessine", R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Mot à trou", R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Ecoute", R.drawable.memory_icon));
-        }
-    }
-
-    //Here to set theme to Game
-    private void createThemeGamesCross() {
-        if (db.appDao().tabThemeGameIsEmpty()) {
-            db.appDao().insertThemeGame(new ThemeGameCrossRef("Memory", "Lettres"));
-            db.appDao().insertThemeGame(new ThemeGameCrossRef("Memory", "Chiffres"));
-            db.appDao().insertThemeGame(new ThemeGameCrossRef("Dessine", "Lettres"));
-            db.appDao().insertThemeGame(new ThemeGameCrossRef("Dessine", "Chiffres"));
-            db.appDao().insertThemeGame(new ThemeGameCrossRef("Mot à trou", "Lettres"));
-            db.appDao().insertThemeGame(new ThemeGameCrossRef("Ecoute", "Chiffres"));
-            db.appDao().insertThemeGame(new ThemeGameCrossRef("Ecoute", "Lettres"));
-        }
-    }
-
-    //Here to add SubGame
-    private void createSubGames() {
-        if (db.appDao().tabSubGameIsEmpty()) {
-            db.appDao().insertSubGame(new SubGame("Memory1", R.drawable.memory_icon));
-            db.appDao().insertSubGame(new SubGame("Memory2", R.drawable.memory_icon));
-            db.appDao().insertSubGame(new SubGame("Memory3", R.drawable.memory_icon));
-            db.appDao().insertSubGame(new SubGame("Memory4", R.drawable.memory_icon));
-        }
-    }
-
-    //Here to set Game to SubGame
-    private void createGameSubGamesCross() {
-        if (db.appDao().tabGameSubGameIsEmpty()) {
-            db.appDao().insertGameSubGame(new GameSubGameCrossRef("Memory", "Memory1"));
-            db.appDao().insertGameSubGame(new GameSubGameCrossRef("Memory", "Memory2"));
-            db.appDao().insertGameSubGame(new GameSubGameCrossRef("Memory", "Memory3"));
-            db.appDao().insertGameSubGame(new GameSubGameCrossRef("Memory", "Memory4"));
-        }
-    }
-
-    //Here to add Words with images
-    private void createWords() {
-        if (db.appDao().tabWordIsEmpty()) {
-            db.appDao().insertWord(new Word("AVION", R.drawable.image_avion));
-            db.appDao().insertWord(new Word("MAISON", R.drawable.image_maison));
-            db.appDao().insertWord(new Word("POULE", R.drawable.image_poule));
-            db.appDao().insertWord(new Word("BOUCHE", R.drawable.image_bouche));
-            db.appDao().insertWord(new Word("LIVRE", R.drawable.image_livre));
-            db.appDao().insertWord(new Word("VACHE", R.drawable.image_vache));
-            db.appDao().insertWord(new Word("TOMATE", R.drawable.image_tomate));
-            db.appDao().insertWord(new Word("CHIEN", R.drawable.image_chien));
-            db.appDao().insertWord(new Word("ARBRE", R.drawable.image_arbre));
-            db.appDao().insertWord(new Word("BALLON", R.drawable.image_ballon));
-        }
-    }
-
-    private void createCards(){
-        db.gameDao().insertCard(new Card("1","Chiffres",R.drawable.one));
-        db.gameDao().insertCard(new Card("2","Chiffres",R.drawable.two));
-        db.gameDao().insertCard(new Card("3","Chiffres",R.drawable.three));
-        db.gameDao().insertCard(new Card("4","Chiffres",R.drawable.four));
-        db.gameDao().insertCard(new Card("5","Chiffres",R.drawable.five));
-        db.gameDao().insertCard(new Card("6","Chiffres",R.drawable.six));
-        db.gameDao().insertCard(new Card("7","Chiffres",R.drawable.seven));
-        db.gameDao().insertCard(new Card("8","Chiffres",R.drawable.eight));
-        db.gameDao().insertCard(new Card("9","Chiffres",R.drawable.nine));
-    }
-
-    private void openUserMenuPage() {
-        Intent intent = new Intent().setClass(getApplicationContext(), DrawOnIt.class);
-        startActivity(intent);
-        finish();
-    }
-
-    private void openUserEditPage() {
-        Intent intent = new Intent().setClass(getApplicationContext(), DrawOnIt.class);
-        intent.putExtra("addUser", true);
-        startActivity(intent);
-        finish();
     }
 }

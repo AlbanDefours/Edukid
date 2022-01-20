@@ -1,11 +1,7 @@
 package fr.dut.ptut2021.activities;
 
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -20,10 +16,10 @@ import fr.dut.ptut2021.adapters.RecyclerItemClickListener;
 import fr.dut.ptut2021.adapters.user.UserAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.database.app.User;
+import fr.dut.ptut2021.utils.MyVibrator;
 
 public class UserResume extends AppCompatActivity {
 
-    private Vibrator vibe;
     private CreateDatabase db = null;
     private RecyclerView recyclerView;
     private List<User> listUser = null;
@@ -34,7 +30,6 @@ public class UserResume extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_menu);
 
-        vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         db = CreateDatabase.getInstance(UserResume.this);
 
         getAllUser();
@@ -46,7 +41,7 @@ public class UserResume extends AppCompatActivity {
                 new RecyclerItemClickListener(getApplicationContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        vibrate();
+                        MyVibrator.vibrate(UserResume.this, 35);
                         startEditUserPage(position);
                     }
 
@@ -59,17 +54,9 @@ public class UserResume extends AppCompatActivity {
         addUser.setOnClickListener(view -> startAddUserPage());
     }
 
-    public void vibrate() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            vibe.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
-        else
-            vibe.vibrate(35);
-    }
-
     private void getAllUser() {
-        if (!db.appDao().tabUserIsEmpty()) {
+        if (!db.appDao().tabUserIsEmpty())
             listUser = db.appDao().getAllUsers();
-        }
     }
 
     private void initializeFindView() {
@@ -86,18 +73,17 @@ public class UserResume extends AppCompatActivity {
 
     private void createRecyclerView() {
         RecyclerView.LayoutManager mLayoutManager;
-        if (listUser.size() < 5) {
+        if (listUser.size() < 5)
             mLayoutManager = new GridLayoutManager(this, 1);
-        } else {
+        else
             mLayoutManager = new GridLayoutManager(this, 2);
-        }
 
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(new UserAdapter(getApplicationContext(), listUser, true));
     }
 
     private void startAddUserPage() {
-        vibrate();
+        MyVibrator.vibrate(UserResume.this, 35);
         Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
         intent.putExtra("addUser", true);
         startActivity(intent);

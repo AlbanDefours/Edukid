@@ -12,10 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -41,10 +38,11 @@ import java.lang.reflect.Method;
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.database.app.User;
+import fr.dut.ptut2021.utils.GlobalUtils;
+import fr.dut.ptut2021.utils.MyVibrator;
 
 public class UserEdit extends AppCompatActivity implements View.OnClickListener {
 
-    private Vibrator vibe;
     private TextView title;
     private ImageView userAvatar;
     private CreateDatabase db = null;
@@ -57,14 +55,13 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private static final int GALLERY_REQUEST = 30, MY_STORAGE_PERMISSION_CODE = 300;
 
     private int cpt = 0;
-    private final int[] tableauImage = {R.drawable.a, R.drawable.b, R.drawable.c, R.drawable.d};
+    private final int[] tableauImage = {R.drawable.user_image_a, R.drawable.user_image_b, R.drawable.user_image_c, R.drawable.user_image_d};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_edit);
 
-        vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         imageLocation = String.valueOf(tableauImage[0]);
 
         getDb();
@@ -101,7 +98,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                 title.setText("Modification du profil de " + bundle.getString("userName", ""));
             } else {
                 title.setText("Créer votre session");
-                userAvatar.setImageResource(R.drawable.a);
+                userAvatar.setImageResource(R.drawable.user_image_a);
             }
         }
     }
@@ -109,7 +106,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private void getUserAttribute(Bundle bundle) {
         userName = bundle.getString("userName", "");
         userId = bundle.getInt("userId", 0);
-        imageTmp = bundle.getString("userImage", String.valueOf(R.drawable.a));
+        imageTmp = bundle.getString("userImage", String.valueOf(R.drawable.user_image_a));
         imageLocation = imageTmp;
         userImageType = bundle.getInt("userImageType", -1);
     }
@@ -148,10 +145,8 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private void createUser() {
         if(imageLocation.indexOf(".jpg")> 0){
             userImageType = 30;
-            Log.e("WILLY", "pas app");
         }else{
             userImageType = 0;
-            Log.e("WILLY", "app");
         }
         if (isAddUser && isDataCorrect()) {
             db.appDao().insertUser(new User(textField_userName.getText().toString(), imageLocation, userImageType));
@@ -162,7 +157,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
             user.setUserImage(imageLocation);
             user.setUserImageType(userImageType);
             db.appDao().updateUser(user);
-            startUserResumePage();
+            GlobalUtils.startPage(UserEdit.this, "UserResume", true, true);
         } else if (!isDataCorrect()) {
             Toast.makeText(getApplicationContext(), "Veuillez saisir un prénom", Toast.LENGTH_SHORT).show();
         }
@@ -196,7 +191,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
-        vibrate();
+        MyVibrator.vibrate(UserEdit.this, 35);
         switch (v.getId()) {
             case R.id.userAvatar_editPage:
                 cpt = ++cpt % 4;
@@ -212,7 +207,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                 if (tabUserIsEmpty)
                     showMesageDialog("Voulez-vous quitter ?", "Vous n'avez aucune session, êtes vous sur de vouloir quitter ?", false);
                 else
-                    startUserResumePage();
+                    GlobalUtils.startPage(UserEdit.this, "UserResume", true, true);
                 break;
 
             case R.id.buttonDelete_userEditPage:
@@ -261,13 +256,6 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
-    public void vibrate() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            vibe.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
-        else
-            vibe.vibrate(35);
-    }
-
     private void getPhotoFromGallery() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             Intent intent = new Intent(Intent.ACTION_PICK);
@@ -296,13 +284,6 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
         if (force)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-        finish();
-    }
-
-    private void startUserResumePage() {
-        Intent intent = new Intent().setClass(getApplicationContext(), UserResume.class);
         startActivity(intent);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         finish();

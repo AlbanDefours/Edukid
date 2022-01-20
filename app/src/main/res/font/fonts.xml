@@ -4,4 +4,36 @@
         android:fontStyle="normal"
         android:fontWeight="400"
         android:font="@font/magimt" />
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/abstractgroovy" />
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/american_captain" />
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/autography" />
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/cream_cake" />
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/kg_second_chances" />
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/little_comet" />
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/sticky_notes" />
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/stop_bullying" />
 </font-family>
