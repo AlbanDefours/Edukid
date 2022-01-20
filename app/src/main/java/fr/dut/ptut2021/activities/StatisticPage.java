@@ -72,10 +72,39 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         displayNewUserPage();
     }
 
+    private void initOnClickViews() {
+        generalButton.setOnClickListener(this);
+        lettresButton.setOnClickListener(this);
+        chiffresButton.setOnClickListener(this);
+        nextPage.setOnClickListener(this);
+        previousPage.setOnClickListener(this);
+
+        generalButton.setEnabled(false);
+    }
+
+    private void initViews() {
+        userTitle = findViewById(R.id.title_StatisticPage);
+        generalButton = findViewById(R.id.buttonGeneral_statistics);
+        lettresButton = findViewById(R.id.buttonLettres_statistics);
+        chiffresButton = findViewById(R.id.buttonChiffres_statistics);
+        nextPage = findViewById(R.id.arrow_nextPage);
+        previousPage = findViewById(R.id.arrow_previousPage);
+
+        barChartTitle = findViewById(R.id.title_bar_chart);
+    }
+
+    private void createDbAndImportUsers() {
+        db = CreateDatabase.getInstance(StatisticPage.this);
+        if (!db.appDao().tabUserIsEmpty()) {
+            listUser = db.appDao().getAllUsers();
+        }
+    }
+
     private void displayNewUserPage() {
         if (!listUser.isEmpty()) displayUserTitle();
         displaygeneralButton();
     }
+
 
     private void displaygeneralButton() {
         barChartTitle.setText("Fréquence de jeu");
@@ -90,19 +119,28 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     }
 
-    private void createBarChart(Map<Integer, Integer> mapData) {
+    private void displayUserTitle() {
+        userTitle.setText(listUser.get(pageUser).getUserName());
+        verifyPageUserLocation();
+    }
+
+    private void createBarChart(Map<String, Integer> mapData) {
         BarChart barChart = findViewById(R.id.bar_chart);
         List<BarEntry> data = new ArrayList<>();
 
-        for (Map.Entry<Integer, Integer> val : mapData.entrySet())
-            data.add(new BarEntry(val.getKey(), val.getValue()));
+        String[] days = new String[7];
+        int it = 0;
+        for (Map.Entry<String, Integer> val : mapData.entrySet()) {
+            data.add(new BarEntry(it, val.getValue()));
+            days[it] = val.getKey();
+            it++;
+        }
 
         BarDataSet barDataSet = new BarDataSet(data, "Data");
         barDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
         barDataSet.setValueTextColor(Color.BLACK);
         barDataSet.setDrawValues(false);
 
-        String[] days = {"Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"};
         XAxis axis = barChart.getXAxis();
         axis.setTypeface(Typeface.MONOSPACE);
         axis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -133,38 +171,6 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         barChart.setExtraOffsets(0,0,0,5);
     }
 
-    private void createDbAndImportUsers() {
-        db = CreateDatabase.getInstance(StatisticPage.this);
-        if (!db.appDao().tabUserIsEmpty()) {
-            listUser = db.appDao().getAllUsers();
-        }
-    }
-
-    private void initViews() {
-        userTitle = findViewById(R.id.title_StatisticPage);
-        generalButton = findViewById(R.id.buttonGeneral_statistics);
-        lettresButton = findViewById(R.id.buttonLettres_statistics);
-        chiffresButton = findViewById(R.id.buttonChiffres_statistics);
-        nextPage = findViewById(R.id.arrow_nextPage);
-        previousPage = findViewById(R.id.arrow_previousPage);
-
-        barChartTitle = findViewById(R.id.title_bar_chart);
-    }
-
-    private void initOnClickViews() {
-        generalButton.setOnClickListener(this);
-        lettresButton.setOnClickListener(this);
-        chiffresButton.setOnClickListener(this);
-        nextPage.setOnClickListener(this);
-        previousPage.setOnClickListener(this);
-
-        generalButton.setEnabled(false);
-    }
-
-    private void displayUserTitle() {
-        userTitle.setText(listUser.get(pageUser).getUserName());
-        verifyPageUserLocation();
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private long getStartWeekTime() {
@@ -178,22 +184,25 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         return ldt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - (6* DAY_MILLIS);
     }
 
-    private Map<Integer, Integer> getGameFrequencyData() {
-        Map<Integer, Integer> mapData = new HashMap<>();
+    private Map<String, Integer> getGameFrequencyData() {
+        Map<String, Integer> mapData = new HashMap<>();
         List<GameResultLog> listLog = db.gameLogDao().getAllGameResultLogAfterTime(listUser.get(pageUser).getUserId(), startWeekTime);
 
-        final int NB_DAY = 7;
-        for (int i = 0; i < NB_DAY; i++) {
-            mapData.put(i, 0);
+        String[] days = {"Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"};
+        for (int i = 0; i < 7; i++) {
+            mapData.put(days[i], 0);
         }
 
+        int nbWeekDay = 0;
         for (int i = 0; i < listLog.size(); i++) {
             long gameTime = listLog.get(i).getEndGameDate();
-            for (int j = 0; j < NB_DAY; j++) {
-                if (startWeekTime + (DAY_MILLIS *j) <= gameTime && gameTime < startWeekTime + (DAY_MILLIS *(j+1))) {
-                    mapData.put(j, mapData.get(j)+1);
+            for (Map.Entry<String, Integer> val : mapData.entrySet()) {
+                if (startWeekTime + (DAY_MILLIS *nbWeekDay) <= gameTime && gameTime < startWeekTime + (DAY_MILLIS *(nbWeekDay+1))) {
+                    mapData.put(val.getKey(), mapData.get(val.getKey())+1);
                 }
+                nbWeekDay++;
             }
+            nbWeekDay = 0;
         }
         return mapData;
     }
