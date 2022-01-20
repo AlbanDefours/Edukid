@@ -164,7 +164,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         barChart.setData(barData);
 
         barChart.getDescription().setEnabled(false);
-        barChart.animateY(1000);
+        barChart.animateY(500);
         barChart.setTouchEnabled(false);
         barChart.setNoDataText("Commencer a jouer !");
         barChart.getLegend().setEnabled(false);
