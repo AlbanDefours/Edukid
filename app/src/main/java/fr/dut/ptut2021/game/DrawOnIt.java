@@ -30,6 +30,7 @@ import fr.dut.ptut2021.models.Point;
 import fr.dut.ptut2021.models.Symbol;
 import fr.dut.ptut2021.models.database.game.Card;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
+import fr.dut.ptut2021.utils.MyVibrator;
 
 public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener {
 
@@ -259,9 +260,11 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                         //TODO animation de fni avec les etoiles et toute cette merde
                     } else if (next) {
                         nextSymbol();
-                        
+                        //MyMediaPlayer.playSound(this, R.raw.correct_answer);
                         next = false;
                     }else{
+                        //MyMediaPlayer.playSound(this, R.raw.wrong_answer);
+                        //MyVibrator.vibrate(this, 60);
                         reDraw();
                     }
                     oldUpx = 0;
