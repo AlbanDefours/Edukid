@@ -117,31 +117,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     private void displayNewCategoryPage() {
         createBarChart(getGameFrequencyData());
-        Map<Game, Integer> gameCountMap = new LinkedHashMap<>();
-
-        for (int i = 0; i < gameList.size(); i++) {
-            gameCountMap.put(gameList.get(i), db.gameLogDao().getGameResultLogNbGame(listUser.get(pageUser).getUserId(), gameList.get(i).getGameId()));
-        }
-
-        Game minGame = gameList.get(0), maxGame = gameList.get(0);
-        int minIt, maxIt;
-        minIt = maxIt = gameCountMap.get(gameList.get(0));
-
-        for (Map.Entry<Game, Integer> val : gameCountMap.entrySet()) {
-            if (val.getValue() < minIt) {
-                minGame = val.getKey();
-                minIt = val.getValue();
-            }
-            if (val.getValue() > maxIt) {
-                maxGame = val.getKey();
-                maxIt = val.getValue();
-            }
-        }
-
-        leftStatText.setText(maxGame.getGameName());
-        leftStatIcon.setImageResource(maxGame.getGameImage());
-        rightStatText.setText(minGame.getGameName());
-        rightStatIcon.setImageResource(minGame.getGameImage());
+        setStatsText();
     }
 
     private void displayUserTitle() {
@@ -201,6 +177,41 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         barChart.setNoDataText("Commencer a jouer !");
         barChart.getLegend().setEnabled(false);
         barChart.setExtraOffsets(0,0,0,5);
+    }
+
+    private void setStatsText() {
+        Map<Game, Integer> gameCountMap = new LinkedHashMap<>();
+
+        for (int i = 0; i < gameList.size(); i++) {
+            if (categoryName.equals("Chiffres") || categoryName.equals("Lettres")) {
+                if (gameList.get(i).getThemeName().equals(categoryName))
+                    gameCountMap.put(gameList.get(i), db.gameLogDao().getGameResultLogNbGame(listUser.get(pageUser).getUserId(), gameList.get(i).getGameId()));
+            } else {
+                gameCountMap.put(gameList.get(i), db.gameLogDao().getGameResultLogNbGame(listUser.get(pageUser).getUserId(), gameList.get(i).getGameId()));
+            }
+        }
+
+        Game minGame = null, maxGame = null;
+        int minIt = -1, maxIt = -1;
+
+        for (Map.Entry<Game, Integer> val : gameCountMap.entrySet()) {
+            if (val.getValue() < minIt || minIt == -1) {
+                minGame = val.getKey();
+                minIt = val.getValue();
+            }
+            if (val.getValue() > maxIt || maxIt == -1) {
+                maxGame = val.getKey();
+                maxIt = val.getValue();
+            }
+        }
+        if (minGame != null) {
+            leftStatText.setText(maxGame.getGameName());
+            leftStatIcon.setImageResource(maxGame.getGameImage());
+        }
+        if (maxGame != null) {
+            rightStatText.setText(minGame.getGameName());
+            rightStatIcon.setImageResource(minGame.getGameImage());
+        }
     }
 
 
