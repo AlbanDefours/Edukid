@@ -424,7 +424,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
               db.gameDao().updateMemoryData(memoData);
               db.gameDao().resetAllMemoryDataStreak(userId, category, subCat);
               db.gameDao().resetAllMemoryDataCardUsed(userId, category, subCat);
-              GlobalUtils.startGame(this,"SubMemory");
+              GlobalUtils.startGame(this,"SubMemory",true,true);
             }else{
                 MyVibrator.vibrate(this, 60);
                 GlobalUtils.toast(this,"Fini le niveau "+difficultyMax+" avant de pouvoir jouer au niveau "+stateNumber,false);
