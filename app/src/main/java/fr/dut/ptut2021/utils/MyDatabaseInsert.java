@@ -23,7 +23,7 @@ public class MyDatabaseInsert {
         createGames();
         createSubGames();
         createWords();
-        createCards();
+        createCards(context);
     }
 
     public static void createThemes() {
@@ -82,7 +82,7 @@ public class MyDatabaseInsert {
         db.appDao().insertWord(new Word("ZÈBRE", R.drawable.image_zebre));
     }
 
-    public static void createCards() {
+    public static void createCards(Context context) {
         db.gameDao().insertCard(new Card("1", "Chiffres", R.drawable.number_one));
         db.gameDao().insertCard(new Card("2", "Chiffres", R.drawable.number_two));
         db.gameDao().insertCard(new Card("3", "Chiffres", R.drawable.number_three));
@@ -92,5 +92,11 @@ public class MyDatabaseInsert {
         db.gameDao().insertCard(new Card("7", "Chiffres", R.drawable.number_seven));
         db.gameDao().insertCard(new Card("8", "Chiffres", R.drawable.number_eight));
         db.gameDao().insertCard(new Card("9", "Chiffres", R.drawable.number_nine));
+
+
+        String[] alphabetList = context.getResources().getStringArray(R.array.alphabet);
+        for(int i=0;i<alphabetList.length;i++){
+            db.gameDao().insertCard(new Card(alphabetList[i], "Lettres", 0));
+        }
     }
 }

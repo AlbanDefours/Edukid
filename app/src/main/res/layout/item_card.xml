@@ -15,8 +15,16 @@
             android:layout_centerInParent="true"
             android:layout_margin="10px"
             app:srcCompat="@drawable/backgroundmemory" />
+
+        <TextView
+            android:id="@+id/interieurCardLettre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_centerInParent="true"/>
+
         <RelativeLayout
-            android:id="@+id/interieurCard"
+            android:id="@+id/interieurCardChiffre"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true">
