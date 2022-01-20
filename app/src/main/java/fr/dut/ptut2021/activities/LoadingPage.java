@@ -56,6 +56,7 @@ public class LoadingPage extends AppCompatActivity {
         createCards();
     }
 
+    //TODO creer une classe static pour DB
     //Here to add/update/delete Theme
     private void createThemes() {
         db.appDao().insertTheme(new Theme(themeLettres, R.drawable.lettres));
@@ -65,13 +66,13 @@ public class LoadingPage extends AppCompatActivity {
     //Here to add/update/delete Game
     private void createGames() {
         if (db.appDao().tabGameIsEmpty()) {
-            db.appDao().insertGame(new Game("Memory", themeLettres, R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Dessine", themeLettres, R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Mot à trou", themeLettres, R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Ecoute", themeLettres, R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Memory", themeChiffres, R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Dessine", themeChiffres, R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Ecoute", themeChiffres, R.drawable.memory_icon));
+            db.appDao().insertGame(new Game("Memory", themeLettres, R.drawable.memory_icon));//TODO icone
+            db.appDao().insertGame(new Game("Dessine", themeLettres, R.drawable.memory_icon));//TODO icone
+            db.appDao().insertGame(new Game("Mot à trou", themeLettres, R.drawable.memory_icon));//TODO icone
+            db.appDao().insertGame(new Game("Ecoute", themeLettres, R.drawable.logo_playwithsound_lettre));
+            db.appDao().insertGame(new Game("Memory", themeChiffres, R.drawable.logo_memory));
+            db.appDao().insertGame(new Game("Dessine", themeChiffres, R.drawable.logo_drawonit));
+            db.appDao().insertGame(new Game("Ecoute", themeChiffres, R.drawable.logo_playwithsound));
         }
     }
 
