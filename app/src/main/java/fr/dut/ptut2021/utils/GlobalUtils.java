@@ -22,7 +22,7 @@ import fr.dut.ptut2021.game.WordWithHole;
 
 public class GlobalUtils {
 
-    public static void startGame(Context context, String gameName) {
+    public static void startGame(Context context, String gameName, boolean finish, boolean animation) {
         switch (gameName) {
             case "Ecoute":
                 context.startActivity(new Intent().setClass(context, PlayWithSound.class));
@@ -40,6 +40,10 @@ public class GlobalUtils {
                 context.startActivity(new Intent().setClass(context, WordWithHole.class));
                 break;
         }
+        if (animation)
+            ((Activity) context).overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+        if(finish)
+            ((Activity) context).finish();
     }
 
     public static void startEditPage(Context context){

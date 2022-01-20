@@ -38,7 +38,7 @@ public class GameMenu extends AppCompatActivity {
                     public void onItemClick(View view, int position) {
                         MyVibrator.vibrate(GameMenu.this, 35);
                         saveGameName(position);
-                        GlobalUtils.startGame(GameMenu.this, gameList.get(position).getGameName());
+                        GlobalUtils.startGame(GameMenu.this, gameList.get(position).getGameName(), false, false);
                     }
 
                     @Override
