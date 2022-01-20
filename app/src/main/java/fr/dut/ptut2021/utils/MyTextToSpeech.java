@@ -3,6 +3,7 @@ package fr.dut.ptut2021.utils;
 import android.content.Context;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 
 import java.util.Locale;
 
@@ -26,7 +27,8 @@ public class MyTextToSpeech {
     }
 
     public static void stop(){
-        textToSpeech.stop();
-        textToSpeech.shutdown();
+        if(textToSpeech != null){
+            textToSpeech.shutdown();
+        }
     }
 }
