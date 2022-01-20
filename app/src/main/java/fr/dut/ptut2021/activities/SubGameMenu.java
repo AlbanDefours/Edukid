@@ -17,15 +17,16 @@ import fr.dut.ptut2021.adapters.subgame.SubGameAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.game.Memory;
 import fr.dut.ptut2021.models.database.app.Game;
+import fr.dut.ptut2021.models.database.app.SubGame;
 import fr.dut.ptut2021.utils.*;
 
 public class SubGameMenu extends AppCompatActivity {
 
-    private String themeName;
-    private int userId;
+    private String themeName, gameName;
     private CreateDatabase db = null;
     private RecyclerView recyclerViewListGame;
-    private List<Game> subgameList = new ArrayList<>();
+    private List<SubGame> subGameList;
+    private int userId;
     private List<Boolean> subgamelocks = new ArrayList<>();
 
     @Override
@@ -34,15 +35,17 @@ public class SubGameMenu extends AppCompatActivity {
         setContentView(R.layout.activity_subgame_menu);
         db = CreateDatabase.getInstance(SubGameMenu.this);
 
+        db = CreateDatabase.getInstance(getApplicationContext());
         themeName = MySharedPreferences.getThemeName(SubGameMenu.this);
+        gameName = MySharedPreferences.getGameName(SubGameMenu.this);
+        createRecyclerView();
+
+        subGameList = db.appDao().getAllSubGamesByGame(db.appDao().getGameId(gameName, themeName));
+
         userId = MySharedPreferences.getUserId(SubGameMenu.this);
         createRecyclerView();
 
-        subgameList.add(new Game("Image / Image", R.drawable.img_img));
-        subgameList.add(new Game("Image / Image différente", R.drawable.img_imgdiff));
-        subgameList.add(new Game("Chiffre / Chiffre", R.drawable.chiffre_chiffre));
-        subgameList.add(new Game("Image / Chiffre", R.drawable.img_chiffre));
-        for (int i=0;i<subgameList.size();i++){
+        for (int i=0;i<subGameList.size();i++){
             subgamelocks.add(isLock(i));
         }
 
@@ -56,7 +59,7 @@ public class SubGameMenu extends AppCompatActivity {
                             GlobalUtils.startGame(SubGameMenu.this, "SubMemory");
                         }else{
                             MyVibrator.vibrate(SubGameMenu.this, 60);
-                            GlobalUtils.toast(SubGameMenu.this,"Atteint le niveau 4 dans le jeu "+subgameList.get(position-1).getGameName(),false);
+                            GlobalUtils.toast(SubGameMenu.this,"Atteint le niveau 4 dans le jeu "+subGameList.get(position-1).getSubGameName(),false);
                         }
                     }
 
@@ -97,13 +100,14 @@ public class SubGameMenu extends AppCompatActivity {
     }
 
     private void saveGameName(int position){
-        MySharedPreferences.setSharedPreferencesString(SubGameMenu.this, "subGameName", subgameList.get(position).getGameName());
+        MySharedPreferences.setSharedPreferencesString(SubGameMenu.this, "subGameName", subGameList.get(position).getSubGameName());
         MySharedPreferences.commit();
     }
 
     private void createRecyclerView() {
         recyclerViewListGame = findViewById(R.id.recyclerview_subgame);
         recyclerViewListGame.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewListGame.setAdapter(new SubGameAdapter(getApplicationContext(), subgameList,subgamelocks));
+
+        recyclerViewListGame.setAdapter(new SubGameAdapter(getApplicationContext(), subGameList, subgamelocks));
     }
 }

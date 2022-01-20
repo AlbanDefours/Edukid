@@ -9,41 +9,20 @@ import androidx.room.Update;
 import java.util.List;
 
 import fr.dut.ptut2021.models.database.app.Game;
-import fr.dut.ptut2021.models.database.app.GameSubGameCrossRef;
 import fr.dut.ptut2021.models.database.app.SubGame;
 import fr.dut.ptut2021.models.database.app.Theme;
-import fr.dut.ptut2021.models.database.app.ThemeGameCrossRef;
 import fr.dut.ptut2021.models.database.app.User;
 import fr.dut.ptut2021.models.database.app.Word;
 
 @Dao
 public interface AppDao {
 
-    //ThemeGameCrossRef
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertThemeGame(ThemeGameCrossRef themeGame);
-
-    @Query("SELECT * FROM ThemeGameCrossRef")
-    List<ThemeGameCrossRef> getAllThemeGame();
-
-    default boolean tabThemeGameIsEmpty() {
-        return getAllThemeGame().isEmpty();
-    }
-
-    //Request between Game and ThemeGameCrossRef
-    @Query("SELECT Game.* FROM Game NATURAL JOIN ThemeGameCrossRef WHERE themeName = :themeName")
-    List<Game> getAllGamesByTheme(String themeName);
-
-
     //ThemeDao
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertTheme(Theme theme);
 
     @Query("SELECT * FROM Theme")
     List<Theme> getAllThemes();
-
-    @Query("SELECT * FROM Theme WHERE themeId = :themeId")
-    Theme getThemeById(int themeId);
 
     @Query("SELECT * FROM Theme WHERE themeName = :themeName")
     Theme getThemeByName(String themeName);
@@ -51,29 +30,28 @@ public interface AppDao {
     @Update
     void updateTheme(Theme theme);
 
-    @Query("DELETE FROM Theme WHERE themeId = :themeId")
-    void deleteThemeById(int themeId);
+    @Query("DELETE FROM Theme WHERE themeName = :themeName")
+    void deleteThemeByName(int themeName);
 
     @Query("DELETE FROM Theme")
     void deleteAllThemes();
 
-    default boolean tabThemeIsEmpty() {
-        return getAllThemes().isEmpty();
-    }
-
 
     //GameDao
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertGame(Game game);
 
     @Query("SELECT * FROM Game")
     List<Game> getAllGames();
 
+    @Query("SELECT * FROM Game WHERE themeName = :themeName")
+    List<Game> getAllGamesByTheme(String themeName);
+
     @Query("SELECT * FROM Game WHERE gameId = :gameId")
     Game getGameById(int gameId);
 
-    @Query("SELECT * FROM Game WHERE gameName = :gameName")
-    Game getGameByName(String gameName);
+    @Query("SELECT gameId FROM Game WHERE gameName = :gameName AND themeName = :themeName")
+    int getGameId(String gameName, String themeName);
 
     @Update
     void updateGame(Game game);
@@ -88,12 +66,16 @@ public interface AppDao {
         return getAllGames().isEmpty();
     }
 
+
     //SubGame
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertSubGame(SubGame subGame);
 
     @Query("SELECT * FROM SubGame")
     List<SubGame> getAllSubGames();
+
+    @Query("SELECT * FROM SubGame WHERE gameId = :gameId")
+    List<SubGame> getAllSubGamesByGame(int gameId);
 
     @Query("SELECT * FROM SubGame WHERE subGameId = :subGameId")
     SubGame getSubGameById(int subGameId);
@@ -115,23 +97,8 @@ public interface AppDao {
     }
 
 
-    //GameSubGameCrossRef
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertGameSubGame(GameSubGameCrossRef gameSubGameCrossRef);
-
-    @Query("SELECT * FROM GameSubGameCrossRef")
-    List<GameSubGameCrossRef> getAllGameSubGame();
-
-    default boolean tabGameSubGameIsEmpty() {
-        return getAllGameSubGame().isEmpty();
-    }
-
-    @Query("SELECT SubGame.* FROM SubGame NATURAL JOIN GameSubGameCrossRef WHERE gameName = :gameName")
-    List<SubGame> getAllSubGamesByGame(String gameName);
-
-
     //UserDao
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertUser(User user);
 
     @Query("SELECT * FROM User")
@@ -161,7 +128,7 @@ public interface AppDao {
 
 
     //Word
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertWord(Word word);
 
     @Query("SELECT * FROM Word")
@@ -171,9 +138,6 @@ public interface AppDao {
     int getNbWords();
 
     @Query("SELECT * FROM Word WHERE word LIKE :str")
-    Word getWordIfContain(String str);
+    List<Word> getWordIfContain(String str);
 
-    default boolean tabWordIsEmpty() {
-        return getAllWords().isEmpty();
-    }
 }

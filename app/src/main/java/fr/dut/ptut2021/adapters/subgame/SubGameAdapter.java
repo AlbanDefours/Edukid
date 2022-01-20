@@ -12,16 +12,17 @@ import java.util.List;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.models.database.app.Game;
+import fr.dut.ptut2021.models.database.app.SubGame;
 
 public class SubGameAdapter extends RecyclerView.Adapter<MyViewHolderSubGame> {
 
     Context  context;
-    List<Game> listGame;
+    List<SubGame> listSubGame;
     List<Boolean> locks;
 
-    public SubGameAdapter(Context context, List<Game> listGame, List<Boolean> locks) {
+    public SubGameAdapter(Context context, List<SubGame> listSubGame, List<Boolean> locks) {
         this.context = context;
-        this.listGame = listGame;
+        this.listSubGame = listSubGame;
         this.locks = locks;
     }
 
@@ -33,8 +34,9 @@ public class SubGameAdapter extends RecyclerView.Adapter<MyViewHolderSubGame> {
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolderSubGame holder, int position) {
-        holder.name.setText(listGame.get(position).getGameName());
-        holder.image.setImageResource(listGame.get(position).getGameImage());
+        holder.name.setText(listSubGame.get(position).getSubGameName());
+        holder.image.setImageResource(listSubGame.get(position).getSubGameImage());
+
         if(locks.get(position)){
             holder.lock.setVisibility(View.VISIBLE);
         }
@@ -45,6 +47,6 @@ public class SubGameAdapter extends RecyclerView.Adapter<MyViewHolderSubGame> {
 
     @Override
     public int getItemCount() {
-        return listGame.size();
+        return listSubGame.size();
     }
 }
