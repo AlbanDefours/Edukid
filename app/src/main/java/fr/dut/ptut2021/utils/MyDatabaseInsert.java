@@ -39,9 +39,9 @@ public class MyDatabaseInsert {
             db.appDao().insertGame(new Game("Dessine", themeLettres, R.drawable.memory_icon));
             db.appDao().insertGame(new Game("Mot à trou", themeLettres, R.drawable.memory_icon));
             db.appDao().insertGame(new Game("Ecoute", themeLettres, R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Memory", themeChiffres, R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Dessine", themeChiffres, R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Ecoute", themeChiffres, R.drawable.memory_icon));
+            db.appDao().insertGame(new Game("Memory", themeChiffres, R.drawable.logo_memory));
+            db.appDao().insertGame(new Game("Dessine", themeChiffres, R.drawable.logo_drawonit));
+            db.appDao().insertGame(new Game("Ecoute", themeChiffres, R.drawable.logo_playwithsound));
         }
     }
 
