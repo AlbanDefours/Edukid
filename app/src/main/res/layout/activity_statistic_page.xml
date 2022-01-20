@@ -113,7 +113,7 @@
                     android:layout_marginRight="20dp">
 
                     <TextView
-                        android:id="@+id/title_gauche_stats"
+                        android:id="@+id/title_left_stat1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Titre"
@@ -124,24 +124,24 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView
-                        android:id="@+id/icone1_stats"
+                        android:id="@+id/image_left_stat1"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:src="@drawable/icon_star"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/title_gauche_stats" />
+                        app:layout_constraintTop_toBottomOf="@+id/title_left_stat1" />
 
                     <TextView
-                        android:id="@+id/text_stat1"
+                        android:id="@+id/text_left_stat1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toEndOf="@+id/icone1_stats"
+                        android:layout_toEndOf="@+id/image_left_stat1"
                         android:text="@string/general"
                         android:textSize="15sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/icone1_stats"
-                        app:layout_constraintTop_toBottomOf="@+id/title_gauche_stats" />
+                        app:layout_constraintStart_toEndOf="@+id/image_left_stat1"
+                        app:layout_constraintTop_toBottomOf="@+id/title_left_stat1" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -151,7 +151,7 @@
                     android:layout_marginLeft="20dp">
 
                     <TextView
-                        android:id="@+id/title_droite_stats"
+                        android:id="@+id/title_right_stat1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Titre"
@@ -162,23 +162,23 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView
-                        android:id="@+id/imageView"
+                        android:id="@+id/image_right_stat1"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:src="@drawable/icon_star"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/title_droite_stats" />
+                        app:layout_constraintTop_toBottomOf="@+id/title_right_stat1" />
 
                     <TextView
-                        android:id="@+id/text_stat2"
+                        android:id="@+id/text_right_stat1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/lettres"
                         android:textSize="15sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/imageView"
-                        app:layout_constraintTop_toTopOf="@+id/imageView" />
+                        app:layout_constraintStart_toEndOf="@+id/image_right_stat1"
+                        app:layout_constraintTop_toTopOf="@+id/image_right_stat1" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

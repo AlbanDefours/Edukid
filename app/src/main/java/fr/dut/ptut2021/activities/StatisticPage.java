@@ -43,21 +43,23 @@ import java.util.Map;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.models.database.app.Game;
 import fr.dut.ptut2021.models.database.app.User;
 import fr.dut.ptut2021.models.database.log.GameResultLog;
 import fr.dut.ptut2021.utils.MyVibrator;
 
 public class StatisticPage extends AppCompatActivity implements View.OnClickListener {
 
-    private int pageUser = 0, pageCategory = 0;
-    private TextView userTitle, barChartTitle;
+    private CreateDatabase db = null;
+    private int pageUser = 0;
+    private TextView userTitle, barChartTitle, leftStatTitle, rightStatTitle, leftStatText, rightStatText;
     private int page = 0;
     private List<User> listUser;
-    private CreateDatabase db = null;
+    private List<Game> gameList;
     private Button generalButton, lettresButton, chiffresButton;
-    private ImageView nextPage, previousPage;
+    private ImageView nextPage, previousPage, leftStatIcon, rightStatIcon;
+    private String categoryName = "General";
     private long startWeekTime;
-    private String startWeekDate;
     private final long DAY_MILLIS = 24*3600*1000;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -91,6 +93,12 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         previousPage = findViewById(R.id.arrow_previousPage);
 
         barChartTitle = findViewById(R.id.title_bar_chart);
+        leftStatTitle = findViewById(R.id.title_left_stat1);
+        rightStatTitle = findViewById(R.id.title_right_stat1);
+        leftStatText = findViewById(R.id.text_left_stat1);
+        rightStatText = findViewById(R.id.text_right_stat1);
+        leftStatIcon = findViewById(R.id.image_left_stat1);
+        rightStatIcon = findViewById(R.id.image_right_stat1);
     }
 
     private void createDbAndImportUsers() {
@@ -98,30 +106,54 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         if (!db.appDao().tabUserIsEmpty()) {
             listUser = db.appDao().getAllUsers();
         }
+        gameList = db.appDao().getAllGames();
     }
 
     private void displayNewUserPage() {
         if (!listUser.isEmpty()) displayUserTitle();
-        displayGeneralPage();
+        setTitleText();
+        displayNewCategoryPage();
     }
 
-
-    private void displayGeneralPage() {
-        barChartTitle.setText("Fréquence de jeu");
+    private void displayNewCategoryPage() {
         createBarChart(getGameFrequencyData());
-    }
+        Map<Game, Integer> gameCountMap = new LinkedHashMap<>();
 
-    private void displayChiffresPage() {
+        for (int i = 0; i < gameList.size(); i++) {
+            gameCountMap.put(gameList.get(i), db.gameLogDao().getGameResultLogNbGame(listUser.get(pageUser).getUserId(), gameList.get(i).getGameId()));
+        }
 
-    }
+        Game minGame = gameList.get(0), maxGame = gameList.get(0);
+        int minIt, maxIt;
+        minIt = maxIt = gameCountMap.get(gameList.get(0));
 
-    private void displayLettresPage() {
+        for (Map.Entry<Game, Integer> val : gameCountMap.entrySet()) {
+            if (val.getValue() < minIt) {
+                minGame = val.getKey();
+                minIt = val.getValue();
+            }
+            if (val.getValue() > maxIt) {
+                maxGame = val.getKey();
+                maxIt = val.getValue();
+            }
+        }
 
+        leftStatText.setText(maxGame.getGameName());
+        leftStatIcon.setImageResource(maxGame.getGameImage());
+        rightStatText.setText(minGame.getGameName());
+        rightStatIcon.setImageResource(minGame.getGameImage());
     }
 
     private void displayUserTitle() {
         userTitle.setText(listUser.get(pageUser).getUserName());
         verifyPageUserLocation();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setTitleText() {
+        barChartTitle.setText("Fréquence de jeu");
+        leftStatTitle.setText("Jeu le plus joué");
+        rightStatTitle.setText("Jeu le moins joué");
     }
 
     private void createBarChart(Map<String, Integer> mapData) {
@@ -187,7 +219,12 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     private Map<String, Integer> getGameFrequencyData() {
         Map<String, Integer> mapData = new LinkedHashMap<>();
         //La map se mélange si ce n'est pas une LinkedHashMap
-        List<GameResultLog> listLog = db.gameLogDao().getAllGameResultLogAfterTime(listUser.get(pageUser).getUserId(), startWeekTime);
+        List<GameResultLog> listLog;
+
+        if (categoryName.equals("Chiffres") || categoryName.equals("Lettres"))
+            listLog = db.gameLogDao().getAllGameResultLogAfterTimeByTheme(listUser.get(pageUser).getUserId(), categoryName, startWeekTime);
+        else
+            listLog = db.gameLogDao().getAllGameResultLogAfterTime(listUser.get(pageUser).getUserId(), startWeekTime);
 
         DateFormat df = new SimpleDateFormat("E", Locale.FRENCH);
         for (int i = 0; i < 7; i++) {
@@ -230,18 +267,18 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.buttonGeneral_statistics:
                 lockButton(generalButton);
-                pageCategory = 0;
-                displayGeneralPage();
+                categoryName = "General";
+                displayNewCategoryPage();
                 break;
             case R.id.buttonChiffres_statistics:
                 lockButton(chiffresButton);
-                pageCategory = 1;
-                displayChiffresPage();
+                categoryName = "Chiffres";
+                displayNewCategoryPage();
                 break;
             case R.id.buttonLettres_statistics:
                 lockButton(lettresButton);
-                pageCategory = 2;
-                displayLettresPage();
+                categoryName = "Lettres";
+                displayNewCategoryPage();
                 break;
 
             case R.id.arrow_nextPage:
