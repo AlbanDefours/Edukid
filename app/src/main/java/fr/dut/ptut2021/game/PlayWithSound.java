@@ -306,4 +306,11 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             }
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MyMediaPlayer.stop();
+        MyTextToSpeech.stop();
+    }
 }

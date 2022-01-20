@@ -109,4 +109,10 @@ public class ResultGamePage extends AppCompatActivity {
             MyMediaPlayer.playSound(this, R.raw.kids_cheering);
         }, 800L * nbStars + 200);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopAllHandler();
+    }
 }

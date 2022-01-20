@@ -54,6 +54,7 @@ public class GameMenu extends AppCompatActivity {
 
     private void saveGameName(int position){
         MySharedPreferences.setSharedPreferencesString(this, "gameName", gameList.get(position).getGameName());
+        MySharedPreferences.setSharedPreferencesInt(this, "gameId", gameList.get(position).getGameId());
         MySharedPreferences.commit();
     }
 
