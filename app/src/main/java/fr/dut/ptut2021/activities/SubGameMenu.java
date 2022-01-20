@@ -77,19 +77,19 @@ public class SubGameMenu extends AppCompatActivity {
                 case 1:
                     return false;
                 case 2:
-                    if (db.gameDao().getMemoryDataDifficulty(userId, themeName, 1) >= 4) {
+                    if (db.gameDao().getMemoryDataMaxDifficulty(userId, themeName, 1) >= 4) {
                         return false;
                     } else {
                         return true;
                     }
                 case 3:
-                    if (db.gameDao().getMemoryDataDifficulty(userId, themeName, 2) >= 4) {
+                    if (db.gameDao().getMemoryDataMaxDifficulty(userId, themeName, 2) >= 4) {
                         return false;
                     } else {
                         return true;
                     }
                 case 4:
-                    if (db.gameDao().getMemoryDataDifficulty(userId, themeName, 3) >= 4) {
+                    if (db.gameDao().getMemoryDataMaxDifficulty(userId, themeName, 3) >= 4) {
                         return false;
                     } else {
                         return true;

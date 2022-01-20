@@ -21,14 +21,17 @@ import java.util.Collections;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.activities.ResultGamePage;
+import fr.dut.ptut2021.activities.SubGameMenu;
 import fr.dut.ptut2021.adapters.MemoryAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.MemoryCard;
 import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.MemoryData;
 import fr.dut.ptut2021.models.database.game.MemoryDataCardCrossRef;
+import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
 import fr.dut.ptut2021.utils.MySharedPreferences;
+import fr.dut.ptut2021.utils.MyVibrator;
 
 
 public class Memory extends AppCompatActivity implements OnStateItemClickListener {
@@ -38,6 +41,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     boolean isClicked=false;
     private CreateDatabase db;
     private int difficulty;
+    private int difficultyMax;
     private int userId;
     private String category;
     private int subCat;
@@ -116,9 +120,11 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             memoData.setWinStreak(0);
             memoData.setLoseStreak(db.gameDao().getMemoryData(userId,category,subCat).getLoseStreak()+1);
         }
-        db.gameDao().updateMemoryData(memoData);
-        Log.e("memory","WinStreak : "+db.gameDao().getMemoryData(userId,category,subCat).getWinStreak());
-        Log.e("memory","LoseStreak : "+db.gameDao().getMemoryData(userId,category,subCat).getLoseStreak());
+        if(difficulty==difficultyMax) {
+            db.gameDao().updateMemoryData(memoData);
+            Log.e("memory", "WinStreak : " + db.gameDao().getMemoryData(userId, category, subCat).getWinStreak());
+            Log.e("memory", "LoseStreak : " + db.gameDao().getMemoryData(userId, category, subCat).getLoseStreak());
+        }
         changeDifficulty();
 
         new Handler().postDelayed(() -> {
@@ -151,6 +157,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         }
         db.gameDao().insertMemoryData(new MemoryData(userId,category,subCat));
         difficulty = db.gameDao().getMemoryData(userId,category,subCat).getDifficulty();
+        difficultyMax = db.gameDao().getMemoryData(userId,category,subCat).getMaxDifficulty();
         Log.e("memory","BD initialisé");
         for (int i=0;i<9;i++){
             db.gameDao().insertMemoryDataCard(new MemoryDataCardCrossRef(String.valueOf(i+1),userId,category,subCat));
@@ -160,6 +167,8 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     private void initProgressBar(){
         stateProgressBar = findViewById(R.id.progressBarMemory);
         stateProgressBarLock = findViewById(R.id.progressBarMemoryLock);
+        stateProgressBar.setCurrentStateNumber(getStateNumberDifficulty(difficulty));
+        stateProgressBarLock.setCurrentStateNumber(getStateNumberDifficulty(difficultyMax));
         stateProgressBar.setOnStateItemClickListener(this);
     }
 
@@ -168,12 +177,12 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory);
         Log.e("memory","debut Création du memory");
-        initProgressBar();
+
 
         category = MySharedPreferences.getThemeName(this);
         userId = MySharedPreferences.getUserId(this);
         initDB();
-
+        initProgressBar();
         if(category.equals("Chiffres") ){
             initCardChiffre(getNbCard());
         }
@@ -242,14 +251,16 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             if(!isUsed) {
                 nbChoice++;
                 listMemoryCard.add(new MemoryCard(String.valueOf(value),getImage1(value)));
-                db.gameDao().updateMemoryDataCardUsed(userId,
-                        category,
-                        subCat,
-                        String.valueOf(value),
-                        db.gameDao().getMemoryDataCardUsed(userId,
-                                category,
-                                subCat,
-                                String.valueOf(value))+1);
+                if(difficulty==difficultyMax) {
+                    db.gameDao().updateMemoryDataCardUsed(userId,
+                            category,
+                            subCat,
+                            String.valueOf(value),
+                            db.gameDao().getMemoryDataCardUsed(userId,
+                                    category,
+                                    subCat,
+                                    String.valueOf(value)) + 1);
+                }
 
                 Log.e("memory","Carte ajouté: "+value);
             }
@@ -280,19 +291,16 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     }
 
     private void changeDifficulty(){
-        Log.e("memory","La difficulté est analysé");
-        Log.e("memory","Nombre de carte en dessous de 3 : "+NbCardUsedLessThan(3));
-        if( db.gameDao().getMemoryData(userId,category,subCat).getWinStreak() >= 2 && NbCardUsedLessThan(3)==0 && difficulty+1<=5){
-            Log.e("memory","Monte au niveau "+(difficulty+1));
-            db.gameDao().increaseMemoryDataDifficulty(userId,category,subCat);
-            db.gameDao().resetAllMemoryDataStreak(userId,category,subCat);
-            db.gameDao().resetAllMemoryDataCardUsed(userId,category,subCat);
-        }
-        if(db.gameDao().getMemoryData(userId,category,subCat).getLoseStreak()>=3 && difficulty-1>=1){
-            Log.e("memory","Baisse au niveau "+(difficulty-1));
-            db.gameDao().decreaseMemoryDataDifficulty(userId,category,subCat);
-            db.gameDao().resetAllMemoryDataStreak(userId,category,subCat);
-            db.gameDao().resetAllMemoryDataCardUsed(userId,category,subCat);
+        if(difficulty==difficultyMax) {
+            Log.e("memory","La difficulté est analysé");
+            Log.e("memory","Nombre de carte en dessous de 3 : "+NbCardUsedLessThan(3));
+            if (db.gameDao().getMemoryData(userId, category, subCat).getWinStreak() >= 2 && NbCardUsedLessThan(3) == 0 && difficulty + 1 <= 5) {
+                Log.e("memory", "Monte au niveau " + (difficulty + 1));
+                db.gameDao().increaseMemoryDataDifficulty(userId, category, subCat);
+                db.gameDao().increaseMemoryDataMaxDifficulty(userId,category,subCat);
+                db.gameDao().resetAllMemoryDataStreak(userId, category, subCat);
+                db.gameDao().resetAllMemoryDataCardUsed(userId, category, subCat);
+            }
         }
     }
 
@@ -324,6 +332,22 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                 return "five";
         }
         return "ERREUR: Difficulty invalid";
+    }
+
+    private StateProgressBar.StateNumber getStateNumberDifficulty(int difficulty){
+        switch (difficulty){
+            case 1:
+                return StateProgressBar.StateNumber.ONE;
+            case 2:
+                return StateProgressBar.StateNumber.TWO;
+            case 3:
+                return StateProgressBar.StateNumber.THREE;
+            case 4:
+                return StateProgressBar.StateNumber.FOUR;
+            case 5:
+                return StateProgressBar.StateNumber.FIVE;
+        }
+        return null;
     }
 
     private int getIntDifficulty(String difficulty){
@@ -392,9 +416,18 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
 //TODO faire les bouton sur la progresse Bar avec max diffulté déjà atteinte
     @Override
     public void onStateItemClick(StateProgressBar stateProgressBar, StateItem stateItem, int stateNumber, boolean isCurrentState) {
+        Log.e("memoryProgressBar","ça détecte !");
         if(stateProgressBar == this.stateProgressBar){
-            if(stateNumber<=difficulty){
-                
+            if(stateNumber<=difficultyMax){
+              MemoryData memoData =   db.gameDao().getMemoryData(userId,category,subCat);
+              memoData.setDifficulty(stateNumber);
+              db.gameDao().updateMemoryData(memoData);
+              db.gameDao().resetAllMemoryDataStreak(userId, category, subCat);
+              db.gameDao().resetAllMemoryDataCardUsed(userId, category, subCat);
+              GlobalUtils.startGame(this,"SubMemory");
+            }else{
+                MyVibrator.vibrate(this, 60);
+                GlobalUtils.toast(this,"Fini le niveau "+difficultyMax+" avant de pouvoir jouer au niveau "+stateNumber,false);
             }
         }
     }
