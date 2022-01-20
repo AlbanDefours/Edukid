@@ -1,42 +1,77 @@
 package fr.dut.ptut2021.models.database.game;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity
+@Entity(primaryKeys = {"userId", "category", "subCategory"})
 public class MemoryData {
 
-    @PrimaryKey
     private int userId;
-    private int difficultyLettres, difficultyChiffres;
+    @NonNull
+    private String category;
+    private int subCategory;
+    private int difficulty;
+    private int maxDifficulty;
+    private int winStreak;
+    private int loseStreak;
 
-    public MemoryData(int userId) {
+    public MemoryData(int userId, String category, int subCategory) {
         this.userId = userId;
-        this.difficultyChiffres = 0;
-        this.difficultyLettres = 0;
+        this.category = category;
+        this.subCategory = subCategory;
+        this.difficulty = 1;
+        this.maxDifficulty = 1;
+        this.winStreak = 0;
+        this.loseStreak = 0;
     }
 
     public int getUserId() {
         return userId;
     }
-
     public void setUserId(int userId) {
         this.userId = userId;
     }
 
-    public int getDifficultyLettres() {
-        return difficultyLettres;
+    public String getCategory() {
+        return category;
+    }
+    public void setCategory(String category) {
+        this.category = category;
     }
 
-    public void setDifficultyLettres(int difficultyLettres) {
-        this.difficultyLettres = difficultyLettres;
+    public int getSubCategory() {
+        return subCategory;
+    }
+    public void setSubCategory(int subCategory) {
+        this.subCategory = subCategory;
     }
 
-    public int getDifficultyChiffres() {
-        return difficultyChiffres;
+    public int getDifficulty() {
+        return difficulty;
+    }
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
     }
 
-    public void setDifficultyChiffres(int difficultyChiffres) {
-        this.difficultyChiffres = difficultyChiffres;
+    public int getMaxDifficulty() {
+        return maxDifficulty;
+    }
+    public void setMaxDifficulty(int maxDifficulty) {
+        this.maxDifficulty = maxDifficulty;
+    }
+
+    public int getWinStreak() {
+        return winStreak;
+    }
+    public void setWinStreak(int winStreak) {
+        this.winStreak = winStreak;
+    }
+
+    public int getLoseStreak() {
+        return loseStreak;
+    }
+    public void setLoseStreak(int loseStreak) {
+        this.loseStreak = loseStreak;
     }
 }

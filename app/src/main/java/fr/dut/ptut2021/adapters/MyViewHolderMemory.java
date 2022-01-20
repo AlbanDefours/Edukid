@@ -17,7 +17,7 @@ public class MyViewHolderMemory extends RecyclerView.ViewHolder {
 
     boolean hidden;
     View viewCard;
-    View interieurCard;
+    View interieurCardChiffre, interieurCardLettre;
     ArrayList<ImageView> elements = new ArrayList<>();
     ImageView pattern;
     ImageView returnCard;
@@ -32,7 +32,8 @@ public class MyViewHolderMemory extends RecyclerView.ViewHolder {
     public MyViewHolderMemory(@NonNull View itemView) {
         super(itemView);
         viewCard = itemView.findViewById(R.id.viewCard);
-        interieurCard = itemView.findViewById(R.id.interieurCard);
+        interieurCardChiffre = itemView.findViewById(R.id.interieurCardChiffre);
+        interieurCardLettre = itemView.findViewById(R.id.interieurCardLettre);
         elements.add(itemView.findViewById(R.id.elementMemory1));
         elements.add(itemView.findViewById(R.id.elementMemory2));
         elements.add(itemView.findViewById(R.id.elementMemory3));

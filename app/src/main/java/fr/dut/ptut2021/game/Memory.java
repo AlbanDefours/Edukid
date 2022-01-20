@@ -2,52 +2,68 @@ package fr.dut.ptut2021.game;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.MediaPlayer;
+import android.graphics.fonts.Font;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.activities.ResultGamePage;
-import fr.dut.ptut2021.adapters.MemoryAdapter;
-import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.models.Card;
+import com.kofigyan.stateprogressbar.StateProgressBar;
+import com.kofigyan.stateprogressbar.components.StateItem;
+import com.kofigyan.stateprogressbar.listeners.OnStateItemClickListener;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+
+import fr.dut.ptut2021.R;
+import fr.dut.ptut2021.activities.ResultGamePage;
+import fr.dut.ptut2021.activities.SubGameMenu;
+import fr.dut.ptut2021.adapters.MemoryAdapter;
+import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.models.MemoryCard;
+import fr.dut.ptut2021.models.MemoryCardChiffre;
+import fr.dut.ptut2021.models.database.app.Word;
+import fr.dut.ptut2021.models.database.game.MemoryData;
+import fr.dut.ptut2021.models.database.game.MemoryDataCardCrossRef;
+import fr.dut.ptut2021.utils.GlobalUtils;
+import fr.dut.ptut2021.utils.MyMediaPlayer;
+import fr.dut.ptut2021.utils.MySharedPreferences;
+import fr.dut.ptut2021.utils.MyVibrator;
 
 
-public class Memory extends AppCompatActivity {
-
-    private ArrayList<Card> listCard;
+public class Memory extends AppCompatActivity implements OnStateItemClickListener {
+    private ArrayList<MemoryCard> listMemoryCard;
     private int idLastCardReturn=-1;
     int numColumns;
     boolean isClicked=false;
-    private MediaPlayer mpGoodAnswer;
-    private MediaPlayer mpWrongAnswer;
     private CreateDatabase db;
+    private int difficulty;
+    private int difficultyMax;
+    private int userId;
+    private String category;
+    private int subCat;
+    private StateProgressBar stateProgressBar;
+    private StateProgressBar stateProgressBarLock;
 
     private void shuffle(){
-        Collections.shuffle(listCard);
-        Collections.shuffle(listCard);
-        Collections.shuffle(listCard);
-        Collections.shuffle(listCard);
-        Collections.shuffle(listCard);
-        Collections.shuffle(listCard);
+        Collections.shuffle(listMemoryCard);
+        Collections.shuffle(listMemoryCard);
+        Collections.shuffle(listMemoryCard);
+        Collections.shuffle(listMemoryCard);
+        Collections.shuffle(listMemoryCard);
+        Collections.shuffle(listMemoryCard);
     }
 
     public void returnCard(int idCard,MemoryAdapter memoryAdapter) {
-        if(listCard.get(idCard).isHidden()){
+        if(listMemoryCard.get(idCard).isHidden()){
             ArrayList<Integer> returnableCards=new ArrayList<>();
             isClicked=true;
-            listCard.get(idCard).setHidden(false);
+            listMemoryCard.get(idCard).setHidden(false);
             returnableCards.add(idCard);
             memoryAdapter.setCard(returnableCards);
             memoryAdapter.notifyDataSetChanged();
@@ -58,13 +74,13 @@ public class Memory extends AppCompatActivity {
                     isClicked=false;
                 } else {
                     new Handler().postDelayed(() -> {
-                        if (idCard != idLastCardReturn && listCard.get(idLastCardReturn).getValue() == listCard.get(idCard).getValue()) {
-                            mpGoodAnswer.start();
+                        if (idCard != idLastCardReturn && listMemoryCard.get(idLastCardReturn).getValue() == listMemoryCard.get(idCard).getValue()) {
+                            MyMediaPlayer.playSound(this,R.raw.correct_answer);
                             idLastCardReturn = -1;
                         } else {
-                            listCard.get(idCard).setHidden(true);
-                            listCard.get(idLastCardReturn).setHidden(true);
-                            mpWrongAnswer.start();
+                            listMemoryCard.get(idCard).setHidden(true);
+                            listMemoryCard.get(idLastCardReturn).setHidden(true);
+                            MyMediaPlayer.playSound(this,R.raw.wrong_answer);
                             returnableCards.add(idLastCardReturn);
                             memoryAdapter.setCard(returnableCards);
                             memoryAdapter.notifyDataSetChanged();
@@ -78,24 +94,40 @@ public class Memory extends AppCompatActivity {
     }
 
     private boolean isWin(){
-        for(int i=0;i<listCard.size();i++){
-            if(listCard.get(i).isHidden()){
+        for(int i = 0; i< listMemoryCard.size(); i++){
+            if(listMemoryCard.get(i).isHidden()){
                 return false;
             }
         }
         int ptMalus=0;
-        for(int i=0;i<listCard.size();i++){
-            if(listCard.get(i).getNbReturn()>0){
-                ptMalus+=listCard.get(i).getNbReturn()-1;
+        for(int i = 0; i< listMemoryCard.size(); i++){
+            if(listMemoryCard.get(i).getNbReturn()>0){
+                ptMalus+= listMemoryCard.get(i).getNbReturn()-1;
             }
         }
+        MemoryData memoData = db.gameDao().getMemoryData(userId,category,subCat);
         int nbStar;
-        if(ptMalus<=2)
-            nbStar=3;
-        else if(ptMalus<=5)
-            nbStar=2;
-        else
+        if(ptMalus<=2) {
+            nbStar = 3;
+            memoData.setWinStreak(db.gameDao().getMemoryData(userId,category,subCat).getWinStreak()+1);
+            memoData.setLoseStreak(0);
+        }
+        else if(ptMalus<=5) {
+            nbStar = 2;
+            memoData.setWinStreak(0);
+            memoData.setLoseStreak(0);
+        }
+        else{
             nbStar=1;
+            memoData.setWinStreak(0);
+            memoData.setLoseStreak(db.gameDao().getMemoryData(userId,category,subCat).getLoseStreak()+1);
+        }
+        if(difficulty==difficultyMax) {
+            db.gameDao().updateMemoryData(memoData);
+            Log.e("memory", "WinStreak : " + db.gameDao().getMemoryData(userId, category, subCat).getWinStreak());
+            Log.e("memory", "LoseStreak : " + db.gameDao().getMemoryData(userId, category, subCat).getLoseStreak());
+        }
+        changeDifficulty();
 
         new Handler().postDelayed(() -> {
         Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
@@ -107,39 +139,54 @@ public class Memory extends AppCompatActivity {
         return true;
     }
 
-    public void display(MemoryAdapter memoryAdapter) throws IOException, InterruptedException {
-        int compteur=1;
-
-        System.out.println("Memory : ");
-        for (Card card : listCard){
-            if(!card.isHidden()){
-                System.out.print(card.getValue()+" ");
-            }
-            else
-                System.out.print("X ");
-
-            if(compteur%numColumns ==0)
-                System.out.println("   __   "+compteur);
-
-            compteur++;
+    private void initDB(){
+        db = CreateDatabase.getInstance(Memory.this);
+        SharedPreferences settings = getSharedPreferences("MyPref", 0);
+        String subGame = settings.getString("subGameName", "");
+        switch(subGame){
+            case "Image / Image":
+                subCat=1;
+                break;
+            case "Image / Image différente":
+                subCat=2;
+                break;
+            case "Chiffre / Chiffre":
+                subCat=3;
+                break;
+            case "Image / Chiffre":
+                subCat=4;
+                break;
         }
+        db.gameDao().insertMemoryData(new MemoryData(userId,category,subCat));
+        difficulty = db.gameDao().getMemoryData(userId,category,subCat).getDifficulty();
+        difficultyMax = db.gameDao().getMemoryData(userId,category,subCat).getMaxDifficulty();
+        Log.e("memory","BD initialisé");
+        for (int i=0;i<9;i++){
+            db.gameDao().insertMemoryDataCard(new MemoryDataCardCrossRef(String.valueOf(i+1),userId,category,subCat));
+        }
+    }
+
+    private void initProgressBar(){
+        stateProgressBar = findViewById(R.id.progressBarMemory);
+        stateProgressBarLock = findViewById(R.id.progressBarMemoryLock);
+        stateProgressBar.setCurrentStateNumber(getStateNumberDifficulty(difficulty));
+        stateProgressBarLock.setCurrentStateNumber(getStateNumberDifficulty(difficultyMax));
+        stateProgressBar.setOnStateItemClickListener(this);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        db = CreateDatabase.getInstance(Memory.this);
-
-        mpGoodAnswer = MediaPlayer.create(this, R.raw.correct_answer);
-        mpWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory);
+        Log.e("memory","debut Création du memory");
 
-        SharedPreferences settings = getSharedPreferences("MyPref", 0);
-        String themeName = settings.getString("themeName", "");
-        if(themeName.equals("Chiffres") ){
-            initCardChiffre(9);
-        }
+
+        category = MySharedPreferences.getThemeName(this);
+        userId = MySharedPreferences.getUserId(this);
+        initDB();
+        initProgressBar();
+        initCard(getNbCard());
+
 
         shuffle();
 
@@ -149,7 +196,7 @@ public class Memory extends AppCompatActivity {
         calculatesNbColumns();
         gridView.setNumColumns(numColumns);
 
-        MemoryAdapter memoryAdapter = new MemoryAdapter(getApplicationContext(), listCard,numColumns);
+        MemoryAdapter memoryAdapter = new MemoryAdapter(getApplicationContext(), listMemoryCard,numColumns);
         gridView.setAdapter(memoryAdapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -163,12 +210,10 @@ public class Memory extends AppCompatActivity {
                 }
             }
         });
-        /*recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new MemoryAdapter(getApplicationContext(), listCard));*/
     }
 
     private void calculatesNbColumns(){
-        numColumns = (int) Math.sqrt(listCard.size());
+        numColumns = (int) Math.sqrt(listMemoryCard.size());
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -177,49 +222,216 @@ public class Memory extends AppCompatActivity {
         double cardHeight = cardWidth* (1684.0 / 1094) + 20;
 
         double screenHeight = metrics.heightPixels;
-        int nbRows = (int) ((listCard.size()+ numColumns - 1) / numColumns);
+        int nbRows = (int) ((listMemoryCard.size()+ numColumns - 1) / numColumns);
         if(cardHeight*nbRows>screenHeight){
             numColumns++;
         }
     }
 
-    private void initCardChiffre(int nbCard){
-        ArrayList<Integer> listChiffre = new ArrayList<>();
-        listChiffre.add(R.drawable.one);
-        listChiffre.add(R.drawable.two);
-        listChiffre.add(R.drawable.three);
-        listChiffre.add(R.drawable.four);
-        listChiffre.add(R.drawable.five);
-        listChiffre.add(R.drawable.six);
-        listChiffre.add(R.drawable.seven);
-        listChiffre.add(R.drawable.eight);
-        listChiffre.add(R.drawable.nine);
-
-        listCard = new ArrayList<>();
+    private void initCard(int nbCard){
+        listMemoryCard = new ArrayList<>();
         if(nbCard>9){nbCard=9;}
         int value,nbChoice=0;
-        boolean isUse=false;
-        while(nbChoice!=nbCard){
+        boolean isUsed=false;
 
-            value =(int) (Math.random()*9);
-            for (int j=0;j<listCard.size();j++){
-                if(String.valueOf(value+1)==listCard.get(j).getValue()){
-                    isUse=true;
-                    break;
-                }
+        while(nbChoice!=nbCard){
+            value =(int) (Math.random()*9)+1;
+            for (int j = 0; j< listMemoryCard.size(); j++){
+                    Log.e("memoryB","Le max est "+db.gameDao().getMemoryDataCardMaxUsed(userId,category,subCat));
+                    if(String.valueOf(value)==listMemoryCard.get(j).getValue()) {
+                        isUsed = true;
+                        break;
+                    }
             }
-            if(!isUse) {
+            if(nbChoice<db.gameDao().getMemoryDataCardNbNotMaxUsed(userId,category,subCat,db.gameDao().getMemoryDataCardMaxUsed(userId,category,subCat)) && db.gameDao().getMemoryDataCard(userId, category, subCat, String.valueOf(value)).getUsed() == db.gameDao().getMemoryDataCardMaxUsed(userId, category, subCat)) {
+                isUsed=true;
+            }
+            if(!isUsed) {
                 nbChoice++;
-                System.out.println("------- "+String.valueOf(value+1)+" -------");
-                listCard.add(new Card(String.valueOf(value + 1), listChiffre.get(value)));
+                listMemoryCard.add(new MemoryCardChiffre(String.valueOf(value),getImage1(value)));
+                if(difficulty==difficultyMax) {
+                    db.gameDao().updateMemoryDataCardUsed(userId,
+                            category,
+                            subCat,
+                            String.valueOf(value),
+                            db.gameDao().getMemoryDataCardUsed(userId,
+                                    category,
+                                    subCat,
+                                    String.valueOf(value)) + 1);
+                }
+
+                Log.e("memory","Carte ajouté: "+value);
             }
-            isUse=false;
+            isUsed=false;
         }
 
-        int size = listCard.size();
-        int sizeImage = db.appDao().getNbWords();
+        Log.e("memory","Les valeurs sont choisis. La taille de la liste est de "+listMemoryCard.size());
+        int size= listMemoryCard.size();
         for(int i=0;i<size;i++){
-            this.listCard.add( new Card(listCard.get(i).getValue(),db.appDao().getWordById((int)(Math.random()*sizeImage)).getImage()));
+            this.listMemoryCard.add( new MemoryCardChiffre(listMemoryCard.get(i).getValue(),getImage2(listMemoryCard.get(i).getDrawableImage(),Integer.parseInt(listMemoryCard.get(i).getValue()))));
+
+            Log.e("memory","Création du double de la carte "+(i+1));
+        }
+
+        Log.e("memory","Jeu de carte initialisé : "+listMemoryCard);
+    }
+
+    private int NbCardUsedLessThan(int valeur){
+        int compteur=0;
+        for (int i=0;i<db.gameDao().getMemoryDataCardNbTotal(userId,category,subCat);i++){
+            Log.e("memoryB","CARTE "+(i+1)+" à étais utilisé : "+db.gameDao().getMemoryDataCard(userId,category,subCat,String.valueOf(i+1)).getUsed());
+            if(db.gameDao().getMemoryDataCard(userId,category,subCat,String.valueOf(i+1)).getUsed()<valeur){
+                compteur++;
+
+            }
+        }
+        return compteur;
+    }
+
+    private void changeDifficulty(){
+        if(difficulty==difficultyMax) {
+            Log.e("memory","La difficulté est analysé");
+            Log.e("memory","Nombre de carte en dessous de 3 : "+NbCardUsedLessThan(3));
+            if (db.gameDao().getMemoryData(userId, category, subCat).getWinStreak() >= 2 && NbCardUsedLessThan(3) == 0 && difficulty + 1 <= 5) {
+                Log.e("memory", "Monte au niveau " + (difficulty + 1));
+                db.gameDao().increaseMemoryDataDifficulty(userId, category, subCat);
+                db.gameDao().increaseMemoryDataMaxDifficulty(userId,category,subCat);
+                db.gameDao().resetAllMemoryDataStreak(userId, category, subCat);
+                db.gameDao().resetAllMemoryDataCardUsed(userId, category, subCat);
+            }
+        }
+    }
+
+    private int getNbCard(){
+        if(difficulty==1 )
+            return 2;
+        if(difficulty==2 )
+            return 3;
+        if(difficulty==3 )
+            return 4;
+        if(difficulty==4 )
+            return 5;
+        if(difficulty==5 )
+            return 6;
+        return 1;
+    }
+
+    private String getStringDifficulty(int difficulty){
+        switch (difficulty){
+            case 1:
+                return "one";
+            case 2:
+                return "two";
+            case 3:
+                return "three";
+            case 4:
+                return "four";
+            case 5:
+                return "five";
+        }
+        return "ERREUR: Difficulty invalid";
+    }
+
+    private StateProgressBar.StateNumber getStateNumberDifficulty(int difficulty){
+        switch (difficulty){
+            case 1:
+                return StateProgressBar.StateNumber.ONE;
+            case 2:
+                return StateProgressBar.StateNumber.TWO;
+            case 3:
+                return StateProgressBar.StateNumber.THREE;
+            case 4:
+                return StateProgressBar.StateNumber.FOUR;
+            case 5:
+                return StateProgressBar.StateNumber.FIVE;
+        }
+        return null;
+    }
+
+    private int getIntDifficulty(String difficulty){
+        switch (difficulty){
+            case "one":
+                return 1;
+            case "two":
+                return 2;
+            case "three":
+                return 3;
+            case "four":
+                return 4;
+            case "five":
+                return 5;
+        }
+        return -1;
+    }
+
+    private int getImage1(int value){
+        switch(subCat){
+            case 1:
+            case 2:
+            case 4:
+                return getImageChiffreNotUse();
+            case 3:
+                return db.gameDao().getCard(String.valueOf(value)).getDrawableImage();
+        }
+        return 0;
+    }
+    private int getImage2(int image1,int value){
+        switch(subCat){
+            case 1:
+            case 3:
+                return image1;
+            case 2:
+                return getImageChiffreNotUse();
+            case 4:
+                return db.gameDao().getCard(String.valueOf(value)).getDrawableImage();
+        }
+        return 0;
+    }
+
+    private int getFontLettreNotUse(){
+        String[] fonts = getResources().getStringArray(R.array.preloaded_fonts);
+        return 0;
+    }
+
+    private int getImageChiffreNotUse(){
+        int sizeImage = db.appDao().getNbWords();
+        ArrayList<Word> words = (ArrayList<Word>) db.appDao().getAllWords();
+        if(listMemoryCard!=null && !listMemoryCard.isEmpty() ) {
+            int img = listMemoryCard.get(0).getDrawableImage();
+            while (!isImageNotUse(img)) {
+                img = words.get((int) (Math.random() * sizeImage)).getImage();
+            }
+            return img;
+        }
+        else{
+            return words.get((int) (Math.random() * sizeImage)).getImage();
+        }
+    }
+
+    private boolean isImageNotUse(int img){
+        for (int i=0;i<listMemoryCard.size();i++){
+            if(img == listMemoryCard.get(i).getDrawableImage()){
+                return false;
+            }
+        }
+        return true;
+    }
+//TODO faire les bouton sur la progresse Bar avec max diffulté déjà atteinte
+    @Override
+    public void onStateItemClick(StateProgressBar stateProgressBar, StateItem stateItem, int stateNumber, boolean isCurrentState) {
+        Log.e("memoryProgressBar","ça détecte !");
+        if(stateProgressBar == this.stateProgressBar){
+            if(stateNumber<=difficultyMax){
+              MemoryData memoData =   db.gameDao().getMemoryData(userId,category,subCat);
+              memoData.setDifficulty(stateNumber);
+              db.gameDao().updateMemoryData(memoData);
+              db.gameDao().resetAllMemoryDataStreak(userId, category, subCat);
+              db.gameDao().resetAllMemoryDataCardUsed(userId, category, subCat);
+              GlobalUtils.startGame(this,"SubMemory",true,true);
+            }else{
+                MyVibrator.vibrate(this, 60);
+                GlobalUtils.toast(this,"Fini le niveau "+difficultyMax+" avant de pouvoir jouer au niveau "+stateNumber,false);
+            }
         }
     }
 }

@@ -23,6 +23,15 @@ public interface GameLogDao {
     @Query("SELECT * FROM GameResultLog WHERE userId = :userId AND endGameDate >= :minTime")
     List<GameResultLog> getAllGameResultLogAfterTime(int userId, long minTime);
 
+    @Query("SELECT * FROM GameResultLog WHERE userId = :userId AND gameId = :gameId")
+    List<GameResultLog> getAllGameResultLogByGame(int userId, int gameId);
+
+    @Query("SELECT * FROM GameResultLog WHERE userId = :userId AND gameId = :gameId AND subGameId = :subGameId")
+    List<GameResultLog> getAllGameResultLogBySubGame(int userId, int gameId, int subGameId);
+
+    default boolean tabGameResultLogIsEmpty(int userId, int gameId) {
+        return getAllGameResultLogByGame(userId, gameId).isEmpty();
+    }
 
     //GAME LOG
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -39,8 +48,7 @@ public interface GameLogDao {
     @Query("SELECT g.* FROM GameLog AS g NATURAL JOIN WordWithHoleData AS w WHERE w.userId = :userId")
     List<GameLog> getWWHLogByUser(int userId);
 
-    @Query("SELECT g.* FROM GameLog AS g NATURAL JOIN WordWithHoleData AS w WHERE w.userId = :userId AND g.gameName = :gameName")
-    List<GameLog> getWWHLogByUserAndGame(int userId, String gameName);
-
+    @Query("SELECT g.* FROM GameLog AS g NATURAL JOIN WordWithHoleData AS w WHERE w.userId = :userId AND g.gameId = :gameId")
+    List<GameLog> getWWHLogByGame(int userId, int gameId);
 
 }

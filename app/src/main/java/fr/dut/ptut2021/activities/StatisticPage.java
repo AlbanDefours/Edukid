@@ -5,9 +5,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
+
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -43,12 +42,13 @@ import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.database.app.User;
 import fr.dut.ptut2021.models.database.log.GameResultLog;
+import fr.dut.ptut2021.utils.MyVibrator;
 
 public class StatisticPage extends AppCompatActivity implements View.OnClickListener {
 
-    private Vibrator vibe;
     private int pageUser = 0, pageCategory = 0;
     private TextView userTitle, barChartTitle;
+    private int page = 0;
     private List<User> listUser;
     private CreateDatabase db = null;
     private Button generalButton, lettresButton, chiffresButton;
@@ -61,8 +61,6 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistic_page);
-
-        vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         initViews();
         initOnClickViews();
@@ -223,14 +221,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         button.setEnabled(false);
     }
 
-    public void vibrate() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            vibe.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
-        else
-            vibe.vibrate(35);
-    }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -251,16 +242,16 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.arrow_nextPage:
-                if (pageUser < listUser.size() - 1) {
-                    vibrate();
-                    pageUser++;
+                if (page < listUser.size() - 1) {
+                    MyVibrator.vibrate(StatisticPage.this, 35);
+                    page++;
                 }
                 displayNewUserPage();
                 break;
             case R.id.arrow_previousPage:
-                if (0 < pageUser) {
-                    vibrate();
-                    pageUser--;
+                if (0 < page) {
+                    MyVibrator.vibrate(StatisticPage.this, 35);
+                    page--;
                 }
                 displayNewUserPage();
                 break;
