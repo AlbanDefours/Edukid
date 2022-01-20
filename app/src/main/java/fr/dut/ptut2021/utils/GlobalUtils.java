@@ -42,6 +42,13 @@ public class GlobalUtils {
         }
     }
 
+    public static void startEditPage(Context context){
+        Intent intent = new Intent().setClass(context, UserEdit.class);
+        intent.putExtra("addUser", true);
+        context.startActivity(intent);
+        ((Activity) context).finish();
+    }
+
     public static boolean startPage(Context context, String className, boolean wantToFinish, boolean animation) {
         switch (className) {
             case "GameMenu":
@@ -75,18 +82,14 @@ public class GlobalUtils {
             default:
                 return false;
         }
-        if(animation)
+        if (animation)
             ((Activity) context).overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         if (wantToFinish)
             ((Activity) context).finish();
         return true;
     }
 
-    public static void toast(Context context, String msg,boolean duration){
-        int dur = 0;
-        if(duration){
-            dur=1;
-        }
-        Toast.makeText(context,msg,dur).show();
+    public static void toast(Context context, String msg, boolean wantLong) {
+        Toast.makeText(context, msg, Boolean.compare(wantLong, false)).show();
     }
 }
