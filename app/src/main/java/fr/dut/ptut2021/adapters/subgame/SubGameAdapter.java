@@ -11,11 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.models.database.app.Game;
-<<<<<<< HEAD
-=======
 import fr.dut.ptut2021.models.database.app.SubGame;
->>>>>>> main
 
 public class SubGameAdapter extends RecyclerView.Adapter<MyViewHolderSubGame> {
 

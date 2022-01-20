@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.os.Build;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -35,7 +36,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import fr.dut.ptut2021.R;
@@ -54,6 +57,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     private Button generalButton, lettresButton, chiffresButton;
     private ImageView nextPage, previousPage;
     private long startWeekTime;
+    private String startWeekDate;
     private final long DAY_MILLIS = 24*3600*1000;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -65,8 +69,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         initViews();
         initOnClickViews();
         createDbAndImportUsers();
-
-        startWeekTime = getStartWeekTime();
+        setStartWeekTimeAndDate();
         displayNewUserPage();
     }
 
@@ -76,7 +79,6 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         chiffresButton.setOnClickListener(this);
         nextPage.setOnClickListener(this);
         previousPage.setOnClickListener(this);
-
         generalButton.setEnabled(false);
     }
 
@@ -100,20 +102,20 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     private void displayNewUserPage() {
         if (!listUser.isEmpty()) displayUserTitle();
-        displaygeneralButton();
+        displayGeneralPage();
     }
 
 
-    private void displaygeneralButton() {
+    private void displayGeneralPage() {
         barChartTitle.setText("Fréquence de jeu");
         createBarChart(getGameFrequencyData());
     }
 
-    private void displaychiffresButton() {
+    private void displayChiffresPage() {
 
     }
 
-    private void displaylettresButton() {
+    private void displayLettresPage() {
 
     }
 
@@ -171,7 +173,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private long getStartWeekTime() {
+    private void setStartWeekTimeAndDate() {
         @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
         Date currentDate = new Date();
 
@@ -179,16 +181,17 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime ldt = LocalDateTime.parse(str, formatter);
 
-        return ldt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - (6* DAY_MILLIS);
+        startWeekTime = ldt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - (6* DAY_MILLIS);
     }
 
     private Map<String, Integer> getGameFrequencyData() {
-        Map<String, Integer> mapData = new HashMap<>();
+        Map<String, Integer> mapData = new LinkedHashMap<>();
+        //La map se mélange si ce n'est pas une LinkedHashMap
         List<GameResultLog> listLog = db.gameLogDao().getAllGameResultLogAfterTime(listUser.get(pageUser).getUserId(), startWeekTime);
 
-        String[] days = {"Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"};
+        DateFormat df = new SimpleDateFormat("E", Locale.FRENCH);
         for (int i = 0; i < 7; i++) {
-            mapData.put(days[i], 0);
+            mapData.put(df.format(startWeekTime + (DAY_MILLIS *i)).toUpperCase(), 0);
         }
 
         int nbWeekDay = 0;
@@ -228,17 +231,17 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
             case R.id.buttonGeneral_statistics:
                 lockButton(generalButton);
                 pageCategory = 0;
-                displaygeneralButton();
+                displayGeneralPage();
                 break;
             case R.id.buttonChiffres_statistics:
                 lockButton(chiffresButton);
                 pageCategory = 1;
-                displaychiffresButton();
+                displayChiffresPage();
                 break;
             case R.id.buttonLettres_statistics:
                 lockButton(lettresButton);
                 pageCategory = 2;
-                displaylettresButton();
+                displayLettresPage();
                 break;
 
             case R.id.arrow_nextPage:
