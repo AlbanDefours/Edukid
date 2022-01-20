@@ -160,23 +160,29 @@ public interface GameDao {
     @Update
     void updateMemoryData(MemoryData memoryData);
 
-    @Query("UPDATE MemoryData SET difficulty = (difficulty +1) WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
-    void increaseMemoryDataDifficulty(int userId, String category, int subCategory);
-
-    @Query("UPDATE MemoryData SET difficulty = (difficulty -1) WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
-    void decreaseMemoryDataDifficulty(int userId, String category, int subCategory);
-
     @Query("SELECT * FROM MemoryData WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
     MemoryData getMemoryData(int userId, String category, int subCategory);
 
     @Query("SELECT difficulty FROM MemoryData WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
     int getMemoryDataDifficulty(int userId, String category, int subCategory);
 
-    @Query("UPDATE MemoryData SET winStreak = 0, loseStreak = 0 WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
-    void resetAllMemoryDataStreak(int userId, String category, int subCategory);
+    @Query("SELECT maxDifficulty FROM MemoryData WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
+    int getMemoryDataMaxDifficulty(int userId, String category, int subCategory);
 
     @Query("SELECT * FROM MemoryData")
     List<MemoryData> getAllMemoryData();
+
+    @Query("UPDATE MemoryData SET difficulty = (difficulty +1) WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
+    void increaseMemoryDataDifficulty(int userId, String category, int subCategory);
+
+    @Query("UPDATE MemoryData SET difficulty = (difficulty -1) WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
+    void decreaseMemoryDataDifficulty(int userId, String category, int subCategory);
+
+    @Query("UPDATE MemoryData SET maxDifficulty = (maxDifficulty +1) WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
+    void increaseMemoryDataMaxDifficulty(int userId, String category, int subCategory);
+
+    @Query("UPDATE MemoryData SET winStreak = 0, loseStreak = 0 WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
+    void resetAllMemoryDataStreak(int userId, String category, int subCategory);
 
 
 //Card
@@ -219,12 +225,6 @@ public interface GameDao {
     @Query("SELECT COUNT(*) FROM MemoryDataCardCrossRef WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory AND used = 0")
     int getMemoryDataCardNbNotUsed(int userId, String category, int subCategory);
 
-    @Query("UPDATE MemoryDataCardCrossRef SET used = :used WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory AND cardValue LIKE :cardValue")
-    void updateMemoryDataCardUsed(int userId, String category, int subCategory, String cardValue, int used);
-
-    @Query("UPDATE MemoryDataCardCrossRef SET used = 0 WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
-    void resetAllMemoryDataCardUsed(int userId, String category, int subCategory);
-
     @Query("SELECT COUNT(*) FROM MemoryDataCardCrossRef WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory AND :maxUsed != used")
     int getMemoryDataCardNbNotMaxUsed(int userId, String category, int subCategory,int maxUsed);
 
@@ -237,4 +237,9 @@ public interface GameDao {
     @Query("SELECT COUNT(*) FROM MemoryDataCardCrossRef WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
     int getMemoryDataCardNbTotal(int userId, String category, int subCategory);
 
+    @Query("UPDATE MemoryDataCardCrossRef SET used = :used WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory AND cardValue LIKE :cardValue")
+    void updateMemoryDataCardUsed(int userId, String category, int subCategory, String cardValue, int used);
+
+    @Query("UPDATE MemoryDataCardCrossRef SET used = 0 WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
+    void resetAllMemoryDataCardUsed(int userId, String category, int subCategory);
 }
