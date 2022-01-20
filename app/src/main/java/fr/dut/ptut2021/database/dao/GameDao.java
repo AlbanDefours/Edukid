@@ -198,6 +198,9 @@ public interface GameDao {
     @Query("SELECT drawableImage FROM Card WHERE cardValue LIKE :cardValue")
     int getCardDrawableImage(String cardValue);
 
+    @Query("SELECT * FROM Card WHERE type LIKE :type")
+    List<Card> getAllCardByType(String type);
+
     @Query("SELECT * FROM Card")
     List<Card> getAllCard();
 

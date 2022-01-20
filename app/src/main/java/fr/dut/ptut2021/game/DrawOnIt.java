@@ -107,7 +107,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
 
         int[] numRand = new int[NBGAME];
 
-        List<Card> listCard = db.gameDao().getAllCard();
+        List<Card> listCard = db.gameDao().getAllCardByType("Chiffres");
 
         for(int i = 0; i < NBGAME; i++){
             numRand[i] = (int) (Math.random() * listCard.size());
