@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="fr.dut.ptut2021">
 
     <uses-permission android:name="android.permission.CAMERA"/>
@@ -11,8 +12,8 @@
         android:icon="@mipmap/icon_edukid"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/icon_edukid_round"
-        android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true"
         android:theme="@style/Theme.PTUT2021">
         <activity
             android:name=".activities.LoadingPage"

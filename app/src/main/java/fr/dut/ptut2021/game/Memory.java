@@ -1,3 +1,4 @@
+
 package fr.dut.ptut2021.game;
 
 import android.content.Intent;
@@ -210,6 +211,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                 }
             }
         });
+
     }
 
     private void calculatesNbColumns(){
@@ -265,6 +267,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             isUsed=false;
         }
 
+
         Log.e("memory","Les valeurs sont choisis. La taille de la liste est de "+listMemoryCard.size());
         int size= listMemoryCard.size();
         for(int i=0;i<size;i++){
@@ -287,6 +290,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         }
         return compteur;
     }
+
 
     private void changeDifficulty(){
         if(difficulty==difficultyMax) {
