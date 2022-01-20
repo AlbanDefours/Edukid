@@ -123,10 +123,17 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
             carte[i] = listCard.get(numRand[i]);
         }
 
-        int c = 8;
+
+        int c = 5;
+        image.setImageResource(2131230912); //carte[0]
+        DataSymbol.initPts(c, dm.widthPixels, dm.heightPixels); //Integer.parseInt(carte[0].getCardValue())
+        s = new Symbol(DataSymbol.getPts(), tolerance);
+
+        /*
         image.setImageResource(carte[0].getDrawableImage()); //carte[0]
         DataSymbol.initPts(Integer.parseInt(carte[0].getCardValue()), dm.widthPixels, dm.heightPixels); //Integer.parseInt(carte[0].getCardValue())
         s = new Symbol(DataSymbol.getPts(), tolerance);
+        */
 
 
         Display currentDisplay = getWindowManager().getDefaultDisplay();
@@ -260,11 +267,11 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                         //TODO animation de fni avec les etoiles et toute cette merde
                     } else if (next) {
                         nextSymbol();
-                        //MyMediaPlayer.playSound(this, R.raw.correct_answer);
+                        MyMediaPlayer.playSound(this, R.raw.correct_answer);
                         next = false;
                     }else{
-                        //MyMediaPlayer.playSound(this, R.raw.wrong_answer);
-                        //MyVibrator.vibrate(this, 60);
+                        MyMediaPlayer.playSound(this, R.raw.wrong_answer);
+                        MyVibrator.vibrate(this, 60);
                         reDraw();
                     }
                     oldUpx = 0;
