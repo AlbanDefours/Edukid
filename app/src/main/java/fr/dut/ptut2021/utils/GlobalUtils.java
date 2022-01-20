@@ -1,8 +1,11 @@
 package fr.dut.ptut2021.utils;
 
+import static android.content.Context.AUDIO_SERVICE;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.widget.Toast;
 
 import fr.dut.ptut2021.R;
@@ -95,5 +98,12 @@ public class GlobalUtils {
 
     public static void toast(Context context, String msg, boolean wantLong) {
         Toast.makeText(context, msg, Boolean.compare(wantLong, false)).show();
+    }
+
+    public static void verifyIfSoundIsOn(Context context){
+        AudioManager am = (AudioManager) context.getSystemService(AUDIO_SERVICE);
+        int volume_level= am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        if(volume_level == 0)
+            toast(context, "Veuillez activer le son pour jouer !", true);
     }
 }

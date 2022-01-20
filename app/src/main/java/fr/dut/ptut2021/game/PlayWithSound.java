@@ -24,6 +24,7 @@ import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.database.game.PlayWithSoundData;
 import fr.dut.ptut2021.models.database.log.GameLog;
 import fr.dut.ptut2021.models.database.log.GameResultLog;
+import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
 import fr.dut.ptut2021.utils.MySharedPreferences;
 import fr.dut.ptut2021.utils.MyTextToSpeech;
@@ -32,7 +33,7 @@ import fr.dut.ptut2021.utils.MyVibrator;
 public class PlayWithSound extends AppCompatActivity implements View.OnClickListener {
 
     private CreateDatabase db;
-    private ImageView btnSound;
+    private ImageView btnSound, help;
     private TextView goodAnswer;
     private boolean delay = false, isAnswerFalseWord = false;
     private List<String> listAnswer;
@@ -42,7 +43,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private String themeName;
     private final Button[] listButton = new Button[3];
     private final int MAX_GAME_PLAYED = 5;
-    private int userId, gamePlayed = 1, nbTry = 0, answerFalse = 0, nbrStars = 0, answerFalseWord = 0;
+    private int userId, gameId, gamePlayed = 1, nbTry = 0, answerFalse = 0, nbrStars = 0, answerFalseWord = 0;
     private Random random = new Random();
     private String articleTheme;
 
@@ -51,11 +52,10 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_with_sound);
 
-        getSharedPref();
-        articleTheme = themeName.equals("Chiffres") ? "le " : "la ";
-        String s = themeName.equals("Chiffres") ? "un " : "une ";
-        MyTextToSpeech.speachText(getApplicationContext(), "Dans cet exercice tu vas entendre " + s + themeName.toLowerCase() + " et tu dois " + articleTheme + " retrouver");
+        GlobalUtils.verifyIfSoundIsOn(this);
 
+        getSharedPref();
+        readInstruction();
         initDatabase();
         initializeLayout();
         fillListChooseResult(themeName);
@@ -66,6 +66,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private void getSharedPref() {
         userId = MySharedPreferences.getUserId(this);
         themeName = MySharedPreferences.getThemeName(this);
+        gameId = MySharedPreferences.getGameId(this);
     }
 
     private void initDatabase() {
@@ -92,6 +93,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         answer1 = findViewById(R.id.buttonAnswer1_playWithSound);
         answer2 = findViewById(R.id.buttonAnswer2_playWithSound);
         answer3 = findViewById(R.id.buttonAnswer3_playWithSound);
+        help = findViewById(R.id.ic_help_playWithSound);
         listButton[0] = answer1;
         listButton[1] = answer2;
         listButton[2] = answer3;
@@ -136,6 +138,16 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         MyTextToSpeech.speachText(this, "Trouve " + articleTheme + themeName.toLowerCase() + " : " + listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
     }
 
+    private void readInstruction() {
+        delay = true;
+        articleTheme = themeName.equals("Chiffres") ? "le " : "la ";
+        String s = themeName.equals("Chiffres") ? "un " : "une ";
+        MyTextToSpeech.speachText(getApplicationContext(), "Dans cet exercice tu vas entendre " + s + themeName.toLowerCase() + " et tu dois " + articleTheme + " retrouver");
+        new Handler().postDelayed(() -> {
+            delay = false;
+        }, 3000);
+    }
+
     private void initListAnswer() {
         listAnswer = new ArrayList<>();
 
@@ -162,6 +174,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         btnSound.setOnClickListener(this);
         for (int i = 0; i < 3; i++)
             listButton[i].setOnClickListener(this);
+        help.setOnClickListener(this);
     }
 
     private void playSound(boolean isGoodAnswer) {
@@ -252,12 +265,12 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         }
         db.gameDao().updatePWSData(data);
 
-        GameLog gameLog = new GameLog("PlayWithSound", data.getDataId(), win, nbTry);
+        GameLog gameLog = new GameLog(gameId, -1, data.getDataId(), win, nbTry);
         db.gameLogDao().insertGameLog(gameLog);
     }
 
     private void addGameResultLogInDb(int stars) {
-        GameResultLog gameResultLog = new GameResultLog("PlayWithSound", userId, stars);
+        GameResultLog gameResultLog = new GameResultLog(gameId, -1, userId, stars);
         db.gameLogDao().insertGameResultLog(gameResultLog);
     }
 
@@ -298,9 +311,21 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                 case R.id.btnSound_playWithSound:
                     readTheAnswer();
                     break;
+
+                case R.id.ic_help_playWithSound:
+                    readInstruction();
+                    break;
+
                 default:
                     break;
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MyMediaPlayer.stop();
+        MyTextToSpeech.stop();
     }
 }

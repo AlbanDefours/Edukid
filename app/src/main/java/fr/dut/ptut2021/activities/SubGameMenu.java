@@ -100,6 +100,7 @@ public class SubGameMenu extends AppCompatActivity {
 
     private void saveGameName(int position){
         MySharedPreferences.setSharedPreferencesString(SubGameMenu.this, "subGameName", subGameList.get(position).getSubGameName());
+        MySharedPreferences.setSharedPreferencesInt(SubGameMenu.this, "subGameId", subGameList.get(position).getSubGameId());
         MySharedPreferences.commit();
     }
 
