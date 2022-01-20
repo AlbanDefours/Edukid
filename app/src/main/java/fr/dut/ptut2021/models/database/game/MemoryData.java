@@ -12,6 +12,7 @@ public class MemoryData {
     private String category;
     private int subCategory;
     private int difficulty;
+    private int maxDifficulty;
     private int winStreak;
     private int loseStreak;
 
@@ -20,6 +21,7 @@ public class MemoryData {
         this.category = category;
         this.subCategory = subCategory;
         this.difficulty = 1;
+        this.maxDifficulty = 1;
         this.winStreak = 0;
         this.loseStreak = 0;
     }
@@ -27,7 +29,6 @@ public class MemoryData {
     public int getUserId() {
         return userId;
     }
-
     public void setUserId(int userId) {
         this.userId = userId;
     }
@@ -35,7 +36,6 @@ public class MemoryData {
     public String getCategory() {
         return category;
     }
-
     public void setCategory(String category) {
         this.category = category;
     }
@@ -43,7 +43,6 @@ public class MemoryData {
     public int getSubCategory() {
         return subCategory;
     }
-
     public void setSubCategory(int subCategory) {
         this.subCategory = subCategory;
     }
@@ -51,15 +50,20 @@ public class MemoryData {
     public int getDifficulty() {
         return difficulty;
     }
-
     public void setDifficulty(int difficulty) {
         this.difficulty = difficulty;
+    }
+
+    public int getMaxDifficulty() {
+        return maxDifficulty;
+    }
+    public void setMaxDifficulty(int maxDifficulty) {
+        this.maxDifficulty = maxDifficulty;
     }
 
     public int getWinStreak() {
         return winStreak;
     }
-
     public void setWinStreak(int winStreak) {
         this.winStreak = winStreak;
     }
@@ -67,7 +71,6 @@ public class MemoryData {
     public int getLoseStreak() {
         return loseStreak;
     }
-
     public void setLoseStreak(int loseStreak) {
         this.loseStreak = loseStreak;
     }
