@@ -41,7 +41,8 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     private int userId;
     private String category;
     private int subCat;
-    String[] descriptionData = {"1", "2", "3", "4","5"};
+    private StateProgressBar stateProgressBar;
+    private StateProgressBar stateProgressBarLock;
 
     private void shuffle(){
         Collections.shuffle(listMemoryCard);
@@ -156,14 +157,10 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         }
     }
 
-    private void initProgresseBar(){
-        StateProgressBar stateProgressBar = (StateProgressBar) findViewById(R.id.progressBarMemory);
-        stateProgressBar.setStateDescriptionData(descriptionData);
-        for (int i=0;i<5;i++){
-            stateProgressBar.setOnStateItemClickListener(this){
-
-            };
-        }
+    private void initProgressBar(){
+        stateProgressBar = findViewById(R.id.progressBarMemory);
+        stateProgressBarLock = findViewById(R.id.progressBarMemoryLock);
+        stateProgressBar.setOnStateItemClickListener(this);
     }
 
     @Override
@@ -171,7 +168,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory);
         Log.e("memory","debut Création du memory");
-        initProgresseBar();
+        initProgressBar();
 
         category = MySharedPreferences.getThemeName(this);
         userId = MySharedPreferences.getUserId(this);
@@ -313,6 +310,38 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         return 1;
     }
 
+    private String getStringDifficulty(int difficulty){
+        switch (difficulty){
+            case 1:
+                return "one";
+            case 2:
+                return "two";
+            case 3:
+                return "three";
+            case 4:
+                return "four";
+            case 5:
+                return "five";
+        }
+        return "ERREUR: Difficulty invalid";
+    }
+
+    private int getIntDifficulty(String difficulty){
+        switch (difficulty){
+            case "one":
+                return 1;
+            case "two":
+                return 2;
+            case "three":
+                return 3;
+            case "four":
+                return 4;
+            case "five":
+                return 5;
+        }
+        return -1;
+    }
+
     private int getImage1(int value){
         switch(subCat){
             case 1:
@@ -363,6 +392,10 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
 //TODO faire les bouton sur la progresse Bar avec max diffulté déjà atteinte
     @Override
     public void onStateItemClick(StateProgressBar stateProgressBar, StateItem stateItem, int stateNumber, boolean isCurrentState) {
-
+        if(stateProgressBar == this.stateProgressBar){
+            if(stateNumber<=difficulty){
+                
+            }
+        }
     }
 }
