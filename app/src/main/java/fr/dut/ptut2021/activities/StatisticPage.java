@@ -48,7 +48,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     private Vibrator vibe;
     private int pageUser = 0, pageCategory = 0;
-    private TextView userTitle, barChartTitle, statTitle1, statTitle2;
+    private TextView userTitle, barChartTitle;
     private List<User> listUser;
     private CreateDatabase db = null;
     private Button generalButton, lettresButton, chiffresButton;
@@ -79,8 +79,6 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     private void displaygeneralButton() {
         barChartTitle.setText("Fréquence de jeu");
-        statTitle1.setText("Jeu récent");
-        statTitle2.setText("Jeu ancien");
         createBarChart(getGameFrequencyData());
     }
 
@@ -151,8 +149,6 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         previousPage = findViewById(R.id.arrow_previousPage);
 
         barChartTitle = findViewById(R.id.title_bar_chart);
-        statTitle1 = findViewById(R.id.title_stat1);
-        statTitle2 = findViewById(R.id.title_stat2);
     }
 
     private void initOnClickViews() {
