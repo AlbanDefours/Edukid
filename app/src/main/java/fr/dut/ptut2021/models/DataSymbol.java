@@ -1,6 +1,8 @@
 package fr.dut.ptut2021.models;
 
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 
@@ -15,7 +17,7 @@ public final class DataSymbol {
         return pts;
     }
 
-    public static void initPts(int num, float width, float height, float imageWidth, float imageHeight) {
+    public static void initPts(int num, float width, float height, float wp, float hp, float gw, float gh) {
         pts.clear();
 
         nbTrait[0] = -1;
@@ -165,39 +167,14 @@ public final class DataSymbol {
         }
 
 
-        Log.e("ptsImg", width + " " + height);
-        System.out.println(width + " " + height);
 
-        Log.e("ptsImg", imageWidth + " " + imageHeight);
-        System.out.println(imageWidth + " " + imageHeight);
-
-
-        width = width * imageWidth;
-        height = height * imageHeight;
-
-
-        Log.e("ptsImg", width + " " + height);
-        System.out.println(width + " " + height);
 
         for(Point p : pts){
-            p.setX(p.getX()*width);
-            p.setY(p.getY()*height);
+            p.setX(((p.getX()*wp)/(wp*gw))*wp*gw);
+            p.setY(((p.getY()*hp)/(hp*gh))*hp*gh);
             Log.e("ptsImg", "pts.add(new Point(" + p.getX() + ", " + p.getY() + "));");
             System.out.println("pts.add(new Point(" + p.getX() + ", " + p.getY() + "));");
         }
-
-
-
-        Log.e("ptsImg", imageWidth + " " + imageHeight);
-        System.out.println(imageWidth + " " + imageHeight);
-
-        for(Point p : pts){
-            p.setX(p.getX()/3);
-            p.setY(p.getY()/3);
-            Log.e("ptsImg", "pts.add(new Point(" + p.getX() + ", " + p.getY() + "));");
-            System.out.println("pts.add(new Point(" + p.getX() + ", " + p.getY() + "));");
-        }
-
 
     }
 

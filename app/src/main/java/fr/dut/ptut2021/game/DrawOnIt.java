@@ -133,10 +133,14 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
 
 
         image.setImageResource(carte[0].getDrawableImage()); //carte[0]
-        DataSymbol.initPts(Integer.parseInt(carte[0].getCardValue()),dm.widthPixels, dm.heightPixels, dm.density, dm.density); //(Integer.parseInt(carte[0].getCardValue()), dm.widthPixels, dm.heightPixels)
+        DataSymbol.initPts(Integer.parseInt(carte[0].getCardValue()),dm.widthPixels, dm.heightPixels, dm.widthPixels, dm.heightPixels, image.getWidth(), image.getHeight()); //(Integer.parseInt(carte[0].getCardValue()), dm.widthPixels, dm.heightPixels)
         s = new Symbol(DataSymbol.getPts(), tolerance);
 
+        Log.e("bit", "" + bitmap.getScaledHeight(canvas));
+        Log.e("bit", "" + bitmap.getScaledHeight(dm));
 
+        System.out.println(bitmap.getScaledHeight(canvas));
+        System.out.println(bitmap.getScaledHeight(dm));
 
         Display currentDisplay = getWindowManager().getDefaultDisplay();
         largeur = currentDisplay.getWidth();
@@ -332,7 +336,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         numGame++;
 
         image.setImageResource(carte[numGame].getDrawableImage());
-        DataSymbol.initPts(Integer.parseInt(carte[numGame].getCardValue()), dm.widthPixels, dm.heightPixels, image.getWidth(), image.getHeight());
+        DataSymbol.initPts(Integer.parseInt(carte[numGame].getCardValue()),dm.widthPixels, dm.heightPixels, dm.widthPixels, dm.heightPixels, image.getWidth(), image.getHeight());
         s = new Symbol(DataSymbol.getPts(), tolerance);
 
         Log.e("axel", "millieu nextSymbol");
