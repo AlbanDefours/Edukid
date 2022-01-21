@@ -165,22 +165,39 @@ public final class DataSymbol {
         }
 
 
+        Log.e("ptsImg", width + " " + height);
+        System.out.println(width + " " + height);
+
+        Log.e("ptsImg", imageWidth + " " + imageHeight);
+        System.out.println(imageWidth + " " + imageHeight);
+
+
+        width = width * imageWidth;
+        height = height * imageHeight;
+
+
+        Log.e("ptsImg", width + " " + height);
+        System.out.println(width + " " + height);
+
         for(Point p : pts){
             p.setX(p.getX()*width);
             p.setY(p.getY()*height);
+            Log.e("ptsImg", "pts.add(new Point(" + p.getX() + ", " + p.getY() + "));");
+            System.out.println("pts.add(new Point(" + p.getX() + ", " + p.getY() + "));");
         }
 
-        /*
+
+
         Log.e("ptsImg", imageWidth + " " + imageHeight);
         System.out.println(imageWidth + " " + imageHeight);
 
         for(Point p : pts){
-            p.setX(p.getX()/imageWidth);
-            p.setY(p.getY()/imageHeight);
+            p.setX(p.getX()/3);
+            p.setY(p.getY()/3);
             Log.e("ptsImg", "pts.add(new Point(" + p.getX() + ", " + p.getY() + "));");
             System.out.println("pts.add(new Point(" + p.getX() + ", " + p.getY() + "));");
         }
-        */
+
 
     }
 

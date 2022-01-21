@@ -133,7 +133,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
 
 
         image.setImageResource(carte[0].getDrawableImage()); //carte[0]
-        DataSymbol.initPts(Integer.parseInt(carte[0].getCardValue()), Math.abs(image.getMaxWidth() * dm.widthPixels), Math.abs(image.getMaxHeight() * dm.heightPixels), Math.abs(image.getMaxWidth() * dm.widthPixels), Math.abs(image.getMaxHeight() * dm.heightPixels)); //(Integer.parseInt(carte[0].getCardValue()), dm.widthPixels, dm.heightPixels)
+        DataSymbol.initPts(Integer.parseInt(carte[0].getCardValue()),dm.widthPixels, dm.heightPixels, dm.density, dm.density); //(Integer.parseInt(carte[0].getCardValue()), dm.widthPixels, dm.heightPixels)
         s = new Symbol(DataSymbol.getPts(), tolerance);
 
 
