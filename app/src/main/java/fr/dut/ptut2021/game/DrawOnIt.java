@@ -123,17 +123,17 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
             carte[i] = listCard.get(numRand[i]);
         }
 
-
+        /*
         int c = 5;
         image.setImageResource(2131230912); //carte[0]
         DataSymbol.initPts(c, dm.widthPixels, dm.heightPixels); //Integer.parseInt(carte[0].getCardValue())
         s = new Symbol(DataSymbol.getPts(), tolerance);
-
-        /*
-        image.setImageResource(carte[0].getDrawableImage()); //carte[0]
-        DataSymbol.initPts(Integer.parseInt(carte[0].getCardValue()), dm.widthPixels, dm.heightPixels); //Integer.parseInt(carte[0].getCardValue())
-        s = new Symbol(DataSymbol.getPts(), tolerance);
         */
+
+        image.setImageResource(carte[0].getDrawableImage()); //carte[0]
+        DataSymbol.initPts(Integer.parseInt(carte[0].getCardValue()), image.getWidth(), image.getHeight()); //(Integer.parseInt(carte[0].getCardValue()), dm.widthPixels, dm.heightPixels)
+        s = new Symbol(DataSymbol.getPts(), tolerance);
+
 
 
         Display currentDisplay = getWindowManager().getDefaultDisplay();
@@ -264,7 +264,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                         hasDraw = true;
                         Toast.makeText(getApplicationContext(), "Jeu terminé !!!", Toast.LENGTH_SHORT);
                         Log.e("axel", "jeu terminé !!!");
-                        //TODO animation de fni avec les etoiles et toute cette merde
+                        //TODO animation de fin avec les etoiles
                     } else if (next) {
                         nextSymbol();
                         MyMediaPlayer.playSound(this, R.raw.correct_answer);
