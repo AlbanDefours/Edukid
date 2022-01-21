@@ -122,28 +122,36 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                     listDataDif1.add(listDataNotUsed);
                     listDataDif1.add(listDataUsed);
                     listAllData.add(listDataDif1);
-                    Log.e("APPLOG", "List Dif 1 : " + listDataDif1.get(0));
+                    Log.e("APPLOG", "List Dif 1 (-1): " + listDataDif1.get(0));
+                    Log.e("APPLOG", "List Dif 1 (0): " + listDataDif1.get(1));
+                    Log.e("APPLOG", "List Dif 1 (1): " + listDataDif1.get(2));
                     break;
                 case 2:
                     listDataDif2.add(listDataNeverUsed);
                     listDataDif2.add(listDataNotUsed);
                     listDataDif2.add(listDataUsed);
                     listAllData.add(listDataDif2);
-                    Log.e("APPLOG", "List Dif 2 : " + listDataDif2.get(0));
+                    Log.e("APPLOG", "List Dif 2 (-1): " + listDataDif2.get(0));
+                    Log.e("APPLOG", "List Dif 2 (0): " + listDataDif2.get(1));
+                    Log.e("APPLOG", "List Dif 2 (1): " + listDataDif2.get(2));
                     break;
                 case 3:
                     listDataDif3.add(listDataNeverUsed);
                     listDataDif3.add(listDataNotUsed);
                     listDataDif3.add(listDataUsed);
                     listAllData.add(listDataDif3);
-                    Log.e("APPLOG", "List Dif 3 : " + listDataDif3.get(0));
+                    Log.e("APPLOG", "List Dif 3 (-1): " + listDataDif3.get(0));
+                    Log.e("APPLOG", "List Dif 3 (0): " + listDataDif3.get(1));
+                    Log.e("APPLOG", "List Dif 3 (1): " + listDataDif3.get(2));
                     break;
                 default:
                     listDataDif4.add(listDataNeverUsed);
                     listDataDif4.add(listDataNotUsed);
                     listDataDif4.add(listDataUsed);
                     listAllData.add(listDataDif4);
-                    Log.e("APPLOG", "List Dif 4 : " + listDataDif4.get(0));
+                    Log.e("APPLOG", "List Dif 4 (-1): " + listDataDif4.get(0));
+                    Log.e("APPLOG", "List Dif 4 (0): " + listDataDif4.get(1));
+                    Log.e("APPLOG", "List Dif 4 (1): " + listDataDif4.get(2));
                     break;
             }
 
@@ -171,7 +179,6 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                     ) {
                         words = db.appDao().getWordIfContain('%' + answer + '%');
                         //words.addAll(db.appDao().getWordIfContain(answer + '%'));
-                        Log.e("APPLOG", "size Words : " + words.size());
 
                         if (words.size() > 0) {
                             for (int i = 0; i < 3; i++)
@@ -182,14 +189,11 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                                     for (int m = 0; m < list.get(i).get(l).size(); m++) {
                                         String syllable = list.get(i).get(l).get(m);
                                         if (syllable.length() == 2 && !answer.equals(syllable)) {
-                                            Log.e("APPLOG", syllable);
+                                            //Log.e("APPLOG", syllable);
                                             if (answer.contains(String.valueOf(syllable.charAt(0))) ||
                                                     answer.contains(String.valueOf(syllable.charAt(1)))) {
-                                                Log.e("APPLOG", "syllable contains true");
                                                 for (int n = 0; n < words.size(); n++) {
-                                                    Log.e("APPLOG", "word : " + words.get(n).getWord());
                                                     if (words.get(n).getWord().contains(syllable)) {
-                                                        Log.e("APPLOG", "word contains true");
                                                         words.remove(n);
                                                     }
                                                 }
@@ -199,17 +203,19 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                                 }
                             }
                             if (words.size() > 0) {
+                                for (int n = 0; n < words.size(); n++)
+                                    Log.e("APPLOG", "word : " + words.get(n).getWord());
                                 int rand = random.nextInt(words.size());
                                 mapChooseData.put(answer, words.get(rand));
-                                Log.e("APPLOG_", "FINAL : " + answer + " - " + words.get(rand).getWord());
+                                Log.e("APPLOG", "FINAL : " + answer + " - " + words.get(rand).getWord());
                                 words.clear();
                             }
+                            Log.e("APPLOG", "------------------------------");
                         }
                     }
                 }
             }
         }
-
     }
 
     private void initListAnswer() {
