@@ -122,60 +122,89 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                     listDataDif1.add(listDataNotUsed);
                     listDataDif1.add(listDataUsed);
                     listAllData.add(listDataDif1);
+                    Log.e("APPLOG", "List Dif 1 : " + listDataDif1.get(0));
                     break;
                 case 2:
                     listDataDif2.add(listDataNeverUsed);
                     listDataDif2.add(listDataNotUsed);
                     listDataDif2.add(listDataUsed);
                     listAllData.add(listDataDif2);
+                    Log.e("APPLOG", "List Dif 2 : " + listDataDif2.get(0));
                     break;
                 case 3:
                     listDataDif3.add(listDataNeverUsed);
                     listDataDif3.add(listDataNotUsed);
                     listDataDif3.add(listDataUsed);
                     listAllData.add(listDataDif3);
+                    Log.e("APPLOG", "List Dif 3 : " + listDataDif3.get(0));
                     break;
                 default:
                     listDataDif4.add(listDataNeverUsed);
                     listDataDif4.add(listDataNotUsed);
                     listDataDif4.add(listDataUsed);
                     listAllData.add(listDataDif4);
+                    Log.e("APPLOG", "List Dif 4 : " + listDataDif4.get(0));
                     break;
             }
+
         }
 
-        boolean lastDifficulty = false;
         for (int i = 0; i < listAllData.size(); i++) {
-            if (i == listAllData.size()-1)
-                lastDifficulty = true;
             if (mapChooseData.size() <= MAX_GAME_PLAYED)
-                fillMapChooseWord(listAllData.get(i), lastDifficulty);
+                fillMapChooseWord(listAllData, i+1);
         }
 
         db.gameDao().updateAllWWHDataLastUsed(userId);
     }
 
-    private void fillMapChooseWord(List<List<String>> list, boolean lastDifficulty) {
+    private void fillMapChooseWord(List<List<List<String>>> list, int difficulty) {
         List<Word> words;
 
-        for (int j = 0; j < list.size(); j++) {
-            for (int k = 0; k < list.get(j).size(); k++) {
+        for (int j = 0; j < list.get(difficulty-1).size(); j++) {
+            for (int k = 0; k < list.get(difficulty-1).get(j).size(); k++) {
 
-                if (mapChooseData.size() <= MAX_GAME_PLAYED) {
-                    if (!mapChooseData.containsKey(list.get(j).get(k)) &&
-                            (lastDifficulty || db.gameDao().getWWHDataByData(userId, list.get(j).get(k)).getWinStreak() < 1) &&
-                            (db.appDao().getWordIfContain('%' + list.get(j).get(k) + '%').size() > 0 ||
-                            db.appDao().getWordIfContain(list.get(j).get(k) + '%').size() > 0)) {
+                if (mapChooseData.size() <= MAX_GAME_PLAYED && list.get(difficulty-1).get(j).size() > 0) {
+                    String answer = list.get(difficulty-1).get(j).get(k);
+                    Log.e("APPLOG", "answer : " + answer);
+                    if (!mapChooseData.containsKey(answer) &&
+                            (difficulty == list.size() - 1 || db.gameDao().getWWHDataByData(userId, answer).getWinStreak() < 1)
+                    ) {
+                        words = db.appDao().getWordIfContain('%' + answer + '%');
+                        //words.addAll(db.appDao().getWordIfContain(answer + '%'));
+                        Log.e("APPLOG", "size Words : " + words.size());
 
-                        words = db.appDao().getWordIfContain('%' + list.get(j).get(k) + '%');
-                        words.addAll(db.appDao().getWordIfContain(list.get(j).get(k) + '%'));
-                        for (int i = 0; i < 3; i++)
-                            Collections.shuffle(words);
-                        int rand = random.nextInt(words.size());
+                        if (words.size() > 0) {
+                            for (int i = 0; i < 3; i++)
+                                Collections.shuffle(words);
 
-                        mapChooseData.put(list.get(j).get(k), words.get(rand));
-                        words.clear();
-                        list.get(j).remove(k);
+                            for (int i = difficulty; i < list.size(); i++) {
+                                for (int l = 0; l < list.get(j).size(); l++) {
+                                    for (int m = 0; m < list.get(i).get(l).size(); m++) {
+                                        String syllable = list.get(i).get(l).get(m);
+                                        if (syllable.length() == 2 && !answer.equals(syllable)) {
+                                            Log.e("APPLOG", syllable);
+                                            if (answer.contains(String.valueOf(syllable.charAt(0))) ||
+                                                    answer.contains(String.valueOf(syllable.charAt(1)))) {
+                                                Log.e("APPLOG", "syllable contains true");
+                                                for (int n = 0; n < words.size(); n++) {
+                                                    Log.e("APPLOG", "word : " + words.get(n).getWord());
+                                                    if (words.get(n).getWord().contains(syllable)) {
+                                                        Log.e("APPLOG", "word contains true");
+                                                        words.remove(n);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (words.size() > 0) {
+                                int rand = random.nextInt(words.size());
+                                mapChooseData.put(answer, words.get(rand));
+                                Log.e("APPLOG_", "FINAL : " + answer + " - " + words.get(rand).getWord());
+                                words.clear();
+                            }
+                        }
                     }
                 }
             }
