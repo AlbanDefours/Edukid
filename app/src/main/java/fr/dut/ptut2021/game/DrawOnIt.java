@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -29,6 +28,7 @@ import fr.dut.ptut2021.models.DataSymbol;
 import fr.dut.ptut2021.models.Point;
 import fr.dut.ptut2021.models.Symbol;
 import fr.dut.ptut2021.models.database.game.Card;
+import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
 import fr.dut.ptut2021.utils.MyVibrator;
 
@@ -346,6 +346,12 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         matrix.postRotate(degre);
 
         return Bitmap.createBitmap(bitmapFleche, 0, 0, bitmapFleche.getWidth(), bitmapFleche.getHeight(), matrix, true);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        GlobalUtils.stopAllSound(DrawOnIt.this);
     }
 
 }

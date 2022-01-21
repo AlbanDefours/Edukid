@@ -2,7 +2,6 @@ package fr.dut.ptut2021.game;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,6 +32,7 @@ import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.WordWithHoleData;
 import fr.dut.ptut2021.models.database.log.GameLog;
 import fr.dut.ptut2021.models.database.log.GameResultLog;
+import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
 import fr.dut.ptut2021.utils.MySharedPreferences;
 import fr.dut.ptut2021.utils.MyTextToSpeech;
@@ -396,5 +396,11 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                     break;
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        GlobalUtils.stopAllSound(WordWithHole.this);
     }
 }
