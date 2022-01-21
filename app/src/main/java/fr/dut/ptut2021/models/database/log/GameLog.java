@@ -8,19 +8,19 @@ public class GameLog {
 
     @PrimaryKey(autoGenerate = true)
     private int gameLogId;
-    //Nom du jeu (de la table du jeu)
-    private String gameName;
+    private int gameId, subGameId;
     //Id de la ligne correspondante (de la table gameName)
     private int tableRowId;
     private long gameLogDate;
     private boolean win;
     private int extraTry;
 
-    public GameLog(String gameName, int tableRowId, boolean win, int extraTry) {
-        this.gameName = gameName;
+    //subGame = -1 s'il n'y en a pas
+    public GameLog(int gameId, int subGameId, int tableRowId, boolean win, int extraTry) {
+        this.gameId = gameId;
+        this.subGameId = subGameId;
         this.tableRowId = tableRowId;
         this.gameLogDate = System.currentTimeMillis();
-        //java.sql.Date date=new java.sql.Date(creationDate);  TO CONVERT
         this.win = win;
         this.extraTry = extraTry;
     }
@@ -34,11 +34,18 @@ public class GameLog {
         this.gameLogId = gameLogId;
     }
 
-    public String getGameName() {
-        return gameName;
+    public int getGameId() {
+        return gameId;
     }
-    public void setGameName(String gameName) {
-        this.gameName = gameName;
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
+    }
+
+    public int getSubGameId() {
+        return subGameId;
+    }
+    public void setSubGameId(int subGameId) {
+        this.subGameId = subGameId;
     }
 
     public int getTableRowId() {

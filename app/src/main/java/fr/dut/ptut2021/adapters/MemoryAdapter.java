@@ -92,7 +92,7 @@ public class MemoryAdapter extends BaseAdapter {
             //
             double width = (1094.0 + 20) / numColumns;
             double height = width * 1.36 + 20;
-            double sizeElement = width -50;
+            double sizeElement = width -80;
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) width, (int) height);
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
             holder.viewCard.setLayoutParams(layoutParams);
@@ -101,7 +101,8 @@ public class MemoryAdapter extends BaseAdapter {
 
             layoutParams = new RelativeLayout.LayoutParams((int) sizeElement, (int) sizeElement);
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-            holder.interieurCard.setLayoutParams(layoutParams);
+            holder.interieurCardChiffre.setLayoutParams(layoutParams);
+            holder.interieurCardLettre.setLayoutParams(layoutParams);
 
 
             if(themeName.equals("Chiffres") && !listMemoryCard.get(i).getValue().equals("1") && !isChiffre(listMemoryCard.get(i).getDrawableImage())){

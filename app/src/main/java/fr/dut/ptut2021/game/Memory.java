@@ -1,7 +1,9 @@
+
 package fr.dut.ptut2021.game;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.fonts.Font;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -25,6 +27,7 @@ import fr.dut.ptut2021.activities.SubGameMenu;
 import fr.dut.ptut2021.adapters.MemoryAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.MemoryCard;
+import fr.dut.ptut2021.models.MemoryCardChiffre;
 import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.MemoryData;
 import fr.dut.ptut2021.models.database.game.MemoryDataCardCrossRef;
@@ -183,12 +186,8 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         userId = MySharedPreferences.getUserId(this);
         initDB();
         initProgressBar();
-        if(category.equals("Chiffres") ){
-            initCardChiffre(getNbCard());
-        }
-        else{
+        initCard(getNbCard());
 
-        }
 
         shuffle();
 
@@ -212,6 +211,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                 }
             }
         });
+
     }
 
     private void calculatesNbColumns(){
@@ -230,7 +230,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         }
     }
 
-    private void initCardChiffre(int nbCard){
+    private void initCard(int nbCard){
         listMemoryCard = new ArrayList<>();
         if(nbCard>9){nbCard=9;}
         int value,nbChoice=0;
@@ -250,7 +250,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             }
             if(!isUsed) {
                 nbChoice++;
-                listMemoryCard.add(new MemoryCard(String.valueOf(value),getImage1(value)));
+                listMemoryCard.add(new MemoryCardChiffre(String.valueOf(value),getImage1(value)));
                 if(difficulty==difficultyMax) {
                     db.gameDao().updateMemoryDataCardUsed(userId,
                             category,
@@ -267,10 +267,11 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             isUsed=false;
         }
 
+
         Log.e("memory","Les valeurs sont choisis. La taille de la liste est de "+listMemoryCard.size());
         int size= listMemoryCard.size();
         for(int i=0;i<size;i++){
-            this.listMemoryCard.add( new MemoryCard(listMemoryCard.get(i).getValue(),getImage2(listMemoryCard.get(i).getDrawableImage(),Integer.parseInt(listMemoryCard.get(i).getValue()))));
+            this.listMemoryCard.add( new MemoryCardChiffre(listMemoryCard.get(i).getValue(),getImage2(listMemoryCard.get(i).getDrawableImage(),Integer.parseInt(listMemoryCard.get(i).getValue()))));
 
             Log.e("memory","Création du double de la carte "+(i+1));
         }
@@ -289,6 +290,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         }
         return compteur;
     }
+
 
     private void changeDifficulty(){
         if(difficulty==difficultyMax) {
@@ -371,7 +373,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             case 1:
             case 2:
             case 4:
-                return getImageNotUse();
+                return getImageChiffreNotUse();
             case 3:
                 return db.gameDao().getCard(String.valueOf(value)).getDrawableImage();
         }
@@ -383,14 +385,19 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             case 3:
                 return image1;
             case 2:
-                return getImageNotUse();
+                return getImageChiffreNotUse();
             case 4:
                 return db.gameDao().getCard(String.valueOf(value)).getDrawableImage();
         }
         return 0;
     }
 
-    private int getImageNotUse(){
+    private int getFontLettreNotUse(){
+        String[] fonts = getResources().getStringArray(R.array.preloaded_fonts);
+        return 0;
+    }
+
+    private int getImageChiffreNotUse(){
         int sizeImage = db.appDao().getNbWords();
         ArrayList<Word> words = (ArrayList<Word>) db.appDao().getAllWords();
         if(listMemoryCard!=null && !listMemoryCard.isEmpty() ) {
