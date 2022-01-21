@@ -48,6 +48,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private Map<String, Word> mapChooseData;
     private List<String> listAnswer;
     private String goodAnswer;
+    private List<String[]> dataTab;
     private String[] alphabetTab, syllableTab;
     private final int MAX_GAME_PLAYED = 4;
     private int userId, gameId, gamePlayed = 1, nbTry = 0, nbWin = 0;
@@ -82,15 +83,20 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void fillDatabase() {
-        alphabetTab = getResources().getStringArray(R.array.alphabet);
-        for (String letter : alphabetTab) {
-            db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, letter, 1));
+        dataTab = new ArrayList<>();
+        dataTab.add(getResources().getStringArray(R.array.difficulty1));
+        dataTab.add(getResources().getStringArray(R.array.difficulty2));
+        dataTab.add(getResources().getStringArray(R.array.difficulty3));
+        dataTab.add(getResources().getStringArray(R.array.difficulty4));
+
+        for (int i = 0; i < dataTab.size(); i++) {
+            for (String str : dataTab.get(i)) {
+                db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, str, i+1));
+            }
         }
 
+        alphabetTab = getResources().getStringArray(R.array.alphabet);
         syllableTab = getResources().getStringArray(R.array.syllable);
-        for (String syllable : syllableTab) {
-            db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, syllable, 2));
-        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -98,49 +104,71 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         listData = new ArrayList<>(db.gameDao().getAllWWHData(userId));
         mapChooseData = new HashMap<>();
 
+        List<List<List<String>>> listAllData = new ArrayList<>();
+
         List<List<String>> listDataDif1 = new ArrayList<>();
         List<List<String>> listDataDif2 = new ArrayList<>();
+        List<List<String>> listDataDif3 = new ArrayList<>();
+        List<List<String>> listDataDif4 = new ArrayList<>();
 
-        for (int dif = 1; dif <= 2; dif++) {
+        for (int dif = 1; dif <= 4; dif++) {
             List<String> listDataNeverUsed = db.gameDao().getAllWWHDataLastUsed(listData, dif, -1);
             List<String> listDataNotUsed = db.gameDao().getAllWWHDataLastUsed(listData, dif, 0);
             List<String> listDataUsed = db.gameDao().getAllWWHDataLastUsed(listData, dif, 1);
 
-            if (dif == 1) {
-                listDataDif1.add(listDataNeverUsed);
-                listDataDif1.add(listDataNotUsed);
-                listDataDif1.add(listDataUsed);
-            } else {
-                listDataDif2.add(listDataNeverUsed);
-                listDataDif2.add(listDataNotUsed);
-                listDataDif2.add(listDataUsed);
+            switch (dif) {
+                case 1:
+                    listDataDif1.add(listDataNeverUsed);
+                    listDataDif1.add(listDataNotUsed);
+                    listDataDif1.add(listDataUsed);
+                    listAllData.add(listDataDif1);
+                    break;
+                case 2:
+                    listDataDif2.add(listDataNeverUsed);
+                    listDataDif2.add(listDataNotUsed);
+                    listDataDif2.add(listDataUsed);
+                    listAllData.add(listDataDif2);
+                    break;
+                case 3:
+                    listDataDif3.add(listDataNeverUsed);
+                    listDataDif3.add(listDataNotUsed);
+                    listDataDif3.add(listDataUsed);
+                    listAllData.add(listDataDif3);
+                    break;
+                default:
+                    listDataDif4.add(listDataNeverUsed);
+                    listDataDif4.add(listDataNotUsed);
+                    listDataDif4.add(listDataUsed);
+                    listAllData.add(listDataDif4);
+                    break;
             }
         }
 
-        Log.e("APP_LOG", "DIFFICULTY 1 - Never Used" + listDataDif1.get(0));
-        Log.e("APP_LOG", "DIFFICULTY 1 - Not Used" + listDataDif1.get(1));
-        Log.e("APP_LOG", "DIFFICULTY 1 - Used" + listDataDif1.get(2));
-
-        fillMapChooseWord(listDataDif1, false);
-        if (mapChooseData.size() <= MAX_GAME_PLAYED) {
-            fillMapChooseWord(listDataDif2, true);
+        boolean lastDifficulty = false;
+        for (int i = 0; i < listAllData.size(); i++) {
+            if (i == listAllData.size()-1)
+                lastDifficulty = true;
+            if (mapChooseData.size() <= MAX_GAME_PLAYED)
+                fillMapChooseWord(listAllData.get(i), lastDifficulty);
         }
 
         db.gameDao().updateAllWWHDataLastUsed(userId);
     }
 
     private void fillMapChooseWord(List<List<String>> list, boolean lastDifficulty) {
-        List<Word> words = new ArrayList<>();
+        List<Word> words;
 
         for (int j = 0; j < list.size(); j++) {
             for (int k = 0; k < list.get(j).size(); k++) {
 
                 if (mapChooseData.size() <= MAX_GAME_PLAYED) {
                     if (!mapChooseData.containsKey(list.get(j).get(k)) &&
-                            (lastDifficulty || db.gameDao().getWWHDataByData(userId, list.get(j).get(k)).getWinStreak() < 3) &&
-                            db.appDao().getWordIfContain('%' + list.get(j).get(k) + '%').size() > 0) {
+                            (lastDifficulty || db.gameDao().getWWHDataByData(userId, list.get(j).get(k)).getWinStreak() < 1) &&
+                            (db.appDao().getWordIfContain('%' + list.get(j).get(k) + '%').size() > 0 ||
+                            db.appDao().getWordIfContain(list.get(j).get(k) + '%').size() > 0)) {
 
                         words = db.appDao().getWordIfContain('%' + list.get(j).get(k) + '%');
+                        words.addAll(db.appDao().getWordIfContain(list.get(j).get(k) + '%'));
                         for (int i = 0; i < 3; i++)
                             Collections.shuffle(words);
                         int rand = random.nextInt(words.size());
