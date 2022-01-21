@@ -1,5 +1,7 @@
 package fr.dut.ptut2021.models;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 import fr.dut.ptut2021.models.Point;
@@ -13,7 +15,7 @@ public final class DataSymbol {
         return pts;
     }
 
-    public static void initPts(int num, int width, int height) {
+    public static void initPts(int num, float width, float height, float imageWidth, float imageHeight) {
         pts.clear();
 
         nbTrait[0] = -1;
@@ -167,6 +169,18 @@ public final class DataSymbol {
             p.setX(p.getX()*width);
             p.setY(p.getY()*height);
         }
+
+        /*
+        Log.e("ptsImg", imageWidth + " " + imageHeight);
+        System.out.println(imageWidth + " " + imageHeight);
+
+        for(Point p : pts){
+            p.setX(p.getX()/imageWidth);
+            p.setY(p.getY()/imageHeight);
+            Log.e("ptsImg", "pts.add(new Point(" + p.getX() + ", " + p.getY() + "));");
+            System.out.println("pts.add(new Point(" + p.getX() + ", " + p.getY() + "));");
+        }
+        */
 
     }
 

@@ -130,8 +130,10 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         s = new Symbol(DataSymbol.getPts(), tolerance);
         */
 
+
+
         image.setImageResource(carte[0].getDrawableImage()); //carte[0]
-        DataSymbol.initPts(Integer.parseInt(carte[0].getCardValue()), image.getWidth(), image.getHeight()); //(Integer.parseInt(carte[0].getCardValue()), dm.widthPixels, dm.heightPixels)
+        DataSymbol.initPts(Integer.parseInt(carte[0].getCardValue()), Math.abs(image.getMaxWidth() * dm.widthPixels), Math.abs(image.getMaxHeight() * dm.heightPixels), Math.abs(image.getMaxWidth() * dm.widthPixels), Math.abs(image.getMaxHeight() * dm.heightPixels)); //(Integer.parseInt(carte[0].getCardValue()), dm.widthPixels, dm.heightPixels)
         s = new Symbol(DataSymbol.getPts(), tolerance);
 
 
@@ -315,7 +317,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
             if(s.getPoints().get(i).getX() > s.getPoints().get(i + 1).getX()){
                 degres += 180;
             }
-            canvas.drawBitmap(getRotateFleche(degres),(float) s.getPoints().get(i).getX() - bitmapFleche.getWidth()/2,(float) s.getPoints().get(i).getY() - bitmapFleche.getHeight()/2, paint);
+            canvas.drawBitmap(getRotateFleche(degres),(float) s.getPoints().get(i).getX() - (float) (bitmapFleche.getWidth()/2),(float) s.getPoints().get(i).getY() - (float) (bitmapFleche.getHeight()/2), paint);
         }
 
         s.clearAllLastId();
@@ -330,7 +332,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         numGame++;
 
         image.setImageResource(carte[numGame].getDrawableImage());
-        DataSymbol.initPts(Integer.parseInt(carte[numGame].getCardValue()), dm.widthPixels, dm.heightPixels);
+        DataSymbol.initPts(Integer.parseInt(carte[numGame].getCardValue()), dm.widthPixels, dm.heightPixels, image.getWidth(), image.getHeight());
         s = new Symbol(DataSymbol.getPts(), tolerance);
 
         Log.e("axel", "millieu nextSymbol");
