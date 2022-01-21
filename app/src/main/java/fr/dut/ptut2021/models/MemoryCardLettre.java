@@ -2,9 +2,9 @@ package fr.dut.ptut2021.models;
 
 public class MemoryCardLettre extends MemoryCard{
 
-    private String font;
+    private int font;
 
-    public MemoryCardLettre(String value, String font) {
+    public MemoryCardLettre(String value, int font) {
         super(value);
         this.font = font;
     }
@@ -20,7 +20,7 @@ public class MemoryCardLettre extends MemoryCard{
     }
 
     @Override
-    public String getFont() {
+    public int getFont() {
         return font;
     }
 
@@ -30,7 +30,7 @@ public class MemoryCardLettre extends MemoryCard{
     }
 
     @Override
-    public void setFont(String font) {
+    public void setFont(int font) {
         this.font=font;
     }
 }

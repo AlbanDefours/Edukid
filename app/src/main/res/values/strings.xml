@@ -59,6 +59,7 @@
 
 
     <array name="preloaded_fonts" translatable="false">
+        <item>R.font.magimt</item>
         <item>@font/magimt</item>
         <item>@font/abstractgroovy</item>
         <item>@font/autography</item>

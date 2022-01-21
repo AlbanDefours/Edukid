@@ -71,7 +71,6 @@ public class SubGameMenu extends AppCompatActivity {
     }
 
     private boolean isLock(int position){
-        if(themeName.equals("Chiffres")) {
             switch (position + 1) {
                 case 1:
                     return false;
@@ -94,7 +93,6 @@ public class SubGameMenu extends AppCompatActivity {
                         return true;
                     }
             }
-        }
         return true;
     }
 

@@ -1,6 +1,7 @@
 package fr.dut.ptut2021.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
@@ -96,6 +97,7 @@ public class MyDatabaseInsert {
 
         String[] alphabetList = context.getResources().getStringArray(R.array.alphabet);
         for(int i=0;i<alphabetList.length;i++){
+            Log.e("insertData","insertion de la carte "+alphabetList[i]);
             db.gameDao().insertCard(new Card(alphabetList[i], "Lettres", 0));
         }
     }

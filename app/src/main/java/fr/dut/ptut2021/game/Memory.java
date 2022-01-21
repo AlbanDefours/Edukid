@@ -19,6 +19,7 @@ import com.kofigyan.stateprogressbar.listeners.OnStateItemClickListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Locale;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.activities.ResultGamePage;
@@ -27,6 +28,7 @@ import fr.dut.ptut2021.adapters.MemoryAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.MemoryCard;
 import fr.dut.ptut2021.models.MemoryCardChiffre;
+import fr.dut.ptut2021.models.MemoryCardLettre;
 import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.MemoryData;
 import fr.dut.ptut2021.models.database.game.MemoryDataCardCrossRef;
@@ -49,6 +51,8 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     private int subCat;
     private StateProgressBar stateProgressBar;
     private StateProgressBar stateProgressBarLock;
+    private boolean isWin=false;
+    private ArrayList<Integer> fonts;
 
     private void shuffle(){
         Collections.shuffle(listMemoryCard);
@@ -74,7 +78,8 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                     isClicked=false;
                 } else {
                     new Handler().postDelayed(() -> {
-                        if (idCard != idLastCardReturn && listMemoryCard.get(idLastCardReturn).getValue() == listMemoryCard.get(idCard).getValue()) {
+                        //TODO faire en sorte que pendant la vérification ça remette les valeurs en majuscule pour memory lettre niveau 3 et 4
+                        if (idCard != idLastCardReturn && listMemoryCard.get(idLastCardReturn).getValue().toUpperCase(Locale.ROOT) == listMemoryCard.get(idCard).getValue().toUpperCase(Locale.ROOT) ) {
                             MyMediaPlayer.playSound(this,R.raw.correct_answer);
                             idLastCardReturn = -1;
                         } else {
@@ -99,44 +104,45 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                 return false;
             }
         }
-        int ptMalus=0;
-        for(int i = 0; i< listMemoryCard.size(); i++){
-            if(listMemoryCard.get(i).getNbReturn()>0){
-                ptMalus+= listMemoryCard.get(i).getNbReturn()-1;
+        if(!isWin) {
+            isWin = true;
+            int ptMalus = 0;
+            for (int i = 0; i < listMemoryCard.size(); i++) {
+                if (listMemoryCard.get(i).getNbReturn() > 0) {
+                    ptMalus += listMemoryCard.get(i).getNbReturn() - 1;
+                }
             }
-        }
-        MemoryData memoData = db.gameDao().getMemoryData(userId,category,subCat);
-        int nbStar;
-        if(ptMalus<=2) {
-            nbStar = 3;
-            memoData.setWinStreak(db.gameDao().getMemoryData(userId,category,subCat).getWinStreak()+1);
-            memoData.setLoseStreak(0);
-        }
-        else if(ptMalus<=5) {
-            nbStar = 2;
-            memoData.setWinStreak(0);
-            memoData.setLoseStreak(0);
-        }
-        else{
-            nbStar=1;
-            memoData.setWinStreak(0);
-            memoData.setLoseStreak(db.gameDao().getMemoryData(userId,category,subCat).getLoseStreak()+1);
-        }
-        if(difficulty==difficultyMax) {
-            db.gameDao().updateMemoryData(memoData);
-            Log.e("memory", "WinStreak : " + db.gameDao().getMemoryData(userId, category, subCat).getWinStreak());
-            Log.e("memory", "LoseStreak : " + db.gameDao().getMemoryData(userId, category, subCat).getLoseStreak());
-        }
-        changeDifficulty();
+            MemoryData memoData = db.gameDao().getMemoryData(userId, category, subCat);
+            int nbStar;
+            if (ptMalus <= 2) {
+                nbStar = 3;
+                memoData.setWinStreak(db.gameDao().getMemoryData(userId, category, subCat).getWinStreak() + 1);
+                memoData.setLoseStreak(0);
+            } else if (ptMalus <= 5) {
+                nbStar = 2;
+                memoData.setWinStreak(0);
+                memoData.setLoseStreak(0);
+            } else {
+                nbStar = 1;
+                memoData.setWinStreak(0);
+                memoData.setLoseStreak(db.gameDao().getMemoryData(userId, category, subCat).getLoseStreak() + 1);
+            }
+            if (difficulty == difficultyMax) {
+                db.gameDao().updateMemoryData(memoData);
+                Log.e("memory", "WinStreak : " + db.gameDao().getMemoryData(userId, category, subCat).getWinStreak());
+                Log.e("memory", "LoseStreak : " + db.gameDao().getMemoryData(userId, category, subCat).getLoseStreak());
+            }
+            changeDifficulty();
+            new Handler().postDelayed(() -> {
+                Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
+                intent.putExtra("starsNumber", nbStar);
+                startActivity(intent);
+                finish();
+            }, 2000);
 
-        new Handler().postDelayed(() -> {
-        Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
-        intent.putExtra("starsNumber", nbStar);
-        startActivity(intent);
-        finish();
-        }, 2000);
-
-        return true;
+            return true;
+        }
+        return false;
     }
 
     private void initDB(){
@@ -145,24 +151,36 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         String subGame = settings.getString("subGameName", "");
         switch(subGame){
             case "Image / Image":
+            case "Memory1":
                 subCat=1;
                 break;
             case "Image / Image différente":
+            case "Memory2":
                 subCat=2;
                 break;
             case "Chiffre / Chiffre":
+            case "Memory3":
                 subCat=3;
                 break;
             case "Image / Chiffre":
+            case "Memory4":
                 subCat=4;
                 break;
         }
+        Log.e("memoryLettre","SUBGAME : "+subCat);
         db.gameDao().insertMemoryData(new MemoryData(userId,category,subCat));
         difficulty = db.gameDao().getMemoryData(userId,category,subCat).getDifficulty();
         difficultyMax = db.gameDao().getMemoryData(userId,category,subCat).getMaxDifficulty();
         Log.e("memory","BD initialisé");
-        for (int i=0;i<9;i++){
-            db.gameDao().insertMemoryDataCard(new MemoryDataCardCrossRef(String.valueOf(i+1),userId,category,subCat));
+        if(category.equals("Chiffres")) {
+            for (int i = 0; i < 9; i++) {
+                db.gameDao().insertMemoryDataCard(new MemoryDataCardCrossRef(String.valueOf(i + 1), userId, category, subCat));
+            }
+        }else if(category.equals("Lettres")){
+            String[] alphabet = getResources().getStringArray(R.array.alphabet);
+            for (int i=0;i<alphabet.length;i++){
+                db.gameDao().insertMemoryDataCard(new MemoryDataCardCrossRef(alphabet[i],userId,category,subCat));
+            }
         }
     }
 
@@ -172,6 +190,19 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         stateProgressBar.setCurrentStateNumber(getStateNumberDifficulty(difficulty));
         stateProgressBarLock.setCurrentStateNumber(getStateNumberDifficulty(difficultyMax));
         stateProgressBar.setOnStateItemClickListener(this);
+    }
+
+    private void initFonts(){
+        fonts = new ArrayList<>();
+        fonts.add(R.font.cream_cake);
+        fonts.add(R.font.abstractgroovy);
+        fonts.add(R.font.american_captain);
+        fonts.add(R.font.autography);
+        fonts.add(R.font.kg_second_chances);
+        fonts.add(R.font.little_comet);
+        fonts.add(R.font.magimt);
+        fonts.add(R.font.sticky_notes);
+        fonts.add(R.font.stop_bullying);
     }
 
     @Override
@@ -184,6 +215,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         category = MySharedPreferences.getThemeName(this);
         userId = MySharedPreferences.getUserId(this);
         initDB();
+        initFonts();
         initProgressBar();
         initCard(getNbCard());
 
@@ -233,34 +265,44 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         if(nbCard>9){nbCard=9;}
         int value,nbChoice=0;
         boolean isUsed=false;
+        int nombreValeur=0;
+        if(category.equals("Chiffres")){
+            nombreValeur=9;
+        } else if(category.equals("Lettres")){
+            nombreValeur=26;
+        }
 
         while(nbChoice!=nbCard){
-            value =(int) (Math.random()*9)+1;
+            value =(int) (Math.random()*nombreValeur);
             for (int j = 0; j< listMemoryCard.size(); j++){
                     Log.e("memoryB","Le max est "+db.gameDao().getMemoryDataCardMaxUsed(userId,category,subCat));
-                    if(String.valueOf(value)==listMemoryCard.get(j).getValue()) {
+                    if(getValue(value)==listMemoryCard.get(j).getValue()) {
                         isUsed = true;
                         break;
                     }
             }
-            if(nbChoice<db.gameDao().getMemoryDataCardNbNotMaxUsed(userId,category,subCat,db.gameDao().getMemoryDataCardMaxUsed(userId,category,subCat)) && db.gameDao().getMemoryDataCard(userId, category, subCat, String.valueOf(value)).getUsed() == db.gameDao().getMemoryDataCardMaxUsed(userId, category, subCat)) {
+            if(nbChoice<db.gameDao().getMemoryDataCardNbNotMaxUsed(userId,category,subCat,db.gameDao().getMemoryDataCardMaxUsed(userId,category,subCat)) && db.gameDao().getMemoryDataCard(userId, category, subCat, getValue(value)).getUsed() == db.gameDao().getMemoryDataCardMaxUsed(userId, category, subCat)) {
                 isUsed=true;
             }
             if(!isUsed) {
                 nbChoice++;
-                listMemoryCard.add(new MemoryCardChiffre(String.valueOf(value),getImage1(value)));
+                if(category.equals("Chiffres")) {
+                    listMemoryCard.add(new MemoryCardChiffre(getValue(value), getImage1(value)));
+                }else if(category.equals("Lettres")){
+                    listMemoryCard.add(new MemoryCardLettre(getValue(value), getFont1()));
+                }
                 if(difficulty==difficultyMax) {
                     db.gameDao().updateMemoryDataCardUsed(userId,
                             category,
                             subCat,
-                            String.valueOf(value),
+                            getValue(value),
                             db.gameDao().getMemoryDataCardUsed(userId,
                                     category,
                                     subCat,
-                                    String.valueOf(value)) + 1);
+                                    getValue(value)) + 1);
                 }
 
-                Log.e("memory","Carte ajouté: "+value);
+                Log.e("memory","Carte ajouté: "+getValue(value));
             }
             isUsed=false;
         }
@@ -268,19 +310,48 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         Log.e("memory","Les valeurs sont choisis. La taille de la liste est de "+listMemoryCard.size());
         int size= listMemoryCard.size();
         for(int i=0;i<size;i++){
-            this.listMemoryCard.add( new MemoryCardChiffre(listMemoryCard.get(i).getValue(),getImage2(listMemoryCard.get(i).getDrawableImage(),Integer.parseInt(listMemoryCard.get(i).getValue()))));
+            if(category.equals("Chiffres")) {
+                listMemoryCard.add( new MemoryCardChiffre(listMemoryCard.get(i).getValue(),getImage2(listMemoryCard.get(i).getDrawableImage(),Integer.parseInt(listMemoryCard.get(i).getValue()))));
+            }else if(category.equals("Lettres")){
+                listMemoryCard.add(new MemoryCardLettre(TolowerRelationToDifficulty(listMemoryCard.get(i).getValue()), getFont2(listMemoryCard.get(i).getFont())));
+            }
 
-            Log.e("memory","Création du double de la carte "+(i+1));
+
+            Log.e("memory","Création du double de la carte "+getValue(i));
         }
 
         Log.e("memory","Jeu de carte initialisé : "+listMemoryCard);
     }
 
+    private String getValue(int value){
+        if(category.equals("Chiffres")){
+            return String.valueOf(value+1);
+        } else if(category.equals("Lettres")){
+            String[] alphabet = getResources().getStringArray(R.array.alphabet);
+            return alphabet[value];
+        }
+        return "ERREUR: category invalid";
+    }
+
+    private String TolowerRelationToDifficulty(String value){
+            switch (subCat){
+                case 1:
+                case 2:
+                    return value;
+                case 3:
+                case 4:
+                    return value.toLowerCase(Locale.ROOT);
+
+            }
+
+        return "ERREUR: category invalid";
+    }
+
     private int NbCardUsedLessThan(int valeur){
         int compteur=0;
         for (int i=0;i<db.gameDao().getMemoryDataCardNbTotal(userId,category,subCat);i++){
-            Log.e("memoryB","CARTE "+(i+1)+" à étais utilisé : "+db.gameDao().getMemoryDataCard(userId,category,subCat,String.valueOf(i+1)).getUsed());
-            if(db.gameDao().getMemoryDataCard(userId,category,subCat,String.valueOf(i+1)).getUsed()<valeur){
+            Log.e("memoryB","CARTE "+getValue(i)+" à étais utilisé : "+db.gameDao().getMemoryDataCard(userId,category,subCat,getValue(i)).getUsed());
+            if(db.gameDao().getMemoryDataCard(userId,category,subCat,getValue(i)).getUsed()<valeur){
                 compteur++;
 
             }
@@ -364,6 +435,47 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         return -1;
     }
 
+    private int getFont1(){
+        return getFontLettreNotUse();
+    }
+
+    private int getFont2(int font1){
+        switch(subCat) {
+            case 1:
+            case 3:
+                return font1;
+            case 2:
+            case 4:
+                return getFontLettreNotUse();
+        }
+        return 0;
+    }
+
+    private int getFontLettreNotUse(){
+        int sizeFonts = fonts.size();
+
+        if(listMemoryCard!=null && !listMemoryCard.isEmpty() ) {
+            int font = listMemoryCard.get(0).getFont();
+            while (!isFontNotUse(font)) {
+                font = fonts.get((int) (Math.random() * sizeFonts));
+            }
+            return font;
+        }
+        else{
+            return fonts.get((int) (Math.random() * sizeFonts));
+        }
+    }
+
+    private boolean isFontNotUse(int font){
+        for (int i=0;i<listMemoryCard.size();i++){
+            if(font == listMemoryCard.get(i).getFont()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     private int getImage1(int value){
         switch(subCat){
             case 1:
@@ -385,11 +497,6 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             case 4:
                 return db.gameDao().getCard(String.valueOf(value)).getDrawableImage();
         }
-        return 0;
-    }
-
-    private int getFontLettreNotUse(){
-        String[] fonts = getResources().getStringArray(R.array.preloaded_fonts);
         return 0;
     }
 
@@ -416,7 +523,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         }
         return true;
     }
-//TODO faire les bouton sur la progresse Bar avec max diffulté déjà atteinte
+
     @Override
     public void onStateItemClick(StateProgressBar stateProgressBar, StateItem stateItem, int stateNumber, boolean isCurrentState) {
         Log.e("memoryProgressBar","ça détecte !");

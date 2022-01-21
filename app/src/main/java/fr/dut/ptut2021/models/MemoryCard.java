@@ -20,7 +20,7 @@ public abstract class MemoryCard {
         return hidden;
     }
     public abstract int getDrawableImage();
-    public abstract String getFont();
+    public abstract int getFont();
     public String getValue() {
         return value;
     }
@@ -33,7 +33,7 @@ public abstract class MemoryCard {
         this.hidden = hidden;
     }
     public abstract void setDrawableImage(int drawableImage);
-    public abstract void setFont(String font);
+    public abstract void setFont(int font);
     public void setValue(String value) {
         this.value = value;
     }
