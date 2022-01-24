@@ -36,10 +36,10 @@ public class MyDatabaseInsert {
 
     public static void createGames() {
         if (db.appDao().tabGameIsEmpty()) {
-            db.appDao().insertGame(new Game("Memory", themeLettres, R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Dessine", themeLettres, R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Mot à trou", themeLettres, R.drawable.memory_icon));
-            db.appDao().insertGame(new Game("Ecoute", themeLettres, R.drawable.memory_icon));
+            db.appDao().insertGame(new Game("Memory", themeLettres, R.drawable.logo_memory_lettre));
+            db.appDao().insertGame(new Game("Dessine", themeLettres, R.drawable.logo_drawonit_lettre));
+            db.appDao().insertGame(new Game("Mot à trou", themeLettres, R.drawable.logo_wordwithhole_lettre));
+            db.appDao().insertGame(new Game("Ecoute", themeLettres, R.drawable.logo_ecoute_lettre));
             db.appDao().insertGame(new Game("Memory", themeChiffres, R.drawable.logo_memory));
             db.appDao().insertGame(new Game("Dessine", themeChiffres, R.drawable.logo_drawonit));
             db.appDao().insertGame(new Game("Ecoute", themeChiffres, R.drawable.logo_playwithsound));
@@ -48,14 +48,14 @@ public class MyDatabaseInsert {
 
     public static void createSubGames() {
         if (db.appDao().tabSubGameIsEmpty()) {
-            db.appDao().insertSubGame(new SubGame("Image / Image", db.appDao().getGameId("Memory", themeChiffres), R.drawable.memory_img_img));
-            db.appDao().insertSubGame(new SubGame("Image / Image différente", db.appDao().getGameId("Memory", themeChiffres), R.drawable.memory_img_imgdiff));
-            db.appDao().insertSubGame(new SubGame("Chiffre / Chiffre", db.appDao().getGameId("Memory", themeChiffres), R.drawable.memory_chiffre_chiffre));
-            db.appDao().insertSubGame(new SubGame("Image / Chiffre", db.appDao().getGameId("Memory", themeChiffres), R.drawable.memory_img_chiffre));
-            db.appDao().insertSubGame(new SubGame("Memory1", db.appDao().getGameId("Memory", themeLettres), R.drawable.memory_icon));
-            db.appDao().insertSubGame(new SubGame("Memory2", db.appDao().getGameId("Memory", themeLettres), R.drawable.memory_icon));
-            db.appDao().insertSubGame(new SubGame("Memory3", db.appDao().getGameId("Memory", themeLettres), R.drawable.memory_icon));
-            db.appDao().insertSubGame(new SubGame("Memory4", db.appDao().getGameId("Memory", themeLettres), R.drawable.memory_icon));
+            db.appDao().insertSubGame(new SubGame("Niveau 1", db.appDao().getGameId("Memory", themeChiffres), R.drawable.memory_img_img));
+            db.appDao().insertSubGame(new SubGame("Niveau 2", db.appDao().getGameId("Memory", themeChiffres), R.drawable.memory_img_imgdiff));
+            db.appDao().insertSubGame(new SubGame("Niveau 3", db.appDao().getGameId("Memory", themeChiffres), R.drawable.memory_chiffre_chiffre));
+            db.appDao().insertSubGame(new SubGame("Niveau 4", db.appDao().getGameId("Memory", themeChiffres), R.drawable.memory_img_chiffre));
+            db.appDao().insertSubGame(new SubGame("Niveau 1", db.appDao().getGameId("Memory", themeLettres), R.drawable.memory_majuscule_majuscule));
+            db.appDao().insertSubGame(new SubGame("Niveau 2", db.appDao().getGameId("Memory", themeLettres), R.drawable.memory_majuscule_majuscule_diff));
+            db.appDao().insertSubGame(new SubGame("Niveau 3", db.appDao().getGameId("Memory", themeLettres), R.drawable.memory_majuscule_miniscule));
+            db.appDao().insertSubGame(new SubGame("Niveau 4", db.appDao().getGameId("Memory", themeLettres), R.drawable.memory_majuscule_miniscule_diff));
         }
     }
 

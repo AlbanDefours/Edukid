@@ -58,7 +58,7 @@ public class SubGameMenu extends AppCompatActivity {
                             GlobalUtils.startGame(SubGameMenu.this, "SubMemory", false, false);
                         }else{
                             MyVibrator.vibrate(SubGameMenu.this, 60);
-                            GlobalUtils.toast(SubGameMenu.this,"Atteint le niveau 4 dans le jeu "+subGameList.get(position-1).getSubGameName(),false);
+                            GlobalUtils.toast(SubGameMenu.this,"Atteint la difficulté 4 du "+subGameList.get(position-1).getSubGameName(),false);
                         }
                     }
 
@@ -93,7 +93,7 @@ public class SubGameMenu extends AppCompatActivity {
                         return true;
                     }
             }
-        return true;
+        return false;
     }
 
     private void saveGameName(int position){

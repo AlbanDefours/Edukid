@@ -78,8 +78,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                     isClicked=false;
                 } else {
                     new Handler().postDelayed(() -> {
-                        //TODO faire en sorte que pendant la vérification ça remette les valeurs en majuscule pour memory lettre niveau 3 et 4
-                        if (idCard != idLastCardReturn && listMemoryCard.get(idLastCardReturn).getValue().toUpperCase(Locale.ROOT) == listMemoryCard.get(idCard).getValue().toUpperCase(Locale.ROOT) ) {
+                        if (idCard != idLastCardReturn && listMemoryCard.get(idLastCardReturn).getValue().toUpperCase(Locale.ROOT).equals(listMemoryCard.get(idCard).getValue().toUpperCase(Locale.ROOT)) ) {
                             MyMediaPlayer.playSound(this,R.raw.correct_answer);
                             idLastCardReturn = -1;
                         } else {
@@ -150,20 +149,16 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         SharedPreferences settings = getSharedPreferences("MyPref", 0);
         String subGame = settings.getString("subGameName", "");
         switch(subGame){
-            case "Image / Image":
-            case "Memory1":
+            case "Niveau 1":
                 subCat=1;
                 break;
-            case "Image / Image différente":
-            case "Memory2":
+            case "Niveau 2":
                 subCat=2;
                 break;
-            case "Chiffre / Chiffre":
-            case "Memory3":
+            case "Niveau 3":
                 subCat=3;
                 break;
-            case "Image / Chiffre":
-            case "Memory4":
+            case "Niveau 4":
                 subCat=4;
                 break;
         }
@@ -194,15 +189,11 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
 
     private void initFonts(){
         fonts = new ArrayList<>();
-        fonts.add(R.font.cream_cake);
-        fonts.add(R.font.abstractgroovy);
-        fonts.add(R.font.american_captain);
-        fonts.add(R.font.autography);
         fonts.add(R.font.kg_second_chances);
-        fonts.add(R.font.little_comet);
-        fonts.add(R.font.magimt);
         fonts.add(R.font.sticky_notes);
-        fonts.add(R.font.stop_bullying);
+        fonts.add(R.font.arial);
+        fonts.add(R.font.cocogoose);
+        fonts.add(R.font.roboto);
     }
 
     @Override
@@ -363,7 +354,11 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         if(difficulty==difficultyMax) {
             Log.e("memory","La difficulté est analysé");
             Log.e("memory","Nombre de carte en dessous de 3 : "+NbCardUsedLessThan(3));
-            if (db.gameDao().getMemoryData(userId, category, subCat).getWinStreak() >= 2 && NbCardUsedLessThan(3) == 0 && difficulty + 1 <= 5) {
+            int value=3;
+            if(category.equals("Lettres")){
+                value=2;
+            }
+            if (db.gameDao().getMemoryData(userId, category, subCat).getWinStreak() >= 3 && NbCardUsedLessThan(value) == 0 && difficulty + 1 <= 5) {
                 Log.e("memory", "Monte au niveau " + (difficulty + 1));
                 db.gameDao().increaseMemoryDataDifficulty(userId, category, subCat);
                 db.gameDao().increaseMemoryDataMaxDifficulty(userId,category,subCat);
@@ -387,21 +382,6 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         return 1;
     }
 
-    private String getStringDifficulty(int difficulty){
-        switch (difficulty){
-            case 1:
-                return "one";
-            case 2:
-                return "two";
-            case 3:
-                return "three";
-            case 4:
-                return "four";
-            case 5:
-                return "five";
-        }
-        return "ERREUR: Difficulty invalid";
-    }
 
     private StateProgressBar.StateNumber getStateNumberDifficulty(int difficulty){
         switch (difficulty){
@@ -417,22 +397,6 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                 return StateProgressBar.StateNumber.FIVE;
         }
         return null;
-    }
-
-    private int getIntDifficulty(String difficulty){
-        switch (difficulty){
-            case "one":
-                return 1;
-            case "two":
-                return 2;
-            case "three":
-                return 3;
-            case "four":
-                return 4;
-            case "five":
-                return 5;
-        }
-        return -1;
     }
 
     private int getFont1(){
@@ -526,7 +490,6 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
 
     @Override
     public void onStateItemClick(StateProgressBar stateProgressBar, StateItem stateItem, int stateNumber, boolean isCurrentState) {
-        Log.e("memoryProgressBar","ça détecte !");
         if(stateProgressBar == this.stateProgressBar){
             if(stateNumber<=difficultyMax){
               MemoryData memoData =   db.gameDao().getMemoryData(userId,category,subCat);
@@ -537,7 +500,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
               GlobalUtils.startGame(this,"SubMemory",true,true);
             }else{
                 MyVibrator.vibrate(this, 60);
-                GlobalUtils.toast(this,"Fini le niveau "+difficultyMax+" avant de pouvoir jouer au niveau "+stateNumber,false);
+                GlobalUtils.toast(this,"Fini la difficulté "+(stateNumber-1)+" avant de pouvoir jouer à cette difficulté ",false);
             }
         }
     }
