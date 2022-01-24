@@ -59,6 +59,8 @@
         <item>PH</item>
         <item>AI</item>
         <item>OI</item>
+        <item>EI</item>
+        <item>EN</item>
     </string-array>
 
     <string-array name="difficulty1">
@@ -116,6 +118,8 @@
         <item>H</item>
         <item>CH</item>
         <item>PH</item>
+        <item>EI</item>
+        <item>EN</item>
     </string-array>
 
 

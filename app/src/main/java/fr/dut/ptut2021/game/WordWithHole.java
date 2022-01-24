@@ -173,14 +173,16 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
                 if (mapChooseData.size() <= MAX_GAME_PLAYED && list.get(difficulty-1).get(j).size() > 0) {
                     String answer = list.get(difficulty-1).get(j).get(k);
-                    Log.e("APPLOG", "answer : " + answer);
                     if (!mapChooseData.containsKey(answer) &&
                             (difficulty == list.size() - 1 || db.gameDao().getWWHDataByData(userId, answer).getWinStreak() < 1)
                     ) {
+                        Log.e("APPLOG", "answer : " + answer);
                         words = db.appDao().getWordIfContain('%' + answer + '%');
-                        //words.addAll(db.appDao().getWordIfContain(answer + '%'));
 
                         if (words.size() > 0) {
+                            for (Map.Entry<String, Word> val : mapChooseData.entrySet())
+                                words.remove(mapChooseData.get(val.getKey()));
+
                             for (int i = 0; i < 3; i++)
                                 Collections.shuffle(words);
 
@@ -188,13 +190,14 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                                 for (int l = 0; l < list.get(j).size(); l++) {
                                     for (int m = 0; m < list.get(i).get(l).size(); m++) {
                                         String syllable = list.get(i).get(l).get(m);
+
                                         if (syllable.length() == 2 && !answer.equals(syllable)) {
-                                            //Log.e("APPLOG", syllable);
                                             if (answer.contains(String.valueOf(syllable.charAt(0))) ||
                                                     answer.contains(String.valueOf(syllable.charAt(1)))) {
                                                 for (int n = 0; n < words.size(); n++) {
                                                     if (words.get(n).getWord().contains(syllable)) {
                                                         words.remove(n);
+                                                        n--;
                                                     }
                                                 }
                                             }
