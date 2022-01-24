@@ -174,7 +174,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 if (mapChooseData.size() <= MAX_GAME_PLAYED && list.get(difficulty-1).get(j).size() > 0) {
                     String answer = list.get(difficulty-1).get(j).get(k);
                     if (!mapChooseData.containsKey(answer) &&
-                            (difficulty == list.size() - 1 || db.gameDao().getWWHDataByData(userId, answer).getWinStreak() < 1)
+                            (difficulty == list.size() - 1 || db.gameDao().getWWHDataByData(userId, answer).getWinStreak() < 3)
                     ) {
                         Log.e("APPLOG", "answer : " + answer);
                         words = db.appDao().getWordIfContain('%' + answer + '%');
