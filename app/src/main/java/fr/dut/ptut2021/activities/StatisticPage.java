@@ -53,7 +53,6 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     private CreateDatabase db = null;
     private int pageUser = 0;
     private TextView userTitle, barChartTitle, leftStatTitle, rightStatTitle, leftStatText, rightStatText;
-    private int page = 0;
     private List<User> listUser;
     private List<Game> gameList;
     private Button generalButton, lettresButton, chiffresButton;
@@ -259,10 +258,17 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     private void verifyPageUserLocation() {
         previousPage.setAlpha(1f);
         nextPage.setAlpha(1f);
-        if (pageUser == 0)
+        previousPage.setEnabled(true);
+        nextPage.setEnabled(true);
+
+        if (pageUser == 0) {
             previousPage.setAlpha(0.5f);
-        if (pageUser == listUser.size() - 1)
+            previousPage.setEnabled(false);
+        }
+        if (pageUser == listUser.size() - 1) {
             nextPage.setAlpha(0.5f);
+            nextPage.setEnabled(false);
+        }
     }
 
     public void lockButton(Button button) {
@@ -273,6 +279,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     }
 
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -293,16 +300,16 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.arrow_nextPage:
-                if (page < listUser.size() - 1) {
+                if (pageUser < listUser.size() - 1) {
                     MyVibrator.vibrate(StatisticPage.this, 35);
-                    page++;
+                    pageUser++;
                 }
                 displayNewUserPage();
                 break;
             case R.id.arrow_previousPage:
-                if (0 < page) {
+                if (0 < pageUser) {
                     MyVibrator.vibrate(StatisticPage.this, 35);
-                    page--;
+                    pageUser--;
                 }
                 displayNewUserPage();
                 break;
