@@ -131,10 +131,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         changeDifficulty();
 
         new Handler().postDelayed(() -> {
-        Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
-        intent.putExtra("starsNumber", nbStar);
-        startActivity(intent);
-        finish();
+            GlobalUtils.startResultPage(Memory.this, nbStar);
         }, 2000);
 
         return true;
