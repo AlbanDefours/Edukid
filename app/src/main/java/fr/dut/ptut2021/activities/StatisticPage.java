@@ -254,6 +254,22 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         }
         return mapData;
     }
+
+    private Map<Integer, Float> getGameAvgStarsData() {
+        Map<Integer, Float> mapAvg = new LinkedHashMap<>();
+        List<GameResultLog> listLog = db.gameLogDao().getAllGameResultLogByUserLimit(listUser.get(pageUser).getUserId());
+
+        final int COLUMN = 6;
+        Map<Integer, Integer> mapData = new LinkedHashMap<>();
+
+        for (int i = 0; i < COLUMN; i++)
+            mapAvg.put(i+1, 0f);
+
+        for (int i = COLUMN+1; i > 0; i--)
+            mapData.put(i, mapData.get(i)+1);
+
+        return mapAvg;
+    }
     
     private void verifyPageUserLocation() {
         previousPage.setAlpha(1f);

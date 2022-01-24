@@ -21,6 +21,9 @@ public interface GameLogDao {
     @Query("SELECT * FROM GameResultLog")
     List<GameResultLog> getAllGameResultLog();
 
+    @Query("SELECT * FROM GameResultLog WHERE userId = :userId LIMIT 60")
+    List<GameResultLog> getAllGameResultLogByUserLimit(int userId);
+
     @Query("SELECT * FROM GameResultLog WHERE userId = :userId AND endGameDate >= :minTime")
     List<GameResultLog> getAllGameResultLogAfterTime(int userId, long minTime);
 
@@ -35,6 +38,9 @@ public interface GameLogDao {
 
     @Query("SELECT count(*) FROM GameResultLog WHERE userId = :userId AND gameId = :gameId")
     int getGameResultLogNbGame(int userId, int gameId);
+
+    @Query("SELECT avg(stars) FROM GameResultLog WHERE userId = :userId")
+    float getGameResultLogAvgStars(int userId);
 
     @Query("SELECT count(*) FROM GameResultLog WHERE userId = :userId")
     int getGameResultLogNb(int userId);
