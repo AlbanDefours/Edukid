@@ -21,32 +21,27 @@ import fr.dut.ptut2021.utils.MyVibrator;
 
 public class SubGameMenu extends AppCompatActivity {
 
-    private String themeName, gameName;
-    private CreateDatabase db = null;
-    private RecyclerView recyclerViewListGame;
-    private List<SubGame> subGameList;
     private int userId;
+    private SubGameAdapter adapter;
+    private CreateDatabase db = null;
+    private List<SubGame> subGameList;
+    private String themeName, gameName;
+    private RecyclerView recyclerViewListGame;
     private List<Boolean> subgamelocks = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subgame_menu);
+
         db = CreateDatabase.getInstance(SubGameMenu.this);
 
-        db = CreateDatabase.getInstance(getApplicationContext());
         themeName = MySharedPreferences.getThemeName(SubGameMenu.this);
         gameName = MySharedPreferences.getGameName(SubGameMenu.this);
-        createRecyclerView();
-
-        subGameList = db.appDao().getAllSubGamesByGame(db.appDao().getGameId(gameName, themeName));
-
         userId = MySharedPreferences.getUserId(SubGameMenu.this);
+        getAllSubGames();
+        getAllLockGames();
         createRecyclerView();
-
-        for (int i=0;i<subGameList.size();i++){
-            subgamelocks.add(isLock(i));
-        }
 
         recyclerViewListGame.addOnItemTouchListener(
                 new RecyclerItemClickListener(getApplicationContext(), recyclerViewListGame, new RecyclerItemClickListener.OnItemClickListener() {
@@ -56,7 +51,7 @@ public class SubGameMenu extends AppCompatActivity {
                         if (!isLock(position)) {
                             MyVibrator.vibrate(SubGameMenu.this, 35);
                             GlobalUtils.startGame(SubGameMenu.this, "SubMemory", false, false);
-                        }else{
+                        } else {
                             MyVibrator.vibrate(SubGameMenu.this, 60);
                             GlobalUtils.toast(SubGameMenu.this,"Atteint la difficulté 4 du "+subGameList.get(position-1).getSubGameName(),false);
                         }
@@ -70,33 +65,41 @@ public class SubGameMenu extends AppCompatActivity {
 
     }
 
-    private boolean isLock(int position){
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getAllSubGames();
+        getAllLockGames();
+        createRecyclerView();
+        adapter.notifyDataSetChanged();
+    }
+
+    private void getAllSubGames() {
+        subGameList = db.appDao().getAllSubGamesByGame(db.appDao().getGameId(gameName, themeName));
+    }
+
+    private void getAllLockGames(){
+        subgamelocks.clear();
+        for (int i = 0; i < subGameList.size(); i++)
+            subgamelocks.add(isLock(i));
+    }
+
+
+    private boolean isLock(int position) {
             switch (position + 1) {
                 case 1:
                     return false;
                 case 2:
-                    if (db.gameDao().getMemoryDataMaxDifficulty(userId, themeName, 1) >= 4) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    return db.gameDao().getMemoryDataMaxDifficulty(userId, themeName, 1) < 4;
                 case 3:
-                    if (db.gameDao().getMemoryDataMaxDifficulty(userId, themeName, 2) >= 4) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    return db.gameDao().getMemoryDataMaxDifficulty(userId, themeName, 2) < 4;
                 case 4:
-                    if (db.gameDao().getMemoryDataMaxDifficulty(userId, themeName, 3) >= 4) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    return db.gameDao().getMemoryDataMaxDifficulty(userId, themeName, 3) < 4;
             }
         return false;
     }
 
-    private void saveGameName(int position){
+    private void saveGameName(int position) {
         MySharedPreferences.setSharedPreferencesString(SubGameMenu.this, "subGameName", subGameList.get(position).getSubGameName());
         MySharedPreferences.setSharedPreferencesInt(SubGameMenu.this, "subGameId", subGameList.get(position).getSubGameId());
         MySharedPreferences.commit();
@@ -105,7 +108,7 @@ public class SubGameMenu extends AppCompatActivity {
     private void createRecyclerView() {
         recyclerViewListGame = findViewById(R.id.recyclerview_subgame);
         recyclerViewListGame.setLayoutManager(new LinearLayoutManager(this));
-
-        recyclerViewListGame.setAdapter(new SubGameAdapter(getApplicationContext(), subGameList, subgamelocks));
+        adapter = new SubGameAdapter(getApplicationContext(), subGameList, subgamelocks);
+        recyclerViewListGame.setAdapter(adapter);
     }
 }

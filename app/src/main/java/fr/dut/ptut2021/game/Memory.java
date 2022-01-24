@@ -1,3 +1,4 @@
+
 package fr.dut.ptut2021.game;
 
 import android.content.Intent;
@@ -132,16 +133,15 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                 Log.e("memory", "LoseStreak : " + db.gameDao().getMemoryData(userId, category, subCat).getLoseStreak());
             }
             changeDifficulty();
+
             new Handler().postDelayed(() -> {
-                Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
-                intent.putExtra("starsNumber", nbStar);
-                startActivity(intent);
-                finish();
+                GlobalUtils.startResultPage(Memory.this, nbStar);
             }, 2000);
 
             return true;
         }
         return false;
+
     }
 
     private void initDB(){
@@ -233,6 +233,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                 }
             }
         });
+
     }
 
     private void calculatesNbColumns(){
@@ -298,6 +299,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             isUsed=false;
         }
 
+
         Log.e("memory","Les valeurs sont choisis. La taille de la liste est de "+listMemoryCard.size());
         int size= listMemoryCard.size();
         for(int i=0;i<size;i++){
@@ -349,6 +351,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         }
         return compteur;
     }
+
 
     private void changeDifficulty(){
         if(difficulty==difficultyMax) {
@@ -503,5 +506,11 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                 GlobalUtils.toast(this,"Fini la difficulté "+(stateNumber-1)+" avant de pouvoir jouer à cette difficulté ",false);
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        GlobalUtils.stopAllSound(Memory.this);
     }
 }

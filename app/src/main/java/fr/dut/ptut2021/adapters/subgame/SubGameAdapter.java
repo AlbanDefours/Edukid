@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.models.database.app.Game;
 import fr.dut.ptut2021.models.database.app.SubGame;
 
 public class SubGameAdapter extends RecyclerView.Adapter<MyViewHolderSubGame> {
@@ -37,12 +36,10 @@ public class SubGameAdapter extends RecyclerView.Adapter<MyViewHolderSubGame> {
         holder.name.setText(listSubGame.get(position).getSubGameName());
         holder.image.setImageResource(listSubGame.get(position).getSubGameImage());
 
-        if(locks.get(position)){
+        if(locks.get(position))
             holder.lock.setVisibility(View.VISIBLE);
-        }
-        else{
+        else
             holder.lock.setVisibility(View.INVISIBLE);
-        }
     }
 
     @Override
