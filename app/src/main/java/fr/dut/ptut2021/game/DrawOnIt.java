@@ -1,6 +1,7 @@
 package fr.dut.ptut2021.game;
 
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -24,11 +25,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.dut.ptut2021.R;
+import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.DataSymbol;
 import fr.dut.ptut2021.models.Point;
 import fr.dut.ptut2021.models.Symbol;
 import fr.dut.ptut2021.models.database.game.Card;
+import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
 import fr.dut.ptut2021.utils.MyVibrator;
 
@@ -124,23 +127,24 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         }
 
         /*
-        int c = 5;
-        image.setImageResource(2131230912); //carte[0]
+        int c = 8;
+        image.setImageResource(listCard.get(c - 1).getDrawableImage()); //carte[0]
         DataSymbol.initPts(c, dm.widthPixels, dm.heightPixels); //Integer.parseInt(carte[0].getCardValue())
         s = new Symbol(DataSymbol.getPts(), tolerance);
         */
 
-
-
         image.setImageResource(carte[0].getDrawableImage()); //carte[0]
-        DataSymbol.initPts(Integer.parseInt(carte[0].getCardValue()),dm.widthPixels, dm.heightPixels, dm.widthPixels, dm.heightPixels, image.getWidth(), image.getHeight()); //(Integer.parseInt(carte[0].getCardValue()), dm.widthPixels, dm.heightPixels)
+        DataSymbol.initPts(Integer.parseInt(carte[0].getCardValue()),dm.widthPixels, dm.heightPixels); //(Integer.parseInt(carte[0].getCardValue()), dm.widthPixels, dm.heightPixels)
         s = new Symbol(DataSymbol.getPts(), tolerance);
 
-        Log.e("bit", "" + bitmap.getScaledHeight(canvas));
-        Log.e("bit", "" + bitmap.getScaledHeight(dm));
 
-        System.out.println(bitmap.getScaledHeight(canvas));
-        System.out.println(bitmap.getScaledHeight(dm));
+
+
+        //Log.e("bit", "" + bitmap.getScaledHeight(canvas));
+        //Log.e("bit", "" + bitmap.getScaledHeight(dm));
+
+        //System.out.println(bitmap.getScaledHeight(canvas));
+        //System.out.println(bitmap.getScaledHeight(dm));
 
         Display currentDisplay = getWindowManager().getDefaultDisplay();
         largeur = currentDisplay.getWidth();
@@ -257,8 +261,6 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                         }
 
                     }
-                    error = false;
-                    warning = false;
 
                     if (numEssai >= NBESSAI) { //Manche terminé
                         Log.e("axel", "Symbol suivant : plus d'essai | nb de game " + numGame);
@@ -270,10 +272,25 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                         hasDraw = true;
                         Toast.makeText(getApplicationContext(), "Jeu terminé !!!", Toast.LENGTH_SHORT);
                         Log.e("axel", "jeu terminé !!!");
-                        //TODO animation de fin avec les etoiles
+
+                        Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
+                        if(((NBESSAI*NBGAME)/3.0)*2.0 < nbErreur){
+                            intent.putExtra("starsNumber", 1);
+                        }else if(((NBESSAI*NBGAME)/3.0) > nbErreur){
+                            intent.putExtra("starsNumber", 3);
+                        }else{
+                            intent.putExtra("starsNumber", 2);
+                        }
+                        startActivity(intent);
+                        finish();
+
                     } else if (next) {
                         nextSymbol();
-                        MyMediaPlayer.playSound(this, R.raw.correct_answer);
+                        if(error){
+                            MyMediaPlayer.playSound(this, R.raw.wrong_answer);
+                        }else{
+                            MyMediaPlayer.playSound(this, R.raw.correct_answer);
+                        }
                         next = false;
                     }else{
                         MyMediaPlayer.playSound(this, R.raw.wrong_answer);
@@ -283,6 +300,8 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                     oldUpx = 0;
                     oldUpy = 0;
                     canDraw = false;
+                    error = false;
+                    warning = false;
                 }
                 break;
             case MotionEvent.ACTION_CANCEL:
@@ -336,7 +355,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         numGame++;
 
         image.setImageResource(carte[numGame].getDrawableImage());
-        DataSymbol.initPts(Integer.parseInt(carte[numGame].getCardValue()),dm.widthPixels, dm.heightPixels, dm.widthPixels, dm.heightPixels, image.getWidth(), image.getHeight());
+        DataSymbol.initPts(Integer.parseInt(carte[numGame].getCardValue()),dm.widthPixels, dm.heightPixels);
         s = new Symbol(DataSymbol.getPts(), tolerance);
 
         Log.e("axel", "millieu nextSymbol");
