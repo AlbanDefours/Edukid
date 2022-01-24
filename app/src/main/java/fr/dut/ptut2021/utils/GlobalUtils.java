@@ -106,4 +106,9 @@ public class GlobalUtils {
         if(volume_level == 0)
             toast(context, "Veuillez activer le son pour jouer !", true);
     }
+
+    public static void stopAllSound(Context context){
+        MyTextToSpeech.stop(context);
+        MyMediaPlayer.stop();
+    }
 }
