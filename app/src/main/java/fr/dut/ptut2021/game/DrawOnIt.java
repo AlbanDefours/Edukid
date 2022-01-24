@@ -8,7 +8,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -31,7 +30,6 @@ import fr.dut.ptut2021.models.DataSymbol;
 import fr.dut.ptut2021.models.Point;
 import fr.dut.ptut2021.models.Symbol;
 import fr.dut.ptut2021.models.database.game.Card;
-import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
 import fr.dut.ptut2021.utils.MyVibrator;
 
@@ -44,11 +42,11 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
     private Paint paint;
     private DisplayMetrics dm;
     private float largeur = 0, hauteur = 0, downx = 0, downy = 0, upx = 0, upy = 0, oldUpx = 0, oldUpy = 0;
-    private Boolean canDraw = false, hasDraw = false, warning = false, error = false, next = false;
+    private Boolean canDraw = false, hasDraw = false, warning = false, error = false, next = false, simpleTrait = true;
 
     private static final int NBESSAI = 3, NBGAME = 9;
 
-    private int numEssai = 0, numGame = 0;
+    private int numEssai = 0, numGame = 0, numTrait = 0;
     private float nbErreur = 0;
     private Card[] carte;
 
@@ -230,6 +228,11 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
             case MotionEvent.ACTION_UP:
                 System.out.println("ACTION_UP");
                 if(canDraw) {
+                    if(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(0) == -1){
+                        simpleTrait = true;
+                    }else{
+                        numTrait = DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).size();
+                    }
                     if (s.getDistanceBetweenTwoPoints(s.getLastPoint(), new Point(event.getX(), event.getY())) > s.getTolerance() || s.getLastId() != s.getPoints().size() - 1 || !s.isPastByTheMiddle()) {
                         numEssai++;
                         nbErreur++;
