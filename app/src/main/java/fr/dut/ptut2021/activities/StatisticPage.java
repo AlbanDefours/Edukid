@@ -118,7 +118,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     private void displayNewCategoryPage() {
         createBarChart(getGameFrequencyData());
-        createLineChart();
+        createLineChart(getGameAvgStarsData());
         setStatsText();
     }
 
@@ -181,16 +181,13 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         barChart.setExtraOffsets(0, 0, 0, 5);
     }
 
-    public void createLineChart() {
+    public void createLineChart(Map<Integer, Float> mapData) {
         LineChart lineChart = findViewById(R.id.line_chart);
         List<Entry> data = new ArrayList<>();
 
-        data.add(new Entry(1, 1));
-        data.add(new Entry(2, 1.5f));
-        data.add(new Entry(3, 1.7f));
-        data.add(new Entry(4, 1.9f));
-        data.add(new Entry(5, 2.4f));
-        data.add(new Entry(6, 3));
+        for (Map.Entry<Integer, Float> val : mapData.entrySet())
+            data.add(new Entry(val.getKey(), val.getValue()));
+
 
         LineDataSet lineDataSet = new LineDataSet(data, "Data");
         lineDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
@@ -216,7 +213,8 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         AxisBase axisBase = lineChart.getAxis(YAxis.AxisDependency.LEFT);
         axisBase.setGranularity(1f);
         axisBase.setTextSize(15f);
-        axisBase.setAxisMinimum(1f);
+        axisBase.setAxisMinimum(0f);
+        axisBase.setAxisMaximum(3f);
         axisBase.setTypeface(Typeface.MONOSPACE);
         lineChart.getAxis(YAxis.AxisDependency.RIGHT).setEnabled(false);
 
@@ -309,7 +307,12 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     private Map<Integer, Float> getGameAvgStarsData() {
         Map<Integer, Float> mapData = new TreeMap<>();
-        List<GameResultLog> listLog = db.gameLogDao().getAllGameResultLogByUserLimit(listUser.get(pageUser).getUserId());
+        List<GameResultLog> listLog;
+
+        if (categoryName.equals("Chiffres") || categoryName.equals("Lettres"))
+            listLog = db.gameLogDao().getAllGameResultLogByUserLimitByTheme(listUser.get(pageUser).getUserId(), categoryName);
+        else
+            listLog = db.gameLogDao().getAllGameResultLogByUserLimit(listUser.get(pageUser).getUserId());
 
         final int COLUMN = 6;
 
@@ -317,7 +320,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         for (int i = 0; i < COLUMN; i++) {
             float n = 0;
             float sum = 0;
-            while ((it + 1) % 10 != 0) {
+            while ((it + 1) % 10 != 0 && listLog.size() > it) {
                 n++;
                 sum += listLog.get(it).getStars();
                 it++;

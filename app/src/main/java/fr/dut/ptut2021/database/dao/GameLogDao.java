@@ -24,10 +24,13 @@ public interface GameLogDao {
     @Query("SELECT * FROM GameResultLog WHERE userId = :userId ORDER BY endGameDate DESC LIMIT 60")
     List<GameResultLog> getAllGameResultLogByUserLimit(int userId);
 
+    @Query("SELECT l.* FROM GameResultLog  AS l NATURAL JOIN Game AS g WHERE l.userId = :userId AND g.themeName LIKE :themeName ORDER BY endGameDate DESC LIMIT 60")
+    List<GameResultLog> getAllGameResultLogByUserLimitByTheme(int userId, String themeName);
+
     @Query("SELECT * FROM GameResultLog WHERE userId = :userId AND endGameDate >= :minTime")
     List<GameResultLog> getAllGameResultLogAfterTime(int userId, long minTime);
 
-    @Query("SELECT * FROM GameResultLog as l NATURAL JOIN Game AS g WHERE l.userId = :userId AND g.themeName LIKE :themeName AND l.endGameDate >= :minTime")
+    @Query("SELECT l.* FROM GameResultLog as l NATURAL JOIN Game AS g WHERE l.userId = :userId AND g.themeName LIKE :themeName AND l.endGameDate >= :minTime")
     List<GameResultLog> getAllGameResultLogAfterTimeByTheme(int userId, String themeName, long minTime);
 
     //@Query("SELECT * FROM Game as g NATURAL JOIN GameResultLog AS l WHERE l.userId = :userId AND g.themeName LIKE :themeName")
