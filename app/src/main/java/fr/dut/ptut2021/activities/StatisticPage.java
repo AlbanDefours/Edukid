@@ -35,10 +35,13 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
@@ -305,19 +308,29 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     }
 
     private Map<Integer, Float> getGameAvgStarsData() {
-        Map<Integer, Float> mapAvg = new LinkedHashMap<>();
+        Map<Integer, Float> mapData = new TreeMap<>();
         List<GameResultLog> listLog = db.gameLogDao().getAllGameResultLogByUserLimit(listUser.get(pageUser).getUserId());
 
         final int COLUMN = 6;
-        Map<Integer, Integer> mapData = new LinkedHashMap<>();
 
-        for (int i = 0; i < COLUMN; i++)
-            mapAvg.put(i+1, 0f);
+        int it = 0;
+        for (int i = 0; i < COLUMN; i++) {
+            float n = 0;
+            float sum = 0;
+            while ((it + 1) % 10 != 0) {
+                n++;
+                sum += listLog.get(it).getStars();
+                it++;
+            }
+            float avg;
+            if (n == 0)
+                avg = 0;
+            else
+                avg = sum/n;
 
-        for (int i = COLUMN+1; i > 0; i--)
-            mapData.put(i, mapData.get(i)+1);
-
-        return mapAvg;
+            mapData.put(COLUMN - i, avg);
+        }
+        return mapData;
     }
     
     private void verifyPageUserLocation() {

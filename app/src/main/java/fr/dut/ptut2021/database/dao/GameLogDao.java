@@ -21,7 +21,7 @@ public interface GameLogDao {
     @Query("SELECT * FROM GameResultLog")
     List<GameResultLog> getAllGameResultLog();
 
-    @Query("SELECT * FROM GameResultLog WHERE userId = :userId LIMIT 60")
+    @Query("SELECT * FROM GameResultLog WHERE userId = :userId ORDER BY endGameDate DESC LIMIT 60")
     List<GameResultLog> getAllGameResultLogByUserLimit(int userId);
 
     @Query("SELECT * FROM GameResultLog WHERE userId = :userId AND endGameDate >= :minTime")
