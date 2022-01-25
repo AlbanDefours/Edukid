@@ -3,6 +3,7 @@ package fr.dut.ptut2021.adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,28 +81,40 @@ public class MemoryAdapter extends BaseAdapter {
             SharedPreferences settings = context.getSharedPreferences("MyPref", 0);
 
             String themeName = settings.getString("themeName", "");
-            if(themeName.equals("Chiffres") && !listMemoryCard.get(i).getValue().equals("1") && !isChiffre(listMemoryCard.get(i).getDrawableImage())){
-                for (int k = 0; k<Integer.parseInt(listMemoryCard.get(i).getValue()); k++){
-                    holder.elements.get(k).setImageResource(listMemoryCard.get(i).getDrawableImage());
+            if(themeName.equals("Chiffres")){
+                if(!listMemoryCard.get(i).getValue().equals("1") && !isChiffre(listMemoryCard.get(i).getDrawableImage())) {
+                    for (int k = 0; k < Integer.parseInt(listMemoryCard.get(i).getValue()); k++) {
+                        holder.elements.get(k).setImageResource(listMemoryCard.get(i).getDrawableImage());
+                    }
+                }else{
+                    holder.elements.get(0).setImageResource(listMemoryCard.get(i).getDrawableImage());
                 }
             }
             else{
-                holder.elements.get(0).setImageResource(listMemoryCard.get(i).getDrawableImage());
+                holder.interieurCardLettre.setText(listMemoryCard.get(i).getValue());
+                holder.interieurCardLettre.setTypeface( context.getResources().getFont(listMemoryCard.get(i).getFont()));
             }
 
             //
             double width = (1094.0 + 20) / numColumns;
             double height = width * 1.36 + 20;
-            double sizeElement = width -80;
+            double sizeElement = width -100;
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) width, (int) height);
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
             holder.viewCard.setLayoutParams(layoutParams);
 
             holder.returnCard.setLayoutParams(layoutParams);
 
+        if(themeName.equals("Chiffres")){
             layoutParams = new RelativeLayout.LayoutParams((int) sizeElement, (int) sizeElement);
+        }
+        else{
+            layoutParams = new RelativeLayout.LayoutParams((int) sizeElement, (int) height);
+        }
+
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
             holder.interieurCardChiffre.setLayoutParams(layoutParams);
+            holder.interieurCardLettre.setTextSize((float)(sizeElement/3.5));
             holder.interieurCardLettre.setLayoutParams(layoutParams);
 
 

@@ -53,7 +53,7 @@ public class SubGameMenu extends AppCompatActivity {
                             GlobalUtils.startGame(SubGameMenu.this, "SubMemory", false, false);
                         } else {
                             MyVibrator.vibrate(SubGameMenu.this, 60);
-                            GlobalUtils.toast(SubGameMenu.this, "Atteint le niveau 4 dans le jeu " + subGameList.get(position - 1).getSubGameName(), false);
+                            GlobalUtils.toast(SubGameMenu.this,"Atteint la difficulté 4 du "+subGameList.get(position-1).getSubGameName(),false);
                         }
                     }
 
@@ -70,20 +70,8 @@ public class SubGameMenu extends AppCompatActivity {
         super.onStart();
         getAllSubGames();
         getAllLockGames();
-        tesyhduehfkehzfklhfzh();
         createRecyclerView();
         adapter.notifyDataSetChanged();
-    }
-
-    private void tesyhduehfkehzfklhfzh() {
-        for (SubGame temp : subGameList){
-            System.out.print(temp.getSubGameName()+"-");
-        }
-        System.out.println("------------");
-        for (Boolean temp : subgamelocks){
-            System.out.print(temp+"-");
-        }
-        System.out.println("------------");
     }
 
     private void getAllSubGames() {
@@ -96,8 +84,8 @@ public class SubGameMenu extends AppCompatActivity {
             subgamelocks.add(isLock(i));
     }
 
+
     private boolean isLock(int position) {
-        if (themeName.equals("Chiffres")) {
             switch (position + 1) {
                 case 1:
                     return false;
@@ -108,8 +96,7 @@ public class SubGameMenu extends AppCompatActivity {
                 case 4:
                     return db.gameDao().getMemoryDataMaxDifficulty(userId, themeName, 3) < 4;
             }
-        }
-        return true;
+        return false;
     }
 
     private void saveGameName(int position) {
