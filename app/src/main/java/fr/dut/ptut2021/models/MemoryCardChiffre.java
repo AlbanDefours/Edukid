@@ -22,8 +22,8 @@ public class MemoryCardChiffre extends MemoryCard {
     }
 
     @Override
-    public String getFont() {
-        return null;
+    public int getFont() {
+        return 0;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class MemoryCardChiffre extends MemoryCard {
     }
 
     @Override
-    public void setFont(String font) {
+    public void setFont(int font) {
 
     }
 }

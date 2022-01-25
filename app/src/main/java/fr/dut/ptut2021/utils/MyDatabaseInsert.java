@@ -1,6 +1,7 @@
 package fr.dut.ptut2021.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
@@ -35,9 +36,9 @@ public class MyDatabaseInsert {
 
     public static void createGames() {
         if (db.appDao().tabGameIsEmpty()) {
-            db.appDao().insertGame(new Game("Memory", themeLettres, R.drawable.logo_tmp));
-            db.appDao().insertGame(new Game("Dessine", themeLettres, R.drawable.logo_tmp));
-            db.appDao().insertGame(new Game("Mot à trou", themeLettres, R.drawable.logo_tmp));
+            db.appDao().insertGame(new Game("Memory", themeLettres, R.drawable.logo_memory_lettre));
+            db.appDao().insertGame(new Game("Dessine", themeLettres, R.drawable.logo_drawonit_lettre));
+            db.appDao().insertGame(new Game("Mot à trou", themeLettres, R.drawable.logo_wordwithhole_lettre));
             db.appDao().insertGame(new Game("Ecoute", themeLettres, R.drawable.logo_playwithsound_lettre));
             db.appDao().insertGame(new Game("Memory", themeChiffres, R.drawable.logo_memory));
             db.appDao().insertGame(new Game("Dessine", themeChiffres, R.drawable.logo_drawonit));
@@ -47,14 +48,16 @@ public class MyDatabaseInsert {
 
     public static void createSubGames() {
         if (db.appDao().tabSubGameIsEmpty()) {
-            db.appDao().insertSubGame(new SubGame("Image / Image", db.appDao().getGameId("Memory", themeChiffres), R.drawable.logo_memory_img_img));
-            db.appDao().insertSubGame(new SubGame("Image / Image différente", db.appDao().getGameId("Memory", themeChiffres), R.drawable.logo_memory_img_imgdiff));
-            db.appDao().insertSubGame(new SubGame("Chiffre / Chiffre", db.appDao().getGameId("Memory", themeChiffres), R.drawable.logo_memory_chiffre_chiffre));
-            db.appDao().insertSubGame(new SubGame("Image / Chiffre", db.appDao().getGameId("Memory", themeChiffres), R.drawable.logo_memory_img_chiffre));
-            db.appDao().insertSubGame(new SubGame("Memory1", db.appDao().getGameId("Memory", themeLettres), R.drawable.logo_tmp));
-            db.appDao().insertSubGame(new SubGame("Memory2", db.appDao().getGameId("Memory", themeLettres), R.drawable.logo_tmp));
-            db.appDao().insertSubGame(new SubGame("Memory3", db.appDao().getGameId("Memory", themeLettres), R.drawable.logo_tmp));
-            db.appDao().insertSubGame(new SubGame("Memory4", db.appDao().getGameId("Memory", themeLettres), R.drawable.logo_tmp));
+
+            db.appDao().insertSubGame(new SubGame("Niveau 1", db.appDao().getGameId("Memory", themeLettres), R.drawable.memory_majuscule_majuscule));
+            db.appDao().insertSubGame(new SubGame("Niveau 2", db.appDao().getGameId("Memory", themeLettres), R.drawable.memory_majuscule_majuscule_diff));
+            db.appDao().insertSubGame(new SubGame("Niveau 3", db.appDao().getGameId("Memory", themeLettres), R.drawable.memory_majuscule_miniscule));
+            db.appDao().insertSubGame(new SubGame("Niveau 4", db.appDao().getGameId("Memory", themeLettres), R.drawable.memory_majuscule_miniscule_diff));
+            db.appDao().insertSubGame(new SubGame("Niveau 1", db.appDao().getGameId("Memory", themeChiffres), R.drawable.logo_memory_img_img));
+            db.appDao().insertSubGame(new SubGame("Niveau 2", db.appDao().getGameId("Memory", themeChiffres), R.drawable.logo_memory_img_imgdiff));
+            db.appDao().insertSubGame(new SubGame("Niveau 3", db.appDao().getGameId("Memory", themeChiffres), R.drawable.logo_memory_chiffre_chiffre));
+            db.appDao().insertSubGame(new SubGame("Niveau 4", db.appDao().getGameId("Memory", themeChiffres), R.drawable.logo_memory_img_chiffre));
+
         }
     }
 
@@ -96,6 +99,7 @@ public class MyDatabaseInsert {
 
         String[] alphabetList = context.getResources().getStringArray(R.array.alphabet);
         for(int i=0;i<alphabetList.length;i++){
+            Log.e("insertData","insertion de la carte "+alphabetList[i]);
             db.gameDao().insertCard(new Card(alphabetList[i], "Lettres", 0));
         }
     }
