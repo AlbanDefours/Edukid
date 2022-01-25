@@ -333,6 +333,10 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
             mapData.put(COLUMN - i, avg);
         }
+
+        for (Map.Entry<Integer, Float> val : mapData.entrySet())
+            Log.e("APPLOG", val.getKey() + " - " + val.getValue());
+
         return mapData;
     }
     
