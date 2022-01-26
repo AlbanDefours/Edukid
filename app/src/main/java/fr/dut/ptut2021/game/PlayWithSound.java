@@ -2,6 +2,7 @@ package fr.dut.ptut2021.game;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -10,15 +11,19 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.PlayWithSoundData;
 import fr.dut.ptut2021.models.database.log.GameLog;
 import fr.dut.ptut2021.models.database.log.GameResultLog;
@@ -32,19 +37,19 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
     private CreateDatabase db;
     private ImageView btnSound, help;
-    private TextView goodAnswer;
+    private TextView goodAnswerView;
     private boolean delay = false, isAnswerFalseWord = false;
-    private List<String> listAnswer;
-    private List<Integer> listChooseResult;
-    private List<PlayWithSoundData> listData;
+    private List<String> listAnswer, listChooseResult;
     private Button answer1, answer2, answer3;
     private String themeName;
+    private String[] alphabetTab, syllableTab;
     private final Button[] listButton = new Button[3];
     private final int MAX_GAME_PLAYED = 5;
     private int userId, gameId, gamePlayed = 1, nbTry = 0, answerFalse = 0, nbrStars = 0, answerFalseWord = 0;
     private Random random = new Random();
     private String articleTheme;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,10 +58,10 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         GlobalUtils.verifyIfSoundIsOn(this);
 
         getSharedPref();
-        readInstruction();
         initDatabase();
+        readInstruction(false);
         initializeLayout();
-        fillListChooseResult(themeName);
+        fillListChooseResult();
         initGame();
         addOnClickListener();
     }
@@ -70,23 +75,20 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private void initDatabase() {
         db = CreateDatabase.getInstance(PlayWithSound.this);
 
-        String[] alphabetList = getResources().getStringArray(R.array.alphabet);
-        for (String letter : alphabetList) {
+        alphabetTab = getResources().getStringArray(R.array.alphabet);
+        for (String letter : alphabetTab)
             db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId() + 1, userId, letter, "Lettres", 1, 0));
-        }
 
-        String[] syllableList = getResources().getStringArray(R.array.syllable);
-        for (String syllable : syllableList) {
+        syllableTab = getResources().getStringArray(R.array.syllable);
+        for (String syllable : syllableTab)
             db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId() + 1, userId, syllable, "Lettres", 2, 0));
-        }
 
-        for (int i = 1; i < 10; i++) {
+        for (int i = 1; i < 10; i++)
             db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId() + 1, userId, Integer.toString(i), "Chiffres", 1, 0));
-        }
     }
 
     private void initializeLayout() {
-        goodAnswer = findViewById(R.id.goodAnswer_playWithSound);
+        goodAnswerView = findViewById(R.id.goodAnswer_playWithSound);
         btnSound = findViewById(R.id.btnSound_playWithSound);
         answer1 = findViewById(R.id.buttonAnswer1_playWithSound);
         answer2 = findViewById(R.id.buttonAnswer2_playWithSound);
@@ -103,67 +105,105 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         new Handler().postDelayed(this::readTheAnswer, 200);
     }
 
-    //TODO Choisi pour le moment Result uniquement en fonction de LastUsed
-    private void fillListChooseResult(String theme) {
-        listData = new ArrayList<>(db.gameDao().getAllPWSDataByTheme(userId, theme, 1));
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void fillListChooseResult() {
+        List<PlayWithSoundData> listData = new ArrayList<>(db.gameDao().getAllPWSDataByTheme(userId, themeName));
         listChooseResult = new ArrayList<>();
-        List<Integer> listDataNeverUsed = db.gameDao().getAllPWSDataLastUsed(listData, -1);
-        List<Integer> listDataNotUsed = db.gameDao().getAllPWSDataLastUsed(listData, 0);
-        List<Integer> listDataUsed = db.gameDao().getAllPWSDataLastUsed(listData, 1);
+        int maxDifficulty = db.gameDao().getPWSDataMaxDifficulty(userId, themeName);
+        List<List<List<String>>> listAllData = new ArrayList<>();
 
-        for (int i = 0; i < MAX_GAME_PLAYED; i++) {
-            if (!listDataNeverUsed.isEmpty() && !listChooseResult.contains(listDataNeverUsed.get(0))) {
-                listChooseResult.add(listDataNeverUsed.get(0));
-                listDataNeverUsed.remove(0);
-            } else if (!listDataNotUsed.isEmpty()) {
-                int rand = random.nextInt(listDataNotUsed.size());
-                if (!listChooseResult.contains(listDataNotUsed.get(rand))) {
-                    listChooseResult.add(listDataNotUsed.get(rand));
-                    listDataNotUsed.remove(rand);
-                }
-            } else {
-                int rand = random.nextInt(listDataUsed.size());
-                if (!listChooseResult.contains(listDataUsed.get(rand))) {
-                    listChooseResult.add(listDataUsed.get(rand));
-                    listDataUsed.remove(rand);
-                }
-            }
+        for (int i = 0; i < maxDifficulty; i++)
+            listAllData.add(new ArrayList<>());
+
+        for (int dif = 1; dif <= maxDifficulty; dif++) {
+            List<String> listDataNeverUsed = db.gameDao().getAllPWSDataLastUsed(listData, dif, -1);
+            List<String> listDataNotUsed = db.gameDao().getAllPWSDataLastUsed(listData, dif, 0);
+            List<String> listDataUsed = db.gameDao().getAllPWSDataLastUsed(listData, dif, 1);
+
+            listAllData.get(dif-1).add(listDataNeverUsed);
+            listAllData.get(dif-1).add(listDataNotUsed);
+            listAllData.get(dif-1).add(listDataUsed);
+
+            Collections.shuffle(listAllData.get(dif-1).get(1));
+            Collections.shuffle(listAllData.get(dif-1).get(2));
+
+            Log.e("APPLOG", "List Dif " + dif + " (-1): " + listAllData.get(dif-1).get(0));
+            Log.e("APPLOG", "List Dif " + dif + " (0): " + listAllData.get(dif-1).get(1));
+            Log.e("APPLOG", "List Dif " + dif + " (1): " + listAllData.get(dif-1).get(2));
+
+            if (listChooseResult.size() <= MAX_GAME_PLAYED)
+                fillListChooseResult(listAllData, dif);
         }
         db.gameDao().updateAllPWSDataLastUsed(userId);
     }
 
-    private void readTheAnswer() {
-        MyTextToSpeech.speachText(this, "Trouve " + articleTheme + themeName.toLowerCase() + " : " + listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
+
+    private void fillListChooseResult(List<List<List<String>>> listData, int difficulty) {
+        for (int j = 0; j < listData.get(difficulty-1).size(); j++) {
+            for (int k = 0; k < listData.get(difficulty-1).get(j).size(); k++) {
+
+                if (listChooseResult.size() <= MAX_GAME_PLAYED && listData.get(difficulty-1).get(j).size() > 0) {
+                    String answer = listData.get(difficulty-1).get(j).get(k);
+                    if (!listChooseResult.contains(answer) &&
+                            (difficulty == listData.size() || db.gameDao().getPWSDataByResult(userId, answer).getWinStreak() < 3)) {
+                        listChooseResult.add(answer);
+                    }
+                }
+            }
+        }
     }
 
-    private void readInstruction() {
-        delay = true;
-        articleTheme = themeName.equals("Chiffres") ? "le " : "la ";
-        String s = themeName.equals("Chiffres") ? "un " : "une ";
-        MyTextToSpeech.speachText(PlayWithSound.this, "Dans cet exercice tu vas entendre " + s + themeName.toLowerCase() + " et tu dois " + articleTheme + " retrouver");
-        new Handler().postDelayed(() -> {
-            delay = false;
-        }, 3000);
+
+    private void readTheAnswer() {
+        MyTextToSpeech.speachText(this, "Trouve " + articleTheme + themeName.toLowerCase() + " : " + listChooseResult.get(gamePlayed - 1));
+    }
+
+    private void readInstruction(boolean help) {
+        int sum = 0;
+        int limit = 2;
+        if (!help) {
+            for (int star : db.gameLogDao().getAllGameResultLogStarsLimit(userId, gameId, limit))
+                sum += star;
+        }
+        if (help || sum <= limit) {
+            delay = true;
+            articleTheme = themeName.equals("Chiffres") ? "le " : "la ";
+            String s = themeName.equals("Chiffres") ? "un " : "une ";
+            MyTextToSpeech.speachText(PlayWithSound.this, "Dans cet exercice tu vas entendre " + s + themeName.toLowerCase() + " et tu dois " + articleTheme + " retrouver");
+            new Handler().postDelayed(() -> {
+                delay = false;
+            }, 3000);
+        }
     }
 
     private void initListAnswer() {
         listAnswer = new ArrayList<>();
+        listAnswer.add(listChooseResult.get(gamePlayed - 1));
 
-        listAnswer.add(listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
         while (listAnswer.size() < 3) {
-            int rand = random.nextInt(listData.size());
-            if (!listAnswer.contains(listData.get(rand).getResult()))
-                listAnswer.add(listData.get(rand).getResult());
+            if (themeName.equals("Chiffres")) {
+                int rand = random.nextInt(9)+1;
+                if (!listAnswer.contains(Integer.toString(rand))) {
+                    listAnswer.add(Integer.toString(rand));
+                }
+            } else if (listAnswer.get(0).length() == 1) {
+                int rand = random.nextInt(alphabetTab.length);
+                if (!listAnswer.contains(alphabetTab[rand])) {
+                    listAnswer.add(alphabetTab[rand]);
+                }
+            } else {
+                int rand = random.nextInt(syllableTab.length);
+                if (!listAnswer.contains(syllableTab[rand])) {
+                    listAnswer.add(syllableTab[rand]);
+                }
+            }
         }
-
-        for (int i = 0; i < 4; i++) {
-            Collections.shuffle(listAnswer);
-        }
+        Collections.shuffle(listAnswer);
     }
 
     private void setLayoutContent() {
-        goodAnswer.setVisibility(View.INVISIBLE);
-        goodAnswer.setText(listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
+        goodAnswerView.setVisibility(View.INVISIBLE);
+        goodAnswerView.setText(listChooseResult.get(gamePlayed - 1));
         for (int i = 0; i < 3; i++)
             listButton[i].setText(listAnswer.get(i));
     }
@@ -175,8 +215,8 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         help.setOnClickListener(this);
     }
 
-    private void playSound(boolean isGoodAnswer) {
-        if (isGoodAnswer)
+    private void playSound(boolean isgoodAnswerView) {
+        if (isgoodAnswerView)
             MyMediaPlayer.playSound(this, R.raw.correct_answer);
         else
             MyMediaPlayer.playSound(this, R.raw.wrong_answer);
@@ -193,7 +233,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             delay = true;
             new Handler().postDelayed(() -> {
                 for (int i = 0; i < 3; i++) {
-                    if (listButton[i].getText().equals(listData.get(listChooseResult.get(gamePlayed - 1)).getResult()))
+                    if (listButton[i].getText().equals(listChooseResult.get(gamePlayed - 1)))
                         listButton[i].setBackgroundColor(Color.GREEN);
                 }
                 replay();
@@ -205,10 +245,10 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private void displayAnswer(boolean showAnswer) {
         if (showAnswer) {
             btnSound.setVisibility(View.INVISIBLE);
-            goodAnswer.setVisibility(View.VISIBLE);
+            goodAnswerView.setVisibility(View.VISIBLE);
         } else {
             btnSound.setVisibility(View.VISIBLE);
-            goodAnswer.setVisibility(View.INVISIBLE);
+            goodAnswerView.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -244,7 +284,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
     private void updateDataInDb() {
         PlayWithSoundData data = db.gameDao().getPWSDataByResult(userId,
-                listData.get(listChooseResult.get(gamePlayed - 1)).getResult());
+                listChooseResult.get(gamePlayed - 1));
         data.setLastUsed(1);
         boolean win;
         if (nbTry == 0) {
@@ -270,7 +310,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     }
 
     private void verifyAnswer(Button answer) {
-        if (answer.getText() == listData.get(listChooseResult.get(gamePlayed - 1)).getResult()) {
+        if (answer.getText() == listChooseResult.get(gamePlayed - 1)) {
             answer.setBackgroundColor(Color.GREEN);
             replay();
         } else {
@@ -279,7 +319,6 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             answerFalseWord++;
             if (answerFalseWord == 2)
                 isAnswerFalseWord = true;
-            Log.d("WILL", "" + answerFalseWord);
             setWordAndAddDelay();
             answer.setEnabled(false);
         }
@@ -308,7 +347,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                     break;
 
                 case R.id.ic_help_playWithSound:
-                    readInstruction();
+                    readInstruction(true);
                     break;
 
                 default:

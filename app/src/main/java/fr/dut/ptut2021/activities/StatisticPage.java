@@ -1,13 +1,10 @@
 package fr.dut.ptut2021.activities;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
-
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -15,16 +12,18 @@ import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
@@ -35,11 +34,11 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
@@ -59,7 +58,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     private ImageView nextPage, previousPage, leftStatIcon, rightStatIcon;
     private String categoryName = "General";
     private long startWeekTime;
-    private final long DAY_MILLIS = 24*3600*1000;
+    private final long DAY_MILLIS = 24 * 3600 * 1000;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -116,6 +115,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     private void displayNewCategoryPage() {
         createBarChart(getGameFrequencyData());
+        createLineChart(getGameAvgStarsData());
         setStatsText();
     }
 
@@ -144,7 +144,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         }
 
         BarDataSet barDataSet = new BarDataSet(data, "Data");
-        barDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+        barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         barDataSet.setValueTextColor(Color.BLACK);
         barDataSet.setDrawValues(false);
 
@@ -175,44 +175,101 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         barChart.setTouchEnabled(false);
         barChart.setNoDataText("Commencer a jouer !");
         barChart.getLegend().setEnabled(false);
-        barChart.setExtraOffsets(0,0,0,5);
+        barChart.setExtraOffsets(0, 0, 0, 5);
     }
 
+    public void createLineChart(Map<Integer, Float> mapData) {
+        LineChart lineChart = findViewById(R.id.line_chart);
+        List<Entry> data = new ArrayList<>();
+
+        for (Map.Entry<Integer, Float> val : mapData.entrySet())
+            data.add(new Entry(val.getKey(), val.getValue()));
+
+        LineDataSet lineDataSet = new LineDataSet(data, "Data");
+        lineDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        lineDataSet.setValueTextColor(Color.BLACK);
+        lineDataSet.setLineWidth(3);
+        lineDataSet.setCircleRadius(5);
+        lineDataSet.setDrawValues(false);
+
+        String[] list = {"10", "20", "30", "40", "50", "60"};
+
+        XAxis axis = lineChart.getXAxis();
+        axis.setTypeface(Typeface.MONOSPACE);
+        axis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        axis.setTextSize(15f);
+        axis.setAxisMinimum(1);
+        axis.setGranularity(1);
+        axis.setAxisMaximum(6);
+        axis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getAxisLabel(float value, AxisBase axis) {
+                return list[Math.round(value) - 1];
+            }
+        });
+
+        AxisBase axisBase = lineChart.getAxis(YAxis.AxisDependency.LEFT);
+        axisBase.setGranularity(1f);
+        axisBase.setTextSize(15f);
+        axisBase.setAxisMinimum(0f);
+        axisBase.setAxisMaximum(3f);
+        axisBase.setTypeface(Typeface.MONOSPACE);
+        lineChart.getAxis(YAxis.AxisDependency.RIGHT).setEnabled(false);
+
+        LineData lineData = new LineData(lineDataSet);
+        lineChart.setData(lineData);
+
+        lineChart.getDescription().setEnabled(false);
+        lineChart.animateY(500);
+        lineChart.setTouchEnabled(false);
+        lineChart.setNoDataText("Commencer a jouer !");
+        lineChart.getLegend().setEnabled(false);
+        lineChart.setExtraOffsets(0, 0, 0, 5);
+    }
+
+    @SuppressLint("SetTextI18n")
     private void setStatsText() {
         Map<Game, Integer> gameCountMap = new LinkedHashMap<>();
 
-        for (int i = 0; i < gameList.size(); i++) {
-            if (categoryName.equals("Chiffres") || categoryName.equals("Lettres")) {
-                if (gameList.get(i).getThemeName().equals(categoryName))
+        if (db.gameLogDao().getAllGameResultLogByUser(listUser.get(pageUser).getUserId()).size() > 0) {
+            for (int i = 0; i < gameList.size(); i++) {
+                if (categoryName.equals("Chiffres") || categoryName.equals("Lettres")) {
+                    if (gameList.get(i).getThemeName().equals(categoryName))
+                        gameCountMap.put(gameList.get(i), db.gameLogDao().getGameResultLogNbGame(listUser.get(pageUser).getUserId(), gameList.get(i).getGameId()));
+                } else {
                     gameCountMap.put(gameList.get(i), db.gameLogDao().getGameResultLogNbGame(listUser.get(pageUser).getUserId(), gameList.get(i).getGameId()));
-            } else {
-                gameCountMap.put(gameList.get(i), db.gameLogDao().getGameResultLogNbGame(listUser.get(pageUser).getUserId(), gameList.get(i).getGameId()));
+                }
             }
-        }
 
-        Game minGame = null, maxGame = null;
-        int minIt = -1, maxIt = -1;
+            Game minGame = null, maxGame = null;
+            int minIt = -1, maxIt = -1;
 
-        for (Map.Entry<Game, Integer> val : gameCountMap.entrySet()) {
-            if (val.getValue() < minIt || minIt == -1) {
-                minGame = val.getKey();
-                minIt = val.getValue();
+            for (Map.Entry<Game, Integer> val : gameCountMap.entrySet()) {
+                if (val.getValue() < minIt || minIt == -1) {
+                    minGame = val.getKey();
+                    minIt = val.getValue();
+                }
+                if (val.getValue() > maxIt || maxIt == -1) {
+                    maxGame = val.getKey();
+                    maxIt = val.getValue();
+                }
             }
-            if (val.getValue() > maxIt || maxIt == -1) {
-                maxGame = val.getKey();
-                maxIt = val.getValue();
+            if (minGame != null) {
+                leftStatText.setText(maxGame.getGameName());
+                leftStatIcon.setImageResource(maxGame.getGameImage());
+            }
+            if (maxGame != null) {
+                rightStatText.setText(minGame.getGameName());
+                rightStatIcon.setImageResource(minGame.getGameImage());
             }
         }
-        if (minGame != null) {
-            leftStatText.setText(maxGame.getGameName());
-            leftStatIcon.setImageResource(maxGame.getGameImage());
-        }
-        if (maxGame != null) {
-            rightStatText.setText(minGame.getGameName());
-            rightStatIcon.setImageResource(minGame.getGameImage());
+        else {
+            leftStatText.setText("Aucun");
+            leftStatIcon.setImageResource(R.drawable.ic_square);
+            rightStatText.setText("Aucun");
+            rightStatIcon.setImageResource(R.drawable.ic_square);
         }
     }
-
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void setStartWeekTimeAndDate() {
@@ -223,7 +280,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime ldt = LocalDateTime.parse(str, formatter);
 
-        startWeekTime = ldt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - (6* DAY_MILLIS);
+        startWeekTime = ldt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - (6 * DAY_MILLIS);
     }
 
     private Map<String, Integer> getGameFrequencyData() {
@@ -238,20 +295,52 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
         DateFormat df = new SimpleDateFormat("E", Locale.FRENCH);
         for (int i = 0; i < 7; i++) {
-            mapData.put(df.format(startWeekTime + (DAY_MILLIS *i)).toUpperCase(), 0);
+            mapData.put(df.format(startWeekTime + (DAY_MILLIS * i)).toUpperCase(), 0);
         }
 
         int nbWeekDay = 0;
         for (int i = 0; i < listLog.size(); i++) {
             long gameTime = listLog.get(i).getEndGameDate();
             for (Map.Entry<String, Integer> val : mapData.entrySet()) {
-                if (startWeekTime + (DAY_MILLIS *nbWeekDay) <= gameTime && gameTime < startWeekTime + (DAY_MILLIS *(nbWeekDay+1))) {
-                    mapData.put(val.getKey(), mapData.get(val.getKey())+1);
+                if (startWeekTime + (DAY_MILLIS * nbWeekDay) <= gameTime && gameTime < startWeekTime + (DAY_MILLIS * (nbWeekDay + 1))) {
+                    mapData.put(val.getKey(), mapData.get(val.getKey()) + 1);
                 }
                 nbWeekDay++;
             }
             nbWeekDay = 0;
         }
+        return mapData;
+    }
+
+    private Map<Integer, Float> getGameAvgStarsData() {
+        Map<Integer, Float> mapData = new TreeMap<>();
+        List<GameResultLog> listLog;
+
+        if (categoryName.equals("Chiffres") || categoryName.equals("Lettres"))
+            listLog = db.gameLogDao().getAllGameResultLogByUserLimitByTheme(listUser.get(pageUser).getUserId(), categoryName);
+        else
+            listLog = db.gameLogDao().getAllGameResultLogByUserLimit(listUser.get(pageUser).getUserId());
+
+        final int COLUMN = 6;
+        int it = 0;
+        for (int i = 0; i < COLUMN; i++) {
+            float n = 0;
+            float sum = 0;
+            while ((it + 1) % 10 != 0 && listLog.size() > it) {
+                n++;
+                sum += listLog.get(it).getStars();
+                it++;
+            }
+            float avg;
+            if (n == 0)
+                avg = 0;
+            else
+                avg = sum/n;
+
+            mapData.put(COLUMN - i, avg);
+            it++;
+        }
+
         return mapData;
     }
     
@@ -277,7 +366,6 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         chiffresButton.setEnabled(true);
         button.setEnabled(false);
     }
-
 
     @SuppressLint("NonConstantResourceId")
     @Override

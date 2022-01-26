@@ -2,6 +2,8 @@ package fr.dut.ptut2021.activities;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +22,7 @@ import fr.dut.ptut2021.utils.MyVibrator;
 
 public class GameMenu extends AppCompatActivity {
 
+    private TextView title;
     private String themeName;
     private CreateDatabase db = null;
     private RecyclerView recyclerViewListGame;
@@ -31,6 +34,7 @@ public class GameMenu extends AppCompatActivity {
         setContentView(R.layout.activity_game_menu);
 
         getThemeName();
+        setTitle();
         createDatabaseAndImportGames();
         createRecyclerView();
 
@@ -52,6 +56,11 @@ public class GameMenu extends AppCompatActivity {
 
     private void getThemeName(){
         themeName = MySharedPreferences.getThemeName(this);
+    }
+
+    private void setTitle(){
+        title = findViewById(R.id.title_gameMenu);
+        title.setText("jeu "+themeName.toLowerCase());
     }
 
     private void saveGameName(int position){

@@ -34,6 +34,7 @@ public class UserResume extends AppCompatActivity {
 
         getAllUser();
         initializeFindView();
+        hideAddUserButton();
         hideSettingsAdultImage();
         createRecyclerView();
 
@@ -57,6 +58,11 @@ public class UserResume extends AppCompatActivity {
     private void getAllUser() {
         if (!db.appDao().tabUserIsEmpty())
             listUser = db.appDao().getAllUsers();
+    }
+
+    private void hideAddUserButton() {
+        if (db.appDao().getAllUsers().size() >= 20)
+            addUser.setVisibility(View.GONE);
     }
 
     private void initializeFindView() {
