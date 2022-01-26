@@ -1,9 +1,6 @@
 
 package fr.dut.ptut2021.game;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.fonts.Font;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -23,8 +20,6 @@ import java.util.Collections;
 import java.util.Locale;
 
 import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.activities.ResultGamePage;
-import fr.dut.ptut2021.activities.SubGameMenu;
 import fr.dut.ptut2021.adapters.MemoryAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.MemoryCard;
@@ -37,6 +32,7 @@ import fr.dut.ptut2021.models.database.log.GameResultLog;
 import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
 import fr.dut.ptut2021.utils.MySharedPreferences;
+import fr.dut.ptut2021.utils.MyTextToSpeech;
 import fr.dut.ptut2021.utils.MyVibrator;
 
 
@@ -518,6 +514,6 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        GlobalUtils.stopAllSound(Memory.this);
+        MyTextToSpeech.stop(Memory.this);
     }
 }

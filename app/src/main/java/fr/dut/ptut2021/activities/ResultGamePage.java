@@ -96,10 +96,11 @@ public class ResultGamePage extends AppCompatActivity {
                 break;
         }
 
-        for (int i = 0; i < nbStars; i++) {
+        for (int i = 0; i < 3; i++) {
             int finalI = i;
             handlerStars.postDelayed(() -> {
-                tabStars[finalI].setImageResource(R.drawable.icon_star);
+                if(finalI < nbStars)
+                    tabStars[finalI].setImageResource(R.drawable.icon_star);
                 YoYo.with(Techniques.Swing).duration(800).playOn(tabStars[finalI]);
             }, 800L * i);
         }

@@ -428,6 +428,6 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        GlobalUtils.stopAllSound(WordWithHole.this);
+        MyTextToSpeech.stop(WordWithHole.this);
     }
 }

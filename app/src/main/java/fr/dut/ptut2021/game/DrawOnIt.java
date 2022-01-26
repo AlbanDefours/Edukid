@@ -28,8 +28,8 @@ import fr.dut.ptut2021.models.DataSymbol;
 import fr.dut.ptut2021.models.Point;
 import fr.dut.ptut2021.models.Symbol;
 import fr.dut.ptut2021.models.database.game.Card;
-import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
+import fr.dut.ptut2021.utils.MyTextToSpeech;
 import fr.dut.ptut2021.utils.MyVibrator;
 
 public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener {
@@ -351,7 +351,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        GlobalUtils.stopAllSound(DrawOnIt.this);
+        MyTextToSpeech.stop(DrawOnIt.this);
     }
 
 }
