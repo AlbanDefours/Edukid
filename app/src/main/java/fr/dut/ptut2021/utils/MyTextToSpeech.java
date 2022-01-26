@@ -32,12 +32,13 @@ public class MyTextToSpeech {
 
     public static void initialiser(Context context) {
         textToSpeech = new TextToSpeech(context, status -> {
-            if (status != TextToSpeech.ERROR)
+            if (status != TextToSpeech.ERROR) {
                 textToSpeech.setLanguage(Locale.FRANCE);
-            for (Voice tmpVoice : textToSpeech.getVoices()) {
-                if (tmpVoice.getName().equals("fr-fr-x-fra-network")) {
-                    voice = tmpVoice;
-                    textToSpeech.setVoice(tmpVoice);
+                for (Voice tmpVoice : textToSpeech.getVoices()) {
+                    if (tmpVoice.getName().equals("fr-fr-x-fra-network")) {
+                        voice = tmpVoice;
+                        textToSpeech.setVoice(tmpVoice);
+                    }
                 }
             }
         });

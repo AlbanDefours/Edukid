@@ -3,11 +3,13 @@ package fr.dut.ptut2021.game;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.fonts.Font;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -183,7 +185,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         stateProgressBar = findViewById(R.id.progressBarMemory);
         stateProgressBarLock = findViewById(R.id.progressBarMemoryLock);
         stateProgressBar.setCurrentStateNumber(getStateNumberDifficulty(difficulty));
-        stateProgressBarLock.setCurrentStateNumber(getStateNumberDifficulty(difficultyMax));
+        stateProgressBarLock.setCurrentStateNumber(getStateNumberDifficulty(/*difficultyMax*/5));
         stateProgressBar.setOnStateItemClickListener(this);
     }
 
@@ -227,6 +229,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                 if(!isClicked) {
+                    //v.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttoncolor));
                     returnCard(position, memoryAdapter);
 
                     isWin();
@@ -242,13 +245,17 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-        double cardWidth = (1094.0 + 20) / numColumns ;
+        double cardWidth = metrics.widthPixels / numColumns ;
         double cardHeight = cardWidth* (1684.0 / 1094) + 20;
 
-        double screenHeight = metrics.heightPixels;
-        int nbRows = (int) ((listMemoryCard.size()+ numColumns - 1) / numColumns);
-        if(cardHeight*nbRows>screenHeight){
+        double screenHeight = metrics.heightPixels-377.8;
+        int nbRows = (int) Math.ceil(listMemoryCard.size()/(double) numColumns) ;
+        while(cardHeight*nbRows>=screenHeight){
+            Log.e("memoryCalcul",cardHeight+"*"+nbRows+">="+screenHeight);
             numColumns++;
+            nbRows = (int) Math.ceil(listMemoryCard.size()/(double) numColumns) ;
+            cardWidth = metrics.widthPixels / numColumns ;
+            cardHeight = cardWidth* (1684.0 / 1094) + 20;
         }
     }
 
@@ -494,7 +501,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     @Override
     public void onStateItemClick(StateProgressBar stateProgressBar, StateItem stateItem, int stateNumber, boolean isCurrentState) {
         if(stateProgressBar == this.stateProgressBar){
-            if(stateNumber<=difficultyMax){
+            if(stateNumber<=5){
               MemoryData memoData =   db.gameDao().getMemoryData(userId,category,subCat);
               memoData.setDifficulty(stateNumber);
               db.gameDao().updateMemoryData(memoData);

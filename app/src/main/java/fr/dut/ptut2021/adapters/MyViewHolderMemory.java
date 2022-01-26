@@ -18,8 +18,9 @@ public class MyViewHolderMemory extends RecyclerView.ViewHolder {
     boolean hidden;
     View viewCard;
     View interieurCardChiffre;
-    TextView interieurCardLettre;
+    TextView interieurCardLettre, title,labelDifficulty;
     ArrayList<ImageView> elements = new ArrayList<>();
+    com.kofigyan.stateprogressbar.StateProgressBar progressBar;
     ImageView pattern;
     ImageView returnCard;
     ImageView background;
@@ -33,6 +34,9 @@ public class MyViewHolderMemory extends RecyclerView.ViewHolder {
     public MyViewHolderMemory(@NonNull View itemView) {
         super(itemView);
         viewCard = itemView.findViewById(R.id.viewCard);
+        title = itemView.findViewById(R.id.titleMemory);
+        labelDifficulty = itemView.findViewById(R.id.labelDifficulty);
+        progressBar = itemView.findViewById(R.id.progressBarMemoryLock);
         interieurCardChiffre = itemView.findViewById(R.id.interieurCardChiffre);
         interieurCardLettre = itemView.findViewById(R.id.interieurCardLettre);
         elements.add(itemView.findViewById(R.id.elementMemory1));
@@ -81,6 +85,10 @@ public class MyViewHolderMemory extends RecyclerView.ViewHolder {
             }
         });
 
+    }
+
+    public double getPresentationHeight(){
+        return title.getHeight()+progressBar.getHeight()+labelDifficulty.getHeight();
     }
 
     public void showImageReturnCard() {
