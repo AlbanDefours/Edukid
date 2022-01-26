@@ -38,9 +38,11 @@
             android:id="@+id/textField_userName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
+            android:minHeight="48dp"
+            android:inputType="textCapSentences"
             android:maxLength="30"
-            android:maxLines="1" />
+            android:maxLines="1"
+            tools:ignore="SpeakableTextPresentCheck" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

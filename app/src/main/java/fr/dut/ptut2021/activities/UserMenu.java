@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -72,6 +73,16 @@ public class UserMenu extends AppCompatActivity {
         createAndGetDatabase();
         createRecyclerView();
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(UserMenu.this)
+                .setTitle("Quitter")
+                .setMessage("Voulez-vous quitter l'application ?")
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> UserMenu.super.onBackPressed())
+                .setNegativeButton(android.R.string.no, null)
+                .show();
     }
 
     private void createAndGetDatabase() {

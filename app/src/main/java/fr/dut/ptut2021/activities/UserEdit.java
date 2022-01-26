@@ -112,9 +112,9 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void findCurrentImageUser() {
-        if(userImageType == 0){
+        if (userImageType == 0) {
             for (int i = 0; i < tableauImage.length; i++) {
-                if (tableauImage[i] == Integer.parseInt(imageTmp)){
+                if (tableauImage[i] == Integer.parseInt(imageTmp)) {
                     cpt = i;
                     userAvatar.setImageResource(tableauImage[cpt]);
                 }
@@ -143,24 +143,30 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void createUser() {
-        if(imageLocation.indexOf(".jpg")> 0){
+        if (imageLocation.indexOf(".jpg") > 0) {
             userImageType = 30;
-        }else{
+        } else {
             userImageType = 0;
         }
         if (isAddUser && isDataCorrect()) {
             db.appDao().insertUser(new User(textField_userName.getText().toString(), imageLocation, userImageType));
-            startUserMenuPage(false);
+            startUserMenu();
         } else if (!isAddUser && isDataCorrect()) {
             User user = db.appDao().getUserById(userId);
             user.setUserName(textField_userName.getText().toString());
             user.setUserImage(imageLocation);
             user.setUserImageType(userImageType);
             db.appDao().updateUser(user);
-            GlobalUtils.startPage(UserEdit.this, "UserResume", true, true);
-        } else if (!isDataCorrect()) {
+            startUserMenu();
+        } else if (!isDataCorrect())
             Toast.makeText(getApplicationContext(), "Veuillez saisir un prénom", Toast.LENGTH_SHORT).show();
-        }
+    }
+
+    public void startUserMenu() {
+        if (tabUserIsEmpty)
+            GlobalUtils.startPage(UserEdit.this, "UserMenu", true, false);
+        else
+            finish();
     }
 
     private void showMesageDialog(String title, String message, boolean wantToDelete) {
@@ -175,7 +181,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                         file.delete(); //TODO (pas delete si on modifie l'image par une de l'ap)
                         deleteGameData();
                         db.appDao().deleteUserById(userId);
-                        startUserMenuPage(db.appDao().tabUserIsEmpty());
+                        finish();
                     } else
                         finish();
                 });
@@ -186,6 +192,120 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
 
     private boolean isDataCorrect() {
         return !textField_userName.getText().toString().isEmpty() && imageLocation != null;
+    }
+
+    private void getPhotoFromGallery() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            String[] mimeTypes = {"image/jpeg", "image/png", "image/jpg"};
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+            startActivityForResult(intent, GALLERY_REQUEST);
+        } else
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_STORAGE_PERMISSION_CODE);
+    }
+
+    private void takePhoto() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+        } else
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+    }
+
+    private void deleteGameData() {
+        db.gameDao().deleteWWHDataByUser(userId);
+        //TODO rajouter les fonctions de suppression des jeux à venir
+    }
+
+    private String saveToInternalStorage(Bitmap bitmapImage) {
+        String name = db.appDao().getUserImageMaxInt();
+        int id = 0;
+        if (name != null && name.indexOf(".jpg") - 1 > 0)
+            id = Integer.parseInt(name.substring(name.indexOf(".jpg") - 1, name.indexOf(".jpg"))) + 1;
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        File mypath = new File(directory, "userimage" + id + ".jpg");
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mypath);
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 80, fos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return mypath.getAbsolutePath();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MY_CAMERA_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                takePhoto();
+            else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    new AlertDialog.Builder(UserEdit.this)
+                            .setMessage("Vous devez accepter cette permission pour continuer.")
+                            .setPositiveButton("OK", (dialog, which) -> {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+                            })
+                            .setNegativeButton("Annuler", null)
+                            .create()
+                            .show();
+                }
+            }
+        }
+        if (requestCode == MY_STORAGE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                getPhotoFromGallery();
+            else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                Toast.makeText(getApplicationContext(), "Permission non accordée !", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK)
+            switch (requestCode) {
+                case GALLERY_REQUEST:
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                    Cursor cursor = getContentResolver().query(data.getData(), filePathColumn, null, null, null);
+                    cursor.moveToFirst();
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    imageLocation = cursor.getString(columnIndex);
+                    cursor.close();
+                    Bitmap bitmap = BitmapFactory.decodeFile(imageLocation);
+                    if (bitmap.getWidth() < bitmap.getHeight())
+                        bitmap = Bitmap.createBitmap(bitmap, 0, (bitmap.getHeight() - bitmap.getWidth()) / 2, bitmap.getWidth(), bitmap.getWidth());
+                    else if (bitmap.getWidth() > bitmap.getHeight())
+                        bitmap = Bitmap.createBitmap(bitmap, (bitmap.getWidth() - bitmap.getHeight()) / 2, 0, bitmap.getHeight(), bitmap.getHeight());
+                    if (bitmap.getWidth() > 150)
+                        bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, false);
+                    imageLocation = saveToInternalStorage(bitmap);
+                    userImageType = GALLERY_REQUEST;
+                    userAvatar.setImageBitmap(bitmap);
+                    break;
+
+                case CAMERA_REQUEST:
+                    Bitmap photo = (Bitmap) data.getExtras().get("data");
+                    if (photo.getWidth() < photo.getHeight())
+                        photo = Bitmap.createBitmap(photo, 0, (photo.getHeight() - photo.getWidth()) / 2, photo.getWidth(), photo.getWidth());
+                    else if (photo.getWidth() > photo.getHeight())
+                        photo = Bitmap.createBitmap(photo, (photo.getWidth() - photo.getHeight()) / 2, 0, photo.getHeight(), photo.getHeight());
+                    imageLocation = saveToInternalStorage(photo);
+                    userImageType = CAMERA_REQUEST;
+                    userAvatar.setImageBitmap(photo);
+                    break;
+            }
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -256,126 +376,8 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
-    private void getPhotoFromGallery() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            Intent intent = new Intent(Intent.ACTION_PICK);
-            intent.setType("image/*");
-            String[] mimeTypes = {"image/jpeg", "image/png", "image/jpg"};
-            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-            startActivityForResult(intent, GALLERY_REQUEST);
-        } else
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_STORAGE_PERMISSION_CODE);
-    }
-
-    private void takePhoto() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, CAMERA_REQUEST);
-        } else
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
-    }
-
-    private void deleteGameData() {
-        db.gameDao().deleteWWHDataByUser(userId);
-        //TODO rajouter les fonctions de suppression des jeux à venir
-    }
-
-    private void startUserMenuPage(boolean force) {
-        Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
-        if (force)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-        finish();
-    }
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == MY_CAMERA_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                takePhoto();
-            else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    new AlertDialog.Builder(UserEdit.this)
-                            .setMessage("Vous devez accepter cette permission pour continuer.")
-                            .setPositiveButton("OK", (dialog, which) -> {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
-                            })
-                            .setNegativeButton("Annuler", null)
-                            .create()
-                            .show();
-                }
-            }
-        }
-        if (requestCode == MY_STORAGE_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                getPhotoFromGallery();
-            else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                Toast.makeText(getApplicationContext(), "Permission non accordée !", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK)
-            switch (requestCode) {
-                case GALLERY_REQUEST:
-                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                    Cursor cursor = getContentResolver().query(data.getData(), filePathColumn, null, null, null);
-                    cursor.moveToFirst();
-                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    imageLocation = cursor.getString(columnIndex);
-                    cursor.close();
-                    Bitmap bitmap = BitmapFactory.decodeFile(imageLocation);
-                    if (bitmap.getWidth() < bitmap.getHeight())
-                        bitmap = Bitmap.createBitmap(bitmap, 0, (bitmap.getHeight() - bitmap.getWidth()) / 2, bitmap.getWidth(), bitmap.getWidth());
-                    else if (bitmap.getWidth() > bitmap.getHeight())
-                        bitmap = Bitmap.createBitmap(bitmap, (bitmap.getWidth() - bitmap.getHeight()) / 2, 0, bitmap.getHeight(), bitmap.getHeight());
-                    if (bitmap.getWidth() > 150)
-                        bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, false);
-                    imageLocation = saveToInternalStorage(bitmap);
-                    userImageType = GALLERY_REQUEST;
-                    userAvatar.setImageBitmap(bitmap);
-                    break;
-
-                case CAMERA_REQUEST:
-                    Bitmap photo = (Bitmap) data.getExtras().get("data");
-                    if (photo.getWidth() < photo.getHeight())
-                        photo = Bitmap.createBitmap(photo, 0, (photo.getHeight() - photo.getWidth()) / 2, photo.getWidth(), photo.getWidth());
-                    else if (photo.getWidth() > photo.getHeight())
-                        photo = Bitmap.createBitmap(photo, (photo.getWidth() - photo.getHeight()) / 2, 0, photo.getHeight(), photo.getHeight());
-                    imageLocation = saveToInternalStorage(photo);
-                    userImageType = CAMERA_REQUEST;
-                    userAvatar.setImageBitmap(photo);
-                    break;
-            }
-    }
-
-    private String saveToInternalStorage(Bitmap bitmapImage) {
-        String name = db.appDao().getUserImageMaxInt();
-        int id = 0;
-        if(name != null && name.indexOf(".jpg")-1 > 0)
-            id = Integer.parseInt(name.substring(name.indexOf(".jpg")-1, name.indexOf(".jpg"))) + 1;
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-        File mypath = new File(directory, "userimage" + id + ".jpg");
-
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(mypath);
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 80, fos);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return mypath.getAbsolutePath();
+    public void onBackPressed() {
+        GlobalUtils.startPage(UserEdit.this, "UserResume", true, true);
     }
 }
