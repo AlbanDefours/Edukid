@@ -57,6 +57,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_with_hole);
 
+        GlobalUtils.verifyIfSoundIsOn(this);
         db = CreateDatabase.getInstance(WordWithHole.this);
         getSharedPref();
 

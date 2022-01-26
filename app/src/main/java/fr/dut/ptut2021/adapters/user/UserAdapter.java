@@ -17,6 +17,7 @@ import java.util.List;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.models.database.app.User;
+import fr.dut.ptut2021.utils.GlobalUtils;
 
 public class UserAdapter extends RecyclerView.Adapter<MyViewHolderUser> {
 
@@ -38,7 +39,7 @@ public class UserAdapter extends RecyclerView.Adapter<MyViewHolderUser> {
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolderUser holder, int position) {
-        holder.name.setText(listUser.get(position).getUserName());
+        holder.name.setText(GlobalUtils.cutString(listUser.get(position).getUserName(), 15));
 
         if (listUser.get(position).getUserImageType() == 0) {
             holder.avatar.setImageResource(Integer.parseInt(listUser.get(position).getUserImage()));

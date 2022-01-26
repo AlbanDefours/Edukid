@@ -45,6 +45,7 @@ import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.database.app.Game;
 import fr.dut.ptut2021.models.database.app.User;
 import fr.dut.ptut2021.models.database.log.GameResultLog;
+import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyVibrator;
 
 public class StatisticPage extends AppCompatActivity implements View.OnClickListener {
@@ -120,7 +121,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     }
 
     private void displayUserTitle() {
-        userTitle.setText(listUser.get(pageUser).getUserName());
+        userTitle.setText(GlobalUtils.cutString(listUser.get(pageUser).getUserName(), 15));
         verifyPageUserLocation();
     }
 

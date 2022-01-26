@@ -10,7 +10,6 @@ import com.daimajia.androidanimations.library.YoYo;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
-
 import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyDatabaseInsert;
 import fr.dut.ptut2021.utils.MyTextToSpeech;
@@ -38,8 +37,6 @@ public class LoadingPage extends AppCompatActivity {
 
     //TODO Faire bing bing bing bing de la gauche et TADA !
     private void textAnimation() {
-
         YoYo.with(Techniques.Tada).duration(1000).playOn(findViewById(R.id.applicationName));
-
     }
 }

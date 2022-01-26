@@ -114,6 +114,13 @@ public class GlobalUtils {
             toast(context, "Veuillez activer le son pour jouer !", true);
     }
 
+    public static String cutString(String string, int size) {
+        if (string.length() > size)
+            string = string.substring(0, size-2) + "..";
+
+        return string;
+    }
+
     public static void stopAllSound(Context context) {
         MyTextToSpeech.stop(context);
         MyMediaPlayer.stop();
