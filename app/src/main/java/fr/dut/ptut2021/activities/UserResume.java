@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -20,6 +21,7 @@ import fr.dut.ptut2021.utils.MyVibrator;
 
 public class UserResume extends AppCompatActivity {
 
+    private TextView title;
     private CreateDatabase db = null;
     private RecyclerView recyclerView;
     private List<User> listUser = null;
@@ -34,6 +36,7 @@ public class UserResume extends AppCompatActivity {
 
         getAllUser();
         initializeFindView();
+        title.setText("edition");
         hideSettingsAdultImage();
         createRecyclerView();
 
@@ -64,6 +67,7 @@ public class UserResume extends AppCompatActivity {
         settings = findViewById(R.id.settings);
         recyclerView = findViewById(R.id.recyclerview_users);
         addUser = findViewById(R.id.addUser);
+        title = findViewById(R.id.title_userMenu);
     }
 
     private void hideSettingsAdultImage() {

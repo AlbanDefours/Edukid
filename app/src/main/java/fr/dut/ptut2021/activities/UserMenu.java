@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -23,6 +24,7 @@ import fr.dut.ptut2021.utils.MyVibrator;
 
 public class UserMenu extends AppCompatActivity {
 
+    private TextView title;
     private UserAdapter adapter;
     private CreateDatabase db = null;
     private RecyclerView recyclerView;
@@ -35,6 +37,7 @@ public class UserMenu extends AppCompatActivity {
         setContentView(R.layout.activity_user_menu);
 
         initializeFindView();
+        title.setText("profiles");
         hideAddUserImage();
 
         recyclerView.addOnItemTouchListener(
@@ -81,6 +84,7 @@ public class UserMenu extends AppCompatActivity {
         settings = findViewById(R.id.settings);
         addUser = findViewById(R.id.addUser);
         recyclerView = findViewById(R.id.recyclerview_users);
+        title = findViewById(R.id.title_userMenu);
     }
 
     private void hideAddUserImage() {
