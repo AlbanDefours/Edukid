@@ -42,7 +42,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
     private Paint paint;
     private DisplayMetrics dm;
     private float largeur = 0, hauteur = 0, downx = 0, downy = 0, upx = 0, upy = 0, oldUpx = 0, oldUpy = 0;
-    private Boolean canDraw = false, hasDraw = false, warning = false, error = false, next = false, simpleTrait = true;
+    private Boolean canDraw = false, hasDraw = false, warning = false, error = false, next = false, isStart = false;
 
     private static final int NBESSAI = 3, NBGAME = 9;
 
@@ -125,7 +125,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         }
 
         /*
-        int c = 8;
+        int c = 4;
         image.setImageResource(listCard.get(c - 1).getDrawableImage()); //carte[0]
         DataSymbol.initPts(c, dm.widthPixels, dm.heightPixels); //Integer.parseInt(carte[0].getCardValue())
         s = new Symbol(DataSymbol.getPts(), tolerance);
@@ -134,8 +134,6 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         image.setImageResource(carte[0].getDrawableImage()); //carte[0]
         DataSymbol.initPts(Integer.parseInt(carte[0].getCardValue()),dm.widthPixels, dm.heightPixels); //(Integer.parseInt(carte[0].getCardValue()), dm.widthPixels, dm.heightPixels)
         s = new Symbol(DataSymbol.getPts(), tolerance);
-
-
 
 
         //Log.e("bit", "" + bitmap.getScaledHeight(canvas));
@@ -193,14 +191,25 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
             case MotionEvent.ACTION_DOWN:
                 downx = event.getX();
                 downy = event.getY();
-                if(s.getDistanceBetweenTwoPoints(s.getFirstPoint(),new Point(downx, downy)) <= s.getTolerance() && !hasDraw){
+                Log.e("var", "isStart : " + isStart);
+                Log.e("var", "numTrait : " + numTrait);
+                if(s.getDistanceBetweenTwoPoints(s.getFirstPoint(),new Point(downx, downy)) <= s.getTolerance() && !hasDraw && !isStart){
                     canDraw = true;
+                    Log.e("list", numTrait + "");
+                }else if(s.getPoints().size() - 1 >= DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(numTrait - 1) + 1){
+                    if(s.getDistanceBetweenTwoPoints(s.getPoints().get(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(numTrait - 1) + 1), new Point(downx, downy)) <= s.getTolerance() && !hasDraw){
+                        canDraw = true;
+                    }
                 }
-                //Log.e("Axel","cinq.add(new Point(" + downx/dm.widthPixels + ", " + downy/dm.heightPixels + "));");
+                else{
+                    canDraw = false;
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 upx = event.getX();
                 upy = event.getY();
+                Log.e("var", "canDraw : " + canDraw);
+                Log.e("var", "hasDraw : " + hasDraw);
                 if(canDraw && !hasDraw) {
                     if(oldUpx != 0 && oldUpy != 0){
                         paint.setStrokeWidth(0.15f*largeur);
@@ -228,12 +237,19 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
             case MotionEvent.ACTION_UP:
                 System.out.println("ACTION_UP");
                 if(canDraw) {
-                    if(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(0) == -1){
-                        simpleTrait = true;
-                    }else{
-                        numTrait = DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).size();
-                    }
-                    if (s.getDistanceBetweenTwoPoints(s.getLastPoint(), new Point(event.getX(), event.getY())) > s.getTolerance() || s.getLastId() != s.getPoints().size() - 1 || !s.isPastByTheMiddle()) {
+
+
+                    //if (s.getDistanceBetweenTwoPoints(s.getLastPoint(), new Point(event.getX(), event.getY())) > s.getTolerance() || s.getLastId() != s.getPoints().size() - 1 || !s.isPastByTheMiddle()) {
+
+                    /*
+                    System.out.println("----------------------------------------");
+                    System.out.println(Integer.parseInt(carte[numGame].getCardValue()));
+                    System.out.println(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(numTrait));
+                    System.out.println(s.getDistanceBetweenTwoPoints(s.getPoints().get(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(numTrait)), new Point(event.getX(), event.getY())) > s.getTolerance());
+                    System.out.println("----------------------------------------");
+                    */
+
+                    if (s.getDistanceBetweenTwoPoints(s.getPoints().get(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(numTrait)), new Point(event.getX(), event.getY())) > s.getTolerance() || s.getLastId() != DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(numTrait) || !s.isPastByTheMiddle()) {
                         numEssai++;
                         nbErreur++;
 
@@ -241,9 +257,13 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
 
                         Log.e("axel", "pas arriver au dernier point");
 
+                        Log.e("list", "Erreur multiple trait");
+
+                        Log.e("bool", "passer ici");
+
                         //reDraw();
 
-                    } else {
+                    }else{
                         if (error) {
                             numEssai++;
                             nbErreur++;
@@ -264,6 +284,19 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                         }
 
                     }
+
+                    Log.e("bool", "numTrait  : " + numTrait);
+                    Log.e("bool", "size : " + DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).size());
+
+                    if(numTrait != DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).size() - 2 && next) {
+                        if (numTrait < DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).size() - 2 && next) {
+                            next = false;
+                            numTrait++;
+                            isStart = true;
+                        }
+                    }
+
+                    Log.e("bool", "next : " + next);
 
                     if (numEssai >= NBESSAI) { //Manche terminé
                         Log.e("axel", "Symbol suivant : plus d'essai | nb de game " + numGame);
@@ -291,18 +324,26 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                         nextSymbol();
                         if(error){
                             MyMediaPlayer.playSound(this, R.raw.wrong_answer);
+                            numTrait = 0;
                         }else{
                             MyMediaPlayer.playSound(this, R.raw.correct_answer);
+                            numTrait = 0;
                         }
                         next = false;
-                    }else{
+                    }else if(!isStart){
                         MyMediaPlayer.playSound(this, R.raw.wrong_answer);
                         MyVibrator.vibrate(this, 60);
                         reDraw();
+                        numTrait = 0;
+                        canDraw = false;
+                        Log.e("bool", "canDraw : " + canDraw);
+                    }
+                    if(isStart){
+                        canDraw = true;
+                        Log.e("bool", "canDraw : " + canDraw);
                     }
                     oldUpx = 0;
                     oldUpy = 0;
-                    canDraw = false;
                     error = false;
                     warning = false;
                 }
@@ -322,10 +363,15 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         paint.setColor(Color.GREEN);
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawCircle((float) s.getFirstPoint().getX(),(float) s.getFirstPoint().getY(),s.getTolerance(), paint);
+        for(int i = 0; i < DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).size() - 2; i++){
+            canvas.drawCircle((float) s.getPoints().get(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(i) + 1).getX(),(float) s.getPoints().get(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(i) + 1).getY(), s.getTolerance(), paint);
+        }
 
         paint.setColor(Color.RED);
         canvas.drawCircle((float) s.getLastPoint().getX(),(float) s.getLastPoint().getY(), s.getTolerance(), paint);
-
+        for(int i = 0; i < DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).size() - 1; i++){
+            canvas.drawCircle((float) s.getPoints().get(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(i)).getX(),(float) s.getPoints().get(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(i)).getY(), s.getTolerance(), paint);
+        }
         paint.setColor(Color.GREEN);
         paint.setStrokeWidth(0.15f*largeur);
         paint.setStyle(Paint.Style.FILL);

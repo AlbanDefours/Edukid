@@ -38,7 +38,6 @@ public class Symbol {
     private int findIdOfNearestPoint(Point point){
         int idNearestPoint;
         if(points.isEmpty()){
-            System.out.println("vide");
             return -1;
         }else {
             double dist = Math.sqrt(Math.pow(point.getX() - points.get(0).getX(), 2) + Math.pow(point.getY() - points.get(0).getY(), 2));
@@ -60,6 +59,32 @@ public class Symbol {
         //System.out.println(idNearestPoint);
 
         return idNearestPoint;
+    }
+
+    private int findIdOfNearestPointExept(Point point, int exception){
+        int idNearestPoint, idSecondNearestPoint = 0;
+        if(points.isEmpty() || points.size() == 1){
+            return -1;
+        }else {
+            double dist = Math.sqrt(Math.pow(point.getX() - points.get(0).getX(), 2) + Math.pow(point.getY() - points.get(0).getY(), 2));
+            idNearestPoint = 0;
+
+
+            //System.out.println("dist_" + dist);
+            for (int i = 0; i < points.size(); i++) {
+                //System.out.println(Math.sqrt(Math.pow(point.getX() - points.get(i).getX(), 2) + Math.pow(point.getY() - points.get(i).getY(), 2)));
+                idSecondNearestPoint = idNearestPoint;
+                if (Math.sqrt(Math.pow(point.getX() - points.get(i).getX(), 2) + Math.pow(point.getY() - points.get(i).getY(), 2)) <= dist) {
+                    idNearestPoint = i;
+                    dist = Math.sqrt(Math.pow(point.getX() - points.get(i).getX(), 2) + Math.pow(point.getY() - points.get(i).getY(), 2));
+                }
+            }
+        }
+
+
+        //System.out.println(idNearestPoint);
+
+        return idSecondNearestPoint;
     }
 
     public double getDistanceBetweenTwoPoints(Point p1, Point p2){
@@ -101,10 +126,11 @@ public class Symbol {
 
     public boolean isInSymbol(Point point){
         int idNearestPoint = findIdOfNearestPoint(point);
+        int idOfSecondNearestPoint = findIdOfNearestPointExept(point, idNearestPoint);
 
         if(lastId == -1){
             lastId = idNearestPoint;
-        }else if(lastId != idNearestPoint - 1 && lastId != idNearestPoint){
+        }else if(lastId != idNearestPoint - 1 && lastId != idNearestPoint && lastId != idOfSecondNearestPoint - 1 && lastId != idOfSecondNearestPoint){
             return false;
         }
 
@@ -119,21 +145,25 @@ public class Symbol {
         }
 
         if(idNearestPoint >= 1) {
-            //System.out.println("c1");
             if(isInArea(point, points.get(idNearestPoint - 1), points.get(idNearestPoint))){
+                return true;
+            }
+        }
 
-                //System.out.println("c1 1");
-
+        if(idOfSecondNearestPoint >= 1){
+            if(isInArea(point, points.get(idOfSecondNearestPoint - 1), points.get(idOfSecondNearestPoint))){
                 return true;
             }
         }
 
         if(idNearestPoint + 1 < points.size()){
-
-            //System.out.println("c2");
             if(isInArea(point, points.get(idNearestPoint), points.get(idNearestPoint + 1))){
-                //System.out.println("c2 1");
+                return true;
+            }
+        }
 
+        if(idOfSecondNearestPoint + 1 < points.size()){
+            if(isInArea(point, points.get(idOfSecondNearestPoint), points.get(idOfSecondNearestPoint + 1))){
                 return true;
             }
         }
@@ -176,10 +206,11 @@ public class Symbol {
     //surchage pour avoir la tolerance customisé
     public boolean isInSymbol(Point point, float tol){
         int idNearestPoint = findIdOfNearestPoint(point);
+        int idOfSecondNearestPoint = findIdOfNearestPointExept(point, idNearestPoint);
 
         if(lastIdCustom == -1){
             lastIdCustom = idNearestPoint;
-        }else if(lastIdCustom != idNearestPoint - 1 && lastIdCustom != idNearestPoint){
+        }else if(lastIdCustom != idNearestPoint - 1 && lastIdCustom != idNearestPoint && lastIdCustom != idOfSecondNearestPoint - 1 && lastIdCustom != idOfSecondNearestPoint){
             return false;
         }
 
@@ -194,21 +225,25 @@ public class Symbol {
         }
 
         if(idNearestPoint >= 1) {
-            //System.out.println("c1");
             if(isInArea(point, points.get(idNearestPoint - 1), points.get(idNearestPoint),tol)){
+                return true;
+            }
+        }
 
-                //System.out.println("c1 1");
-
+        if(idOfSecondNearestPoint >= 1){
+            if(isInArea(point, points.get(idOfSecondNearestPoint - 1), points.get(idOfSecondNearestPoint),tol)){
                 return true;
             }
         }
 
         if(idNearestPoint + 1 < points.size()){
-
-            //System.out.println("c2");
             if(isInArea(point, points.get(idNearestPoint), points.get(idNearestPoint + 1), tol)){
-                //System.out.println("c2 1");
+                return true;
+            }
+        }
 
+        if(idOfSecondNearestPoint + 1 < points.size()){
+            if(isInArea(point, points.get(idOfSecondNearestPoint), points.get(idOfSecondNearestPoint + 1), tol)){
                 return true;
             }
         }

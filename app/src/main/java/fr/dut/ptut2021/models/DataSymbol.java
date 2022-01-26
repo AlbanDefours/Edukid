@@ -24,10 +24,21 @@ public final class DataSymbol {
 
         for(int i = 0; i < 10; i++){
             nbTrait.add(new ArrayList<Integer>());
-            nbTrait.get(i).add(-1);
         }
 
-        nbTrait.get(4).set(0, 3);
+        nbTrait.get(1).add(7);
+        nbTrait.get(2).add(8);
+        nbTrait.get(3).add(11);
+        nbTrait.get(4).add(4);
+        nbTrait.get(4).add(6);
+        nbTrait.get(5).add(15);
+        nbTrait.get(6).add(17);
+        nbTrait.get(7).add(2);
+        nbTrait.get(8).add(13);
+        nbTrait.get(9).add(15);
+
+        nbTrait.get(4).set(0, 4);
+        nbTrait.get(4).add(6);
 
         switch (num){
             case 1:
