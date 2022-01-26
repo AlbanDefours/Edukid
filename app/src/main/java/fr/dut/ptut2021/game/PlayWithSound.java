@@ -40,7 +40,6 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private TextView goodAnswerView;
     private boolean delay = false, isAnswerFalseWord = false;
     private List<String> listAnswer, listChooseResult;
-    private List<PlayWithSoundData> listData;
     private Button answer1, answer2, answer3;
     private String themeName;
     private String[] alphabetTab, syllableTab;
@@ -108,10 +107,9 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void fillListChooseResult() {
-        listData = new ArrayList<>(db.gameDao().getAllPWSDataByTheme(userId, themeName));
+        List<PlayWithSoundData> listData = new ArrayList<>(db.gameDao().getAllPWSDataByTheme(userId, themeName));
         listChooseResult = new ArrayList<>();
-        int maxDifficulty = db.gameDao().getPWSDataDifficulty(userId, themeName);
-
+        int maxDifficulty = db.gameDao().getPWSDataMaxDifficulty(userId, themeName);
         List<List<List<String>>> listAllData = new ArrayList<>();
 
         for (int i = 0; i < maxDifficulty; i++)

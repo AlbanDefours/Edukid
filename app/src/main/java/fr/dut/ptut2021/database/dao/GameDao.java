@@ -37,8 +37,11 @@ public interface GameDao {
     @Query("UPDATE WordWithHoleData SET lastUsed = 0 WHERE userId = :userId AND lastUsed = 1")
     void updateAllWWHDataLastUsed(int userId);
 
+    @Query("SELECT max(difficulty) FROM WordWithHoleData WHERE userId = :userId")
+    int getWWHDataMaxDifficulty(int userId);
+
     @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId AND result = :result")
-    WordWithHoleData getWWHDataByData(int userId, String result);
+    WordWithHoleData getWWHDataByResult(int userId, String result);
 
     @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId")
     List<WordWithHoleData> getAllWWHData(int userId);
@@ -101,7 +104,7 @@ public interface GameDao {
     List<PlayWithSoundData> getAllPWSDataByThemeAndDifficulty(int userId, String themeName, int difficulty);
 
     @Query("SELECT max(difficulty) FROM PlayWithSoundData WHERE userId = :userId AND theme LIKE :themeName")
-    int getPWSDataDifficulty(int userId, String themeName);
+    int getPWSDataMaxDifficulty(int userId, String themeName);
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     default List<String> getAllPWSDataLastUsed(List<PlayWithSoundData> listData, int difficulty, int lastUsed) {

@@ -42,11 +42,9 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private TextView word;
     private ImageView image, help;
     private Button answer1, answer2, answer3;
-    private List<WordWithHoleData> listData;
     private Map<String, Word> mapChooseData;
     private List<String> listAnswer;
     private String goodAnswer;
-    private List<String[]> dataTab;
     private String[] alphabetTab, syllableTab;
     private final int MAX_GAME_PLAYED = 4;
     private int userId, gameId, gamePlayed = 1, nbTry = 0, nbWin = 0;
@@ -81,7 +79,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void fillDatabase() {
-        dataTab = new ArrayList<>();
+        List<String[]> dataTab = new ArrayList<>();
         dataTab.add(getResources().getStringArray(R.array.WWHdifficulty1));
         dataTab.add(getResources().getStringArray(R.array.WWHdifficulty2));
         dataTab.add(getResources().getStringArray(R.array.WWHdifficulty3));
@@ -99,79 +97,47 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initGame() {
-        listData = new ArrayList<>(db.gameDao().getAllWWHData(userId));
+        List<WordWithHoleData> listData = new ArrayList<>(db.gameDao().getAllWWHData(userId));
         mapChooseData = new HashMap<>();
-
+        int maxDifficulty = db.gameDao().getWWHDataMaxDifficulty(userId);
         List<List<List<String>>> listAllData = new ArrayList<>();
 
-        List<List<String>> listDataDif1 = new ArrayList<>();
-        List<List<String>> listDataDif2 = new ArrayList<>();
-        List<List<String>> listDataDif3 = new ArrayList<>();
-        List<List<String>> listDataDif4 = new ArrayList<>();
+        for (int i = 0; i < maxDifficulty; i++)
+            listAllData.add(new ArrayList<>());
 
-        for (int dif = 1; dif <= 4; dif++) {
+        for (int dif = 1; dif <= maxDifficulty; dif++) {
             List<String> listDataNeverUsed = db.gameDao().getAllWWHDataLastUsed(listData, dif, -1);
             List<String> listDataNotUsed = db.gameDao().getAllWWHDataLastUsed(listData, dif, 0);
             List<String> listDataUsed = db.gameDao().getAllWWHDataLastUsed(listData, dif, 1);
 
-            switch (dif) {
-                case 1:
-                    listDataDif1.add(listDataNeverUsed);
-                    listDataDif1.add(listDataNotUsed);
-                    listDataDif1.add(listDataUsed);
-                    listAllData.add(listDataDif1);
-                    Log.e("APPLOG", "List Dif 1 (-1): " + listDataDif1.get(0));
-                    Log.e("APPLOG", "List Dif 1 (0): " + listDataDif1.get(1));
-                    Log.e("APPLOG", "List Dif 1 (1): " + listDataDif1.get(2));
-                    break;
-                case 2:
-                    listDataDif2.add(listDataNeverUsed);
-                    listDataDif2.add(listDataNotUsed);
-                    listDataDif2.add(listDataUsed);
-                    listAllData.add(listDataDif2);
-                    Log.e("APPLOG", "List Dif 2 (-1): " + listDataDif2.get(0));
-                    Log.e("APPLOG", "List Dif 2 (0): " + listDataDif2.get(1));
-                    Log.e("APPLOG", "List Dif 2 (1): " + listDataDif2.get(2));
-                    break;
-                case 3:
-                    listDataDif3.add(listDataNeverUsed);
-                    listDataDif3.add(listDataNotUsed);
-                    listDataDif3.add(listDataUsed);
-                    listAllData.add(listDataDif3);
-                    Log.e("APPLOG", "List Dif 3 (-1): " + listDataDif3.get(0));
-                    Log.e("APPLOG", "List Dif 3 (0): " + listDataDif3.get(1));
-                    Log.e("APPLOG", "List Dif 3 (1): " + listDataDif3.get(2));
-                    break;
-                default:
-                    listDataDif4.add(listDataNeverUsed);
-                    listDataDif4.add(listDataNotUsed);
-                    listDataDif4.add(listDataUsed);
-                    listAllData.add(listDataDif4);
-                    Log.e("APPLOG", "List Dif 4 (-1): " + listDataDif4.get(0));
-                    Log.e("APPLOG", "List Dif 4 (0): " + listDataDif4.get(1));
-                    Log.e("APPLOG", "List Dif 4 (1): " + listDataDif4.get(2));
-                    break;
-            }
-        }
+            listAllData.get(dif - 1).add(listDataNeverUsed);
+            listAllData.get(dif - 1).add(listDataNotUsed);
+            listAllData.get(dif - 1).add(listDataUsed);
 
+            Collections.shuffle(listAllData.get(dif - 1).get(1));
+            Collections.shuffle(listAllData.get(dif - 1).get(2));
+
+            Log.e("APPLOG", "List Dif " + dif + " (-1): " + listAllData.get(dif - 1).get(0));
+            Log.e("APPLOG", "List Dif " + dif + " (0): " + listAllData.get(dif - 1).get(1));
+            Log.e("APPLOG", "List Dif " + dif + " (1): " + listAllData.get(dif - 1).get(2));
+        }
         for (int i = 0; i < listAllData.size(); i++) {
             if (mapChooseData.size() <= MAX_GAME_PLAYED)
                 fillMapChooseWord(listAllData, i+1);
         }
-
         db.gameDao().updateAllWWHDataLastUsed(userId);
     }
 
-    private void fillMapChooseWord(List<List<List<String>>> list, int difficulty) {
+    private void fillMapChooseWord(List<List<List<String>>> listData, int difficulty) {
         List<Word> words;
 
-        for (int j = 0; j < list.get(difficulty-1).size(); j++) {
-            for (int k = 0; k < list.get(difficulty-1).get(j).size(); k++) {
+        for (int j = 0; j < listData.get(difficulty-1).size(); j++) {
+            for (int k = 0; k < listData.get(difficulty-1).get(j).size(); k++) {
 
-                if (mapChooseData.size() <= MAX_GAME_PLAYED && list.get(difficulty-1).get(j).size() > 0) {
-                    String answer = list.get(difficulty-1).get(j).get(k);
+                if (mapChooseData.size() <= MAX_GAME_PLAYED && listData.get(difficulty-1).get(j).size() > 0) {
+                    String answer = listData.get(difficulty-1).get(j).get(k);
                     if (!mapChooseData.containsKey(answer) &&
-                            (difficulty == list.size() - 1 || db.gameDao().getWWHDataByData(userId, answer).getWinStreak() < 3)
+                            (difficulty == listData.size() || db.gameDao().getWWHDataByResult(userId, answer).getWinStreak() < 3)
                     ) {
                         Log.e("APPLOG", "answer : " + answer);
                         words = db.appDao().getWordIfContain('%' + answer + '%');
@@ -183,10 +149,10 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                             for (int i = 0; i < 3; i++)
                                 Collections.shuffle(words);
 
-                            for (int i = difficulty; i < list.size(); i++) {
-                                for (int l = 0; l < list.get(j).size(); l++) {
-                                    for (int m = 0; m < list.get(i).get(l).size(); m++) {
-                                        String syllable = list.get(i).get(l).get(m);
+                            for (int i = difficulty; i < listData.size(); i++) {
+                                for (int l = 0; l < listData.get(i).size(); l++) {
+                                    for (int m = 0; m < listData.get(i).get(l).size(); m++) {
+                                        String syllable = listData.get(i).get(l).get(m);
 
                                         if (syllable.length() == 2 && !answer.equals(syllable)) {
                                             if (answer.contains(String.valueOf(syllable.charAt(0))) ||
@@ -388,7 +354,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void updateDataInDb() {
-        WordWithHoleData data = db.gameDao().getWWHDataByData(userId, goodAnswer);
+        WordWithHoleData data = db.gameDao().getWWHDataByResult(userId, goodAnswer);
         data.setLastUsed(1);
         boolean win;
         if (nbTry == 0) {
