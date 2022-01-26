@@ -315,7 +315,6 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
             listLog = db.gameLogDao().getAllGameResultLogByUserLimit(listUser.get(pageUser).getUserId());
 
         final int COLUMN = 6;
-
         int it = 0;
         for (int i = 0; i < COLUMN; i++) {
             float n = 0;
@@ -332,10 +331,10 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
                 avg = sum/n;
 
             mapData.put(COLUMN - i, avg);
+            it++;
         }
 
         for (Map.Entry<Integer, Float> val : mapData.entrySet())
-            Log.e("APPLOG", val.getKey() + " - " + val.getValue());
 
         return mapData;
     }
