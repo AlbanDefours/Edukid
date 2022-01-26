@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -35,12 +34,10 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 import fr.dut.ptut2021.R;
@@ -147,7 +144,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         }
 
         BarDataSet barDataSet = new BarDataSet(data, "Data");
-        barDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+        barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         barDataSet.setValueTextColor(Color.BLACK);
         barDataSet.setDrawValues(false);
 
@@ -188,24 +185,25 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         for (Map.Entry<Integer, Float> val : mapData.entrySet())
             data.add(new Entry(val.getKey(), val.getValue()));
 
-
         LineDataSet lineDataSet = new LineDataSet(data, "Data");
-        lineDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+        lineDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         lineDataSet.setValueTextColor(Color.BLACK);
         lineDataSet.setLineWidth(3);
         lineDataSet.setCircleRadius(5);
         lineDataSet.setDrawValues(false);
 
-        String[] list = {"1", "2", "3", "4", "5", "6"};
+        String[] list = {"10", "20", "30", "40", "50", "60"};
 
         XAxis axis = lineChart.getXAxis();
         axis.setTypeface(Typeface.MONOSPACE);
         axis.setPosition(XAxis.XAxisPosition.BOTTOM);
         axis.setTextSize(15f);
+        axis.setAxisMinimum(1);
+        axis.setGranularity(1);
+        axis.setAxisMaximum(6);
         axis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getAxisLabel(float value, AxisBase axis) {
-                Log.e("will", "" + value);
                 return list[Math.round(value) - 1];
             }
         });
@@ -333,8 +331,6 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
             mapData.put(COLUMN - i, avg);
             it++;
         }
-
-        for (Map.Entry<Integer, Float> val : mapData.entrySet())
 
         return mapData;
     }
