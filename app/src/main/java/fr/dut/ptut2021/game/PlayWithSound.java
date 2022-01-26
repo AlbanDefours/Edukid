@@ -58,8 +58,8 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         GlobalUtils.verifyIfSoundIsOn(this);
 
         getSharedPref();
-        readInstruction();
         initDatabase();
+        readInstruction(false);
         initializeLayout();
         fillListChooseResult();
         initGame();
@@ -158,14 +158,22 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         MyTextToSpeech.speachText(this, "Trouve " + articleTheme + themeName.toLowerCase() + " : " + listChooseResult.get(gamePlayed - 1));
     }
 
-    private void readInstruction() {
-        delay = true;
-        articleTheme = themeName.equals("Chiffres") ? "le " : "la ";
-        String s = themeName.equals("Chiffres") ? "un " : "une ";
-        MyTextToSpeech.speachText(PlayWithSound.this, "Dans cet exercice tu vas entendre " + s + themeName.toLowerCase() + " et tu dois " + articleTheme + " retrouver");
-        new Handler().postDelayed(() -> {
-            delay = false;
-        }, 3000);
+    private void readInstruction(boolean help) {
+        int sum = 0;
+        int limit = 2;
+        if (!help) {
+            for (int star : db.gameLogDao().getAllGameResultLogStarsLimit(userId, gameId, limit))
+                sum += star;
+        }
+        if (help || sum <= limit) {
+            delay = true;
+            articleTheme = themeName.equals("Chiffres") ? "le " : "la ";
+            String s = themeName.equals("Chiffres") ? "un " : "une ";
+            MyTextToSpeech.speachText(PlayWithSound.this, "Dans cet exercice tu vas entendre " + s + themeName.toLowerCase() + " et tu dois " + articleTheme + " retrouver");
+            new Handler().postDelayed(() -> {
+                delay = false;
+            }, 3000);
+        }
     }
 
     private void initListAnswer() {
@@ -339,7 +347,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                     break;
 
                 case R.id.ic_help_playWithSound:
-                    readInstruction();
+                    readInstruction(true);
                     break;
 
                 default:
