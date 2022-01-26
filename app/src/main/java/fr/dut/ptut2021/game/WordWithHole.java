@@ -82,10 +82,10 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
     private void fillDatabase() {
         dataTab = new ArrayList<>();
-        dataTab.add(getResources().getStringArray(R.array.difficulty1));
-        dataTab.add(getResources().getStringArray(R.array.difficulty2));
-        dataTab.add(getResources().getStringArray(R.array.difficulty3));
-        dataTab.add(getResources().getStringArray(R.array.difficulty4));
+        dataTab.add(getResources().getStringArray(R.array.WWHdifficulty1));
+        dataTab.add(getResources().getStringArray(R.array.WWHdifficulty2));
+        dataTab.add(getResources().getStringArray(R.array.WWHdifficulty3));
+        dataTab.add(getResources().getStringArray(R.array.WWHdifficulty4));
 
         for (int i = 0; i < dataTab.size(); i++) {
             for (String str : dataTab.get(i)) {
@@ -152,7 +152,6 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                     Log.e("APPLOG", "List Dif 4 (1): " + listDataDif4.get(2));
                     break;
             }
-
         }
 
         for (int i = 0; i < listAllData.size(); i++) {

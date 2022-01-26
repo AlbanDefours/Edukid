@@ -63,7 +63,7 @@
         <item>EN</item>
     </string-array>
 
-    <string-array name="difficulty1">
+    <string-array name="WWHdifficulty1">
         <item>LI</item>
         <item>VA</item>
         <item>MA</item>
@@ -78,7 +78,7 @@
         <item>PO</item>
     </string-array>
 
-    <string-array name="difficulty2">
+    <string-array name="WWHdifficulty2">
         <item>A</item>
         <item>B</item>
         <item>C</item>
@@ -103,7 +103,7 @@
         <item>Z</item>
     </string-array>
 
-    <string-array name="difficulty3">
+    <string-array name="WWHdifficulty3">
         <item>AN</item>
         <item>ON</item>
         <item>OU</item>
@@ -111,7 +111,7 @@
         <item>OI</item>
     </string-array>
 
-    <string-array name="difficulty4">
+    <string-array name="WWHdifficulty4">
         <item>Q</item>
         <item>G</item>
         <item>Y</item>
