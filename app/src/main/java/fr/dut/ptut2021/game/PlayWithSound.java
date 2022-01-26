@@ -173,7 +173,12 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         listAnswer.add(listChooseResult.get(gamePlayed - 1));
 
         while (listAnswer.size() < 3) {
-            if (listAnswer.get(0).length() == 1) {
+            if (themeName.equals("Chiffres")) {
+                int rand = random.nextInt(9)+1;
+                if (!listAnswer.contains(Integer.toString(rand))) {
+                    listAnswer.add(Integer.toString(rand));
+                }
+            } else if (listAnswer.get(0).length() == 1) {
                 int rand = random.nextInt(alphabetTab.length);
                 if (!listAnswer.contains(alphabetTab[rand])) {
                     listAnswer.add(alphabetTab[rand]);
