@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -306,7 +305,6 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             answerFalseWord++;
             if (answerFalseWord == 2)
                 isAnswerFalseWord = true;
-            Log.d("WILL", "" + answerFalseWord);
             setWordAndAddDelay();
             answer.setEnabled(false);
         }

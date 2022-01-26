@@ -11,6 +11,8 @@
         android:layout_width="64dp"
         android:layout_height="59dp"
         android:src="@drawable/ic_help"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="5dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -18,32 +20,45 @@
         tools:layout_editor_absoluteY="2dp" />
 
     <TextView
-        android:id="@+id/goodAnswer_playWithSound"
-        android:layout_width="match_parent"
+        android:id="@+id/title_playwithsound"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="A"
-        android:textSize="200sp"
-        android:layout_marginTop="170dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/magimt"
+        android:text="Ecoute"
         android:textAlignment="center"
+        android:textColor="#00BCD4"
+        android:textSize="48sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/goodAnswer_playWithSound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="200sp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_playwithsound" />
 
     <ImageView
         android:id="@+id/btnSound_playWithSound"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:src="@drawable/ic_sound"
-        android:layout_marginTop="200dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/title_playwithsound" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="88dp"
+        android:layout_marginBottom="100dp"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"

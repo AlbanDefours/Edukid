@@ -33,6 +33,7 @@ import fr.dut.ptut2021.models.MemoryCardLettre;
 import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.MemoryData;
 import fr.dut.ptut2021.models.database.game.MemoryDataCardCrossRef;
+import fr.dut.ptut2021.models.database.log.GameResultLog;
 import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
 import fr.dut.ptut2021.utils.MySharedPreferences;
@@ -134,6 +135,8 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             }
             changeDifficulty();
 
+        addGameResultLog(nbStar);
+
             new Handler().postDelayed(() -> {
                 GlobalUtils.startResultPage(Memory.this, nbStar);
             }, 2000);
@@ -141,13 +144,11 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             return true;
         }
         return false;
-
     }
 
     private void initDB(){
         db = CreateDatabase.getInstance(Memory.this);
-        SharedPreferences settings = getSharedPreferences("MyPref", 0);
-        String subGame = settings.getString("subGameName", "");
+        String subGame = MySharedPreferences.getSubGameName(this);
         switch(subGame){
             case "Niveau 1":
                 subCat=1;
@@ -491,6 +492,12 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         return true;
     }
 
+    private void addGameResultLog(int stars) {
+        GameResultLog gameResultLog = new GameResultLog(MySharedPreferences.getGameId(this), -1, userId, stars);
+        db.gameLogDao().insertGameResultLog(gameResultLog);
+    }
+
+//TODO faire les bouton sur la progresse Bar avec max diffulté déjà atteinte
     @Override
     public void onStateItemClick(StateProgressBar stateProgressBar, StateItem stateItem, int stateNumber, boolean isCurrentState) {
         if(stateProgressBar == this.stateProgressBar){

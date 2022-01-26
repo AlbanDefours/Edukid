@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".game.WordWithHole">
-
 
     <ImageView
         android:id="@+id/ic_help_wordWithHole"
         android:layout_width="64dp"
         android:layout_height="59dp"
         android:src="@drawable/ic_help"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="5dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -20,26 +20,43 @@
         tools:layout_editor_absoluteY="2dp" />
 
     <TextView
+        android:id="@+id/title_wordwithhole"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/magimt"
+        android:text="mot à trou"
+        android:textAlignment="center"
+        android:textColor="#00BCD4"
+        android:textSize="45sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/word_wordWithHole"
-        android:layout_width="415dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="104dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="55sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/title_wordwithhole" />
 
     <ImageView
         android:id="@+id/imageWord_wordWithHole"
-        android:layout_width="411dp"
-        android:layout_height="247dp"
-        android:layout_marginBottom="104dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:maxHeight="400dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/word_wordWithHole" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
