@@ -198,7 +198,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                 if(s.getDistanceBetweenTwoPoints(s.getFirstPoint(),new Point(downx, downy)) <= s.getTolerance() && !hasDraw && !isStart){
                     canDraw = true;
                     Log.e("list", numTrait + "");
-                }else if(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).size() - 1 >= numTrait - 1) {
+                }else if(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).size() - 2 >= numTrait - 1 && numTrait > 0) {
                     if (s.getPoints().size() - 1 >= DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(numTrait - 1) + 1) {
                         if (s.getDistanceBetweenTwoPoints(s.getPoints().get(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(numTrait - 1) + 1), new Point(downx, downy)) <= s.getTolerance() && !hasDraw) {
                             canDraw = true;
@@ -327,11 +327,10 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                         nextSymbol();
                         if(error){
                             MyMediaPlayer.playSound(this, R.raw.wrong_answer);
-                            numTrait = 0;
                         }else{
                             MyMediaPlayer.playSound(this, R.raw.correct_answer);
-                            numTrait = 0;
                         }
+                        numTrait = 0;
                         next = false;
                     }else if(!isStart){
                         MyMediaPlayer.playSound(this, R.raw.wrong_answer);
