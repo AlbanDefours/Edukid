@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.mikephil.charting.utils.FSize;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -196,13 +198,14 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                 if(s.getDistanceBetweenTwoPoints(s.getFirstPoint(),new Point(downx, downy)) <= s.getTolerance() && !hasDraw && !isStart){
                     canDraw = true;
                     Log.e("list", numTrait + "");
-                }else if(s.getPoints().size() - 1 >= DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(numTrait - 1) + 1){
-                    if(s.getDistanceBetweenTwoPoints(s.getPoints().get(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(numTrait - 1) + 1), new Point(downx, downy)) <= s.getTolerance() && !hasDraw){
-                        canDraw = true;
+                }else if(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).size() - 1 >= numTrait - 1) {
+                    if (s.getPoints().size() - 1 >= DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(numTrait - 1) + 1) {
+                        if (s.getDistanceBetweenTwoPoints(s.getPoints().get(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(numTrait - 1) + 1), new Point(downx, downy)) <= s.getTolerance() && !hasDraw) {
+                            canDraw = true;
+                        } else {
+                            canDraw = false;
+                        }
                     }
-                }
-                else{
-                    canDraw = false;
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
