@@ -122,15 +122,4 @@
         <item>EN</item>
     </string-array>
 
-
-    <array name="preloaded_fonts" translatable="false">
-        <item>@font/magimt</item>
-        <item>@font/abstractgroovy</item>
-        <item>@font/autography</item>
-        <item>@font/cream_cake</item>
-        <item>@font/kg_second_chances</item>
-        <item>@font/little_comet</item>
-        <item>@font/sticky_notes</item>
-        <item>@font/stop_bullying</item>
-    </array>
 </resources>

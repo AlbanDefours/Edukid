@@ -356,6 +356,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
 
 }
 
+
 /*
 for(int i = 0; i < s.getPoints().size(); i+=2){
             tailleFleche = s.getDistanceBetweenTwoPoints(s.getPoints().get(i), s.getPoints().get(i+1)) * 10/100;

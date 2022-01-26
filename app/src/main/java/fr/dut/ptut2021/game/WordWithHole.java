@@ -1,7 +1,6 @@
 package fr.dut.ptut2021.game;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,7 +25,6 @@ import java.util.Map;
 import java.util.Random;
 
 import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.WordWithHoleData;
@@ -174,7 +172,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 if (mapChooseData.size() <= MAX_GAME_PLAYED && list.get(difficulty-1).get(j).size() > 0) {
                     String answer = list.get(difficulty-1).get(j).get(k);
                     if (!mapChooseData.containsKey(answer) &&
-                            (difficulty == list.size() - 1 || db.gameDao().getWWHDataByData(userId, answer).getWinStreak() < 1)
+                            (difficulty == list.size() - 1 || db.gameDao().getWWHDataByData(userId, answer).getWinStreak() < 3)
                     ) {
                         Log.e("APPLOG", "answer : " + answer);
                         words = db.appDao().getWordIfContain('%' + answer + '%');
@@ -375,10 +373,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             } else {
                 int stars = starsNumber();
                 addGameResultLogInDb(stars);
-                Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
-                intent.putExtra("starsNumber", stars);
-                startActivity(intent);
-                finish();
+                GlobalUtils.startResultPage(WordWithHole.this, stars);
             }
         }, 3000);
     }

@@ -17,7 +17,8 @@ public class MyViewHolderMemory extends RecyclerView.ViewHolder {
 
     boolean hidden;
     View viewCard;
-    View interieurCardChiffre, interieurCardLettre;
+    View interieurCardChiffre;
+    TextView interieurCardLettre;
     ArrayList<ImageView> elements = new ArrayList<>();
     ImageView pattern;
     ImageView returnCard;

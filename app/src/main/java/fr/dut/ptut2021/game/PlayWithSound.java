@@ -1,7 +1,6 @@
 package fr.dut.ptut2021.game;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,7 +17,6 @@ import java.util.List;
 import java.util.Random;
 
 import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.database.game.PlayWithSoundData;
 import fr.dut.ptut2021.models.database.log.GameLog;
@@ -231,7 +229,6 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                     listButton[i].setEnabled(true);
                 }
             } else {
-                Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
                 if (0 <= answerFalse && answerFalse < 2)//Nombre etoile
                     nbrStars = 3;
                 else if (isAnswerFalseWord)
@@ -239,9 +236,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                 else
                     nbrStars = 2;
                 addGameResultLogInDb(nbrStars);
-                intent.putExtra("starsNumber", nbrStars);
-                startActivity(intent);
-                finish();
+                GlobalUtils.startResultPage(PlayWithSound.this, nbrStars);
             }
         }, 3000);
     }
