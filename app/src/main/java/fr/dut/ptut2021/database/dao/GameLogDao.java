@@ -17,8 +17,8 @@ public interface GameLogDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertGameResultLog(GameResultLog gameResultLog);
 
-    @Query("SELECT * FROM GameResultLog")
-    List<GameResultLog> getAllGameResultLog();
+    @Query("SELECT * FROM GameResultLog WHERE userId = :userId")
+    List<GameResultLog> getAllGameResultLogByUser(int userId);
 
     @Query("SELECT * FROM GameResultLog WHERE userId = :userId ORDER BY endGameDate DESC LIMIT 60")
     List<GameResultLog> getAllGameResultLogByUserLimit(int userId);

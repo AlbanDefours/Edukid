@@ -227,38 +227,47 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         lineChart.setExtraOffsets(0, 0, 0, 5);
     }
 
+    @SuppressLint("SetTextI18n")
     private void setStatsText() {
         Map<Game, Integer> gameCountMap = new LinkedHashMap<>();
 
-        for (int i = 0; i < gameList.size(); i++) {
-            if (categoryName.equals("Chiffres") || categoryName.equals("Lettres")) {
-                if (gameList.get(i).getThemeName().equals(categoryName))
+        if (db.gameLogDao().getAllGameResultLogByUser(listUser.get(pageUser).getUserId()).size() > 0) {
+            for (int i = 0; i < gameList.size(); i++) {
+                if (categoryName.equals("Chiffres") || categoryName.equals("Lettres")) {
+                    if (gameList.get(i).getThemeName().equals(categoryName))
+                        gameCountMap.put(gameList.get(i), db.gameLogDao().getGameResultLogNbGame(listUser.get(pageUser).getUserId(), gameList.get(i).getGameId()));
+                } else {
                     gameCountMap.put(gameList.get(i), db.gameLogDao().getGameResultLogNbGame(listUser.get(pageUser).getUserId(), gameList.get(i).getGameId()));
-            } else {
-                gameCountMap.put(gameList.get(i), db.gameLogDao().getGameResultLogNbGame(listUser.get(pageUser).getUserId(), gameList.get(i).getGameId()));
+                }
             }
-        }
 
-        Game minGame = null, maxGame = null;
-        int minIt = -1, maxIt = -1;
+            Game minGame = null, maxGame = null;
+            int minIt = -1, maxIt = -1;
 
-        for (Map.Entry<Game, Integer> val : gameCountMap.entrySet()) {
-            if (val.getValue() < minIt || minIt == -1) {
-                minGame = val.getKey();
-                minIt = val.getValue();
+            for (Map.Entry<Game, Integer> val : gameCountMap.entrySet()) {
+                if (val.getValue() < minIt || minIt == -1) {
+                    minGame = val.getKey();
+                    minIt = val.getValue();
+                }
+                if (val.getValue() > maxIt || maxIt == -1) {
+                    maxGame = val.getKey();
+                    maxIt = val.getValue();
+                }
             }
-            if (val.getValue() > maxIt || maxIt == -1) {
-                maxGame = val.getKey();
-                maxIt = val.getValue();
+            if (minGame != null) {
+                leftStatText.setText(maxGame.getGameName());
+                leftStatIcon.setImageResource(maxGame.getGameImage());
+            }
+            if (maxGame != null) {
+                rightStatText.setText(minGame.getGameName());
+                rightStatIcon.setImageResource(minGame.getGameImage());
             }
         }
-        if (minGame != null) {
-            leftStatText.setText(maxGame.getGameName());
-            leftStatIcon.setImageResource(maxGame.getGameImage());
-        }
-        if (maxGame != null) {
-            rightStatText.setText(minGame.getGameName());
-            rightStatIcon.setImageResource(minGame.getGameImage());
+        else {
+            leftStatText.setText("Aucun");
+            leftStatIcon.setImageResource(R.drawable.ic_square);
+            rightStatText.setText("Aucun");
+            rightStatIcon.setImageResource(R.drawable.ic_square);
         }
     }
 
