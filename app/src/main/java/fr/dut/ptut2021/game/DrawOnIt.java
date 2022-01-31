@@ -52,6 +52,8 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
     private float nbErreur = 0;
     private Card[] carte;
 
+    private android.graphics.Point p;
+
 
     float tolerance, toleranceLarge;
 
@@ -126,15 +128,22 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
             carte[i] = listCard.get(numRand[i]);
         }
 
+        Display currentDisplay = getWindowManager().getDefaultDisplay();
+        largeur = currentDisplay.getWidth();
+        hauteur = currentDisplay.getHeight();
+
+        p = new android.graphics.Point();
+        currentDisplay.getRealSize(p);
+
         /*
         int c = 4;
         image.setImageResource(listCard.get(c - 1).getDrawableImage()); //carte[0]
-        DataSymbol.initPts(c, dm.widthPixels, dm.heightPixels); //Integer.parseInt(carte[0].getCardValue())
+        DataSymbol.initPts(c, dm.xdpi, dm.ydpi); //Integer.parseInt(carte[0].getCardValue())
         s = new Symbol(DataSymbol.getPts(), tolerance);
         */
 
         image.setImageResource(carte[0].getDrawableImage()); //carte[0]
-        DataSymbol.initPts(Integer.parseInt(carte[0].getCardValue()),dm.widthPixels, dm.heightPixels); //(Integer.parseInt(carte[0].getCardValue()), dm.widthPixels, dm.heightPixels)
+        DataSymbol.initPts(Integer.parseInt(carte[0].getCardValue()),largeur, hauteur); //(Integer.parseInt(carte[0].getCardValue()), dm.widthPixels, dm.heightPixels)
         s = new Symbol(DataSymbol.getPts(), tolerance);
 
 
@@ -144,9 +153,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         //System.out.println(bitmap.getScaledHeight(canvas));
         //System.out.println(bitmap.getScaledHeight(dm));
 
-        Display currentDisplay = getWindowManager().getDefaultDisplay();
-        largeur = currentDisplay.getWidth();
-        hauteur = currentDisplay.getHeight();
+
 
         bitmap = Bitmap.createBitmap((int) largeur, (int) hauteur, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
@@ -182,6 +189,8 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
 
         System.out.println("c'est bon");
         Log.e("axel", "c'est bon");
+
+        Log.e("dim", "w : " + p.x + " h : " + p.y);
 
         imageVide.setOnTouchListener(this);
     }
@@ -406,13 +415,12 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         numGame++;
 
         image.setImageResource(carte[numGame].getDrawableImage());
-        DataSymbol.initPts(Integer.parseInt(carte[numGame].getCardValue()),dm.widthPixels, dm.heightPixels);
+        DataSymbol.initPts(Integer.parseInt(carte[numGame].getCardValue()),largeur, hauteur); //dm.widthPixels, dm.heightPixels
         s = new Symbol(DataSymbol.getPts(), tolerance);
 
         Log.e("axel", "millieu nextSymbol");
 
         reDraw();
-
 
         Log.e("axel", "fin nextSymbol");
     }
