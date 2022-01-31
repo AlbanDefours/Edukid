@@ -314,7 +314,6 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             button.setBackgroundColor(Color.GREEN);
     }
 
-    //TODO Refaire l'algo de calcul des étoiles
     private int starsNumber() {
         if (nbWrongAnswer < 2)
             return 3;

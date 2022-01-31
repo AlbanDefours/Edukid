@@ -183,6 +183,35 @@
 
             </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/linearLayout_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/spinner_game_stats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Spinner
+                android:id="@+id/spinner_difficulty_stats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
+
+            <!--
             <TextView
                 android:id="@+id/title_line_chart"
                 android:layout_width="match_parent"
@@ -198,6 +227,7 @@
                 android:layout_width="match_parent"
                 android:layout_marginBottom="20dp"
                 android:layout_height="250dp"/>
+            -->
 
         </LinearLayout>
 

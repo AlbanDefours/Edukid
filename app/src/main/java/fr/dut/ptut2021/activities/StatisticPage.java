@@ -5,9 +5,12 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -52,7 +55,8 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     private CreateDatabase db = null;
     private int pageUser = 0;
     private TextView userTitle, barChartTitle, leftStatTitle, rightStatTitle, leftStatText, rightStatText;
-    private List<User> listUser;
+    private Spinner gameSpinner;
+    private List<User> userList;
     private List<Game> gameList;
     private Button generalButton, lettresButton, chiffresButton;
     private ImageView nextPage, previousPage, leftStatIcon, rightStatIcon;
@@ -97,30 +101,33 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         rightStatText = findViewById(R.id.text_right_stat1);
         leftStatIcon = findViewById(R.id.image_left_stat1);
         rightStatIcon = findViewById(R.id.image_right_stat1);
+
+        gameSpinner = findViewById(R.id.spinner_game_stats);
     }
 
     private void createDbAndImportUsers() {
         db = CreateDatabase.getInstance(StatisticPage.this);
         if (!db.appDao().tabUserIsEmpty()) {
-            listUser = db.appDao().getAllUsers();
+            userList = db.appDao().getAllUsers();
         }
         gameList = db.appDao().getAllGames();
     }
 
     private void displayNewUserPage() {
-        if (!listUser.isEmpty()) displayUserTitle();
+        if (!userList.isEmpty()) displayUserTitle();
         setTitleText();
         displayNewCategoryPage();
     }
 
     private void displayNewCategoryPage() {
         createBarChart(getGameFrequencyData());
-        createLineChart(getGameAvgStarsData());
+        //createLineChart(getGameAvgStarsData());
         setStatsText();
+        setSpinnerGames();
     }
 
     private void displayUserTitle() {
-        userTitle.setText(listUser.get(pageUser).getUserName());
+        userTitle.setText(userList.get(pageUser).getUserName());
         verifyPageUserLocation();
     }
 
@@ -177,7 +184,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         barChart.getLegend().setEnabled(false);
         barChart.setExtraOffsets(0, 0, 0, 5);
     }
-
+/*
     public void createLineChart(Map<Integer, Float> mapData) {
         LineChart lineChart = findViewById(R.id.line_chart);
         List<Entry> data = new ArrayList<>();
@@ -222,22 +229,22 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         lineChart.getDescription().setEnabled(false);
         lineChart.animateY(500);
         lineChart.setTouchEnabled(false);
-        lineChart.setNoDataText("Commencer a jouer !");
+        lineChart.setNoDataText("Tu n'as encore jamais joué !");
         lineChart.getLegend().setEnabled(false);
         lineChart.setExtraOffsets(0, 0, 0, 5);
     }
-
+*/
     @SuppressLint("SetTextI18n")
     private void setStatsText() {
         Map<Game, Integer> gameCountMap = new LinkedHashMap<>();
 
-        if (db.gameLogDao().getAllGameResultLogByUser(listUser.get(pageUser).getUserId()).size() > 0) {
+        if (db.gameLogDao().getAllGameResultLogByUser(userList.get(pageUser).getUserId()).size() > 0) {
             for (int i = 0; i < gameList.size(); i++) {
                 if (categoryName.equals("Chiffres") || categoryName.equals("Lettres")) {
                     if (gameList.get(i).getThemeName().equals(categoryName))
-                        gameCountMap.put(gameList.get(i), db.gameLogDao().getGameResultLogNbGame(listUser.get(pageUser).getUserId(), gameList.get(i).getGameId()));
+                        gameCountMap.put(gameList.get(i), db.gameLogDao().getGameResultLogNbGame(userList.get(pageUser).getUserId(), gameList.get(i).getGameId()));
                 } else {
-                    gameCountMap.put(gameList.get(i), db.gameLogDao().getGameResultLogNbGame(listUser.get(pageUser).getUserId(), gameList.get(i).getGameId()));
+                    gameCountMap.put(gameList.get(i), db.gameLogDao().getGameResultLogNbGame(userList.get(pageUser).getUserId(), gameList.get(i).getGameId()));
                 }
             }
 
@@ -271,6 +278,38 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    private void setSpinnerGames() {
+        if (categoryName.equals("General")) {
+            gameSpinner.setVisibility(View.INVISIBLE);
+        } else {
+            gameSpinner.setVisibility(View.VISIBLE);
+            List<String> tmpList = new ArrayList<>();
+
+            for (Game game : gameList) {
+                if (game.getThemeName().equals(categoryName))
+                    tmpList.add(game.getGameName());
+            }
+
+            String[] gameNameTab = new String[tmpList.size()];
+            int it = 0;
+            for (String s : tmpList) {
+                gameNameTab[it] = s;
+                it++;
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    gameNameTab);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            gameSpinner.setAdapter(adapter);
+        }
+    }
+
+    private void setSpinnerDifficulty() {
+
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void setStartWeekTimeAndDate() {
         @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
@@ -289,9 +328,9 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         List<GameResultLog> listLog;
 
         if (categoryName.equals("Chiffres") || categoryName.equals("Lettres"))
-            listLog = db.gameLogDao().getAllGameResultLogAfterTimeByTheme(listUser.get(pageUser).getUserId(), categoryName, startWeekTime);
+            listLog = db.gameLogDao().getAllGameResultLogAfterTimeByTheme(userList.get(pageUser).getUserId(), categoryName, startWeekTime);
         else
-            listLog = db.gameLogDao().getAllGameResultLogAfterTime(listUser.get(pageUser).getUserId(), startWeekTime);
+            listLog = db.gameLogDao().getAllGameResultLogAfterTime(userList.get(pageUser).getUserId(), startWeekTime);
 
         DateFormat df = new SimpleDateFormat("E", Locale.FRENCH);
         for (int i = 0; i < 7; i++) {
@@ -317,9 +356,9 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         List<GameResultLog> listLog;
 
         if (categoryName.equals("Chiffres") || categoryName.equals("Lettres"))
-            listLog = db.gameLogDao().getAllGameResultLogByUserLimitByTheme(listUser.get(pageUser).getUserId(), categoryName);
+            listLog = db.gameLogDao().getAllGameResultLogByUserLimitByTheme(userList.get(pageUser).getUserId(), categoryName);
         else
-            listLog = db.gameLogDao().getAllGameResultLogByUserLimit(listUser.get(pageUser).getUserId());
+            listLog = db.gameLogDao().getAllGameResultLogByUserLimit(userList.get(pageUser).getUserId());
 
         final int COLUMN = 6;
         int it = 0;
@@ -344,6 +383,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         return mapData;
     }
     
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     private void verifyPageUserLocation() {
         previousPage.setAlpha(1f);
         nextPage.setAlpha(1f);
@@ -354,7 +394,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
             previousPage.setAlpha(0.5f);
             previousPage.setEnabled(false);
         }
-        if (pageUser == listUser.size() - 1) {
+        if (pageUser == userList.size() - 1) {
             nextPage.setAlpha(0.5f);
             nextPage.setEnabled(false);
         }
@@ -388,7 +428,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.arrow_nextPage:
-                if (pageUser < listUser.size() - 1) {
+                if (pageUser < userList.size() - 1) {
                     MyVibrator.vibrate(StatisticPage.this, 35);
                     pageUser++;
                 }
