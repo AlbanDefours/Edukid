@@ -8,15 +8,16 @@ public class GameResultLog {
 
     @PrimaryKey(autoGenerate = true)
     private int gameResultLogId;
-    private int gameId, subGameId, userId, stars;
+    private int gameId, subGameId, userId, stars, difficulty;
     private long endGameDate;
 
 //subGame = -1 s'il n'y en a pas
-    public GameResultLog(int gameId, int subGameId, int userId, int stars) {
+    public GameResultLog(int gameId, int subGameId, int userId, int stars, int difficulty) {
         this.gameId = gameId;
         this.subGameId = subGameId;
         this.userId = userId;
         this.stars = stars;
+        this.difficulty = difficulty;
         this.endGameDate = System.currentTimeMillis();
     }
 
@@ -53,6 +54,13 @@ public class GameResultLog {
     }
     public void setStars(int stars) {
         this.stars = stars;
+    }
+
+    public int getDifficulty() {
+        return difficulty;
+    }
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
     }
 
     public long getEndGameDate() {

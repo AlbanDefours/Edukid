@@ -47,6 +47,9 @@ public interface GameLogDao {
     @Query("SELECT count(*) FROM GameResultLog WHERE userId = :userId")
     int getGameResultLogNb(int userId);
 
+    @Query("SELECT max(difficulty) FROM GameResultLog WHERE userId = :userId AND gameId = :gameId")
+    int getGameResultLogMaxDifByGame(int userId, int gameId);
+
     @Query("SELECT * FROM GameResultLog WHERE userId = :userId AND gameId = :gameId AND subGameId = :subGameId")
     List<GameResultLog> getAllGameResultLogBySubGame(int userId, int gameId, int subGameId);
 

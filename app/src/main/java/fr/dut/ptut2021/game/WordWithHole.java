@@ -47,7 +47,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private String goodAnswer;
     private String[] alphabetTab, syllableTab;
     private final int MAX_GAME_PLAYED = 4;
-    private int userId, gameId, gamePlayed = 1, nbTry = 0, nbWrongAnswer = 0;
+    private int userId, gameId, gamePlayed = 1, nbTry = 0, nbWrongAnswer = 0, difficulty = 1;
     private boolean delay = false;
     private Random random = new Random();
 
@@ -128,8 +128,10 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             Log.e("APPLOG", "List Dif " + dif + " (1): " + listAllData.get(dif - 1).get(2));
         }
         for (int i = 0; i < listAllData.size(); i++) {
-            if (mapChooseData.size() <= MAX_GAME_PLAYED)
-                fillMapChooseWord(listAllData, i+1);
+            if (mapChooseData.size() <= MAX_GAME_PLAYED) {
+                fillMapChooseWord(listAllData, i + 1);
+                difficulty = i + 1;
+            }
         }
         db.gameDao().updateAllWWHDataLastUsed(userId);
     }
@@ -390,7 +392,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void addGameResultLogInDb(int stars) {
-        GameResultLog gameResultLog = new GameResultLog(gameId, -1, userId, stars);
+        GameResultLog gameResultLog = new GameResultLog(gameId, -1, userId, stars, difficulty);
         db.gameLogDao().insertGameResultLog(gameResultLog);
     }
 

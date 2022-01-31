@@ -45,7 +45,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private String[] alphabetTab, syllableTab;
     private final Button[] listButton = new Button[3];
     private final int MAX_GAME_PLAYED = 5;
-    private int userId, gameId, gamePlayed = 1, nbTry = 0, answerFalse = 0, nbrStars = 0, answerFalseWord = 0;
+    private int userId, gameId, gamePlayed = 1, nbTry = 0, answerFalse = 0, nbrStars = 0, answerFalseWord = 0, difficulty = 1;
     private Random random = new Random();
     private String articleTheme;
 
@@ -131,8 +131,10 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             Log.e("APPLOG", "List Dif " + dif + " (0): " + listAllData.get(dif-1).get(1));
             Log.e("APPLOG", "List Dif " + dif + " (1): " + listAllData.get(dif-1).get(2));
 
-            if (listChooseResult.size() <= MAX_GAME_PLAYED)
+            if (listChooseResult.size() <= MAX_GAME_PLAYED) {
                 fillListChooseResult(listAllData, dif);
+                difficulty = dif;
+            }
         }
         db.gameDao().updateAllPWSDataLastUsed(userId);
     }
@@ -305,7 +307,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     }
 
     private void addGameResultLogInDb(int stars) {
-        GameResultLog gameResultLog = new GameResultLog(gameId, -1, userId, stars);
+        GameResultLog gameResultLog = new GameResultLog(gameId, -1, userId, stars, difficulty);
         db.gameLogDao().insertGameResultLog(gameResultLog);
     }
 

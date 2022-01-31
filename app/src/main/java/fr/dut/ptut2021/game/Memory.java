@@ -493,7 +493,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     }
 
     private void addGameResultLog(int stars) {
-        GameResultLog gameResultLog = new GameResultLog(MySharedPreferences.getGameId(this), -1, userId, stars);
+        GameResultLog gameResultLog = new GameResultLog(MySharedPreferences.getGameId(this), -1, userId, stars, difficulty);
         db.gameLogDao().insertGameResultLog(gameResultLog);
     }
 

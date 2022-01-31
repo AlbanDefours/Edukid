@@ -55,9 +55,10 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     private CreateDatabase db = null;
     private int pageUser = 0;
     private TextView userTitle, barChartTitle, leftStatTitle, rightStatTitle, leftStatText, rightStatText;
-    private Spinner gameSpinner;
+    private Spinner gameSpinner, difficultySpinner;
     private List<User> userList;
     private List<Game> gameList;
+    private List<GameResultLog> gameLogList;
     private Button generalButton, lettresButton, chiffresButton;
     private ImageView nextPage, previousPage, leftStatIcon, rightStatIcon;
     private String categoryName = "General";
@@ -103,6 +104,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         rightStatIcon = findViewById(R.id.image_right_stat1);
 
         gameSpinner = findViewById(R.id.spinner_game_stats);
+        difficultySpinner = findViewById(R.id.spinner_difficulty_stats);
     }
 
     private void createDbAndImportUsers() {
@@ -115,6 +117,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     private void displayNewUserPage() {
         if (!userList.isEmpty()) displayUserTitle();
+        gameLogList = db.gameLogDao().getAllGameResultLogByUser(userList.get(pageUser).getUserId());
         setTitleText();
         displayNewCategoryPage();
     }
@@ -238,7 +241,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     private void setStatsText() {
         Map<Game, Integer> gameCountMap = new LinkedHashMap<>();
 
-        if (db.gameLogDao().getAllGameResultLogByUser(userList.get(pageUser).getUserId()).size() > 0) {
+        if (gameLogList.size() > 0) {
             for (int i = 0; i < gameList.size(); i++) {
                 if (categoryName.equals("Chiffres") || categoryName.equals("Lettres")) {
                     if (gameList.get(i).getThemeName().equals(categoryName))
@@ -280,35 +283,50 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     private void setSpinnerGames() {
         if (categoryName.equals("General")) {
-            gameSpinner.setVisibility(View.INVISIBLE);
+            hideSpinners();
         } else {
-            gameSpinner.setVisibility(View.VISIBLE);
-            List<String> tmpList = new ArrayList<>();
+            displaySpinners();
+            List<String> gameNameList = new ArrayList<>();
 
-            for (Game game : gameList) {
-                if (game.getThemeName().equals(categoryName))
-                    tmpList.add(game.getGameName());
+            for (GameResultLog log : gameLogList) {
+                if (categoryName.equals(db.appDao().getThemeByGameId(log.getGameId())))
+                    gameNameList.add(db.appDao().getGameById(log.getGameId()).getGameName());
             }
 
-            String[] gameNameTab = new String[tmpList.size()];
-            int it = 0;
-            for (String s : tmpList) {
-                gameNameTab[it] = s;
-                it++;
-            }
+            if (gameNameList.size() > 0) {
+                String[] gameNameTab = new String[gameNameList.size()];
+                int it = 0;
+                for (String s : gameNameList) {
+                    gameNameTab[it] = s;
+                    it++;
+                }
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                    this,
-                    android.R.layout.simple_spinner_item,
-                    gameNameTab);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            gameSpinner.setAdapter(adapter);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                        this,
+                        android.R.layout.simple_spinner_item,
+                        gameNameTab);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                gameSpinner.setAdapter(adapter);
+            } else {
+                hideSpinners();
+            }
         }
     }
 
     private void setSpinnerDifficulty() {
-
+        
     }
+
+    private void hideSpinners() {
+        gameSpinner.setVisibility(View.INVISIBLE);
+        difficultySpinner.setVisibility(View.INVISIBLE);
+    }
+
+    private void displaySpinners() {
+        gameSpinner.setVisibility(View.VISIBLE);
+        difficultySpinner.setVisibility(View.VISIBLE);
+    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void setStartWeekTimeAndDate() {
