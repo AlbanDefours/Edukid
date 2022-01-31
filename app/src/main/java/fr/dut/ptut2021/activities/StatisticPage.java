@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -46,7 +48,7 @@ import fr.dut.ptut2021.models.database.app.User;
 import fr.dut.ptut2021.models.database.log.GameLog;
 import fr.dut.ptut2021.utils.MyVibrator;
 
-public class StatisticPage extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class StatisticPage extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener, View.OnTouchListener {
 
     private CreateDatabase db = null;
     private int userPage = 0, difficultyItemId = 0;
@@ -61,6 +63,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     private String themeName = "General";
     private long startWeekTime;
     private final long DAY_MILLIS = 24 * 3600 * 1000;
+    private boolean spinnerRefresh = false;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -103,6 +106,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         previousPage.setOnClickListener(this);
         generalButton.setEnabled(false);
         gameSpinner.setOnItemSelectedListener(this);
+        gameSpinner.setOnTouchListener(this);
         difficultySpinner.setOnItemSelectedListener(this);
     }
 
@@ -189,6 +193,48 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         barChart.getLegend().setEnabled(false);
         barChart.setExtraOffsets(0, 0, 0, 5);
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void setStartWeekTimeAndDate() {
+        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+        Date currentDate = new Date();
+
+        String str = df.format(currentDate) + " 00:00:00";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime ldt = LocalDateTime.parse(str, formatter);
+
+        startWeekTime = ldt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - (6 * DAY_MILLIS);
+    }
+
+    private Map<String, Integer> getGameFrequencyData() {
+        Map<String, Integer> mapData = new LinkedHashMap<>();
+        //La map se mélange si ce n'est pas une LinkedHashMap
+        List<GameLog> listLog;
+
+        if (themeName.equals("Chiffres") || themeName.equals("Lettres"))
+            listLog = db.gameLogDao().getAllGameLogAfterTimeByTheme(currentUser.getUserId(), themeName, startWeekTime);
+        else
+            listLog = db.gameLogDao().getAllGameLogAfterTime(currentUser.getUserId(), startWeekTime);
+
+        DateFormat df = new SimpleDateFormat("E", Locale.FRENCH);
+        for (int i = 0; i < 7; i++) {
+            mapData.put(df.format(startWeekTime + (DAY_MILLIS * i)).toUpperCase(), 0);
+        }
+
+        int nbWeekDay = 0;
+        for (int i = 0; i < listLog.size(); i++) {
+            long gameTime = listLog.get(i).getEndGameDate();
+            for (Map.Entry<String, Integer> val : mapData.entrySet()) {
+                if (startWeekTime + (DAY_MILLIS * nbWeekDay) <= gameTime && gameTime < startWeekTime + (DAY_MILLIS * (nbWeekDay + 1))) {
+                    mapData.put(val.getKey(), mapData.get(val.getKey()) + 1);
+                }
+                nbWeekDay++;
+            }
+            nbWeekDay = 0;
+        }
+        return mapData;
+    }
+
 /*
     public void createLineChart(Map<Integer, Float> mapData) {
         LineChart lineChart = findViewById(R.id.line_chart);
@@ -239,6 +285,39 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         lineChart.setExtraOffsets(0, 0, 0, 5);
     }
 */
+
+    private Map<Integer, Float> getGameAvgStarsData() {
+        Map<Integer, Float> mapData = new TreeMap<>();
+        List<GameLog> listLog;
+
+        if (themeName.equals("Chiffres") || themeName.equals("Lettres"))
+            listLog = db.gameLogDao().getAllGameLogByUserLimitByTheme(currentUser.getUserId(), themeName);
+        else
+            listLog = db.gameLogDao().getAllGameLogByUserLimit(currentUser.getUserId());
+
+        final int COLUMN = 6;
+        int it = 0;
+        for (int i = 0; i < COLUMN; i++) {
+            float n = 0;
+            float sum = 0;
+            while ((it + 1) % 10 != 0 && listLog.size() > it) {
+                n++;
+                sum += listLog.get(it).getStars();
+                it++;
+            }
+            float avg;
+            if (n == 0)
+                avg = 0;
+            else
+                avg = sum/n;
+
+            mapData.put(COLUMN - i, avg);
+            it++;
+        }
+
+        return mapData;
+    }
+
     @SuppressLint("SetTextI18n")
     private void setStatsText() {
         Map<Game, Integer> gameCountMap = new LinkedHashMap<>();
@@ -320,11 +399,10 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     private void setSpinnerDifficulty() {
         int currentGameId = db.appDao().getGameId(gameSpinner.getSelectedItem().toString(), themeName);
         int maxDifficulty = db.gameLogDao().getGameLogMaxDifByGame(currentUser.getUserId(), currentGameId);
-        if (currentGameId == 4) maxDifficulty++;
         String[] difficultyTab = new String[maxDifficulty];
-        for (int i = 1; i <= maxDifficulty; i++) {
+
+        for (int i = 1; i <= maxDifficulty; i++)
             difficultyTab[i-1] = "Difficulté " + i;
-        }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this,
@@ -342,80 +420,6 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     private void displaySpinners() {
         gameSpinner.setVisibility(View.VISIBLE);
         difficultySpinner.setVisibility(View.VISIBLE);
-    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private void setStartWeekTimeAndDate() {
-        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
-        Date currentDate = new Date();
-
-        String str = df.format(currentDate) + " 00:00:00";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        LocalDateTime ldt = LocalDateTime.parse(str, formatter);
-
-        startWeekTime = ldt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - (6 * DAY_MILLIS);
-    }
-
-    private Map<String, Integer> getGameFrequencyData() {
-        Map<String, Integer> mapData = new LinkedHashMap<>();
-        //La map se mélange si ce n'est pas une LinkedHashMap
-        List<GameLog> listLog;
-
-        if (themeName.equals("Chiffres") || themeName.equals("Lettres"))
-            listLog = db.gameLogDao().getAllGameLogAfterTimeByTheme(currentUser.getUserId(), themeName, startWeekTime);
-        else
-            listLog = db.gameLogDao().getAllGameLogAfterTime(currentUser.getUserId(), startWeekTime);
-
-        DateFormat df = new SimpleDateFormat("E", Locale.FRENCH);
-        for (int i = 0; i < 7; i++) {
-            mapData.put(df.format(startWeekTime + (DAY_MILLIS * i)).toUpperCase(), 0);
-        }
-
-        int nbWeekDay = 0;
-        for (int i = 0; i < listLog.size(); i++) {
-            long gameTime = listLog.get(i).getEndGameDate();
-            for (Map.Entry<String, Integer> val : mapData.entrySet()) {
-                if (startWeekTime + (DAY_MILLIS * nbWeekDay) <= gameTime && gameTime < startWeekTime + (DAY_MILLIS * (nbWeekDay + 1))) {
-                    mapData.put(val.getKey(), mapData.get(val.getKey()) + 1);
-                }
-                nbWeekDay++;
-            }
-            nbWeekDay = 0;
-        }
-        return mapData;
-    }
-
-    private Map<Integer, Float> getGameAvgStarsData() {
-        Map<Integer, Float> mapData = new TreeMap<>();
-        List<GameLog> listLog;
-
-        if (themeName.equals("Chiffres") || themeName.equals("Lettres"))
-            listLog = db.gameLogDao().getAllGameLogByUserLimitByTheme(currentUser.getUserId(), themeName);
-        else
-            listLog = db.gameLogDao().getAllGameLogByUserLimit(currentUser.getUserId());
-
-        final int COLUMN = 6;
-        int it = 0;
-        for (int i = 0; i < COLUMN; i++) {
-            float n = 0;
-            float sum = 0;
-            while ((it + 1) % 10 != 0 && listLog.size() > it) {
-                n++;
-                sum += listLog.get(it).getStars();
-                it++;
-            }
-            float avg;
-            if (n == 0)
-                avg = 0;
-            else
-                avg = sum/n;
-
-            mapData.put(COLUMN - i, avg);
-            it++;
-        }
-
-        return mapData;
     }
     
     @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
@@ -484,11 +488,21 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        setSpinnerDifficulty();
+        if (spinnerRefresh) {
+            setSpinnerDifficulty();
+            spinnerRefresh = false;
+        }
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        return;
+
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        spinnerRefresh = true;
+        return false;
     }
 }
