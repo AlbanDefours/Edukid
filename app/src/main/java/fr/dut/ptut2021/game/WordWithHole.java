@@ -29,7 +29,6 @@ import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.WordWithHoleData;
 import fr.dut.ptut2021.models.database.log.GameLog;
-import fr.dut.ptut2021.models.database.log.GameResultLog;
 import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
 import fr.dut.ptut2021.utils.MySharedPreferences;
@@ -84,7 +83,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
         for (int i = 0; i < dataTab.size(); i++) {
             for (String str : dataTab.get(i)) {
-                db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, str, i+1));
+                db.gameDao().insertWWHData(new WordWithHoleData(userId, str, i+1));
             }
         }
 
@@ -235,7 +234,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         int sum = 0;
         int limit = 2;
         if (!help) {
-            for (int star : db.gameLogDao().getAllGameResultLogStarsLimit(userId, gameId, limit))
+            for (int star : db.gameLogDao().getAllGameLogStarsLimit(userId, gameId, limit))
                 sum += star;
         }
         if (help || sum <= limit) {
@@ -332,7 +331,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         playSound(true);
         textAnimation(true);
 
-        updateDataInDb();
+        updateGameData();
 
         gamePlayed++;
         delay = true;
@@ -349,7 +348,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 resetButton();
             } else {
                 int stars = starsNumber();
-                addGameResultLogInDb(stars);
+                addGameLogInDb(stars);
                 GlobalUtils.startResultPage(WordWithHole.this, stars);
             }
         }, 3000);
@@ -365,35 +364,25 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         answer3.setEnabled(true);
     }
 
-    private void updateDataInDb() {
+    private void updateGameData() {
         WordWithHoleData data = db.gameDao().getWWHDataByResult(userId, goodAnswer);
         data.setLastUsed(1);
-        boolean win;
+
         if (nbTry == 0) {
             data.setWin(data.getWin() + 1);
             data.setWinStreak(data.getWinStreak() + 1);
             data.setLoseStreak(0);
-            win = true;
         } else {
             data.setLose(data.getLose() + 1);
             data.setLoseStreak(data.getLoseStreak() + 1);
             data.setWinStreak(0);
-            win = false;
         }
         db.gameDao().updateWWHData(data);
-
-        GameLog gameLog = new GameLog(
-                gameId,
-                -1,
-                data.getDataId(),
-                win,
-                nbTry);
-        db.gameLogDao().insertGameLog(gameLog);
     }
 
-    private void addGameResultLogInDb(int stars) {
-        GameResultLog gameResultLog = new GameResultLog(gameId, -1, userId, stars, difficulty);
-        db.gameLogDao().insertGameResultLog(gameResultLog);
+    private void addGameLogInDb(int stars) {
+        GameLog gameLog = new GameLog(gameId, -1, userId, stars, difficulty);
+        db.gameLogDao().insertGameLog(gameLog);
     }
 
     private void verifyAnswer(Button answer, int numAnswer) {

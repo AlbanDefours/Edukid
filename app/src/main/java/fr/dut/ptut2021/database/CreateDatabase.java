@@ -18,7 +18,6 @@ import fr.dut.ptut2021.models.database.game.MemoryData;
 import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.MemoryDataCardCrossRef;
 import fr.dut.ptut2021.models.database.log.GameLog;
-import fr.dut.ptut2021.models.database.log.GameResultLog;
 import fr.dut.ptut2021.models.database.game.DrawOnItData;
 import fr.dut.ptut2021.models.database.game.PlayWithSoundData;
 import fr.dut.ptut2021.models.database.game.WordWithHoleData;
@@ -31,13 +30,12 @@ import fr.dut.ptut2021.models.database.game.WordWithHoleData;
         Word.class,
         Card.class,
         GameLog.class,
-        GameResultLog.class,
         WordWithHoleData.class,
         PlayWithSoundData.class,
         DrawOnItData.class,
         MemoryData.class,
         MemoryDataCardCrossRef.class
-}, version = 4, exportSchema = false)
+}, version = 5, exportSchema = false)
 
 
 public abstract class CreateDatabase extends RoomDatabase {

@@ -28,9 +28,6 @@ public interface GameDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertWWHData(WordWithHoleData wordWithHoleStats);
 
-    @Query("SELECT MAX(dataId) FROM WordWithHoleData")
-    int getWWHMaxId();
-
     @Update
     void updateWWHData(WordWithHoleData wordWithHoleStats);
 
@@ -84,9 +81,6 @@ public interface GameDao {
 //PlayWithSoundData
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertPWSData(PlayWithSoundData playWithSoundData);
-
-    @Query("SELECT MAX(dataId) FROM PlayWithSoundData")
-    int getPWSMaxId();
 
     @Update
     void updatePWSData(PlayWithSoundData playWithSoundData);

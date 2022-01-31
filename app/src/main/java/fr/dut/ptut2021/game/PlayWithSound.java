@@ -16,17 +16,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
-import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.PlayWithSoundData;
 import fr.dut.ptut2021.models.database.log.GameLog;
-import fr.dut.ptut2021.models.database.log.GameResultLog;
 import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
 import fr.dut.ptut2021.utils.MySharedPreferences;
@@ -77,14 +73,14 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
         alphabetTab = getResources().getStringArray(R.array.alphabet);
         for (String letter : alphabetTab)
-            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId() + 1, userId, letter, "Lettres", 1, 0));
+            db.gameDao().insertPWSData(new PlayWithSoundData(userId, letter, "Lettres", 1, 0));
 
         syllableTab = getResources().getStringArray(R.array.syllable);
         for (String syllable : syllableTab)
-            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId() + 1, userId, syllable, "Lettres", 2, 0));
+            db.gameDao().insertPWSData(new PlayWithSoundData(userId, syllable, "Lettres", 2, 0));
 
         for (int i = 1; i < 10; i++)
-            db.gameDao().insertPWSData(new PlayWithSoundData(db.gameDao().getPWSMaxId() + 1, userId, Integer.toString(i), "Chiffres", 1, 0));
+            db.gameDao().insertPWSData(new PlayWithSoundData(userId, Integer.toString(i), "Chiffres", 1, 0));
     }
 
     private void initializeLayout() {
@@ -164,7 +160,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         int sum = 0;
         int limit = 2;
         if (!help) {
-            for (int star : db.gameLogDao().getAllGameResultLogStarsLimit(userId, gameId, limit))
+            for (int star : db.gameLogDao().getAllGameLogStarsLimit(userId, gameId, limit))
                 sum += star;
         }
         if (help || sum <= limit) {
@@ -256,7 +252,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
     private void replay() {
         playSound(true);
-        updateDataInDb();
+        updateGameData();
         gamePlayed++;
         answerFalseWord = 0;
         delay = true;
@@ -278,37 +274,32 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                     nbrStars = 1;
                 else
                     nbrStars = 2;
-                addGameResultLogInDb(nbrStars);
+                addGameLogInDb(nbrStars);
                 GlobalUtils.startResultPage(PlayWithSound.this, nbrStars);
             }
         }, 3000);
     }
 
-    private void updateDataInDb() {
+    private void updateGameData() {
         PlayWithSoundData data = db.gameDao().getPWSDataByResult(userId,
                 listChooseResult.get(gamePlayed - 1));
         data.setLastUsed(1);
-        boolean win;
+
         if (nbTry == 0) {
             data.setWin(data.getWin() + 1);
             data.setWinStreak(data.getWinStreak() + 1);
             data.setLoseStreak(0);
-            win = true;
         } else {
             data.setLose(data.getLose() + 1);
             data.setLoseStreak(data.getLoseStreak() + 1);
             data.setWinStreak(0);
-            win = false;
         }
         db.gameDao().updatePWSData(data);
-
-        GameLog gameLog = new GameLog(gameId, -1, data.getDataId(), win, nbTry);
-        db.gameLogDao().insertGameLog(gameLog);
     }
 
-    private void addGameResultLogInDb(int stars) {
-        GameResultLog gameResultLog = new GameResultLog(gameId, -1, userId, stars, difficulty);
-        db.gameLogDao().insertGameResultLog(gameResultLog);
+    private void addGameLogInDb(int stars) {
+        GameLog gameLog = new GameLog(gameId, -1, userId, stars, difficulty);
+        db.gameLogDao().insertGameLog(gameLog);
     }
 
     private void verifyAnswer(Button answer) {

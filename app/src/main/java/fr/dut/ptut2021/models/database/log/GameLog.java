@@ -7,31 +7,32 @@ import androidx.room.PrimaryKey;
 public class GameLog {
 
     @PrimaryKey(autoGenerate = true)
-    private int gameLogId;
-    private int gameId, subGameId;
-    //Id de la ligne correspondante (de la table gameName)
-    private int tableRowId;
-    private long gameLogDate;
-    private boolean win;
-    private int extraTry;
+    private int gameResultLogId;
+    private int gameId, subGameId, userId, stars, difficulty;
+    private long endGameDate;
 
-    //subGame = -1 s'il n'y en a pas
-    public GameLog(int gameId, int subGameId, int tableRowId, boolean win, int extraTry) {
+//subGame = -1 s'il n'y en a pas
+    public GameLog(int gameId, int subGameId, int userId, int stars, int difficulty) {
         this.gameId = gameId;
         this.subGameId = subGameId;
-        this.tableRowId = tableRowId;
-        this.gameLogDate = System.currentTimeMillis();
-        this.win = win;
-        this.extraTry = extraTry;
+        this.userId = userId;
+        this.stars = stars;
+        this.difficulty = difficulty;
+        this.endGameDate = System.currentTimeMillis();
     }
 
-
-    //Getter & Setter
-    public int getGameLogId() {
-        return gameLogId;
+    public int getGameResultLogId() {
+        return gameResultLogId;
     }
-    public void setGameLogId(int gameLogId) {
-        this.gameLogId = gameLogId;
+    public void setGameResultLogId(int gameResultLogId) {
+        this.gameResultLogId = gameResultLogId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public int getGameId() {
@@ -48,31 +49,24 @@ public class GameLog {
         this.subGameId = subGameId;
     }
 
-    public int getTableRowId() {
-        return tableRowId;
+    public int getStars() {
+        return stars;
     }
-    public void setTableRowId(int tableRowId) {
-        this.tableRowId = tableRowId;
-    }
-
-    public long getGameLogDate() {
-        return gameLogDate;
-    }
-    public void setGameLogDate(long gameLogDate) {
-        this.gameLogDate = gameLogDate;
+    public void setStars(int stars) {
+        this.stars = stars;
     }
 
-    public boolean isWin() {
-        return win;
+    public int getDifficulty() {
+        return difficulty;
     }
-    public void setWin(boolean win) {
-        this.win = win;
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
     }
 
-    public int getExtraTry() {
-        return extraTry;
+    public long getEndGameDate() {
+        return endGameDate;
     }
-    public void setExtraTry(int nbTry) {
-        this.extraTry = extraTry;
+    public void setEndGameDate(long endGameDate) {
+        this.endGameDate = endGameDate;
     }
 }

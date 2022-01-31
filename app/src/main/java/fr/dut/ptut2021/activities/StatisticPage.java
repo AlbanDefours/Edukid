@@ -43,7 +43,7 @@ import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.database.app.Game;
 import fr.dut.ptut2021.models.database.app.User;
-import fr.dut.ptut2021.models.database.log.GameResultLog;
+import fr.dut.ptut2021.models.database.log.GameLog;
 import fr.dut.ptut2021.utils.MyVibrator;
 
 public class StatisticPage extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -55,7 +55,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     private Spinner gameSpinner, difficultySpinner;
     private List<User> userList;
     private List<Game> gameList;
-    private List<GameResultLog> gameLogList;
+    private List<GameLog> gameLogList;
     private Button generalButton, lettresButton, chiffresButton;
     private ImageView nextPage, previousPage, leftStatIcon, rightStatIcon;
     private String themeName = "General";
@@ -119,7 +119,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
             currentUser = userList.get(userPage);
             displayUserTitle();
         }
-        gameLogList = db.gameLogDao().getAllGameResultLogByUser(currentUser.getUserId());
+        gameLogList = db.gameLogDao().getAllGameLogByUser(currentUser.getUserId());
         setTitleText();
         displayNewCategoryPage();
     }
@@ -247,9 +247,9 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
             for (int i = 0; i < gameList.size(); i++) {
                 if (themeName.equals("Chiffres") || themeName.equals("Lettres")) {
                     if (gameList.get(i).getThemeName().equals(themeName))
-                        gameCountMap.put(gameList.get(i), db.gameLogDao().getGameResultLogNbGame(currentUser.getUserId(), gameList.get(i).getGameId()));
+                        gameCountMap.put(gameList.get(i), db.gameLogDao().getGameLogNbGame(currentUser.getUserId(), gameList.get(i).getGameId()));
                 } else {
-                    gameCountMap.put(gameList.get(i), db.gameLogDao().getGameResultLogNbGame(currentUser.getUserId(), gameList.get(i).getGameId()));
+                    gameCountMap.put(gameList.get(i), db.gameLogDao().getGameLogNbGame(currentUser.getUserId(), gameList.get(i).getGameId()));
                 }
             }
 
@@ -290,7 +290,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
             displaySpinners();
             List<String> gameNameList = new ArrayList<>();
 
-            for (GameResultLog log : gameLogList) {
+            for (GameLog log : gameLogList) {
                 if (themeName.equals(db.appDao().getThemeByGameId(log.getGameId())))
                     gameNameList.add(db.appDao().getGameById(log.getGameId()).getGameName());
             }
@@ -319,7 +319,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     private void setSpinnerDifficulty() {
         int currentGameId = db.appDao().getGameId(gameSpinner.getSelectedItem().toString(), themeName);
-        int maxDifficulty = db.gameLogDao().getGameResultLogMaxDifByGame(currentUser.getUserId(), currentGameId);
+        int maxDifficulty = db.gameLogDao().getGameLogMaxDifByGame(currentUser.getUserId(), currentGameId);
         if (currentGameId == 4) maxDifficulty++;
         String[] difficultyTab = new String[maxDifficulty];
         for (int i = 1; i <= maxDifficulty; i++) {
@@ -360,12 +360,12 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     private Map<String, Integer> getGameFrequencyData() {
         Map<String, Integer> mapData = new LinkedHashMap<>();
         //La map se mélange si ce n'est pas une LinkedHashMap
-        List<GameResultLog> listLog;
+        List<GameLog> listLog;
 
         if (themeName.equals("Chiffres") || themeName.equals("Lettres"))
-            listLog = db.gameLogDao().getAllGameResultLogAfterTimeByTheme(currentUser.getUserId(), themeName, startWeekTime);
+            listLog = db.gameLogDao().getAllGameLogAfterTimeByTheme(currentUser.getUserId(), themeName, startWeekTime);
         else
-            listLog = db.gameLogDao().getAllGameResultLogAfterTime(currentUser.getUserId(), startWeekTime);
+            listLog = db.gameLogDao().getAllGameLogAfterTime(currentUser.getUserId(), startWeekTime);
 
         DateFormat df = new SimpleDateFormat("E", Locale.FRENCH);
         for (int i = 0; i < 7; i++) {
@@ -388,12 +388,12 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     private Map<Integer, Float> getGameAvgStarsData() {
         Map<Integer, Float> mapData = new TreeMap<>();
-        List<GameResultLog> listLog;
+        List<GameLog> listLog;
 
         if (themeName.equals("Chiffres") || themeName.equals("Lettres"))
-            listLog = db.gameLogDao().getAllGameResultLogByUserLimitByTheme(currentUser.getUserId(), themeName);
+            listLog = db.gameLogDao().getAllGameLogByUserLimitByTheme(currentUser.getUserId(), themeName);
         else
-            listLog = db.gameLogDao().getAllGameResultLogByUserLimit(currentUser.getUserId());
+            listLog = db.gameLogDao().getAllGameLogByUserLimit(currentUser.getUserId());
 
         final int COLUMN = 6;
         int it = 0;

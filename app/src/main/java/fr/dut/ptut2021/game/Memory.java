@@ -1,9 +1,6 @@
 
 package fr.dut.ptut2021.game;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.fonts.Font;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -23,8 +20,6 @@ import java.util.Collections;
 import java.util.Locale;
 
 import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.activities.ResultGamePage;
-import fr.dut.ptut2021.activities.SubGameMenu;
 import fr.dut.ptut2021.adapters.MemoryAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.MemoryCard;
@@ -33,7 +28,7 @@ import fr.dut.ptut2021.models.MemoryCardLettre;
 import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.MemoryData;
 import fr.dut.ptut2021.models.database.game.MemoryDataCardCrossRef;
-import fr.dut.ptut2021.models.database.log.GameResultLog;
+import fr.dut.ptut2021.models.database.log.GameLog;
 import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
 import fr.dut.ptut2021.utils.MySharedPreferences;
@@ -135,7 +130,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             }
             changeDifficulty();
 
-        addGameResultLog(nbStar);
+        addGameLog(nbStar);
 
             new Handler().postDelayed(() -> {
                 GlobalUtils.startResultPage(Memory.this, nbStar);
@@ -492,9 +487,9 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         return true;
     }
 
-    private void addGameResultLog(int stars) {
-        GameResultLog gameResultLog = new GameResultLog(MySharedPreferences.getGameId(this), -1, userId, stars, difficulty);
-        db.gameLogDao().insertGameResultLog(gameResultLog);
+    private void addGameLog(int stars) {
+        GameLog gameLog = new GameLog(MySharedPreferences.getGameId(this), -1, userId, stars, difficulty);
+        db.gameLogDao().insertGameLog(gameLog);
     }
 
 //TODO faire les bouton sur la progresse Bar avec max diffulté déjà atteinte
