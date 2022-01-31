@@ -47,7 +47,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private String goodAnswer;
     private String[] alphabetTab, syllableTab;
     private final int MAX_GAME_PLAYED = 4;
-    private int userId, gameId, gamePlayed = 1, nbTry = 0, nbWin = 0;
+    private int userId, gameId, gamePlayed = 1, nbTry = 0, nbWrongAnswer = 0;
     private boolean delay = false;
     private Random random = new Random();
 
@@ -316,12 +316,12 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
     //TODO Refaire l'algo de calcul des étoiles
     private int starsNumber() {
-        float average = (float)nbWin / (float)MAX_GAME_PLAYED;
-        if (average == 1)
+        if (nbWrongAnswer < 2)
             return 3;
-        else if (average >= 0.75)
+        else if (nbWrongAnswer < 5)
             return 2;
-        return 1;
+        else
+            return 1;
     }
 
     private void replay() {
@@ -373,7 +373,6 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             data.setWinStreak(data.getWinStreak() + 1);
             data.setLoseStreak(0);
             win = true;
-            nbWin++;
         } else {
             data.setLose(data.getLose() + 1);
             data.setLoseStreak(data.getLoseStreak() + 1);
@@ -405,6 +404,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             answer.setBackgroundColor(Color.RED);
             setWordAndAddDelay(numAnswer);
             answer.setEnabled(false);
+            nbWrongAnswer++;
         }
     }
 
