@@ -50,6 +50,9 @@ public interface AppDao {
     @Query("SELECT * FROM Game WHERE gameId = :gameId")
     Game getGameById(int gameId);
 
+    @Query("SELECT gameName FROM Game WHERE gameId = :gameId")
+    String getGameNameByGameId(int gameId);
+
     @Query("SELECT themeName FROM Game WHERE gameId = :gameId")
     String getThemeByGameId(int gameId);
 

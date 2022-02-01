@@ -35,6 +35,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -51,15 +52,15 @@ import fr.dut.ptut2021.utils.MyVibrator;
 public class StatisticPage extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener, View.OnTouchListener {
 
     private CreateDatabase db = null;
-    private int userPage = 0, difficultyItemId = 0;
     private User currentUser;
-    private TextView userTitle, barChartTitle, leftStatTitle, rightStatTitle, leftStatText, rightStatText;
+    private TextView userTitle, barChartTitle, leftStatTitle, rightStatTitle, leftStatText, rightStatText, spinnerStatText;
+    private Button generalButton, lettresButton, chiffresButton;
+    private ImageView arrowNext, arrowPrevious, leftStatIcon, rightStatIcon, spinnerStatIcon;
     private Spinner gameSpinner, difficultySpinner;
     private List<User> userList;
     private List<Game> gameList;
     private List<GameLog> gameLogList;
-    private Button generalButton, lettresButton, chiffresButton;
-    private ImageView nextPage, previousPage, leftStatIcon, rightStatIcon;
+    private int userPage = 0, currentGameId;
     private String themeName = "General";
     private long startWeekTime;
     private final long DAY_MILLIS = 24 * 3600 * 1000;
@@ -83,8 +84,8 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         generalButton = findViewById(R.id.buttonGeneral_statistics);
         lettresButton = findViewById(R.id.buttonLettres_statistics);
         chiffresButton = findViewById(R.id.buttonChiffres_statistics);
-        nextPage = findViewById(R.id.arrow_nextPage);
-        previousPage = findViewById(R.id.arrow_previousPage);
+        arrowNext = findViewById(R.id.arrow_nextPage);
+        arrowPrevious = findViewById(R.id.arrow_previousPage);
 
         barChartTitle = findViewById(R.id.title_bar_chart);
         leftStatTitle = findViewById(R.id.title_left_stat1);
@@ -96,18 +97,21 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
         gameSpinner = findViewById(R.id.spinner_game_stats);
         difficultySpinner = findViewById(R.id.spinner_difficulty_stats);
+        spinnerStatIcon = findViewById(R.id.image_spinner_stats);
+        spinnerStatText = findViewById(R.id.text_spinner_stats);
     }
 
     private void initOnClickViews() {
         generalButton.setOnClickListener(this);
         lettresButton.setOnClickListener(this);
         chiffresButton.setOnClickListener(this);
-        nextPage.setOnClickListener(this);
-        previousPage.setOnClickListener(this);
+        arrowNext.setOnClickListener(this);
+        arrowPrevious.setOnClickListener(this);
         generalButton.setEnabled(false);
         gameSpinner.setOnItemSelectedListener(this);
         gameSpinner.setOnTouchListener(this);
         difficultySpinner.setOnItemSelectedListener(this);
+        difficultySpinner.setOnTouchListener(this);
     }
 
     private void createDbAndImportUsers() {
@@ -363,22 +367,19 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     }
 
     private void setSpinnerResources() {
-        if (themeName.equals("General")) {
+        if (themeName.equals("General") || gameLogList.isEmpty())
             hideSpinners();
-        } else {
+        else {
             displaySpinners();
-            List<String> gameNameList = new ArrayList<>();
+            /*List<Game> ?
 
-            for (GameLog log : gameLogList) {
-                if (themeName.equals(db.appDao().getThemeByGameId(log.getGameId())))
-                    gameNameList.add(db.appDao().getGameById(log.getGameId()).getGameName());
-            }
-
-            if (gameNameList.size() > 0) {
-                String[] gameNameTab = new String[gameNameList.size()];
+            if (countGameMap.isEmpty())
+                hideSpinners();
+            else {
+                String[] gameNameTab = new String[countGameMap.size()];
                 int it = 0;
-                for (String s : gameNameList) {
-                    gameNameTab[it] = s;
+                for (Map.Entry<Integer, Integer> val : countGameMap.entrySet()) {
+                    gameNameTab[it] = db.appDao().getGameNameByGameId(val.getKey());
                     it++;
                 }
 
@@ -390,14 +391,16 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
                 gameSpinner.setAdapter(adapter);
 
                 setSpinnerDifficulty();
-            } else {
-                hideSpinners();
+                setSpinnerStats();
             }
+            */
         }
+        hideSpinners();
+        Log.e("APPLOG", "" + db.gameLogDao().getGameAvgByGameId(currentUser.getUserId(), 3));
     }
 
     private void setSpinnerDifficulty() {
-        int currentGameId = db.appDao().getGameId(gameSpinner.getSelectedItem().toString(), themeName);
+        currentGameId = db.appDao().getGameId(gameSpinner.getSelectedItem().toString(), themeName);
         int maxDifficulty = db.gameLogDao().getGameLogMaxDifByGame(currentUser.getUserId(), currentGameId);
         String[] difficultyTab = new String[maxDifficulty];
 
@@ -412,30 +415,39 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         difficultySpinner.setAdapter(adapter);
     }
 
+    private void setSpinnerStats() {
+        int currentDifficulty = difficultySpinner.getSelectedItemPosition()+1;
+
+    }
+
     private void hideSpinners() {
-        gameSpinner.setVisibility(View.INVISIBLE);
-        difficultySpinner.setVisibility(View.INVISIBLE);
+        gameSpinner.setVisibility(View.GONE);
+        difficultySpinner.setVisibility(View.GONE);
+        spinnerStatText.setVisibility(View.GONE);
+        spinnerStatIcon.setVisibility(View.GONE);
     }
 
     private void displaySpinners() {
         gameSpinner.setVisibility(View.VISIBLE);
         difficultySpinner.setVisibility(View.VISIBLE);
+        spinnerStatText.setVisibility(View.VISIBLE);
+        spinnerStatIcon.setVisibility(View.VISIBLE);
     }
     
     @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     private void verifyUserPageLocation() {
-        previousPage.setAlpha(1f);
-        nextPage.setAlpha(1f);
-        previousPage.setEnabled(true);
-        nextPage.setEnabled(true);
+        arrowPrevious.setAlpha(1f);
+        arrowNext.setAlpha(1f);
+        arrowPrevious.setEnabled(true);
+        arrowNext.setEnabled(true);
 
         if (userPage == 0) {
-            previousPage.setAlpha(0.5f);
-            previousPage.setEnabled(false);
+            arrowPrevious.setAlpha(0.5f);
+            arrowPrevious.setEnabled(false);
         }
         if (userPage == userList.size() - 1) {
-            nextPage.setAlpha(0.5f);
-            nextPage.setEnabled(false);
+            arrowNext.setAlpha(0.5f);
+            arrowNext.setEnabled(false);
         }
     }
 
@@ -490,6 +502,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (spinnerRefresh) {
             setSpinnerDifficulty();
+            setSpinnerStats();
             spinnerRefresh = false;
         }
     }

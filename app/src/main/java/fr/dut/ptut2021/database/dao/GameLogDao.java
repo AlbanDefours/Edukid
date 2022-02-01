@@ -5,6 +5,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
+import fr.dut.ptut2021.models.database.app.Game;
 import fr.dut.ptut2021.models.database.log.GameLog;
 
 import java.util.List;
@@ -51,6 +52,12 @@ public interface GameLogDao {
 
     @Query("SELECT * FROM GameLog WHERE userId = :userId AND gameId = :gameId AND subGameId = :subGameId")
     List<GameLog> getAllGameLogBySubGame(int userId, int gameId, int subGameId);
+
+    @Query("SELECT g.* FROM Game AS g NATURAL JOIN GameLog AS l WHERE l.userId = :userId AND g.gameId = l.gameId GROUP BY g.gameId")
+    List<Game> getAllGameIdByUserId(int userId);
+
+    @Query("SELECT avg(stars) FROM GameLog WHERE userId = :userId AND gameId = :gameId")
+    Float getGameAvgByGameId(int userId, int gameId);
 
     default boolean tabGameLogIsEmpty(int userId, int gameId) {
         return getAllGameLogByGame(userId, gameId).isEmpty();
