@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 public class GameLog {
 
     @PrimaryKey(autoGenerate = true)
-    private int gameResultLogId;
+    private int gameLogId;
     private int gameId, subGameId, userId, stars, difficulty;
     private long endGameDate;
 
@@ -21,11 +21,11 @@ public class GameLog {
         this.endGameDate = System.currentTimeMillis();
     }
 
-    public int getGameResultLogId() {
-        return gameResultLogId;
+    public int getGameLogId() {
+        return gameLogId;
     }
-    public void setGameResultLogId(int gameResultLogId) {
-        this.gameResultLogId = gameResultLogId;
+    public void setGameLogId(int gameResultLogId) {
+        this.gameLogId = gameResultLogId;
     }
 
     public int getUserId() {

@@ -12,7 +12,7 @@ import java.util.List;
 @Dao
 public interface GameLogDao {
 
-    //GAME RESULT LOG
+    //GAME LOG
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertGameLog(GameLog gameLog);
 
