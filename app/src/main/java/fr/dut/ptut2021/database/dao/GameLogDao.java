@@ -18,7 +18,7 @@ public interface GameLogDao {
     void insertGameLog(GameLog gameLog);
 
     @Query("SELECT * FROM GameLog WHERE userId = :userId")
-    List<GameLog> getAllGameLogByUser(int userId);
+    List<GameLog> getAllGameLogByUserId(int userId);
 
     @Query("SELECT * FROM GameLog WHERE userId = :userId ORDER BY endGameDate DESC LIMIT 60")
     List<GameLog> getAllGameLogByUserLimit(int userId);
@@ -53,14 +53,14 @@ public interface GameLogDao {
     @Query("SELECT * FROM GameLog WHERE userId = :userId AND gameId = :gameId AND subGameId = :subGameId")
     List<GameLog> getAllGameLogBySubGame(int userId, int gameId, int subGameId);
 
-    @Query("SELECT g.* FROM Game AS g NATURAL JOIN GameLog AS l WHERE l.userId = :userId AND g.gameId = l.gameId GROUP BY g.gameId")
-    List<Game> getAllGameIdByUserId(int userId);
+    @Query("SELECT g.* FROM Game AS g NATURAL JOIN GameLog AS l WHERE l.userId = :userId AND g.gameId = l.gameId AND g.themeName LIKE :themeName GROUP BY g.gameId")
+    List<Game> getAllGamePlayedByUserIdAndTheme(int userId, String themeName);
 
     @Query("SELECT avg(stars) FROM GameLog WHERE userId = :userId AND gameId = :gameId")
     Float getGameAvgByGameId(int userId, int gameId);
 
-    default boolean tabGameLogIsEmpty(int userId, int gameId) {
-        return getAllGameLogByGame(userId, gameId).isEmpty();
+    default boolean tabGameLogIsEmpty(int userId) {
+        return getAllGameLogByUserId(userId).isEmpty();
     }
 
 }

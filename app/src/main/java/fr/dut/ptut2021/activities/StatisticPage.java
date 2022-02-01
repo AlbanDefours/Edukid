@@ -59,7 +59,6 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     private Spinner gameSpinner, difficultySpinner;
     private List<User> userList;
     private List<Game> gameList;
-    private List<GameLog> gameLogList;
     private int userPage = 0, currentGameId;
     private String themeName = "General";
     private long startWeekTime;
@@ -127,7 +126,6 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
             currentUser = userList.get(userPage);
             displayUserTitle();
         }
-        gameLogList = db.gameLogDao().getAllGameLogByUser(currentUser.getUserId());
         setTitleText();
         displayNewCategoryPage();
     }
@@ -326,7 +324,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     private void setStatsText() {
         Map<Game, Integer> gameCountMap = new LinkedHashMap<>();
 
-        if (gameLogList.size() > 0) {
+        if (!db.gameLogDao().tabGameLogIsEmpty(currentUser.getUserId())) {
             for (int i = 0; i < gameList.size(); i++) {
                 if (themeName.equals("Chiffres") || themeName.equals("Lettres")) {
                     if (gameList.get(i).getThemeName().equals(themeName))
@@ -367,39 +365,31 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     }
 
     private void setSpinnerResources() {
-        if (themeName.equals("General") || gameLogList.isEmpty())
+        if (!themeName.equals("General"))
+            hideSpinners();
+
+        List<Game> gamePlayedList = db.gameLogDao().getAllGamePlayedByUserIdAndTheme(currentUser.getUserId(), themeName);
+        if (gamePlayedList.isEmpty())
             hideSpinners();
         else {
+            String[] gameNameTab = new String[gamePlayedList.size()];
+            for (int i = 0; i < gamePlayedList.size(); i++)
+                gameNameTab[i] = gamePlayedList.get(i).getGameName();
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    gameNameTab);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            gameSpinner.setAdapter(adapter);
+
+            updateSpinnerDifficulty();
+            updateGameAverage();
             displaySpinners();
-            /*List<Game> ?
-
-            if (countGameMap.isEmpty())
-                hideSpinners();
-            else {
-                String[] gameNameTab = new String[countGameMap.size()];
-                int it = 0;
-                for (Map.Entry<Integer, Integer> val : countGameMap.entrySet()) {
-                    gameNameTab[it] = db.appDao().getGameNameByGameId(val.getKey());
-                    it++;
-                }
-
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                        this,
-                        android.R.layout.simple_spinner_item,
-                        gameNameTab);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                gameSpinner.setAdapter(adapter);
-
-                setSpinnerDifficulty();
-                setSpinnerStats();
-            }
-            */
         }
-        hideSpinners();
-        Log.e("APPLOG", "" + db.gameLogDao().getGameAvgByGameId(currentUser.getUserId(), 3));
     }
 
-    private void setSpinnerDifficulty() {
+    private void updateSpinnerDifficulty() {
         currentGameId = db.appDao().getGameId(gameSpinner.getSelectedItem().toString(), themeName);
         int maxDifficulty = db.gameLogDao().getGameLogMaxDifByGame(currentUser.getUserId(), currentGameId);
         String[] difficultyTab = new String[maxDifficulty];
@@ -415,7 +405,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         difficultySpinner.setAdapter(adapter);
     }
 
-    private void setSpinnerStats() {
+    private void updateGameAverage() {
         int currentDifficulty = difficultySpinner.getSelectedItemPosition()+1;
 
     }
@@ -501,8 +491,8 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (spinnerRefresh) {
-            setSpinnerDifficulty();
-            setSpinnerStats();
+            updateSpinnerDifficulty();
+            updateGameAverage();
             spinnerRefresh = false;
         }
     }
