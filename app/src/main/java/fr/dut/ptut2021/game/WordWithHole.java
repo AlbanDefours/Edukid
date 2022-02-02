@@ -62,11 +62,8 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         getSharedPref();
 
         fillDatabase();
-        initGame();
-        initListAnswer();
         initLayoutContent();
-        setLayoutContent();
-        readInstructionAndWord(db.gameLogDao().tabGameResultLogIsEmpty(userId, gameId));
+        initGame();
 
         answer1.setOnClickListener(this);
         answer2.setOnClickListener(this);
@@ -98,6 +95,15 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initGame() {
+        initMapChooseWord();
+        initListAnswer();
+        setLayoutContent();
+        readInstruction(false);
+        readWord();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void initMapChooseWord() {
         List<WordWithHoleData> listData = new ArrayList<>(db.gameDao().getAllWWHData(userId));
         mapChooseData = new HashMap<>();
         int maxDifficulty = db.gameDao().getWWHDataMaxDifficulty(userId);
@@ -224,20 +230,24 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         answer3.setText(listAnswer.get(2));
     }
 
-    private void readInstructionAndWord(boolean instruction) {
-        delay = true;
-        String str = "";
-        int timeDelay = 500;
-        if (instruction) {
-            str = "Trouve la lettre ou la syllabe manquante du mot . ";
-            timeDelay += 2000;
+    private void readInstruction(boolean help) {
+        int sum = 0;
+        int limit = 2;
+        if (!help) {
+            for (int star : db.gameLogDao().getAllGameResultLogStarsLimit(userId, gameId, limit))
+                sum += star;
         }
-        str += mapChooseData.get(goodAnswer).getWord();
-        MyTextToSpeech.speachText(this, str);
+        if (help || sum <= limit) {
+            delay = true;
+            MyTextToSpeech.speachText(this, "Trouve la lettre ou la syllabe manquante.");
+            new Handler().postDelayed(() -> {
+                delay = false;
+            }, 2000);
+        }
+    }
 
-        new Handler().postDelayed(() -> {
-            delay = false;
-        }, timeDelay);
+    private void readWord() {
+        MyTextToSpeech.speachText(this, mapChooseData.get(goodAnswer).getWord());
     }
 
     private void textAnimation(boolean goodAnswer) {
@@ -287,7 +297,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 delay = false;
                 word.setText(holeTheWord());
                 word.setTextColor(Color.BLACK);
-                readInstructionAndWord(false);
+                readWord();
             }, 2000);
         }else {
             delay = true;
@@ -305,6 +315,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             button.setBackgroundColor(Color.GREEN);
     }
 
+    //TODO Refaire l'algo de calcul des étoiles
     private int starsNumber() {
         float average = (float)nbWin / (float)MAX_GAME_PLAYED;
         if (average == 1)
@@ -334,7 +345,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 initListAnswer();
                 setLayoutContent();
                 word.setTextColor(Color.BLACK);
-                readInstructionAndWord(false);
+                readWord();
                 resetButton();
             } else {
                 int stars = starsNumber();
@@ -404,7 +415,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         if (!delay) {
             switch (v.getId()) {
                 case R.id.ic_help_wordWithHole:
-                    readInstructionAndWord(true);
+                    readInstruction(true);
                     break;
 
                 case R.id.buttonAnswer1_wordWithHole:

@@ -99,7 +99,6 @@ public class MyDatabaseInsert {
 
         String[] alphabetList = context.getResources().getStringArray(R.array.alphabet);
         for(int i=0;i<alphabetList.length;i++){
-            Log.e("insertData","insertion de la carte "+alphabetList[i]);
             db.gameDao().insertCard(new Card(alphabetList[i], "Lettres", 0));
         }
     }
