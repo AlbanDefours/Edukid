@@ -1,6 +1,9 @@
 
 package fr.dut.ptut2021.game;
 
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -8,7 +11,10 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -125,14 +131,33 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                 Log.e("memory", "WinStreak : " + db.gameDao().getMemoryData(userId, category, subCat).getWinStreak());
                 Log.e("memory", "LoseStreak : " + db.gameDao().getMemoryData(userId, category, subCat).getLoseStreak());
             }
-            changeDifficulty();
+            if(changeDifficulty()) {
+                final Dialog dialog = new Dialog(Memory.this);
+                dialog.setContentView(R.layout.custom_alert_dialog);
+                Button dialogButton = (Button) dialog.findViewById(R.id.buttonCustomAlertDialog);
+                TextView text = dialog.findViewById(R.id.TextCustomAlertDialog);
+                if(difficulty+1!=4)
+                    text.setText("Tu viens de débloquer la difficulté " + (difficulty + 1));
+                else
+                    text.setText("Tu viens de débloquer la difficulté " + (difficulty + 1)+"\nEt le niveau "+(subCat+1));
+                // if button is clicked, close the custom dialog
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
 
-        addGameLog(nbStar);
-
-            new Handler().postDelayed(() -> {
-                GlobalUtils.startResultPage(Memory.this, nbStar);
-            }, 2000);
-
+                        addGameLog(nbStar);
+                        GlobalUtils.startResultPage(Memory.this, nbStar);
+                    }
+                });
+                dialog.show();
+            }else{
+                addGameLog(nbStar);
+                new Handler().postDelayed(() -> {
+                    GlobalUtils.startResultPage(Memory.this, nbStar);
+                }, 2000);
+            }
             return true;
         }
         return false;
@@ -351,7 +376,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     }
 
 
-    private void changeDifficulty(){
+    private boolean changeDifficulty(){
         if(difficulty==difficultyMax) {
             Log.e("memory","La difficulté est analysé");
             Log.e("memory","Nombre de carte en dessous de 3 : "+NbCardUsedLessThan(3));
@@ -365,8 +390,11 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                 db.gameDao().increaseMemoryDataMaxDifficulty(userId,category,subCat);
                 db.gameDao().resetAllMemoryDataStreak(userId, category, subCat);
                 db.gameDao().resetAllMemoryDataCardUsed(userId, category, subCat);
+
+                return true;
             }
         }
+        return false;
     }
 
     private int getNbCard(){
