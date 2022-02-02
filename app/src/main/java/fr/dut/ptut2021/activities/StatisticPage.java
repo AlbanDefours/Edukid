@@ -405,9 +405,13 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         difficultySpinner.setAdapter(adapter);
     }
 
+    @SuppressLint("SetTextI18n")
     private void updateGameAverage() {
-        int currentDifficulty = difficultySpinner.getSelectedItemPosition()+1;
-
+        spinnerStatText.setText(db.gameLogDao().getGameAvgByGameIdAndDifficulty(
+                currentUser.getUserId(),
+                currentGameId,
+                difficultySpinner.getSelectedItemPosition()+1
+        ).toString());
     }
 
     private void hideSpinners() {
@@ -488,11 +492,20 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
         if (spinnerRefresh) {
-            updateSpinnerDifficulty();
-            updateGameAverage();
+            switch (v.getId()) {
+                case R.id.spinner_game_stats:
+                    updateSpinnerDifficulty();
+                    updateGameAverage();
+                    break;
+                case R.id.spinner_difficulty_stats:
+                    updateGameAverage();
+                    break;
+
+            }
             spinnerRefresh = false;
         }
     }
