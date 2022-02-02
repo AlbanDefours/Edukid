@@ -32,6 +32,7 @@ import fr.dut.ptut2021.models.DataSymbol;
 import fr.dut.ptut2021.models.Point;
 import fr.dut.ptut2021.models.Symbol;
 import fr.dut.ptut2021.models.database.game.Card;
+import fr.dut.ptut2021.models.database.log.GameLog;
 import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
 import fr.dut.ptut2021.utils.MyVibrator;
@@ -328,13 +329,16 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                         Log.e("axel", "jeu terminé !!!");
 
                         Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
+                        int stars;
                         if(((NBESSAI*NBGAME)/3.0)*2.0 < nbErreur){
-                            intent.putExtra("starsNumber", 1);
+                            stars = 1;
                         }else if(((NBESSAI*NBGAME)/3.0) > nbErreur){
-                            intent.putExtra("starsNumber", 3);
+                            stars = 3;
                         }else{
-                            intent.putExtra("starsNumber", 2);
+                            stars = 2;
                         }
+                        addGameLogInDb(stars);
+                        intent.putExtra("starsNumber", stars);
                         startActivity(intent);
                         finish();
 
@@ -371,6 +375,11 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                 break;
         }
         return true;
+    }
+
+    private void addGameLogInDb(int stars) {
+        //GameLog gameLog = new GameLog(gameId, -1, userId, stars, difficulty);
+        //db.gameLogDao().insertGameLog(gameLog);
     }
 
     public void reDraw(){
