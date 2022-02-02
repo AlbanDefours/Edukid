@@ -1,12 +1,17 @@
 package fr.dut.ptut2021.adapters;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.RelativeLayout;
 
@@ -95,9 +100,13 @@ public class MemoryAdapter extends BaseAdapter {
                 holder.interieurCardLettre.setTypeface( context.getResources().getFont(listMemoryCard.get(i).getFont()));
             }
 
-            //
-            double width = (1094.0 + 20) / numColumns;
-            double height = width * 1.36 + 20;
+            WindowManager wm = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+
+            double ratio = (display.getHeight()-377.8) / display.getWidth();
+            Log.e("memoryAdapter","RATIO : "+ratio);
+            double width = display.getWidth() / numColumns;
+            double height = width * (1684.0 / 1094) + 20;
             double sizeElement = width -100;
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) width, (int) height);
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
