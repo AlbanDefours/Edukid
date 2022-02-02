@@ -6,14 +6,13 @@ import androidx.room.Entity;
 @Entity (primaryKeys = {"userId", "result"})
 public class PlayWithSoundData {
 
-    private int dataId, userId;
+    private int userId;
     @NonNull
     private String result;
     private String theme;
     private int difficulty, win, winStreak, lose, loseStreak, image, lastUsed;
 
-    public PlayWithSoundData(int dataId, int userId, @NonNull String result, String theme, int difficulty, int image) {
-        this.dataId = dataId;
+    public PlayWithSoundData(int userId, @NonNull String result, String theme, int difficulty, int image) {
         this.userId = userId;
         this.result = result;
         this.theme = theme;
@@ -26,13 +25,7 @@ public class PlayWithSoundData {
         this.lastUsed = -1;
     }
 
-    public int getDataId() {
-        return dataId;
-    }
-    public void setDataUserId(int dataId) {
-        this.dataId = dataId;
-    }
-
+    //Getter & Setter
     public int getUserId() {
         return userId;
     }

@@ -28,7 +28,7 @@ import fr.dut.ptut2021.models.MemoryCardLettre;
 import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.MemoryData;
 import fr.dut.ptut2021.models.database.game.MemoryDataCardCrossRef;
-import fr.dut.ptut2021.models.database.log.GameResultLog;
+import fr.dut.ptut2021.models.database.log.GameLog;
 import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
 import fr.dut.ptut2021.utils.MySharedPreferences;
@@ -49,7 +49,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     private int subCat;
     private StateProgressBar stateProgressBar;
     private StateProgressBar stateProgressBarLock;
-    private boolean isWin=false;
+    private boolean isWin=false, haveWin = false;
     private ArrayList<Integer> fonts;
 
     private void shuffle(){
@@ -131,7 +131,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             }
             changeDifficulty();
 
-        addGameResultLog(nbStar);
+        addGameLog(nbStar);
 
             new Handler().postDelayed(() -> {
                 GlobalUtils.startResultPage(Memory.this, nbStar);
@@ -493,9 +493,9 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         return true;
     }
 
-    private void addGameResultLog(int stars) {
-        GameResultLog gameResultLog = new GameResultLog(MySharedPreferences.getGameId(this), -1, userId, stars);
-        db.gameLogDao().insertGameResultLog(gameResultLog);
+    private void addGameLog(int stars) {
+        GameLog gameLog = new GameLog(MySharedPreferences.getGameId(this), -1, userId, stars, difficulty);
+        db.gameLogDao().insertGameLog(gameLog);
     }
 
 //TODO faire les bouton sur la progresse Bar avec max diffulté déjà atteinte
@@ -520,5 +520,11 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     protected void onDestroy() {
         super.onDestroy();
         MyTextToSpeech.stop(Memory.this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(!haveWin)
+            super.onBackPressed();
     }
 }

@@ -29,7 +29,6 @@ import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.WordWithHoleData;
 import fr.dut.ptut2021.models.database.log.GameLog;
-import fr.dut.ptut2021.models.database.log.GameResultLog;
 import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
 import fr.dut.ptut2021.utils.MySharedPreferences;
@@ -47,8 +46,8 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private String goodAnswer;
     private String[] alphabetTab, syllableTab;
     private final int MAX_GAME_PLAYED = 4;
-    private int userId, gameId, gamePlayed = 1, nbTry = 0, nbWin = 0;
-    private boolean delay = false;
+    private int userId, gameId, gamePlayed = 1, nbTry = 0, nbWrongAnswer = 0, difficulty = 1;
+    private boolean delay = false, haveWin = false;
     private Random random = new Random();
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -85,7 +84,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
         for (int i = 0; i < dataTab.size(); i++) {
             for (String str : dataTab.get(i)) {
-                db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, str, i+1));
+                db.gameDao().insertWWHData(new WordWithHoleData(userId, str, i+1));
             }
         }
 
@@ -129,8 +128,10 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             Log.e("APPLOG", "List Dif " + dif + " (1): " + listAllData.get(dif - 1).get(2));
         }
         for (int i = 0; i < listAllData.size(); i++) {
-            if (mapChooseData.size() <= MAX_GAME_PLAYED)
-                fillMapChooseWord(listAllData, i+1);
+            if (mapChooseData.size() <= MAX_GAME_PLAYED) {
+                fillMapChooseWord(listAllData, i + 1);
+                difficulty = i + 1;
+            }
         }
         db.gameDao().updateAllWWHDataLastUsed(userId);
     }
@@ -144,7 +145,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 if (mapChooseData.size() <= MAX_GAME_PLAYED && listData.get(difficulty-1).get(j).size() > 0) {
                     String answer = listData.get(difficulty-1).get(j).get(k);
                     if (!mapChooseData.containsKey(answer) &&
-                            (difficulty == listData.size() || db.gameDao().getWWHDataByResult(userId, answer).getWinStreak() < 3)
+                            (difficulty == listData.size() || db.gameDao().getWWHDataByResult(userId, answer).getWinStreak() < 2)
                     ) {
                         Log.e("APPLOG", "answer : " + answer);
                         words = db.appDao().getWordIfContain('%' + answer + '%');
@@ -234,7 +235,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         int sum = 0;
         int limit = 2;
         if (!help) {
-            for (int star : db.gameLogDao().getAllGameResultLogStarsLimit(userId, gameId, limit))
+            for (int star : db.gameLogDao().getAllGameLogStarsLimit(userId, gameId, limit))
                 sum += star;
         }
         if (help || sum <= limit) {
@@ -315,14 +316,13 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             button.setBackgroundColor(Color.GREEN);
     }
 
-    //TODO Refaire l'algo de calcul des étoiles
     private int starsNumber() {
-        float average = (float)nbWin / (float)MAX_GAME_PLAYED;
-        if (average == 1)
+        if (nbWrongAnswer < 2)
             return 3;
-        else if (average >= 0.75)
+        else if (nbWrongAnswer < 5)
             return 2;
-        return 1;
+        else
+            return 1;
     }
 
     private void replay() {
@@ -332,7 +332,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         playSound(true);
         textAnimation(true);
 
-        updateDataInDb();
+        updateGameData();
 
         gamePlayed++;
         delay = true;
@@ -349,7 +349,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 resetButton();
             } else {
                 int stars = starsNumber();
-                addGameResultLogInDb(stars);
+                addGameLogInDb(stars);
                 GlobalUtils.startResultPage(WordWithHole.this, stars);
             }
         }, 3000);
@@ -365,47 +365,39 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         answer3.setEnabled(true);
     }
 
-    private void updateDataInDb() {
+    private void updateGameData() {
         WordWithHoleData data = db.gameDao().getWWHDataByResult(userId, goodAnswer);
         data.setLastUsed(1);
-        boolean win;
+
         if (nbTry == 0) {
             data.setWin(data.getWin() + 1);
             data.setWinStreak(data.getWinStreak() + 1);
             data.setLoseStreak(0);
-            win = true;
-            nbWin++;
         } else {
             data.setLose(data.getLose() + 1);
             data.setLoseStreak(data.getLoseStreak() + 1);
             data.setWinStreak(0);
-            win = false;
         }
         db.gameDao().updateWWHData(data);
-
-        GameLog gameLog = new GameLog(
-                gameId,
-                -1,
-                data.getDataId(),
-                win,
-                nbTry);
-        db.gameLogDao().insertGameLog(gameLog);
     }
 
-    private void addGameResultLogInDb(int stars) {
-        GameResultLog gameResultLog = new GameResultLog(gameId, -1, userId, stars);
-        db.gameLogDao().insertGameResultLog(gameResultLog);
+    private void addGameLogInDb(int stars) {
+        GameLog gameLog = new GameLog(gameId, -1, userId, stars, difficulty);
+        db.gameLogDao().insertGameLog(gameLog);
     }
 
     private void verifyAnswer(Button answer, int numAnswer) {
         MyVibrator.vibrate(WordWithHole.this, 35);
         if (answer.getText() == goodAnswer) {
+            if (gamePlayed > MAX_GAME_PLAYED)
+                haveWin = true;
             answer.setBackgroundColor(Color.GREEN);
             replay();
         } else {
             answer.setBackgroundColor(Color.RED);
             setWordAndAddDelay(numAnswer);
             answer.setEnabled(false);
+            nbWrongAnswer++;
         }
     }
 
@@ -440,5 +432,11 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         MyTextToSpeech.stop(WordWithHole.this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(!haveWin)
+            super.onBackPressed();
     }
 }

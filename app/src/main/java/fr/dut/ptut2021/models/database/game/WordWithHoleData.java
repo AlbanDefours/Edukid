@@ -6,13 +6,12 @@ import androidx.room.Entity;
 @Entity (primaryKeys = {"userId", "result"})
 public class WordWithHoleData {
 
-    private int dataId, userId;
+    private int userId;
     @NonNull
     private String result;
     private int difficulty, win, winStreak, lose, loseStreak, lastUsed;
 
-    public WordWithHoleData(int dataId, int userId, @NonNull String result, int difficulty) {
-        this.dataId = dataId;
+    public WordWithHoleData(int userId, @NonNull String result, int difficulty) {
         this.userId = userId;
         this.result = result;
         this.difficulty = difficulty;
@@ -24,13 +23,6 @@ public class WordWithHoleData {
     }
 
     //Getter & Setter
-    public int getDataId() {
-        return dataId;
-    }
-    public void setDataId(int dataId) {
-        this.userId = dataId;
-    }
-
     public int getUserId() {
         return userId;
     }

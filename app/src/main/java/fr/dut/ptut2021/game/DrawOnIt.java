@@ -42,6 +42,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
     private DisplayMetrics dm;
     private float largeur = 0, hauteur = 0, downx = 0, downy = 0, upx = 0, upy = 0, oldUpx = 0, oldUpy = 0;
     private Boolean canDraw = false, hasDraw = false, warning = false, error = false, next = false;
+    private boolean haveWin = false;
 
     private static final int NBESSAI = 3, NBGAME = 4;
 
@@ -261,6 +262,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                         next = true;
                     }
                     if (numGame >= NBGAME - 1 && next) { //Partie terminé
+                        haveWin = true;
                         hasDraw = true;
                         Toast.makeText(getApplicationContext(), "Jeu terminé !!!", Toast.LENGTH_SHORT);
                         Log.e("axel", "jeu terminé !!!");
@@ -354,6 +356,11 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         MyTextToSpeech.stop(DrawOnIt.this);
     }
 
+    @Override
+    public void onBackPressed() {
+        if(!haveWin)
+            super.onBackPressed();
+    }
 }
 
 

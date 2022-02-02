@@ -5,25 +5,25 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
@@ -44,22 +44,25 @@ import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.database.app.Game;
 import fr.dut.ptut2021.models.database.app.User;
-import fr.dut.ptut2021.models.database.log.GameResultLog;
+import fr.dut.ptut2021.models.database.log.GameLog;
 import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyVibrator;
 
-public class StatisticPage extends AppCompatActivity implements View.OnClickListener {
+public class StatisticPage extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener, View.OnTouchListener {
 
     private CreateDatabase db = null;
-    private int pageUser = 0;
-    private TextView userTitle, barChartTitle, leftStatTitle, rightStatTitle, leftStatText, rightStatText;
-    private List<User> listUser;
-    private List<Game> gameList;
+    private User currentUser;
+    private TextView userTitle, barChartTitle, leftStatTitle, rightStatTitle, leftStatText, rightStatText, spinnerStatText;
     private Button generalButton, lettresButton, chiffresButton;
-    private ImageView nextPage, previousPage, leftStatIcon, rightStatIcon;
-    private String categoryName = "General";
+    private ImageView arrowNext, arrowPrevious, leftStatIcon, rightStatIcon, spinnerStatIcon;
+    private Spinner gameSpinner, difficultySpinner;
+    private List<User> userList;
+    private List<Game> gameList;
+    private int userPage = 0, currentGameId;
+    private String themeName = "General";
     private long startWeekTime;
     private final long DAY_MILLIS = 24 * 3600 * 1000;
+    private boolean spinnerRefresh = false;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -74,22 +77,13 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         displayNewUserPage();
     }
 
-    private void initOnClickViews() {
-        generalButton.setOnClickListener(this);
-        lettresButton.setOnClickListener(this);
-        chiffresButton.setOnClickListener(this);
-        nextPage.setOnClickListener(this);
-        previousPage.setOnClickListener(this);
-        generalButton.setEnabled(false);
-    }
-
     private void initViews() {
         userTitle = findViewById(R.id.title_StatisticPage);
         generalButton = findViewById(R.id.buttonGeneral_statistics);
         lettresButton = findViewById(R.id.buttonLettres_statistics);
         chiffresButton = findViewById(R.id.buttonChiffres_statistics);
-        nextPage = findViewById(R.id.arrow_nextPage);
-        previousPage = findViewById(R.id.arrow_previousPage);
+        arrowNext = findViewById(R.id.arrow_nextPage);
+        arrowPrevious = findViewById(R.id.arrow_previousPage);
 
         barChartTitle = findViewById(R.id.title_bar_chart);
         leftStatTitle = findViewById(R.id.title_left_stat1);
@@ -98,31 +92,53 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         rightStatText = findViewById(R.id.text_right_stat1);
         leftStatIcon = findViewById(R.id.image_left_stat1);
         rightStatIcon = findViewById(R.id.image_right_stat1);
+
+        gameSpinner = findViewById(R.id.spinner_game_stats);
+        difficultySpinner = findViewById(R.id.spinner_difficulty_stats);
+        spinnerStatIcon = findViewById(R.id.image_spinner_stats);
+        spinnerStatText = findViewById(R.id.text_spinner_stats);
+    }
+
+    private void initOnClickViews() {
+        generalButton.setOnClickListener(this);
+        lettresButton.setOnClickListener(this);
+        chiffresButton.setOnClickListener(this);
+        arrowNext.setOnClickListener(this);
+        arrowPrevious.setOnClickListener(this);
+        generalButton.setEnabled(false);
+        gameSpinner.setOnItemSelectedListener(this);
+        gameSpinner.setOnTouchListener(this);
+        difficultySpinner.setOnItemSelectedListener(this);
+        difficultySpinner.setOnTouchListener(this);
     }
 
     private void createDbAndImportUsers() {
         db = CreateDatabase.getInstance(StatisticPage.this);
         if (!db.appDao().tabUserIsEmpty()) {
-            listUser = db.appDao().getAllUsers();
+            userList = db.appDao().getAllUsers();
         }
         gameList = db.appDao().getAllGames();
     }
 
     private void displayNewUserPage() {
-        if (!listUser.isEmpty()) displayUserTitle();
+        if (!userList.isEmpty()) {
+            currentUser = userList.get(userPage);
+            displayUserTitle();
+        }
         setTitleText();
         displayNewCategoryPage();
     }
 
     private void displayNewCategoryPage() {
         createBarChart(getGameFrequencyData());
-        createLineChart(getGameAvgStarsData());
+        //createLineChart(getGameAvgStarsData());
         setStatsText();
+        setSpinnerResources();
     }
 
     private void displayUserTitle() {
-        userTitle.setText(GlobalUtils.cutString(listUser.get(pageUser).getUserName(), 15));
-        verifyPageUserLocation();
+        userTitle.setText(GlobalUtils.cutString(currentUser.getUserName(), 15));
+        verifyUserPageLocation();
     }
 
     @SuppressLint("SetTextI18n")
@@ -179,6 +195,48 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         barChart.setExtraOffsets(0, 0, 0, 5);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void setStartWeekTimeAndDate() {
+        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+        Date currentDate = new Date();
+
+        String str = df.format(currentDate) + " 00:00:00";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime ldt = LocalDateTime.parse(str, formatter);
+
+        startWeekTime = ldt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - (6 * DAY_MILLIS);
+    }
+
+    private Map<String, Integer> getGameFrequencyData() {
+        Map<String, Integer> mapData = new LinkedHashMap<>();
+        //La map se mélange si ce n'est pas une LinkedHashMap
+        List<GameLog> listLog;
+
+        if (themeName.equals("Chiffres") || themeName.equals("Lettres"))
+            listLog = db.gameLogDao().getAllGameLogAfterTimeByTheme(currentUser.getUserId(), themeName, startWeekTime);
+        else
+            listLog = db.gameLogDao().getAllGameLogAfterTime(currentUser.getUserId(), startWeekTime);
+
+        DateFormat df = new SimpleDateFormat("E", Locale.FRENCH);
+        for (int i = 0; i < 7; i++) {
+            mapData.put(df.format(startWeekTime + (DAY_MILLIS * i)).toUpperCase(), 0);
+        }
+
+        int nbWeekDay = 0;
+        for (int i = 0; i < listLog.size(); i++) {
+            long gameTime = listLog.get(i).getEndGameDate();
+            for (Map.Entry<String, Integer> val : mapData.entrySet()) {
+                if (startWeekTime + (DAY_MILLIS * nbWeekDay) <= gameTime && gameTime < startWeekTime + (DAY_MILLIS * (nbWeekDay + 1))) {
+                    mapData.put(val.getKey(), mapData.get(val.getKey()) + 1);
+                }
+                nbWeekDay++;
+            }
+            nbWeekDay = 0;
+        }
+        return mapData;
+    }
+
+/*
     public void createLineChart(Map<Integer, Float> mapData) {
         LineChart lineChart = findViewById(R.id.line_chart);
         List<Entry> data = new ArrayList<>();
@@ -223,22 +281,55 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         lineChart.getDescription().setEnabled(false);
         lineChart.animateY(500);
         lineChart.setTouchEnabled(false);
-        lineChart.setNoDataText("Commencer a jouer !");
+        lineChart.setNoDataText("Tu n'as encore jamais joué !");
         lineChart.getLegend().setEnabled(false);
         lineChart.setExtraOffsets(0, 0, 0, 5);
+    }
+*/
+
+    private Map<Integer, Float> getGameAvgStarsData() {
+        Map<Integer, Float> mapData = new TreeMap<>();
+        List<GameLog> listLog;
+
+        if (themeName.equals("Chiffres") || themeName.equals("Lettres"))
+            listLog = db.gameLogDao().getAllGameLogByUserLimitByTheme(currentUser.getUserId(), themeName);
+        else
+            listLog = db.gameLogDao().getAllGameLogByUserLimit(currentUser.getUserId());
+
+        final int COLUMN = 6;
+        int it = 0;
+        for (int i = 0; i < COLUMN; i++) {
+            float n = 0;
+            float sum = 0;
+            while ((it + 1) % 10 != 0 && listLog.size() > it) {
+                n++;
+                sum += listLog.get(it).getStars();
+                it++;
+            }
+            float avg;
+            if (n == 0)
+                avg = 0;
+            else
+                avg = sum/n;
+
+            mapData.put(COLUMN - i, avg);
+            it++;
+        }
+
+        return mapData;
     }
 
     @SuppressLint("SetTextI18n")
     private void setStatsText() {
         Map<Game, Integer> gameCountMap = new LinkedHashMap<>();
 
-        if (db.gameLogDao().getAllGameResultLogByUser(listUser.get(pageUser).getUserId()).size() > 0) {
+        if (!db.gameLogDao().tabGameLogIsEmpty(currentUser.getUserId())) {
             for (int i = 0; i < gameList.size(); i++) {
-                if (categoryName.equals("Chiffres") || categoryName.equals("Lettres")) {
-                    if (gameList.get(i).getThemeName().equals(categoryName))
-                        gameCountMap.put(gameList.get(i), db.gameLogDao().getGameResultLogNbGame(listUser.get(pageUser).getUserId(), gameList.get(i).getGameId()));
+                if (themeName.equals("Chiffres") || themeName.equals("Lettres")) {
+                    if (gameList.get(i).getThemeName().equals(themeName))
+                        gameCountMap.put(gameList.get(i), db.gameLogDao().getGameLogNbGame(currentUser.getUserId(), gameList.get(i).getGameId()));
                 } else {
-                    gameCountMap.put(gameList.get(i), db.gameLogDao().getGameResultLogNbGame(listUser.get(pageUser).getUserId(), gameList.get(i).getGameId()));
+                    gameCountMap.put(gameList.get(i), db.gameLogDao().getGameLogNbGame(currentUser.getUserId(), gameList.get(i).getGameId()));
                 }
             }
 
@@ -272,92 +363,84 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private void setStartWeekTimeAndDate() {
-        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
-        Date currentDate = new Date();
+    private void setSpinnerResources() {
+        if (!themeName.equals("General"))
+            hideSpinners();
 
-        String str = df.format(currentDate) + " 00:00:00";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        LocalDateTime ldt = LocalDateTime.parse(str, formatter);
+        List<Game> gamePlayedList = db.gameLogDao().getAllGamePlayedByUserIdAndTheme(currentUser.getUserId(), themeName);
+        if (gamePlayedList.isEmpty())
+            hideSpinners();
+        else {
+            String[] gameNameTab = new String[gamePlayedList.size()];
+            for (int i = 0; i < gamePlayedList.size(); i++)
+                gameNameTab[i] = gamePlayedList.get(i).getGameName();
 
-        startWeekTime = ldt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - (6 * DAY_MILLIS);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    gameNameTab);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            gameSpinner.setAdapter(adapter);
+
+            updateSpinnerDifficulty();
+            updateGameAverage();
+            displaySpinners();
+        }
     }
 
-    private Map<String, Integer> getGameFrequencyData() {
-        Map<String, Integer> mapData = new LinkedHashMap<>();
-        //La map se mélange si ce n'est pas une LinkedHashMap
-        List<GameResultLog> listLog;
+    private void updateSpinnerDifficulty() {
+        currentGameId = db.appDao().getGameId(gameSpinner.getSelectedItem().toString(), themeName);
+        int maxDifficulty = db.gameLogDao().getGameLogMaxDifByGame(currentUser.getUserId(), currentGameId);
+        String[] difficultyTab = new String[maxDifficulty];
 
-        if (categoryName.equals("Chiffres") || categoryName.equals("Lettres"))
-            listLog = db.gameLogDao().getAllGameResultLogAfterTimeByTheme(listUser.get(pageUser).getUserId(), categoryName, startWeekTime);
-        else
-            listLog = db.gameLogDao().getAllGameResultLogAfterTime(listUser.get(pageUser).getUserId(), startWeekTime);
+        for (int i = 1; i <= maxDifficulty; i++)
+            difficultyTab[i-1] = "Difficulté " + i;
 
-        DateFormat df = new SimpleDateFormat("E", Locale.FRENCH);
-        for (int i = 0; i < 7; i++) {
-            mapData.put(df.format(startWeekTime + (DAY_MILLIS * i)).toUpperCase(), 0);
-        }
-
-        int nbWeekDay = 0;
-        for (int i = 0; i < listLog.size(); i++) {
-            long gameTime = listLog.get(i).getEndGameDate();
-            for (Map.Entry<String, Integer> val : mapData.entrySet()) {
-                if (startWeekTime + (DAY_MILLIS * nbWeekDay) <= gameTime && gameTime < startWeekTime + (DAY_MILLIS * (nbWeekDay + 1))) {
-                    mapData.put(val.getKey(), mapData.get(val.getKey()) + 1);
-                }
-                nbWeekDay++;
-            }
-            nbWeekDay = 0;
-        }
-        return mapData;
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                difficultyTab);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        difficultySpinner.setAdapter(adapter);
     }
 
-    private Map<Integer, Float> getGameAvgStarsData() {
-        Map<Integer, Float> mapData = new TreeMap<>();
-        List<GameResultLog> listLog;
+    @SuppressLint("SetTextI18n")
+    private void updateGameAverage() {
+        spinnerStatText.setText(db.gameLogDao().getGameAvgByGameIdAndDifficulty(
+                currentUser.getUserId(),
+                currentGameId,
+                difficultySpinner.getSelectedItemPosition()+1
+        ).toString());
+    }
 
-        if (categoryName.equals("Chiffres") || categoryName.equals("Lettres"))
-            listLog = db.gameLogDao().getAllGameResultLogByUserLimitByTheme(listUser.get(pageUser).getUserId(), categoryName);
-        else
-            listLog = db.gameLogDao().getAllGameResultLogByUserLimit(listUser.get(pageUser).getUserId());
+    private void hideSpinners() {
+        gameSpinner.setVisibility(View.GONE);
+        difficultySpinner.setVisibility(View.GONE);
+        spinnerStatText.setVisibility(View.GONE);
+        spinnerStatIcon.setVisibility(View.GONE);
+    }
 
-        final int COLUMN = 6;
-        int it = 0;
-        for (int i = 0; i < COLUMN; i++) {
-            float n = 0;
-            float sum = 0;
-            while ((it + 1) % 10 != 0 && listLog.size() > it) {
-                n++;
-                sum += listLog.get(it).getStars();
-                it++;
-            }
-            float avg;
-            if (n == 0)
-                avg = 0;
-            else
-                avg = sum/n;
-
-            mapData.put(COLUMN - i, avg);
-            it++;
-        }
-
-        return mapData;
+    private void displaySpinners() {
+        gameSpinner.setVisibility(View.VISIBLE);
+        difficultySpinner.setVisibility(View.VISIBLE);
+        spinnerStatText.setVisibility(View.VISIBLE);
+        spinnerStatIcon.setVisibility(View.VISIBLE);
     }
     
-    private void verifyPageUserLocation() {
-        previousPage.setAlpha(1f);
-        nextPage.setAlpha(1f);
-        previousPage.setEnabled(true);
-        nextPage.setEnabled(true);
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
+    private void verifyUserPageLocation() {
+        arrowPrevious.setAlpha(1f);
+        arrowNext.setAlpha(1f);
+        arrowPrevious.setEnabled(true);
+        arrowNext.setEnabled(true);
 
-        if (pageUser == 0) {
-            previousPage.setAlpha(0.5f);
-            previousPage.setEnabled(false);
+        if (userPage == 0) {
+            arrowPrevious.setAlpha(0.5f);
+            arrowPrevious.setEnabled(false);
         }
-        if (pageUser == listUser.size() - 1) {
-            nextPage.setAlpha(0.5f);
-            nextPage.setEnabled(false);
+        if (userPage == userList.size() - 1) {
+            arrowNext.setAlpha(0.5f);
+            arrowNext.setEnabled(false);
         }
     }
 
@@ -374,36 +457,67 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.buttonGeneral_statistics:
                 lockButton(generalButton);
-                categoryName = "General";
+                themeName = "General";
                 displayNewCategoryPage();
                 break;
             case R.id.buttonChiffres_statistics:
                 lockButton(chiffresButton);
-                categoryName = "Chiffres";
+                themeName = "Chiffres";
                 displayNewCategoryPage();
                 break;
             case R.id.buttonLettres_statistics:
                 lockButton(lettresButton);
-                categoryName = "Lettres";
+                themeName = "Lettres";
                 displayNewCategoryPage();
                 break;
 
             case R.id.arrow_nextPage:
-                if (pageUser < listUser.size() - 1) {
+                if (userPage < userList.size() - 1) {
                     MyVibrator.vibrate(StatisticPage.this, 35);
-                    pageUser++;
+                    userPage++;
                 }
                 displayNewUserPage();
                 break;
             case R.id.arrow_previousPage:
-                if (0 < pageUser) {
+                if (0 < userPage) {
                     MyVibrator.vibrate(StatisticPage.this, 35);
-                    pageUser--;
+                    userPage--;
                 }
                 displayNewUserPage();
                 break;
+
             default:
                 break;
         }
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+        if (spinnerRefresh) {
+            switch (v.getId()) {
+                case R.id.spinner_game_stats:
+                    updateSpinnerDifficulty();
+                    updateGameAverage();
+                    break;
+                case R.id.spinner_difficulty_stats:
+                    updateGameAverage();
+                    break;
+
+            }
+            spinnerRefresh = false;
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        spinnerRefresh = true;
+        return false;
     }
 }

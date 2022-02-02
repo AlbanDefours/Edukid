@@ -9,6 +9,7 @@
     <string name="general">Général</string>
     <string name="chiffres">Chiffres</string>
     <string name="importer">Importer</string>
+    <string name="emptyText">. . . . . . . .</string>
 
     <string-array name="alphabet">
         <item>A</item>
