@@ -20,6 +20,7 @@ import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MySharedPreferences;
 import fr.dut.ptut2021.utils.MyVibrator;
 
+
 public class SubGameMenu extends AppCompatActivity {
 
     private String themeName, gameName;

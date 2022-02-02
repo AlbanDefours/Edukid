@@ -47,7 +47,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
     private Boolean canDraw = false, hasDraw = false, warning = false, error = false, next = false, isStart = false;
     private Boolean haveWin = false;
 
-    private static final int NBESSAI = 3, NBGAME = 9;
+    private static final int NBESSAI = 3, NBGAME = 4;
 
     private int numEssai = 0, numGame = 0, numTrait = 0;
     private float nbErreur = 0;
@@ -128,6 +128,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         for(int i = 0; i < NBGAME; i++){
             carte[i] = listCard.get(numRand[i]);
         }
+
 
         Display currentDisplay = getWindowManager().getDefaultDisplay();
         largeur = currentDisplay.getWidth();
