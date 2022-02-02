@@ -1,8 +1,6 @@
 package fr.dut.ptut2021.game;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,12 +25,11 @@ import java.util.Map;
 import java.util.Random;
 
 import fr.dut.ptut2021.R;
-import fr.dut.ptut2021.activities.ResultGamePage;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.WordWithHoleData;
 import fr.dut.ptut2021.models.database.log.GameLog;
-import fr.dut.ptut2021.models.database.log.GameResultLog;
+import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
 import fr.dut.ptut2021.utils.MySharedPreferences;
 import fr.dut.ptut2021.utils.MyTextToSpeech;
@@ -44,13 +41,12 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private TextView word;
     private ImageView image, help;
     private Button answer1, answer2, answer3;
-    private List<WordWithHoleData> listData;
     private Map<String, Word> mapChooseData;
     private List<String> listAnswer;
     private String goodAnswer;
     private String[] alphabetTab, syllableTab;
     private final int MAX_GAME_PLAYED = 4;
-    private int userId, gameId, gamePlayed = 1, nbTry = 0, nbWin = 0;
+    private int userId, gameId, gamePlayed = 1, nbTry = 0, nbWrongAnswer = 0, difficulty = 1;
     private boolean delay = false;
     private Random random = new Random();
 
@@ -64,11 +60,8 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         getSharedPref();
 
         fillDatabase();
-        initGame();
-        initListAnswer();
         initLayoutContent();
-        setLayoutContent();
-        readInstructionAndWord(db.gameLogDao().tabGameResultLogIsEmpty(userId, gameId));
+        initGame();
 
         answer1.setOnClickListener(this);
         answer2.setOnClickListener(this);
@@ -82,77 +75,120 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void fillDatabase() {
-        alphabetTab = getResources().getStringArray(R.array.alphabet);
-        for (String letter : alphabetTab) {
-            db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, letter, 1));
+        List<String[]> dataTab = new ArrayList<>();
+        dataTab.add(getResources().getStringArray(R.array.WWHdifficulty1));
+        dataTab.add(getResources().getStringArray(R.array.WWHdifficulty2));
+        dataTab.add(getResources().getStringArray(R.array.WWHdifficulty3));
+        dataTab.add(getResources().getStringArray(R.array.WWHdifficulty4));
+
+        for (int i = 0; i < dataTab.size(); i++) {
+            for (String str : dataTab.get(i)) {
+                db.gameDao().insertWWHData(new WordWithHoleData(userId, str, i+1));
+            }
         }
 
+        alphabetTab = getResources().getStringArray(R.array.alphabet);
         syllableTab = getResources().getStringArray(R.array.syllable);
-        for (String syllable : syllableTab) {
-            db.gameDao().insertWWHData(new WordWithHoleData(db.gameDao().getWWHMaxId()+1, userId, syllable, 2));
-        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initGame() {
-        listData = new ArrayList<>(db.gameDao().getAllWWHData(userId));
+        initMapChooseWord();
+        initListAnswer();
+        setLayoutContent();
+        readInstruction(false);
+        readWord();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void initMapChooseWord() {
+        List<WordWithHoleData> listData = new ArrayList<>(db.gameDao().getAllWWHData(userId));
         mapChooseData = new HashMap<>();
+        int maxDifficulty = db.gameDao().getWWHDataMaxDifficulty(userId);
+        List<List<List<String>>> listAllData = new ArrayList<>();
 
-        List<List<String>> listDataDif1 = new ArrayList<>();
-        List<List<String>> listDataDif2 = new ArrayList<>();
+        for (int i = 0; i < maxDifficulty; i++)
+            listAllData.add(new ArrayList<>());
 
-        for (int dif = 1; dif <= 2; dif++) {
+        for (int dif = 1; dif <= maxDifficulty; dif++) {
             List<String> listDataNeverUsed = db.gameDao().getAllWWHDataLastUsed(listData, dif, -1);
             List<String> listDataNotUsed = db.gameDao().getAllWWHDataLastUsed(listData, dif, 0);
             List<String> listDataUsed = db.gameDao().getAllWWHDataLastUsed(listData, dif, 1);
 
-            if (dif == 1) {
-                listDataDif1.add(listDataNeverUsed);
-                listDataDif1.add(listDataNotUsed);
-                listDataDif1.add(listDataUsed);
-            } else {
-                listDataDif2.add(listDataNeverUsed);
-                listDataDif2.add(listDataNotUsed);
-                listDataDif2.add(listDataUsed);
+            listAllData.get(dif - 1).add(listDataNeverUsed);
+            listAllData.get(dif - 1).add(listDataNotUsed);
+            listAllData.get(dif - 1).add(listDataUsed);
+
+            Collections.shuffle(listAllData.get(dif - 1).get(1));
+            Collections.shuffle(listAllData.get(dif - 1).get(2));
+
+            Log.e("APPLOG", "List Dif " + dif + " (-1): " + listAllData.get(dif - 1).get(0));
+            Log.e("APPLOG", "List Dif " + dif + " (0): " + listAllData.get(dif - 1).get(1));
+            Log.e("APPLOG", "List Dif " + dif + " (1): " + listAllData.get(dif - 1).get(2));
+        }
+        for (int i = 0; i < listAllData.size(); i++) {
+            if (mapChooseData.size() <= MAX_GAME_PLAYED) {
+                fillMapChooseWord(listAllData, i + 1);
+                difficulty = i + 1;
             }
         }
-
-        Log.e("APP_LOG", "DIFFICULTY 1 - Never Used" + listDataDif1.get(0));
-        Log.e("APP_LOG", "DIFFICULTY 1 - Not Used" + listDataDif1.get(1));
-        Log.e("APP_LOG", "DIFFICULTY 1 - Used" + listDataDif1.get(2));
-
-        fillMapChooseWord(listDataDif1, false);
-        if (mapChooseData.size() <= MAX_GAME_PLAYED) {
-            fillMapChooseWord(listDataDif2, true);
-        }
-
         db.gameDao().updateAllWWHDataLastUsed(userId);
     }
 
-    private void fillMapChooseWord(List<List<String>> list, boolean lastDifficulty) {
-        List<Word> words = new ArrayList<>();
+    private void fillMapChooseWord(List<List<List<String>>> listData, int difficulty) {
+        List<Word> words;
 
-        for (int j = 0; j < list.size(); j++) {
-            for (int k = 0; k < list.get(j).size(); k++) {
+        for (int j = 0; j < listData.get(difficulty-1).size(); j++) {
+            for (int k = 0; k < listData.get(difficulty-1).get(j).size(); k++) {
 
-                if (mapChooseData.size() <= MAX_GAME_PLAYED) {
-                    if (!mapChooseData.containsKey(list.get(j).get(k)) &&
-                            (lastDifficulty || db.gameDao().getWWHDataByData(userId, list.get(j).get(k)).getWinStreak() < 3) &&
-                            db.appDao().getWordIfContain('%' + list.get(j).get(k) + '%').size() > 0) {
+                if (mapChooseData.size() <= MAX_GAME_PLAYED && listData.get(difficulty-1).get(j).size() > 0) {
+                    String answer = listData.get(difficulty-1).get(j).get(k);
+                    if (!mapChooseData.containsKey(answer) &&
+                            (difficulty == listData.size() || db.gameDao().getWWHDataByResult(userId, answer).getWinStreak() < 2)
+                    ) {
+                        Log.e("APPLOG", "answer : " + answer);
+                        words = db.appDao().getWordIfContain('%' + answer + '%');
 
-                        words = db.appDao().getWordIfContain('%' + list.get(j).get(k) + '%');
-                        for (int i = 0; i < 3; i++)
-                            Collections.shuffle(words);
-                        int rand = random.nextInt(words.size());
+                        if (words.size() > 0) {
+                            for (Map.Entry<String, Word> val : mapChooseData.entrySet())
+                                words.remove(mapChooseData.get(val.getKey()));
 
-                        mapChooseData.put(list.get(j).get(k), words.get(rand));
-                        words.clear();
-                        list.get(j).remove(k);
+                            for (int i = 0; i < 3; i++)
+                                Collections.shuffle(words);
+
+                            for (int i = difficulty; i < listData.size(); i++) {
+                                for (int l = 0; l < listData.get(i).size(); l++) {
+                                    for (int m = 0; m < listData.get(i).get(l).size(); m++) {
+                                        String syllable = listData.get(i).get(l).get(m);
+
+                                        if (syllable.length() == 2 && !answer.equals(syllable)) {
+                                            if (answer.contains(String.valueOf(syllable.charAt(0))) ||
+                                                    answer.contains(String.valueOf(syllable.charAt(1)))) {
+                                                for (int n = 0; n < words.size(); n++) {
+                                                    if (words.get(n).getWord().contains(syllable)) {
+                                                        words.remove(n);
+                                                        n--;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (words.size() > 0) {
+                                for (int n = 0; n < words.size(); n++)
+                                    Log.e("APPLOG", "word : " + words.get(n).getWord());
+                                int rand = random.nextInt(words.size());
+                                mapChooseData.put(answer, words.get(rand));
+                                Log.e("APPLOG", "FINAL : " + answer + " - " + words.get(rand).getWord());
+                                words.clear();
+                            }
+                            Log.e("APPLOG", "------------------------------");
+                        }
                     }
                 }
             }
         }
-
     }
 
     private void initListAnswer() {
@@ -194,20 +230,24 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         answer3.setText(listAnswer.get(2));
     }
 
-    private void readInstructionAndWord(boolean instruction) {
-        delay = true;
-        String str = "";
-        int timeDelay = 500;
-        if (instruction) {
-            str = "Trouve la lettre ou la syllabe manquante du mot . ";
-            timeDelay += 2000;
+    private void readInstruction(boolean help) {
+        int sum = 0;
+        int limit = 2;
+        if (!help) {
+            for (int star : db.gameLogDao().getAllGameLogStarsLimit(userId, gameId, limit))
+                sum += star;
         }
-        str += mapChooseData.get(goodAnswer).getWord();
-        MyTextToSpeech.speachText(this, str);
+        if (help || sum <= limit) {
+            delay = true;
+            MyTextToSpeech.speachText(this, "Trouve la lettre ou la syllabe manquante.");
+            new Handler().postDelayed(() -> {
+                delay = false;
+            }, 2000);
+        }
+    }
 
-        new Handler().postDelayed(() -> {
-            delay = false;
-        }, timeDelay);
+    private void readWord() {
+        MyTextToSpeech.speachText(this, mapChooseData.get(goodAnswer).getWord());
     }
 
     private void textAnimation(boolean goodAnswer) {
@@ -257,7 +297,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 delay = false;
                 word.setText(holeTheWord());
                 word.setTextColor(Color.BLACK);
-                readInstructionAndWord(false);
+                readWord();
             }, 2000);
         }else {
             delay = true;
@@ -276,12 +316,12 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private int starsNumber() {
-        float average = (float)nbWin / (float)MAX_GAME_PLAYED;
-        if (average == 1)
+        if (nbWrongAnswer < 2)
             return 3;
-        else if (average >= 0.75)
+        else if (nbWrongAnswer < 5)
             return 2;
-        return 1;
+        else
+            return 1;
     }
 
     private void replay() {
@@ -291,7 +331,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         playSound(true);
         textAnimation(true);
 
-        updateDataInDb();
+        updateGameData();
 
         gamePlayed++;
         delay = true;
@@ -304,15 +344,12 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                 initListAnswer();
                 setLayoutContent();
                 word.setTextColor(Color.BLACK);
-                readInstructionAndWord(false);
+                readWord();
                 resetButton();
             } else {
                 int stars = starsNumber();
-                addGameResultLogInDb(stars);
-                Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
-                intent.putExtra("starsNumber", stars);
-                startActivity(intent);
-                finish();
+                addGameLogInDb(stars);
+                GlobalUtils.startResultPage(WordWithHole.this, stars);
             }
         }, 3000);
     }
@@ -327,36 +364,25 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         answer3.setEnabled(true);
     }
 
-    private void updateDataInDb() {
-        WordWithHoleData data = db.gameDao().getWWHDataByData(userId, goodAnswer);
+    private void updateGameData() {
+        WordWithHoleData data = db.gameDao().getWWHDataByResult(userId, goodAnswer);
         data.setLastUsed(1);
-        boolean win;
+
         if (nbTry == 0) {
             data.setWin(data.getWin() + 1);
             data.setWinStreak(data.getWinStreak() + 1);
             data.setLoseStreak(0);
-            win = true;
-            nbWin++;
         } else {
             data.setLose(data.getLose() + 1);
             data.setLoseStreak(data.getLoseStreak() + 1);
             data.setWinStreak(0);
-            win = false;
         }
         db.gameDao().updateWWHData(data);
-
-        GameLog gameLog = new GameLog(
-                gameId,
-                -1,
-                data.getDataId(),
-                win,
-                nbTry);
-        db.gameLogDao().insertGameLog(gameLog);
     }
 
-    private void addGameResultLogInDb(int stars) {
-        GameResultLog gameResultLog = new GameResultLog(gameId, -1, userId, stars);
-        db.gameLogDao().insertGameResultLog(gameResultLog);
+    private void addGameLogInDb(int stars) {
+        GameLog gameLog = new GameLog(gameId, -1, userId, stars, difficulty);
+        db.gameLogDao().insertGameLog(gameLog);
     }
 
     private void verifyAnswer(Button answer, int numAnswer) {
@@ -368,6 +394,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             answer.setBackgroundColor(Color.RED);
             setWordAndAddDelay(numAnswer);
             answer.setEnabled(false);
+            nbWrongAnswer++;
         }
     }
 
@@ -377,7 +404,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         if (!delay) {
             switch (v.getId()) {
                 case R.id.ic_help_wordWithHole:
-                    readInstructionAndWord(true);
+                    readInstruction(true);
                     break;
 
                 case R.id.buttonAnswer1_wordWithHole:
@@ -396,5 +423,11 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
                     break;
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        GlobalUtils.stopAllSound(WordWithHole.this);
     }
 }

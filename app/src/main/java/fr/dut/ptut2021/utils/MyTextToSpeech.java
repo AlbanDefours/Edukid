@@ -1,9 +1,9 @@
 package fr.dut.ptut2021.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.Voice;
 
 import java.util.Locale;
 
@@ -11,25 +11,42 @@ import fr.dut.ptut2021.game.PlayWithSound;
 
 public class MyTextToSpeech {
     static TextToSpeech textToSpeech;
+    static Voice voice = null;
 
     public static void speachText(Context context, String text) {
-        if(text.contains("Y") || text.contains("y") && context.getClass() == PlayWithSound.class)
+        if (text.contains("Y") || text.contains("y") && context.getClass() == PlayWithSound.class)
             text = "Trouve la lettre igrec";
         String finalText = text;
         textToSpeech = new TextToSpeech(context, status -> {
-            if(status != TextToSpeech.ERROR) {
+            if (status != TextToSpeech.ERROR) {
                 textToSpeech.setLanguage(Locale.FRANCE);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                if (voice != null)
+                    textToSpeech.setVoice(voice);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                     textToSpeech.speak(finalText, TextToSpeech.QUEUE_FLUSH, null, null);
-                }
                 else
                     textToSpeech.speak(finalText, TextToSpeech.QUEUE_FLUSH, null);
             }
         });
     }
 
-    public static void stop(){
-        textToSpeech.stop();
-        textToSpeech.shutdown();
+    public static void initialiser(Context context) {
+        textToSpeech = new TextToSpeech(context, status -> {
+            if (status != TextToSpeech.ERROR) {
+                textToSpeech.setLanguage(Locale.FRANCE);
+                for (Voice tmpVoice : textToSpeech.getVoices()) {
+                    if (tmpVoice.getName().equals("fr-fr-x-fra-network")) {
+                        voice = tmpVoice;
+                        textToSpeech.setVoice(tmpVoice);
+                    }
+                }
+            }
+        });
+    }
+
+    public static void stop(Context context) {
+        if (textToSpeech != null) {
+            speachText(context, "");
+        }
     }
 }

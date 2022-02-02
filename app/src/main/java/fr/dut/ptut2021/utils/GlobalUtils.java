@@ -45,13 +45,20 @@ public class GlobalUtils {
         }
         if (animation)
             ((Activity) context).overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-        if(finish)
+        if (finish)
             ((Activity) context).finish();
     }
 
-    public static void startEditPage(Context context){
+    public static void startEditPage(Context context) {
         Intent intent = new Intent().setClass(context, UserEdit.class);
         intent.putExtra("addUser", true);
+        context.startActivity(intent);
+        ((Activity) context).finish();
+    }
+
+    public static void startResultPage(Context context, int starsNb) {
+        Intent intent = new Intent(context, ResultGamePage.class);
+        intent.putExtra("starsNumber", starsNb);
         context.startActivity(intent);
         ((Activity) context).finish();
     }
@@ -100,10 +107,15 @@ public class GlobalUtils {
         Toast.makeText(context, msg, Boolean.compare(wantLong, false)).show();
     }
 
-    public static void verifyIfSoundIsOn(Context context){
+    public static void verifyIfSoundIsOn(Context context) {
         AudioManager am = (AudioManager) context.getSystemService(AUDIO_SERVICE);
-        int volume_level= am.getStreamVolume(AudioManager.STREAM_MUSIC);
-        if(volume_level == 0)
+        int volume_level = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        if (volume_level == 0)
             toast(context, "Veuillez activer le son pour jouer !", true);
+    }
+
+    public static void stopAllSound(Context context) {
+        MyTextToSpeech.stop(context);
+        MyMediaPlayer.stop();
     }
 }

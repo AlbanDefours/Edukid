@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:focusable="false"
+    android:clickable="false"
     android:gravity="center">
     <RelativeLayout
         android:id="@+id/viewCard"
@@ -16,11 +18,15 @@
             android:layout_margin="10px"
             app:srcCompat="@drawable/backgroundmemory" />
 
+
         <TextView
             android:id="@+id/interieurCardLettre"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:textAlignment="center"
+            android:gravity="center"
+            android:layout_margin="0dp"
+            android:textSize="40mm"
             android:layout_centerInParent="true"/>
 
         <RelativeLayout
@@ -68,6 +74,8 @@
                 android:layout_height="0dp" />
 
         </RelativeLayout>
+
+
 
         <ImageView
             android:id="@+id/patternImgMemory"

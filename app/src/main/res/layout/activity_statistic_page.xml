@@ -74,9 +74,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout_button">
+        android:layout_height="match_parent"
+        android:layout_marginTop="150dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -102,8 +101,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
-                android:orientation="horizontal"
                 android:gravity="center"
+                android:orientation="horizontal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/arrow_nextPage">
 
@@ -127,7 +126,7 @@
                         android:id="@+id/image_left_stat1"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
-                        android:src="@drawable/icon_star"
+                        android:src="@drawable/ic_square"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/title_left_stat1" />
@@ -137,7 +136,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toEndOf="@+id/image_left_stat1"
-                        android:text="@string/general"
+                        android:text="@string/emptyText"
                         android:textSize="15sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/image_left_stat1"
@@ -165,7 +164,7 @@
                         android:id="@+id/image_right_stat1"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
-                        android:src="@drawable/icon_star"
+                        android:src="@drawable/ic_square"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/title_right_stat1" />
@@ -174,7 +173,7 @@
                         android:id="@+id/text_right_stat1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/lettres"
+                        android:text="@string/emptyText"
                         android:textSize="15sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/image_right_stat1"
@@ -183,6 +182,73 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/spinner_game_stats"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:textSize="30sp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/spinner_difficulty_stats" />
+
+            <Spinner
+                android:id="@+id/spinner_difficulty_stats"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:textSize="30sp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/spinner_game_stats"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </LinearLayout>
+
+            <ImageView
+                android:id="@+id/image_spinner_stats"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/icon_star"/>
+
+            <TextView
+                android:id="@+id/text_spinner_stats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/emptyText"
+                android:textSize="30sp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"/>
+
+
+            <!--
+            <TextView
+                android:id="@+id/title_line_chart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="Moyenne des étoiles par 10 jeux"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/line_chart"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="20dp"
+                android:layout_height="250dp"/>
+            -->
 
         </LinearLayout>
 

@@ -13,6 +13,7 @@ import fr.dut.ptut2021.database.CreateDatabase;
 
 import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyDatabaseInsert;
+import fr.dut.ptut2021.utils.MyTextToSpeech;
 
 
 public class LoadingPage extends AppCompatActivity {
@@ -25,6 +26,7 @@ public class LoadingPage extends AppCompatActivity {
         textAnimation();
         CreateDatabase db = CreateDatabase.getInstance(getApplicationContext());
         MyDatabaseInsert.ajoutDatabase(this);
+        MyTextToSpeech.initialiser(this);
 
         new Handler().postDelayed(() -> {
             if (db.appDao().tabUserIsEmpty())

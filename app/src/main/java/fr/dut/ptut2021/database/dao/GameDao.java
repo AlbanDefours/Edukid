@@ -28,21 +28,20 @@ public interface GameDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertWWHData(WordWithHoleData wordWithHoleStats);
 
-    @Query("SELECT MAX(dataId) FROM WordWithHoleData")
-    int getWWHMaxId();
-
     @Update
     void updateWWHData(WordWithHoleData wordWithHoleStats);
 
     @Query("UPDATE WordWithHoleData SET lastUsed = 0 WHERE userId = :userId AND lastUsed = 1")
     void updateAllWWHDataLastUsed(int userId);
 
+    @Query("SELECT max(difficulty) FROM WordWithHoleData WHERE userId = :userId")
+    int getWWHDataMaxDifficulty(int userId);
+
     @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId AND result = :result")
-    WordWithHoleData getWWHDataByData(int userId, String result);
+    WordWithHoleData getWWHDataByResult(int userId, String result);
 
     @Query("SELECT * FROM WordWithHoleData WHERE userId = :userId")
     List<WordWithHoleData> getAllWWHData(int userId);
-
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     default List<String> getAllWWHDataLastUsed(List<WordWithHoleData> listData, int difficulty, int lastUsed) {
@@ -51,7 +50,6 @@ public interface GameDao {
         List<WordWithHoleData> listSortLose = new ArrayList<>();
         List<WordWithHoleData> listSortWin = new ArrayList<>();
         List<WordWithHoleData> listNeverUsed = new ArrayList<>();
-
 
         for (int i = 0; i < listData.size(); i++) {
             if (listData.get(i).getLoseStreak() > 0)
@@ -84,30 +82,53 @@ public interface GameDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertPWSData(PlayWithSoundData playWithSoundData);
 
-    @Query("SELECT MAX(dataId) FROM PlayWithSoundData")
-    int getPWSMaxId();
-
     @Update
     void updatePWSData(PlayWithSoundData playWithSoundData);
 
     @Query("UPDATE PlayWithSoundData SET lastUsed = 0 WHERE userId = :userId AND lastUsed = 1")
     void updateAllPWSDataLastUsed(int userId);
 
-    @Query("SELECT * FROM PlayWithSoundData WHERE userId = :userId AND result = :result")
+    @Query("SELECT * FROM PlayWithSoundData WHERE userId = :userId AND result LIKE :result")
     PlayWithSoundData getPWSDataByResult(int userId, String result);
 
-    @Query("SELECT * FROM PlayWithSoundData WHERE userId = :userId AND theme = :theme AND difficulty = :difficulty")
-    List<PlayWithSoundData> getAllPWSDataByTheme(int userId, String theme, int difficulty);
+    @Query("SELECT * FROM PlayWithSoundData WHERE userId = :userId AND theme LIKE :themeName")
+    List<PlayWithSoundData> getAllPWSDataByTheme(int userId, String themeName);
 
-    default List<Integer> getAllPWSDataLastUsed(List<PlayWithSoundData> listData, int lastUsed) {
-        List<Integer> listInt = new ArrayList<>();
+    @Query("SELECT * FROM PlayWithSoundData WHERE userId = :userId AND theme LIKE :themeName AND difficulty = :difficulty")
+    List<PlayWithSoundData> getAllPWSDataByThemeAndDifficulty(int userId, String themeName, int difficulty);
 
-            for (int i = 0; i < listData.size(); i++) {
-                if (listData.get(i).getLastUsed() == lastUsed) {
-                    listInt.add(i);
-                }
+    @Query("SELECT max(difficulty) FROM PlayWithSoundData WHERE userId = :userId AND theme LIKE :themeName")
+    int getPWSDataMaxDifficulty(int userId, String themeName);
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    default List<String> getAllPWSDataLastUsed(List<PlayWithSoundData> listData, int difficulty, int lastUsed) {
+        List<String> listRes = new ArrayList<>();
+        List<PlayWithSoundData> listDataSort = new ArrayList<>();
+        List<PlayWithSoundData> listSortLose = new ArrayList<>();
+        List<PlayWithSoundData> listSortWin = new ArrayList<>();
+        List<PlayWithSoundData> listNeverUsed = new ArrayList<>();
+
+        for (int i = 0; i < listData.size(); i++) {
+            if (listData.get(i).getLoseStreak() > 0)
+                listSortLose.add(listData.get(i));
+            else if (listData.get(i).getWinStreak() > 0)
+                listSortWin.add(listData.get(i));
+            else
+                listNeverUsed.add(listData.get(i));
+        }
+        listSortLose.sort(Comparator.comparing(PlayWithSoundData::getLoseStreak).reversed());
+        listSortWin.sort(Comparator.comparing(PlayWithSoundData::getLoseStreak));
+
+        listDataSort.addAll(listSortLose);
+        listDataSort.addAll(listNeverUsed);
+        listDataSort.addAll(listSortWin);
+
+        for (int i = 0; i < listDataSort.size(); i++) {
+            if (listDataSort.get(i).getLastUsed() == lastUsed && listDataSort.get(i).getDifficulty() == difficulty) {
+                listRes.add(listDataSort.get(i).getResult());
             }
-        return  listInt;
+        }
+        return listRes;
     }
 
     @Query("DELETE FROM PlayWithSoundData WHERE userId = :userId")
