@@ -33,8 +33,6 @@ import fr.dut.ptut2021.models.Point;
 import fr.dut.ptut2021.models.Symbol;
 import fr.dut.ptut2021.models.database.game.Card;
 import fr.dut.ptut2021.models.database.game.DrawOnItData;
-import fr.dut.ptut2021.models.database.game.PlayWithSoundData;
-import fr.dut.ptut2021.models.database.game.WordWithHoleData;
 import fr.dut.ptut2021.models.database.log.GameLog;
 import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
