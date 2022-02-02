@@ -32,8 +32,13 @@ import fr.dut.ptut2021.models.DataSymbol;
 import fr.dut.ptut2021.models.Point;
 import fr.dut.ptut2021.models.Symbol;
 import fr.dut.ptut2021.models.database.game.Card;
+import fr.dut.ptut2021.models.database.game.DrawOnItData;
+import fr.dut.ptut2021.models.database.game.PlayWithSoundData;
+import fr.dut.ptut2021.models.database.game.WordWithHoleData;
+import fr.dut.ptut2021.models.database.log.GameLog;
 import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
+import fr.dut.ptut2021.utils.MySharedPreferences;
 import fr.dut.ptut2021.utils.MyVibrator;
 
 public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener {
@@ -56,8 +61,10 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
 
     private android.graphics.Point p;
 
+    private int userId;
+    private String themeName;
 
-    float tolerance, toleranceLarge;
+    private float tolerance, toleranceLarge;
 
     private Symbol s;
 
@@ -93,6 +100,38 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         return tab;
     }
 
+    private void initDatabase() {
+        db = CreateDatabase.getInstance(DrawOnIt.this);
+
+        String[] alphabetTab = getResources().getStringArray(R.array.alphabet);
+        for (String letter : alphabetTab)
+            db.gameDao().insertDOIData(new DrawOnItData(userId, letter, "Lettres", 1));
+
+        for (int i = 1; i < 10; i++)
+            db.gameDao().insertDOIData(new DrawOnItData(userId, Integer.toString(i), "Chiffres", 1));
+    }
+
+    private void getSharedPref() {
+        userId = MySharedPreferences.getUserId(this);
+        themeName = MySharedPreferences.getThemeName(this);
+    }
+
+    private void updateGameData() {
+        DrawOnItData data = db.gameDao().getDOIData(userId, carte[numGame].getCardValue());
+        data.setLastUsed(1);
+
+        if (numEssai == 0) {
+            data.setWin(data.getWin() + 1);
+            data.setWinStreak(data.getWinStreak() + 1);
+            data.setLoseStreak(0);
+        } else {
+            data.setLose(data.getLose() + 1);
+            data.setLoseStreak(data.getLoseStreak() + 1);
+            data.setWinStreak(0);
+        }
+        db.gameDao().updateDOIData(data);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,7 +139,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         
         dm = getResources().getDisplayMetrics();
 
-        tolerance = dm.widthPixels/15; // essaye avec 18
+        tolerance = dm.widthPixels/15;
 
         toleranceLarge = tolerance * 2;
 
@@ -109,8 +148,10 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
 
         carte = new Card[NBGAME];
 
-
         db = CreateDatabase.getInstance(DrawOnIt.this);
+
+        getSharedPref();
+        initDatabase();
 
         int[] numRand = new int[NBGAME];
 
@@ -328,17 +369,21 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                         Log.e("axel", "jeu terminé !!!");
 
                         Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
+                        int stars;
                         if(((NBESSAI*NBGAME)/3.0)*2.0 < nbErreur){
-                            intent.putExtra("starsNumber", 1);
+                            stars = 1;
                         }else if(((NBESSAI*NBGAME)/3.0) > nbErreur){
-                            intent.putExtra("starsNumber", 3);
+                            stars = 3;
                         }else{
-                            intent.putExtra("starsNumber", 2);
+                            stars = 2;
                         }
+                        addGameLogInDb(stars);
+                        intent.putExtra("starsNumber", stars);
                         startActivity(intent);
                         finish();
 
                     } else if (next) {
+                        updateGameData();
                         nextSymbol();
                         if(error){
                             MyMediaPlayer.playSound(this, R.raw.wrong_answer);
@@ -373,6 +418,11 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         return true;
     }
 
+    private void addGameLogInDb(int stars) {
+        GameLog gameLog = new GameLog(MySharedPreferences.getGameId(this), -1, userId, stars, db.gameDao().getDOIDataMaxDif(userId, carte[numGame].getCardValue()));
+        db.gameLogDao().insertGameLog(gameLog);
+    }
+
     public void reDraw(){
 
         Log.e("debug", "reDraw");
@@ -396,8 +446,6 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         paint.setStrokeWidth(0.15f*largeur);
         paint.setStyle(Paint.Style.FILL);
 
-        Point p, p2;
-        float deltaX, deltaY, m, b, m2, b2, x1_1, x1_2, x2_1, x2_2;
         paint.setColor(Color.RED);
         paint.setStrokeWidth(10);
         double tailleFleche = 0;
