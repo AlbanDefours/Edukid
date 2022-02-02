@@ -396,8 +396,6 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         paint.setStrokeWidth(0.15f*largeur);
         paint.setStyle(Paint.Style.FILL);
 
-        Point p, p2;
-        float deltaX, deltaY, m, b, m2, b2, x1_1, x1_2, x2_1, x2_2;
         paint.setColor(Color.RED);
         paint.setStrokeWidth(10);
         double tailleFleche = 0;
