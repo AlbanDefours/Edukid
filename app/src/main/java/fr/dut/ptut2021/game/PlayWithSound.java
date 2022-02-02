@@ -307,7 +307,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
     private void verifyAnswer(Button answer) {
         if (answer.getText() == listChooseResult.get(gamePlayed - 1)) {
-            if (gamePlayed > MAX_GAME_PLAYED)
+            if (gamePlayed+1 == MAX_GAME_PLAYED)
                 haveWin = true;
             answer.setBackgroundColor(Color.GREEN);
             replay();

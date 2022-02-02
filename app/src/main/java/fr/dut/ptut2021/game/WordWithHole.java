@@ -389,7 +389,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private void verifyAnswer(Button answer, int numAnswer) {
         MyVibrator.vibrate(WordWithHole.this, 35);
         if (answer.getText() == goodAnswer) {
-            if (gamePlayed > MAX_GAME_PLAYED)
+            if (gamePlayed+1 == MAX_GAME_PLAYED)
                 haveWin = true;
             answer.setBackgroundColor(Color.GREEN);
             replay();

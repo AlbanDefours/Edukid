@@ -52,6 +52,15 @@ public class UserMenu extends AppCompatActivity {
 
                     @Override
                     public void onLongItemClick(View view, int position) {
+                        MyVibrator.vibrate(UserMenu.this, 35);
+                        Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
+                        intent.putExtra("userName", listUser.get(position).getUserName());
+                        intent.putExtra("userId", listUser.get(position).getUserId());
+                        intent.putExtra("userImage", listUser.get(position).getUserImage());
+                        intent.putExtra("userImageType", listUser.get(position).getUserImageType());
+                        intent.putExtra("shortcut",true);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                     }
                 })
         );

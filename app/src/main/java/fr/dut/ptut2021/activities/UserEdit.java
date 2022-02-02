@@ -10,9 +10,11 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -34,6 +36,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
@@ -45,6 +49,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
 
     private TextView title;
     private ImageView userAvatar;
+    private boolean shortcut = false;
     private CreateDatabase db = null;
     private Button valid, cancel, delete, inport;
     private TextInputEditText textField_userName;
@@ -55,19 +60,29 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private static final int GALLERY_REQUEST = 30, MY_STORAGE_PERMISSION_CODE = 300;
 
     private int cpt = 0;
-    private final int[] tableauImage = {R.drawable.user_image_a, R.drawable.user_image_b, R.drawable.user_image_c, R.drawable.user_image_d};
+    private List<String> tabImage = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_edit);
 
-        imageLocation = String.valueOf(tableauImage[0]);
+        addingAvatar();
+        Log.e("WILLY", "" + tabImage.get(0).toString());
+        Log.e("WILLY", "" + String.valueOf(tabImage.get(0)));
+        imageLocation = String.valueOf(tabImage.get(0));
 
         getDb();
         initializeLayout();
         checkIfAddOrUpdateUser();
         addOnClickListener();
+    }
+
+    private void addingAvatar() {
+        tabImage.add(String.valueOf(R.drawable.user_image_a));
+        tabImage.add(String.valueOf(R.drawable.user_image_b));
+        tabImage.add(String.valueOf(R.drawable.user_image_c));
+        tabImage.add(String.valueOf(R.drawable.user_image_d));
     }
 
     private void getDb() {
@@ -92,10 +107,13 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
             isAddUser = bundle.getBoolean("addUser", false);
             if (!isAddUser) {
                 getUserAttribute(bundle);
-                findCurrentImageUser();
+                setImageAvatar();
                 fillInFields();
                 delete.setVisibility(View.VISIBLE);
                 title.setText("Modification du profil de " + bundle.getString("userName", ""));
+            } else if (db.appDao().getAllUsers().isEmpty()) {
+                title.setText("Créer votre première session");
+                userAvatar.setImageResource(R.drawable.user_image_a);
             } else {
                 title.setText("Créer votre session");
                 userAvatar.setImageResource(R.drawable.user_image_a);
@@ -106,22 +124,18 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private void getUserAttribute(Bundle bundle) {
         userName = bundle.getString("userName", "");
         userId = bundle.getInt("userId", 0);
+        shortcut = bundle.getBoolean("shortcut", false);
         imageTmp = bundle.getString("userImage", String.valueOf(R.drawable.user_image_a));
         imageLocation = imageTmp;
         userImageType = bundle.getInt("userImageType", -1);
     }
 
-    private void findCurrentImageUser() {
+    private void setImageAvatar() {
         if (userImageType == 0) {
-            for (int i = 0; i < tableauImage.length; i++) {
-                if (tableauImage[i] == Integer.parseInt(imageTmp)) {
-                    cpt = i;
-                    userAvatar.setImageResource(tableauImage[cpt]);
-                }
-            }
+            userAvatar.setImageResource(Integer.parseInt(tabImage.get(cpt)));
         } else {
             try {
-                File f = new File(imageTmp);
+                File f = new File(tabImage.get(cpt));
                 Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
                 userAvatar.setImageBitmap(b);
             } catch (FileNotFoundException e) {
@@ -230,7 +244,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(mypath);
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 80, fos);
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 90, fos);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -315,8 +329,8 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         switch (v.getId()) {
             case R.id.userAvatar_editPage:
                 cpt = ++cpt % 4;
-                imageLocation = String.valueOf(tableauImage[cpt]);
-                userAvatar.setImageResource(tableauImage[cpt]);
+                imageLocation = String.valueOf(tabImage.get(cpt));54
+                userAvatar.setImageDrawable(tabImage.get(cpt));
                 break;
 
             case R.id.buttonValider_userEditPage:
@@ -326,6 +340,8 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
             case R.id.buttonCancel_userEditPage:
                 if (tabUserIsEmpty)
                     showMesageDialog("Voulez-vous quitter ?", "Vous n'avez aucune session, êtes vous sur de vouloir quitter ?", false);
+                else if (shortcut)
+                    finish();
                 else
                     GlobalUtils.startPage(UserEdit.this, "UserResume", true, true);
                 break;
@@ -379,5 +395,12 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     @Override
     public void onBackPressed() {
         GlobalUtils.startPage(UserEdit.this, "UserResume", true, true);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        if (shortcut)
+            overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
 }

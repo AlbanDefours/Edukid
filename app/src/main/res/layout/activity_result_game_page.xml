@@ -45,8 +45,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
         android:text="Félicitations !!"
+        android:fontFamily="@font/magimt"
         android:textAlignment="center"
-        android:textSize="35sp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="42sp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout

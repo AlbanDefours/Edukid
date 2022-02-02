@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -49,7 +50,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     private int subCat;
     private StateProgressBar stateProgressBar;
     private StateProgressBar stateProgressBarLock;
-    private boolean isWin=false, haveWin = false;
+    private boolean isWin=false, haveWin = false; //TODO a changer
     private ArrayList<Integer> fonts;
 
     private void shuffle(){
@@ -226,7 +227,6 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                 if(!isClicked) {
                     //v.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttoncolor));
                     returnCard(position, memoryAdapter);
-
                     isWin();
                 }
             }
