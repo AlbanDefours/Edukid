@@ -50,6 +50,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     private StateProgressBar stateProgressBar;
     private StateProgressBar stateProgressBarLock;
     private boolean isWin=false;
+    private int nbAttempt = 0;
     private ArrayList<Integer> fonts;
 
     private void shuffle(){
@@ -75,6 +76,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                     idLastCardReturn = idCard;
                     isClicked=false;
                 } else {
+                    nbAttempt++;
                     new Handler().postDelayed(() -> {
                         if (idCard != idLastCardReturn && listMemoryCard.get(idLastCardReturn).getValue().toUpperCase(Locale.ROOT).equals(listMemoryCard.get(idCard).getValue().toUpperCase(Locale.ROOT)) ) {
                             MyMediaPlayer.playSound(this,R.raw.correct_answer);
@@ -103,19 +105,13 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         }
         if(!isWin) {
             isWin = true;
-            int ptMalus = 0;
-            for (int i = 0; i < listMemoryCard.size(); i++) {
-                if (listMemoryCard.get(i).getNbReturn() > 0) {
-                    ptMalus += listMemoryCard.get(i).getNbReturn() - 1;
-                }
-            }
             MemoryData memoData = db.gameDao().getMemoryData(userId, category, subCat);
             int nbStar;
-            if (ptMalus <= 2) {
+            if (nbAttempt <= Math.ceil(0.75*(getNbCard()*2))) {
                 nbStar = 3;
                 memoData.setWinStreak(db.gameDao().getMemoryData(userId, category, subCat).getWinStreak() + 1);
                 memoData.setLoseStreak(0);
-            } else if (ptMalus <= 5) {
+            } else if (nbAttempt <= Math.ceil((getNbCard()*2))) {
                 nbStar = 2;
                 memoData.setWinStreak(0);
                 memoData.setLoseStreak(0);

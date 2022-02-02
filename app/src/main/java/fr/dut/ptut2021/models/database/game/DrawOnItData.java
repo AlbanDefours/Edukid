@@ -8,15 +8,30 @@ public class DrawOnItData {
 
     private int userId;
     @NonNull
-    private String draw;
+    private String draw, themeName;
     private long touchTime;
-    private boolean lastUsed;
+    private int difficulty, win, winStreak, lose, loseStreak, lastUsed;
 
-    public DrawOnItData(int userId, @NonNull String draw) {
+    public DrawOnItData(int userId, @NonNull String draw, String themeName, int difficulty) {
         this.userId = userId;
         this.draw = draw;
         this.touchTime = 0;
-        this.lastUsed = false;
+        this.difficulty = difficulty;
+        this.win = 0;
+        this.winStreak = 0;
+        this.lose = 0;
+        this.loseStreak = 0;
+        this.lastUsed = -1;
+        this.themeName = themeName;
+    }
+
+    @NonNull
+    public String getThemeName() {
+        return themeName;
+    }
+
+    public void setThemeName(@NonNull String themeName) {
+        this.themeName = themeName;
     }
 
     public int getUserId() {
@@ -41,10 +56,51 @@ public class DrawOnItData {
         this.touchTime = touchTime;
     }
 
-    public boolean isLastUsed() {
+    public int getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public int getWin() {
+        return win;
+    }
+
+    public void setWin(int win) {
+        this.win = win;
+    }
+
+    public int getWinStreak() {
+        return winStreak;
+    }
+
+    public void setWinStreak(int winStreak) {
+        this.winStreak = winStreak;
+    }
+
+    public int getLose() {
+        return lose;
+    }
+
+    public void setLose(int lose) {
+        this.lose = lose;
+    }
+
+    public int getLoseStreak() {
+        return loseStreak;
+    }
+
+    public void setLoseStreak(int loseStreak) {
+        this.loseStreak = loseStreak;
+    }
+
+    public int getLastUsed() {
         return lastUsed;
     }
-    public void setLastUsed(boolean lastUsed) {
+
+    public void setLastUsed(int lastUsed) {
         this.lastUsed = lastUsed;
     }
 }
