@@ -526,7 +526,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     @Override
     public void onStateItemClick(StateProgressBar stateProgressBar, StateItem stateItem, int stateNumber, boolean isCurrentState) {
         if(stateProgressBar == this.stateProgressBar){
-            if(stateNumber<=5){
+            if(stateNumber<=difficultyMax){
               MemoryData memoData =   db.gameDao().getMemoryData(userId,category,subCat);
               memoData.setDifficulty(stateNumber);
               db.gameDao().updateMemoryData(memoData);
