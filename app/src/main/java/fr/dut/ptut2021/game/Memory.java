@@ -201,7 +201,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         stateProgressBar = findViewById(R.id.progressBarMemory);
         stateProgressBarLock = findViewById(R.id.progressBarMemoryLock);
         stateProgressBar.setCurrentStateNumber(getStateNumberDifficulty(difficulty));
-        stateProgressBarLock.setCurrentStateNumber(getStateNumberDifficulty(/*difficultyMax*/5));
+        stateProgressBarLock.setCurrentStateNumber(getStateNumberDifficulty(difficultyMax));
         stateProgressBar.setOnStateItemClickListener(this);
     }
 
