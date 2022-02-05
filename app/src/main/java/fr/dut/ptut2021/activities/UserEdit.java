@@ -317,6 +317,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                     imageLocation = saveToInternalStorage(bitmap);
                     tabImageType.add(GALLERY_REQUEST);
                     tabImage.add(imageLocation);
+                    cpt = tabImage.size()-1;
                     setImageAvatar();
                     break;
 
@@ -329,6 +330,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                     imageLocation = saveToInternalStorage(photo);
                     tabImageType.add(CAMERA_REQUEST);
                     tabImage.add(imageLocation);
+                    cpt = tabImage.size()-1;
                     setImageAvatar();
                     break;
             }
