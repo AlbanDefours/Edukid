@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Locale;
 
 import fr.dut.ptut2021.R;
+import fr.dut.ptut2021.activities.SubGameMenu;
 import fr.dut.ptut2021.adapters.MemoryAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.MemoryCard;
@@ -58,6 +59,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     private boolean isWin=false;
     private int nbAttempt = 0;
     private ArrayList<Integer> fonts;
+    private static boolean difficultyIsChanged=false;
 
     private void shuffle(){
         Collections.shuffle(listMemoryCard);
@@ -131,33 +133,11 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                 Log.e("memory", "WinStreak : " + db.gameDao().getMemoryData(userId, category, subCat).getWinStreak());
                 Log.e("memory", "LoseStreak : " + db.gameDao().getMemoryData(userId, category, subCat).getLoseStreak());
             }
-            if(changeDifficulty()) {
-                final Dialog dialog = new Dialog(Memory.this);
-                dialog.setContentView(R.layout.custom_alert_dialog);
-                Button dialogButton = (Button) dialog.findViewById(R.id.buttonCustomAlertDialog);
-                TextView text = dialog.findViewById(R.id.TextCustomAlertDialog);
-                if(difficulty+1!=4)
-                    text.setText("Tu viens de débloquer la difficulté " + (difficulty + 1));
-                else
-                    text.setText("Tu viens de débloquer la difficulté " + (difficulty + 1)+"\nEt le niveau "+(subCat+1));
-                // if button is clicked, close the custom dialog
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialogButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-
-                        addGameLog(nbStar);
-                        GlobalUtils.startResultPage(Memory.this, nbStar);
-                    }
-                });
-                dialog.show();
-            }else{
+            changeDifficulty();
                 addGameLog(nbStar);
                 new Handler().postDelayed(() -> {
                     GlobalUtils.startResultPage(Memory.this, nbStar);
                 }, 2000);
-            }
             return true;
         }
         return false;
@@ -228,6 +208,43 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         initProgressBar();
         initCard(getNbCard());
 
+        if(MySharedPreferences.getSharedPreferencesBoolean(Memory.this, "Memory"+category+"niv"+subCat,false)) {
+            MySharedPreferences.setSharedPreferencesBoolean(Memory.this, "Memory"+category+"niv"+subCat, false);
+            MySharedPreferences.commit();
+            final Dialog dialog = new Dialog(Memory.this);
+            dialog.setContentView(R.layout.custom_alert_dialog);
+            Button dialogButton = (Button) dialog.findViewById(R.id.buttonCustomAlertDialog);
+            TextView text = dialog.findViewById(R.id.TextCustomAlertDialog);
+            if (difficulty != 4 )
+                text.setText("Tu viens de débloquer la difficulté " + (difficulty));
+            else if(subCat!=4) {
+                text.setText("Tu viens de débloquer la difficulté " + (difficulty) + "\nEt le niveau " + (subCat + 1));
+
+                Button changeNiv = dialog.findViewById(R.id.buttonSuiteCustomAlertDialog);
+                changeNiv.setText("Passer au Niveau "+(subCat + 1));
+                changeNiv.setVisibility(View.VISIBLE);
+                changeNiv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MySharedPreferences.setSharedPreferencesString(Memory.this, "subGameName", "Niveau "+(subCat + 1));
+                        MySharedPreferences.setSharedPreferencesInt(Memory.this, "subGameId", (subCat));
+                        MySharedPreferences.commit();
+                        MyVibrator.vibrate(Memory.this, 35);
+                        GlobalUtils.startGame(Memory.this, "SubMemory", true, false);
+                    }
+                });
+            }
+            // if button is clicked, close the custom dialog
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialogButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MyVibrator.vibrate(Memory.this, 35);
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
 
         shuffle();
 
@@ -390,7 +407,8 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                 db.gameDao().increaseMemoryDataMaxDifficulty(userId,category,subCat);
                 db.gameDao().resetAllMemoryDataStreak(userId, category, subCat);
                 db.gameDao().resetAllMemoryDataCardUsed(userId, category, subCat);
-
+                MySharedPreferences.setSharedPreferencesBoolean(Memory.this, "Memory"+category+"niv"+subCat, true);
+                MySharedPreferences.commit();
                 return true;
             }
         }

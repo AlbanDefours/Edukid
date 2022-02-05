@@ -61,6 +61,17 @@
             android:textSize="20sp" />
 
         <Button
+            android:id="@+id/buttonSuiteCustomAlertDialog"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="60dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="5dp"
+            android:text=""
+            android:textSize="20sp" />
+
+        <Button
             android:id="@+id/buttonCustomAlertDialog"
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -68,7 +79,8 @@
             android:layout_marginEnd="30dp"
             android:layout_marginBottom="15dp"
             android:text="Continuer"
-            android:textSize="25sp" />
+            android:textSize="20sp" />
+
 
     </LinearLayout>
 
