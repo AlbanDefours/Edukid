@@ -493,9 +493,9 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     @SuppressLint("NonConstantResourceId")
     @Override
-    public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (spinnerRefresh) {
-            switch (v.getId()) {
+            switch (parent.getId()) {
                 case R.id.spinner_game_stats:
                     updateSpinnerDifficulty();
                     updateGameAverage();
@@ -503,7 +503,8 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
                 case R.id.spinner_difficulty_stats:
                     updateGameAverage();
                     break;
-
+                default:
+                    break;
             }
             spinnerRefresh = false;
         }

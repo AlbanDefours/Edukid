@@ -148,27 +148,12 @@ public interface GameDao {
     @Query("SELECT * FROM DrawOnItData WHERE userId = :userId AND draw = :draw")
     DrawOnItData getDOIData(int userId, String draw);
 
+    @Query("SELECT difficulty FROM DrawOnItData WHERE userId = :userId AND draw = :draw")
+    int getDOIDataMaxDif(int userId, String draw);
+
     @Query("SELECT * FROM DrawOnItData WHERE userId = :userId")
     List<DrawOnItData> getAllDOIData(int userId);
 
-    default List<Integer> getAllDOIDataLastUsed(List<DrawOnItData> listData, boolean lastUsed) {
-        List<Integer> listInt = new ArrayList<>();
-        if (lastUsed) {
-            for (int i = 0; i < listData.size(); i++) {
-                if (listData.get(i).isLastUsed()) {
-                    listInt.add(i);
-                }
-            }
-        }
-        else {
-            for (int i = 0; i < listData.size(); i++) {
-                if (!listData.get(i).isLastUsed()) {
-                    listInt.add(i);
-                }
-            }
-        }
-        return  listInt;
-    }
 
     @Query("DELETE FROM DrawOnItData WHERE userId = :userId")
     void deleteDOIDataByUser(int userId);

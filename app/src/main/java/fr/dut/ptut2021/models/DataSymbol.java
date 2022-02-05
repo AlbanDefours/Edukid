@@ -1,5 +1,10 @@
 package fr.dut.ptut2021.models;
 
+import android.accessibilityservice.FingerprintGestureController;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.widget.ImageView;
+
 import java.util.ArrayList;
 
 import fr.dut.ptut2021.models.Point;
@@ -7,25 +12,33 @@ import fr.dut.ptut2021.models.Point;
 public final class DataSymbol {
 
     public static ArrayList<Point> pts = new ArrayList<>();
-    public static int[] nbTrait = new int[10];
+    public static ArrayList<ArrayList<Integer>> nbTrait = new ArrayList<>();
 
     public static ArrayList<Point> getPts(){
         return pts;
     }
 
-    public static void initPts(int num, int width, int height) {
+    public static void initPts(int num, float width, float height) {
         pts.clear();
+        nbTrait.clear();
 
-        nbTrait[0] = -1;
-        nbTrait[1] = -1;
-        nbTrait[2] = -1;
-        nbTrait[3] = -1;
-        nbTrait[4] = 10;
-        nbTrait[5] = -1;
-        nbTrait[6] = -1;
-        nbTrait[7] = -1;
-        nbTrait[8] = -1;
-        nbTrait[9] = -1;
+        for(int i = 0; i < 10; i++){
+            nbTrait.add(new ArrayList<Integer>());
+        }
+
+        nbTrait.get(1).add(7);
+        nbTrait.get(2).add(8);
+        nbTrait.get(3).add(11);
+        nbTrait.get(4).add(4);
+        nbTrait.get(4).add(6);
+        nbTrait.get(5).add(15);
+        nbTrait.get(6).add(17);
+        nbTrait.get(7).add(2);
+        nbTrait.get(8).add(13);
+        nbTrait.get(9).add(15);
+
+        nbTrait.get(4).set(0, 4);
+        nbTrait.get(4).add(6);
 
         switch (num){
             case 1:
@@ -125,7 +138,7 @@ public final class DataSymbol {
                 pts.add(new Point(0.42235893, 0.7002789));
                 break;
             case 8:
-                pts.add(new Point(0.49213693, 0.27905194));
+                pts.add(new Point(0.46213693, 0.27905194));
                 pts.add(new Point(0.3894542, 0.29364687));
                 pts.add(new Point(0.31117485, 0.35119897));
                 pts.add(new Point(0.3572063, 0.4156376));
@@ -140,7 +153,7 @@ public final class DataSymbol {
                 //pts.add(new Point(0.45790935, 0.4490867));
                 pts.add(new Point(0.61239594, 0.38612372));
                 pts.add(new Point(0.6445513, 0.31627417));
-                pts.add(new Point(0.53469014, 0.27544662));
+                pts.add(new Point(0.56469014, 0.28544662));
                 break;
             case 9:
                 pts.add(new Point(0.68270123, 0.32020935));
@@ -163,45 +176,18 @@ public final class DataSymbol {
         }
 
 
+        //densitydpi 480
+        //p.setX(((p.getX() * 1080) / 480) * width);
+        //p.setY(((p.getY() * 2032) / 480) * height);
+
         for(Point p : pts){
-            p.setX(p.getX()*width);
-            p.setY(p.getY()*height);
+            p.setX(((p.getX() * 1080.0) / 1080.0) * width);
+            p.setY(((p.getY() * 2032.0) / 2032.0) * height);
         }
 
     }
 
+    public static ArrayList<ArrayList<Integer>> getNbTrait() {
+        return nbTrait;
+    }
 }
-
-
-/* // chiffre 3
-
-*/
-
-
-/* chiffre 6
-
-*/
-
-/* //chiffre 2
-
-*/
-
-/* // chiffre 8
-
-*/
-
-/* // chiffre 4   le 10eme point est les dubut du 2eme trait
-
- */
-
-/* // chiifre 1
-
- */
-
-/* // chiffre 7
-
- */
-
-/* // chiffre 9
-
- */

@@ -1,6 +1,9 @@
 
 package fr.dut.ptut2021.game;
 
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -8,7 +11,10 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,6 +27,7 @@ import java.util.Collections;
 import java.util.Locale;
 
 import fr.dut.ptut2021.R;
+import fr.dut.ptut2021.activities.SubGameMenu;
 import fr.dut.ptut2021.adapters.MemoryAdapter;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.MemoryCard;
@@ -51,7 +58,9 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     private StateProgressBar stateProgressBar;
     private StateProgressBar stateProgressBarLock;
     private boolean isWin=false, haveWin = false; //TODO a changer
+    private int nbAttempt = 0;
     private ArrayList<Integer> fonts;
+    private static boolean difficultyIsChanged=false;
 
     private void shuffle(){
         Collections.shuffle(listMemoryCard);
@@ -76,6 +85,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                     idLastCardReturn = idCard;
                     isClicked=false;
                 } else {
+                    nbAttempt++;
                     new Handler().postDelayed(() -> {
                         if (idCard != idLastCardReturn && listMemoryCard.get(idLastCardReturn).getValue().toUpperCase(Locale.ROOT).equals(listMemoryCard.get(idCard).getValue().toUpperCase(Locale.ROOT)) ) {
                             MyMediaPlayer.playSound(this,R.raw.correct_answer);
@@ -104,19 +114,13 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         }
         if(!isWin) {
             isWin = true;
-            int ptMalus = 0;
-            for (int i = 0; i < listMemoryCard.size(); i++) {
-                if (listMemoryCard.get(i).getNbReturn() > 0) {
-                    ptMalus += listMemoryCard.get(i).getNbReturn() - 1;
-                }
-            }
             MemoryData memoData = db.gameDao().getMemoryData(userId, category, subCat);
             int nbStar;
-            if (ptMalus <= 2) {
+            if (nbAttempt <= Math.ceil(0.75*(getNbCard()*2))) {
                 nbStar = 3;
                 memoData.setWinStreak(db.gameDao().getMemoryData(userId, category, subCat).getWinStreak() + 1);
                 memoData.setLoseStreak(0);
-            } else if (ptMalus <= 5) {
+            } else if (nbAttempt <= Math.ceil((getNbCard()*2))) {
                 nbStar = 2;
                 memoData.setWinStreak(0);
                 memoData.setLoseStreak(0);
@@ -131,13 +135,10 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                 Log.e("memory", "LoseStreak : " + db.gameDao().getMemoryData(userId, category, subCat).getLoseStreak());
             }
             changeDifficulty();
-
-        addGameLog(nbStar);
-
-            new Handler().postDelayed(() -> {
-                GlobalUtils.startResultPage(Memory.this, nbStar);
-            }, 2000);
-
+                addGameLog(nbStar);
+                new Handler().postDelayed(() -> {
+                    GlobalUtils.startResultPage(Memory.this, nbStar);
+                }, 2000);
             return true;
         }
         return false;
@@ -181,7 +182,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         stateProgressBar = findViewById(R.id.progressBarMemory);
         stateProgressBarLock = findViewById(R.id.progressBarMemoryLock);
         stateProgressBar.setCurrentStateNumber(getStateNumberDifficulty(difficulty));
-        stateProgressBarLock.setCurrentStateNumber(getStateNumberDifficulty(/*difficultyMax*/5));
+        stateProgressBarLock.setCurrentStateNumber(getStateNumberDifficulty(difficultyMax));
         stateProgressBar.setOnStateItemClickListener(this);
     }
 
@@ -208,6 +209,43 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         initProgressBar();
         initCard(getNbCard());
 
+        if(MySharedPreferences.getSharedPreferencesBoolean(Memory.this, "Memory"+category+"niv"+subCat,false)) {
+            MySharedPreferences.setSharedPreferencesBoolean(Memory.this, "Memory"+category+"niv"+subCat, false);
+            MySharedPreferences.commit();
+            final Dialog dialog = new Dialog(Memory.this);
+            dialog.setContentView(R.layout.custom_alert_dialog);
+            Button dialogButton = (Button) dialog.findViewById(R.id.buttonCustomAlertDialog);
+            TextView text = dialog.findViewById(R.id.TextCustomAlertDialog);
+            if (difficulty != 4 )
+                text.setText("Tu viens de débloquer la difficulté " + (difficulty));
+            else if(subCat!=4) {
+                text.setText("Tu viens de débloquer la difficulté " + (difficulty) + "\nEt le niveau " + (subCat + 1));
+
+                Button changeNiv = dialog.findViewById(R.id.buttonSuiteCustomAlertDialog);
+                changeNiv.setText("Passer au Niveau "+(subCat + 1));
+                changeNiv.setVisibility(View.VISIBLE);
+                changeNiv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MySharedPreferences.setSharedPreferencesString(Memory.this, "subGameName", "Niveau "+(subCat + 1));
+                        MySharedPreferences.setSharedPreferencesInt(Memory.this, "subGameId", (subCat));
+                        MySharedPreferences.commit();
+                        MyVibrator.vibrate(Memory.this, 35);
+                        GlobalUtils.startGame(Memory.this, "SubMemory", true, false);
+                    }
+                });
+            }
+            // if button is clicked, close the custom dialog
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialogButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MyVibrator.vibrate(Memory.this, 35);
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
 
         shuffle();
 
@@ -355,7 +393,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     }
 
 
-    private void changeDifficulty(){
+    private boolean changeDifficulty(){
         if(difficulty==difficultyMax) {
             Log.e("memory","La difficulté est analysé");
             Log.e("memory","Nombre de carte en dessous de 3 : "+NbCardUsedLessThan(3));
@@ -369,8 +407,12 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                 db.gameDao().increaseMemoryDataMaxDifficulty(userId,category,subCat);
                 db.gameDao().resetAllMemoryDataStreak(userId, category, subCat);
                 db.gameDao().resetAllMemoryDataCardUsed(userId, category, subCat);
+                MySharedPreferences.setSharedPreferencesBoolean(Memory.this, "Memory"+category+"niv"+subCat, true);
+                MySharedPreferences.commit();
+                return true;
             }
         }
+        return false;
     }
 
     private int getNbCard(){
@@ -502,7 +544,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     @Override
     public void onStateItemClick(StateProgressBar stateProgressBar, StateItem stateItem, int stateNumber, boolean isCurrentState) {
         if(stateProgressBar == this.stateProgressBar){
-            if(stateNumber<=5){
+            if(stateNumber<=difficultyMax){
               MemoryData memoData =   db.gameDao().getMemoryData(userId,category,subCat);
               memoData.setDifficulty(stateNumber);
               db.gameDao().updateMemoryData(memoData);

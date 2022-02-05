@@ -33,7 +33,7 @@ import fr.dut.ptut2021.models.database.log.GameLog;
         DrawOnItData.class,
         MemoryData.class,
         MemoryDataCardCrossRef.class
-}, version = 8, exportSchema = false)
+}, version = 9, exportSchema = false)
 
 
 public abstract class CreateDatabase extends RoomDatabase {

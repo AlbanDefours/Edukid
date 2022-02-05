@@ -76,14 +76,14 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
         alphabetTab = getResources().getStringArray(R.array.alphabet);
         for (String letter : alphabetTab)
-            db.gameDao().insertPWSData(new PlayWithSoundData(userId, letter, "Lettres", 1, 0));
+            db.gameDao().insertPWSData(new PlayWithSoundData(userId, letter, "Lettres", 1));
 
         syllableTab = getResources().getStringArray(R.array.syllable);
         for (String syllable : syllableTab)
-            db.gameDao().insertPWSData(new PlayWithSoundData(userId, syllable, "Lettres", 2, 0));
+            db.gameDao().insertPWSData(new PlayWithSoundData(userId, syllable, "Lettres", 2));
 
         for (int i = 1; i < 10; i++)
-            db.gameDao().insertPWSData(new PlayWithSoundData(userId, Integer.toString(i), "Chiffres", 1, 0));
+            db.gameDao().insertPWSData(new PlayWithSoundData(userId, Integer.toString(i), "Chiffres", 1));
     }
 
     private void initializeLayout() {
