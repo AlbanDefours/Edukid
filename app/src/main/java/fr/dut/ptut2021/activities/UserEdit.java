@@ -10,11 +10,9 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -48,19 +46,17 @@ import fr.dut.ptut2021.utils.MyVibrator;
 public class UserEdit extends AppCompatActivity implements View.OnClickListener {
 
     private TextView title;
+    private String userName;
+    private int userId, cpt = 0;
     private ImageView userAvatar;
-    private boolean shortcut = false;
     private CreateDatabase db = null;
     private Button valid, cancel, delete, inport;
     private TextInputEditText textField_userName;
-    private String userName, imageLocation = null, imageTmp;
-    private int userId, userImageType = 0;
-    private boolean isAddUser = false, tabUserIsEmpty = false;
+    private boolean isAddUser = false, tabUserIsEmpty = false, shortcut = false;
     private static final int CAMERA_REQUEST = 20, MY_CAMERA_PERMISSION_CODE = 200;
     private static final int GALLERY_REQUEST = 30, MY_STORAGE_PERMISSION_CODE = 300;
-
-    private int cpt = 0;
     private List<String> tabImage = new ArrayList<>();
+    private List<Integer> tabImageType = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,10 +64,6 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         setContentView(R.layout.activity_user_edit);
 
         addingAvatar();
-        Log.e("WILLY", "" + tabImage.get(0).toString());
-        Log.e("WILLY", "" + String.valueOf(tabImage.get(0)));
-        imageLocation = String.valueOf(tabImage.get(0));
-
         getDb();
         initializeLayout();
         checkIfAddOrUpdateUser();
@@ -80,9 +72,13 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
 
     private void addingAvatar() {
         tabImage.add(String.valueOf(R.drawable.user_image_a));
+        tabImageType.add(0);
         tabImage.add(String.valueOf(R.drawable.user_image_b));
+        tabImageType.add(0);
         tabImage.add(String.valueOf(R.drawable.user_image_c));
+        tabImageType.add(0);
         tabImage.add(String.valueOf(R.drawable.user_image_d));
+        tabImageType.add(0);
     }
 
     private void getDb() {
@@ -121,17 +117,36 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
+    private void findImageActual(String imageName){
+        for (int i = 0; i < tabImage.size(); i++){
+            if(tabImage.get(i).equals(imageName))
+                cpt = i;
+        }
+    }
+
     private void getUserAttribute(Bundle bundle) {
-        userName = bundle.getString("userName", "");
         userId = bundle.getInt("userId", 0);
+        userName = bundle.getString("userName", "");
         shortcut = bundle.getBoolean("shortcut", false);
-        imageTmp = bundle.getString("userImage", String.valueOf(R.drawable.user_image_a));
-        imageLocation = imageTmp;
-        userImageType = bundle.getInt("userImageType", -1);
+        String imageName = bundle.getString("userImage", null);
+        addImageTabIfNotExist(imageName, bundle.getInt("userImageType", 30));
+        findImageActual(imageName);
+    }
+
+    public void addImageTabIfNotExist(String userImage, int userImageType){
+        boolean exist = false;
+        for (String s : tabImage){
+            if(s.equals(userImage))
+                exist = true;
+        }
+        if(!exist){
+            tabImage.add(userImage);
+            tabImageType.add(userImageType);
+        }
     }
 
     private void setImageAvatar() {
-        if (userImageType == 0) {
+        if (tabImageType.get(cpt) == 0) {
             userAvatar.setImageResource(Integer.parseInt(tabImage.get(cpt)));
         } else {
             try {
@@ -157,19 +172,14 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void createUser() {
-        if (imageLocation.indexOf(".jpg") > 0) {
-            userImageType = 30;
-        } else {
-            userImageType = 0;
-        }
         if (isAddUser && isDataCorrect()) {
-            db.appDao().insertUser(new User(textField_userName.getText().toString(), imageLocation, userImageType));
+            db.appDao().insertUser(new User(textField_userName.getText().toString(), tabImage.get(cpt), tabImageType.get(cpt)));
             startUserMenu();
         } else if (!isAddUser && isDataCorrect()) {
             User user = db.appDao().getUserById(userId);
             user.setUserName(textField_userName.getText().toString());
-            user.setUserImage(imageLocation);
-            user.setUserImageType(userImageType);
+            user.setUserImage(tabImage.get(cpt));
+            user.setUserImageType(tabImageType.get(cpt));
             db.appDao().updateUser(user);
             startUserMenu();
         } else if (!isDataCorrect())
@@ -205,7 +215,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     }
 
     private boolean isDataCorrect() {
-        return !textField_userName.getText().toString().isEmpty() && imageLocation != null;
+        return !textField_userName.getText().toString().isEmpty();
     }
 
     private void getPhotoFromGallery() {
@@ -295,7 +305,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                     Cursor cursor = getContentResolver().query(data.getData(), filePathColumn, null, null, null);
                     cursor.moveToFirst();
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    imageLocation = cursor.getString(columnIndex);
+                    String imageLocation = cursor.getString(columnIndex);
                     cursor.close();
                     Bitmap bitmap = BitmapFactory.decodeFile(imageLocation);
                     if (bitmap.getWidth() < bitmap.getHeight())
@@ -305,8 +315,9 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                     if (bitmap.getWidth() > 150)
                         bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, false);
                     imageLocation = saveToInternalStorage(bitmap);
-                    userImageType = GALLERY_REQUEST;
-                    userAvatar.setImageBitmap(bitmap);
+                    tabImageType.add(GALLERY_REQUEST);
+                    tabImage.add(imageLocation);
+                    setImageAvatar();
                     break;
 
                 case CAMERA_REQUEST:
@@ -316,8 +327,9 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                     else if (photo.getWidth() > photo.getHeight())
                         photo = Bitmap.createBitmap(photo, (photo.getWidth() - photo.getHeight()) / 2, 0, photo.getHeight(), photo.getHeight());
                     imageLocation = saveToInternalStorage(photo);
-                    userImageType = CAMERA_REQUEST;
-                    userAvatar.setImageBitmap(photo);
+                    tabImageType.add(CAMERA_REQUEST);
+                    tabImage.add(imageLocation);
+                    setImageAvatar();
                     break;
             }
     }
@@ -328,9 +340,8 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         MyVibrator.vibrate(UserEdit.this, 35);
         switch (v.getId()) {
             case R.id.userAvatar_editPage:
-                cpt = ++cpt % 4;
-                imageLocation = String.valueOf(tabImage.get(cpt));54
-                userAvatar.setImageDrawable(tabImage.get(cpt));
+                cpt = ++cpt % tabImage.size();
+                setImageAvatar();
                 break;
 
             case R.id.buttonValider_userEditPage:
