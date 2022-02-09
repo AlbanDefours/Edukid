@@ -10,10 +10,32 @@ import java.util.Locale;
 import fr.dut.ptut2021.game.PlayWithSound;
 
 public class MyTextToSpeech {
-    static TextToSpeech textToSpeech;
-    static Voice voice = null;
+    TextToSpeech textToSpeech;
+    Voice voice = null;
 
-    public static void speachText(Context context, String text) {
+    private static MyTextToSpeech instance;
+    public static MyTextToSpeech getInstance() {
+        if (instance == null) {
+            instance = new MyTextToSpeech();
+        }
+        return instance;
+    }
+
+//    public void init(Context context) {
+//        textToSpeech = new TextToSpeech(context, status -> {
+//            if (status != TextToSpeech.ERROR) {
+//                textToSpeech.setLanguage(Locale.FRANCE);
+//                for (Voice tmpVoice : textToSpeech.getVoices()) {
+//                    if (tmpVoice.getName().equals("fr-fr-x-fra-network")) {
+//                        voice = tmpVoice;
+//                        textToSpeech.setVoice(tmpVoice);
+//                    }
+//                }
+//            }
+//        });
+//    }
+
+    public void speachText(Context context, String text) {
         if (text.contains("Y") || text.contains("y") && context.getClass() == PlayWithSound.class)
             text = "Trouve la lettre igrec";
         String finalText = text;
@@ -30,7 +52,7 @@ public class MyTextToSpeech {
         });
     }
 
-    public static void initialiser(Context context) {
+    public void initialiser(Context context) {
         textToSpeech = new TextToSpeech(context, status -> {
             if (status != TextToSpeech.ERROR) {
                 textToSpeech.setLanguage(Locale.FRANCE);
@@ -44,7 +66,7 @@ public class MyTextToSpeech {
         });
     }
 
-    public static void stop(Context context) {
+    public void stop(Context context) {
         if (textToSpeech != null) {
             speachText(context, "");
         }

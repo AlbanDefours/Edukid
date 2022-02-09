@@ -122,7 +122,7 @@ public class GlobalUtils {
     }
 
     public static void stopAllSound(Context context) {
-        MyTextToSpeech.stop(context);
+        MyTextToSpeech.getInstance().stop(context);
         MyMediaPlayer.stop();
     }
 }

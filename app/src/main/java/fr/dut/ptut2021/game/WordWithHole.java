@@ -240,7 +240,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         }
         if (help || sum <= limit) {
             delay = true;
-            MyTextToSpeech.speachText(this, "Trouve la lettre ou la syllabe manquante.");
+            MyTextToSpeech.getInstance().speachText(this, "Trouve la lettre ou la syllabe manquante.");
             new Handler().postDelayed(() -> {
                 delay = false;
             }, 2000);
@@ -248,7 +248,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void readWord() {
-        MyTextToSpeech.speachText(this, mapChooseData.get(goodAnswer).getWord());
+        MyTextToSpeech.getInstance().speachText(this, mapChooseData.get(goodAnswer).getWord());
     }
 
     private void textAnimation(boolean goodAnswer) {
@@ -431,7 +431,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        MyTextToSpeech.stop(WordWithHole.this);
+        MyTextToSpeech.getInstance().stop(WordWithHole.this);
     }
 
     @Override

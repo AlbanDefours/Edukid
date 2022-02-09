@@ -25,7 +25,7 @@ public class LoadingPage extends AppCompatActivity {
         textAnimation();
         CreateDatabase db = CreateDatabase.getInstance(getApplicationContext());
         MyDatabaseInsert.ajoutDatabase(this);
-        MyTextToSpeech.initialiser(this);
+        MyTextToSpeech.getInstance().initialiser(this);
 
         new Handler().postDelayed(() -> {
             if (db.appDao().tabUserIsEmpty())

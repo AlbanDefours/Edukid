@@ -488,7 +488,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        MyTextToSpeech.stop(DrawOnIt.this);
+        MyTextToSpeech.getInstance().stop(DrawOnIt.this);
     }
 
     @Override

@@ -156,7 +156,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
 
     private void readTheAnswer() {
-        MyTextToSpeech.speachText(this, "Trouve " + articleTheme + themeName.toLowerCase() + " : " + listChooseResult.get(gamePlayed - 1));
+        MyTextToSpeech.getInstance().speachText(this, "Trouve " + articleTheme + themeName.toLowerCase() + " : " + listChooseResult.get(gamePlayed - 1));
     }
 
     private void readInstruction(boolean help) {
@@ -170,7 +170,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             delay = true;
             articleTheme = themeName.equals("Chiffres") ? "le " : "la ";
             String s = themeName.equals("Chiffres") ? "un " : "une ";
-            MyTextToSpeech.speachText(PlayWithSound.this, "Dans cet exercice tu vas entendre " + s + themeName.toLowerCase() + " et tu dois " + articleTheme + " retrouver");
+            MyTextToSpeech.getInstance().speachText(PlayWithSound.this, "Dans cet exercice tu vas entendre " + s + themeName.toLowerCase() + " et tu dois " + articleTheme + " retrouver");
             new Handler().postDelayed(() -> {
                 delay = false;
             }, 3000);
@@ -356,8 +356,8 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
     @Override
     protected void onDestroy() {
+        MyTextToSpeech.getInstance().stop(PlayWithSound.this);
         super.onDestroy();
-        MyTextToSpeech.stop(PlayWithSound.this);
     }
 
     @Override
