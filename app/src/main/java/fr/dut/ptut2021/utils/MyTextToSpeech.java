@@ -21,20 +21,6 @@ public class MyTextToSpeech {
         return instance;
     }
 
-//    public void init(Context context) {
-//        textToSpeech = new TextToSpeech(context, status -> {
-//            if (status != TextToSpeech.ERROR) {
-//                textToSpeech.setLanguage(Locale.FRANCE);
-//                for (Voice tmpVoice : textToSpeech.getVoices()) {
-//                    if (tmpVoice.getName().equals("fr-fr-x-fra-network")) {
-//                        voice = tmpVoice;
-//                        textToSpeech.setVoice(tmpVoice);
-//                    }
-//                }
-//            }
-//        });
-//    }
-
     public void speachText(Context context, String text) {
         if (text.contains("Y") || text.contains("y") && context.getClass() == PlayWithSound.class)
             text = "Trouve la lettre igrec";

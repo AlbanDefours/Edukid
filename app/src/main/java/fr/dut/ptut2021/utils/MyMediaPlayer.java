@@ -4,15 +4,26 @@ import android.content.Context;
 import android.media.MediaPlayer;
 
 public class MyMediaPlayer {
-    static MediaPlayer ref;
 
-    public static void playSound(Context context, int song) {
+    private MediaPlayer ref;
+    private static MyMediaPlayer instance;
+
+    public static MyMediaPlayer getInstance() {
+        if (instance == null) {
+            instance = new MyMediaPlayer();
+        }
+        return instance;
+    }
+
+    public void playSound(Context context, int song) {
         ref = MediaPlayer.create(context, song);
         ref.start();
     }
 
-    public static void stop(){
-        if(ref != null)
+    public void stop(){
+        if(ref != null) {
             ref.stop();
+            ref = null;
+        }
     }
 }
