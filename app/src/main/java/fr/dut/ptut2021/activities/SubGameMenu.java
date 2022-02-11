@@ -36,9 +36,9 @@ public class SubGameMenu extends AppCompatActivity {
 
         db = CreateDatabase.getInstance(SubGameMenu.this);
 
-        themeName = MySharedPreferences.getThemeName(SubGameMenu.this);
-        gameName = MySharedPreferences.getGameName(SubGameMenu.this);
-        userId = MySharedPreferences.getUserId(SubGameMenu.this);
+        themeName = MySharedPreferences.getInstance().getThemeName(SubGameMenu.this);
+        gameName = MySharedPreferences.getInstance().getGameName(SubGameMenu.this);
+        userId = MySharedPreferences.getInstance().getUserId(SubGameMenu.this);
         getAllSubGames();
         getAllLockGames();
         createRecyclerView();
@@ -49,10 +49,10 @@ public class SubGameMenu extends AppCompatActivity {
                     public void onItemClick(View view, int position) {
                         saveGameName(position);
                         if (!isLock(position)) {
-                            MyVibrator.vibrate(SubGameMenu.this, 35);
+                           MyVibrator.getInstance().vibrate(SubGameMenu.this, 35);
                             GlobalUtils.startGame(SubGameMenu.this, "SubMemory", false, false);
                         } else {
-                            MyVibrator.vibrate(SubGameMenu.this, 60);
+                           MyVibrator.getInstance().vibrate(SubGameMenu.this, 60);
                             GlobalUtils.toast(SubGameMenu.this,"Atteint la difficulté 4 du "+subGameList.get(position-1).getSubGameName(),false);
                         }
                     }
@@ -100,9 +100,9 @@ public class SubGameMenu extends AppCompatActivity {
     }
 
     private void saveGameName(int position) {
-        MySharedPreferences.setSharedPreferencesString(SubGameMenu.this, "subGameName", subGameList.get(position).getSubGameName());
-        MySharedPreferences.setSharedPreferencesInt(SubGameMenu.this, "subGameId", subGameList.get(position).getSubGameId());
-        MySharedPreferences.commit();
+        MySharedPreferences.getInstance().setSharedPreferencesString(SubGameMenu.this, "subGameName", subGameList.get(position).getSubGameName());
+        MySharedPreferences.getInstance().setSharedPreferencesInt(SubGameMenu.this, "subGameId", subGameList.get(position).getSubGameId());
+        MySharedPreferences.getInstance().commit();
     }
 
     private void createRecyclerView() {

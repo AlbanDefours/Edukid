@@ -339,7 +339,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
-        MyVibrator.vibrate(UserEdit.this, 35);
+       MyVibrator.getInstance().vibrate(UserEdit.this, 35);
         switch (v.getId()) {
             case R.id.userAvatar_editPage:
                 cpt = ++cpt % tabImage.size();

@@ -473,14 +473,14 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
             case R.id.arrow_nextPage:
                 if (userPage < userList.size() - 1) {
-                    MyVibrator.vibrate(StatisticPage.this, 35);
+                   MyVibrator.getInstance().vibrate(StatisticPage.this, 35);
                     userPage++;
                 }
                 displayNewUserPage();
                 break;
             case R.id.arrow_previousPage:
                 if (0 < userPage) {
-                    MyVibrator.vibrate(StatisticPage.this, 35);
+                   MyVibrator.getInstance().vibrate(StatisticPage.this, 35);
                     userPage--;
                 }
                 displayNewUserPage();

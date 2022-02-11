@@ -42,7 +42,7 @@ public class GameMenu extends AppCompatActivity {
                 new RecyclerItemClickListener(getApplicationContext(), recyclerViewListGame, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        MyVibrator.vibrate(GameMenu.this, 35);
+                       MyVibrator.getInstance().vibrate(GameMenu.this, 35);
                         saveGameName(position);
                         GlobalUtils.startGame(GameMenu.this, gameList.get(position).getGameName(), false, false);
                     }
@@ -55,7 +55,7 @@ public class GameMenu extends AppCompatActivity {
     }
 
     private void getThemeName(){
-        themeName = MySharedPreferences.getThemeName(this);
+        themeName = MySharedPreferences.getInstance().getThemeName(this);
     }
 
     private void setTitle(){
@@ -64,9 +64,9 @@ public class GameMenu extends AppCompatActivity {
     }
 
     private void saveGameName(int position){
-        MySharedPreferences.setSharedPreferencesString(this, "gameName", gameList.get(position).getGameName());
-        MySharedPreferences.setSharedPreferencesInt(this, "gameId", gameList.get(position).getGameId());
-        MySharedPreferences.commit();
+        MySharedPreferences.getInstance().setSharedPreferencesString(this, "gameName", gameList.get(position).getGameName());
+        MySharedPreferences.getInstance().setSharedPreferencesInt(this, "gameId", gameList.get(position).getGameId());
+        MySharedPreferences.getInstance().commit();
     }
 
     private void createDatabaseAndImportGames() {

@@ -66,9 +66,9 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     }
 
     private void getSharedPref() {
-        userId = MySharedPreferences.getUserId(this);
-        themeName = MySharedPreferences.getThemeName(this);
-        gameId = MySharedPreferences.getGameId(this);
+        userId = MySharedPreferences.getInstance().getUserId(this);
+        themeName = MySharedPreferences.getInstance().getThemeName(this);
+        gameId = MySharedPreferences.getInstance().getGameId(this);
     }
 
     private void initDatabase() {
@@ -218,9 +218,9 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
 
     private void playSound(boolean isgoodAnswerView) {
         if (isgoodAnswerView)
-            MyMediaPlayer.playSound(this, R.raw.correct_answer);
+            MyMediaPlayer.getInstance().playSound(this, R.raw.correct_answer);
         else
-            MyMediaPlayer.playSound(this, R.raw.wrong_answer);
+            MyMediaPlayer.getInstance().playSound(this, R.raw.wrong_answer);
     }
 
     private void setWordAndAddDelay() {
@@ -326,7 +326,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         if (!delay) {
-            MyVibrator.vibrate(PlayWithSound.this, 35);
+           MyVibrator.getInstance().vibrate(PlayWithSound.this, 35);
             switch (v.getId()) {
                 case R.id.buttonAnswer1_playWithSound:
                     verifyAnswer(answer1);

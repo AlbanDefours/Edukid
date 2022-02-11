@@ -45,7 +45,7 @@ public class UserResume extends AppCompatActivity {
                 new RecyclerItemClickListener(getApplicationContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        MyVibrator.vibrate(UserResume.this, 35);
+                       MyVibrator.getInstance().vibrate(UserResume.this, 35);
                         startEditUserPage(position);
                     }
 
@@ -93,7 +93,7 @@ public class UserResume extends AppCompatActivity {
     }
 
     private void startAddUserPage() {
-        MyVibrator.vibrate(UserResume.this, 35);
+       MyVibrator.getInstance().vibrate(UserResume.this, 35);
         Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
         intent.putExtra("addUser", true);
         startActivity(intent);

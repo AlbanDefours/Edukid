@@ -10,10 +10,10 @@ import java.util.Locale;
 import fr.dut.ptut2021.game.PlayWithSound;
 
 public class MyTextToSpeech {
-    TextToSpeech textToSpeech;
-    Voice voice = null;
-
+    private Voice voice = null;
+    private TextToSpeech textToSpeech;
     private static MyTextToSpeech instance;
+
     public static MyTextToSpeech getInstance() {
         if (instance == null) {
             instance = new MyTextToSpeech();

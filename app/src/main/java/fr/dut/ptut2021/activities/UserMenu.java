@@ -45,14 +45,14 @@ public class UserMenu extends AppCompatActivity {
                 new RecyclerItemClickListener(getApplicationContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        MyVibrator.vibrate(UserMenu.this, 35);
+                       MyVibrator.getInstance().vibrate(UserMenu.this, 35);
                         saveUserNameSahredPref(position);
                         GlobalUtils.startPage(UserMenu.this, "ThemeMenu", false, false);
                     }
 
                     @Override
                     public void onLongItemClick(View view, int position) {
-                        MyVibrator.vibrate(UserMenu.this, 35);
+                       MyVibrator.getInstance().vibrate(UserMenu.this, 35);
                         Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
                         intent.putExtra("userName", listUser.get(position).getUserName());
                         intent.putExtra("userId", listUser.get(position).getUserId());
@@ -66,12 +66,12 @@ public class UserMenu extends AppCompatActivity {
         );
 
         settings.setOnClickListener(view -> {
-            MyVibrator.vibrate(UserMenu.this, 35);
+           MyVibrator.getInstance().vibrate(UserMenu.this, 35);
             GlobalUtils.startPage(UserMenu.this, "UserResume", false, false);
         });
 
         adultProfile.setOnClickListener(view -> {
-            MyVibrator.vibrate(UserMenu.this, 35);
+           MyVibrator.getInstance().vibrate(UserMenu.this, 35);
             GlobalUtils.startPage(UserMenu.this, "StatisticPage", false, false);
         });
     }
@@ -141,9 +141,9 @@ public class UserMenu extends AppCompatActivity {
     }
 
     private void saveUserNameSahredPref(int position) {
-        MySharedPreferences.setSharedPreferencesString(UserMenu.this, "userName", listUser.get(position).getUserName());
-        MySharedPreferences.setSharedPreferencesInt(UserMenu.this, "userId", listUser.get(position).getUserId());
-        MySharedPreferences.setSharedPreferencesString(UserMenu.this, "userImage", listUser.get(position).getUserImage());
-        MySharedPreferences.commit();
+        MySharedPreferences.getInstance().setSharedPreferencesString(UserMenu.this, "userName", listUser.get(position).getUserName());
+        MySharedPreferences.getInstance().setSharedPreferencesInt(UserMenu.this, "userId", listUser.get(position).getUserId());
+        MySharedPreferences.getInstance().setSharedPreferencesString(UserMenu.this, "userImage", listUser.get(position).getUserImage());
+        MySharedPreferences.getInstance().commit();
     }
 }

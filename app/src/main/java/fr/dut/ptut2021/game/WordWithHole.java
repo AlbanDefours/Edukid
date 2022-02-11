@@ -71,8 +71,8 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getSharedPref() {
-        userId = MySharedPreferences.getUserId(this);
-        gameId = MySharedPreferences.getGameId(this);
+        userId = MySharedPreferences.getInstance().getUserId(this);
+        gameId = MySharedPreferences.getInstance().getGameId(this);
     }
 
     private void fillDatabase() {
@@ -265,9 +265,9 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
     private void playSound(boolean isGoodAnswer) {
         if (isGoodAnswer)
-            MyMediaPlayer.playSound(this, R.raw.correct_answer);
+            MyMediaPlayer.getInstance().playSound(this, R.raw.correct_answer);
         else
-            MyMediaPlayer.playSound(this, R.raw.wrong_answer);
+            MyMediaPlayer.getInstance().playSound(this, R.raw.wrong_answer);
     }
 
     private String concatWrongAnswer(int indAnswer) {
@@ -387,7 +387,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void verifyAnswer(Button answer, int numAnswer) {
-        MyVibrator.vibrate(WordWithHole.this, 35);
+       MyVibrator.getInstance().vibrate(WordWithHole.this, 35);
         if (answer.getText() == goodAnswer) {
             if (gamePlayed+1 == MAX_GAME_PLAYED)
                 haveWin = true;

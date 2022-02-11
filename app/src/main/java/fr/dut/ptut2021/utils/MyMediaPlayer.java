@@ -4,7 +4,6 @@ import android.content.Context;
 import android.media.MediaPlayer;
 
 public class MyMediaPlayer {
-
     private MediaPlayer ref;
     private static MyMediaPlayer instance;
 
