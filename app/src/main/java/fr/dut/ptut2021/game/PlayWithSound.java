@@ -54,7 +54,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_with_sound);
 
-        GlobalUtils.verifyIfSoundIsOn(this);
+        GlobalUtils.getInstance().verifyIfSoundIsOn(this);
 
         getSharedPref();
         initDatabase();
@@ -278,7 +278,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
                 else
                     nbrStars = 2;
                 addGameLogInDb(nbrStars);
-                GlobalUtils.startResultPage(PlayWithSound.this, nbrStars);
+                GlobalUtils.getInstance().startResultPage(PlayWithSound.this, nbrStars);
             }
         }, 3000);
     }

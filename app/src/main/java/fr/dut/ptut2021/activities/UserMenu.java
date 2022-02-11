@@ -47,7 +47,7 @@ public class UserMenu extends AppCompatActivity {
                     public void onItemClick(View view, int position) {
                        MyVibrator.getInstance().vibrate(UserMenu.this, 35);
                         saveUserNameSahredPref(position);
-                        GlobalUtils.startPage(UserMenu.this, "ThemeMenu", false, false);
+                        GlobalUtils.getInstance().startPage(UserMenu.this, "ThemeMenu", false, false);
                     }
 
                     @Override
@@ -67,12 +67,12 @@ public class UserMenu extends AppCompatActivity {
 
         settings.setOnClickListener(view -> {
            MyVibrator.getInstance().vibrate(UserMenu.this, 35);
-            GlobalUtils.startPage(UserMenu.this, "UserResume", false, false);
+            GlobalUtils.getInstance().startPage(UserMenu.this, "UserResume", false, false);
         });
 
         adultProfile.setOnClickListener(view -> {
            MyVibrator.getInstance().vibrate(UserMenu.this, 35);
-            GlobalUtils.startPage(UserMenu.this, "StatisticPage", false, false);
+            GlobalUtils.getInstance().startPage(UserMenu.this, "StatisticPage", false, false);
         });
     }
 

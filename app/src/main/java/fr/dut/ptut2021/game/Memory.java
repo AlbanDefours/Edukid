@@ -137,7 +137,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             changeDifficulty();
                 addGameLog(nbStar);
                 new Handler().postDelayed(() -> {
-                    GlobalUtils.startResultPage(Memory.this, nbStar);
+                    GlobalUtils.getInstance().startResultPage(Memory.this, nbStar);
                 }, 2000);
             return true;
         }
@@ -231,7 +231,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                         MySharedPreferences.getInstance().setSharedPreferencesInt(Memory.this, "subGameId", (subCat));
                         MySharedPreferences.getInstance().commit();
                        MyVibrator.getInstance().vibrate(Memory.this, 35);
-                        GlobalUtils.startGame(Memory.this, "SubMemory", true, false);
+                        GlobalUtils.getInstance().startGame(Memory.this, "SubMemory", true, false);
                     }
                 });
             }
@@ -550,10 +550,10 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
               db.gameDao().updateMemoryData(memoData);
               db.gameDao().resetAllMemoryDataStreak(userId, category, subCat);
               db.gameDao().resetAllMemoryDataCardUsed(userId, category, subCat);
-              GlobalUtils.startGame(this,"SubMemory",true,true);
+              GlobalUtils.getInstance().startGame(this,"SubMemory",true,true);
             }else{
                MyVibrator.getInstance().vibrate(this, 60);
-                GlobalUtils.toast(this,"Fini la difficulté "+(stateNumber-1)+" avant de pouvoir jouer à cette difficulté ",false);
+                GlobalUtils.getInstance().toast(this,"Fini la difficulté "+(stateNumber-1)+" avant de pouvoir jouer à cette difficulté ",false);
             }
         }
     }

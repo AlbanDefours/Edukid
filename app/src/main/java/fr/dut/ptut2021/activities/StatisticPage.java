@@ -137,7 +137,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     }
 
     private void displayUserTitle() {
-        userTitle.setText(GlobalUtils.cutString(currentUser.getUserName(), 15));
+        userTitle.setText(GlobalUtils.getInstance().cutString(currentUser.getUserName(), 15));
         verifyUserPageLocation();
     }
 

@@ -39,7 +39,7 @@ public class UserAdapter extends RecyclerView.Adapter<MyViewHolderUser> {
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolderUser holder, int position) {
-        holder.name.setText(GlobalUtils.cutString(listUser.get(position).getUserName(), 15));
+        holder.name.setText(GlobalUtils.getInstance().cutString(listUser.get(position).getUserName(), 15));
 
         if (listUser.get(position).getUserImageType() == 0) {
             holder.avatar.setImageResource(Integer.parseInt(listUser.get(position).getUserImage()));

@@ -188,7 +188,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
 
     public void startUserMenu() {
         if (tabUserIsEmpty)
-            GlobalUtils.startPage(UserEdit.this, "UserMenu", true, false);
+            GlobalUtils.getInstance().startPage(UserEdit.this, "UserMenu", true, false);
         else
             finish();
     }
@@ -356,7 +356,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                 else if (shortcut)
                     finish();
                 else
-                    GlobalUtils.startPage(UserEdit.this, "UserResume", true, true);
+                    GlobalUtils.getInstance().startPage(UserEdit.this, "UserResume", true, true);
                 break;
 
             case R.id.buttonDelete_userEditPage:
@@ -407,7 +407,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
 
     @Override
     public void onBackPressed() {
-        GlobalUtils.startPage(UserEdit.this, "UserResume", true, true);
+        GlobalUtils.getInstance().startPage(UserEdit.this, "UserResume", true, true);
     }
 
     @Override

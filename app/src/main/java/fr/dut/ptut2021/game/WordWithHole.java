@@ -56,7 +56,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_with_hole);
 
-        GlobalUtils.verifyIfSoundIsOn(this);
+        GlobalUtils.getInstance().verifyIfSoundIsOn(this);
         db = CreateDatabase.getInstance(WordWithHole.this);
         getSharedPref();
 
@@ -350,7 +350,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             } else {
                 int stars = starsNumber();
                 addGameLogInDb(stars);
-                GlobalUtils.startResultPage(WordWithHole.this, stars);
+                GlobalUtils.getInstance().startResultPage(WordWithHole.this, stars);
             }
         }, 3000);
     }

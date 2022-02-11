@@ -37,7 +37,7 @@ public class ThemeMenu extends AppCompatActivity {
                     public void onItemClick(View view, int position) {
                        MyVibrator.getInstance().vibrate(ThemeMenu.this, 35);
                         saveUserNameSahredPref(position);
-                        GlobalUtils.startPage(ThemeMenu.this, "GameMenu", false, false);
+                        GlobalUtils.getInstance().startPage(ThemeMenu.this, "GameMenu", false, false);
                     }
 
                     @Override

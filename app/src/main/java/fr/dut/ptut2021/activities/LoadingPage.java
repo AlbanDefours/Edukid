@@ -24,14 +24,14 @@ public class LoadingPage extends AppCompatActivity {
 
         textAnimation();
         CreateDatabase db = CreateDatabase.getInstance(getApplicationContext());
-        MyDatabaseInsert.ajoutDatabase(this);
+        MyDatabaseInsert.getInstance().ajoutDatabase(this);
         MyTextToSpeech.getInstance().initialiser(this);
 
         new Handler().postDelayed(() -> {
             if (db.appDao().tabUserIsEmpty())
-                GlobalUtils.startEditPage(this);
+                GlobalUtils.getInstance().startEditPage(this);
             else
-                GlobalUtils.startPage(this, "UserMenu", true, false);
+                GlobalUtils.getInstance().startPage(this, "UserMenu", true, false);
         }, 1500);
     }
 

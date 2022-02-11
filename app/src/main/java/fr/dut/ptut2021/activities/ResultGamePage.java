@@ -45,7 +45,7 @@ public class ResultGamePage extends AppCompatActivity {
         replay.setOnClickListener(v -> {
             stopAllHandler();
             MyVibrator.getInstance().vibrate(this, 35);
-            GlobalUtils.startGame(this, gameName, false, false);
+            GlobalUtils.getInstance().startGame(this, gameName, false, false);
             finish();
         });
     }
