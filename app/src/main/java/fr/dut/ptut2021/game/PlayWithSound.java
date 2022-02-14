@@ -42,7 +42,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private String themeName;
     private String[] alphabetTab, syllableTab;
     private final Button[] listButton = new Button[3];
-    private final int MAX_GAME_PLAYED = 1;
+    private final int MAX_GAME_PLAYED =5;
     private int userId, gameId, gamePlayed = 1, nbTry = 0, answerFalse = 0, nbrStars = 0, answerFalseWord = 0, difficulty = 1;
     private Random random = new Random();
     private String articleTheme;
