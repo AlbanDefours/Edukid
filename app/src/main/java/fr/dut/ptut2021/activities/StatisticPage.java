@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -387,6 +388,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 gameSpinner.setAdapter(adapter);
 
+                currentGameId = db.appDao().getGameId(gameSpinner.getSelectedItem().toString(), themeName);
                 subGameExist = updateSubGameSpinner();
                 updateSpinnerDifficulty();
                 updateGameAverage();
@@ -396,12 +398,11 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     }
 
     private void updateSpinnerDifficulty() {
-        currentGameId = db.appDao().getGameId(gameSpinner.getSelectedItem().toString(), themeName);
         int maxDifficulty = db.gameLogDao().getGameLogMaxDifByGame(currentUser.getUserId(), currentGameId);
         String[] difficultyTab = new String[maxDifficulty];
 
         for (int i = 1; i <= maxDifficulty; i++)
-            difficultyTab[i-1] = "Difficulté " + i + "    ";
+            difficultyTab[i-1] = "Difficulté " + i;
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this,
@@ -448,20 +449,24 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     @SuppressLint("SetTextI18n")
     private void updateGameAverage() {
         String val = "";
-        DecimalFormat df = new DecimalFormat("0.0");
+        Log.e("APPLOG", "subgame : " + subGameExist);
+        Log.e("APPLOG", "userId : " + currentUser.getUserId());
+        Log.e("APPLOG", "gameId : " + currentGameId);
+        int difficulty = difficultySpinner.getSelectedItemPosition() + 1;
+        Log.e("APPLOG", "difficulty : " + difficulty);
         if (subGameExist) {
-            val = df.format(db.gameLogDao().getGameAvgBySubGameIdAndDifficulty(
+            val = db.gameLogDao().getGameAvgBySubGameIdAndDifficulty(
                     currentUser.getUserId(),
                     currentGameId,
                     db.appDao().getSubGameByName(subGameSpinner.getSelectedItem().toString()).getSubGameId(),
                     difficultySpinner.getSelectedItemPosition() + 1
-            ));
+            ).toString();
         } else {
-            val = df.format(db.gameLogDao().getGameAvgByGameIdAndDifficulty(
+            val = db.gameLogDao().getGameAvgByGameIdAndDifficulty(
                     currentUser.getUserId(),
                     currentGameId,
                     difficultySpinner.getSelectedItemPosition() + 1
-            ));
+            ).toString();
         }
         spinnerStatText.setText(val);
     }
@@ -551,9 +556,10 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         if (spinnerRefresh) {
             switch (parent.getId()) {
                 case R.id.spinner_game_stats:
-                    updateGameAverage();
+                    currentGameId = db.appDao().getGameId(gameSpinner.getSelectedItem().toString(), themeName);
                     subGameExist = updateSubGameSpinner();
                     updateSpinnerDifficulty();
+                    updateGameAverage();
                     break;
                 case R.id.spinner_difficulty_stats:
                     updateGameAverage();

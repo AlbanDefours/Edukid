@@ -63,7 +63,7 @@ public interface GameLogDao {
     @Query("SELECT avg(stars) FROM GameLog WHERE userId = :userId AND gameId = :gameId AND difficulty = :difficulty")
     Float getGameAvgByGameIdAndDifficulty(int userId, int gameId, int difficulty);
 
-    @Query("SELECT avg(l.stars) FROM GameLog AS l NATURAL JOIN SubGame AS s WHERE l.userId = :userId AND l.gameId = :gameId AND l.gameId = s.gameId AND l.subGameId = :subGameId AND l.difficulty = :difficulty")
+    @Query("SELECT avg(stars) FROM GameLog AS l NATURAL JOIN SubGame AS s WHERE l.userId = :userId AND l.gameId = :gameId AND l.gameId = s.gameId AND l.subGameId = :subGameId AND l.difficulty = :difficulty")
     Float getGameAvgBySubGameIdAndDifficulty(int userId, int gameId, int subGameId, int difficulty);
 
     default boolean tabGameLogIsEmpty(int userId) {
