@@ -12,11 +12,18 @@ import fr.dut.ptut2021.models.database.app.Word;
 import fr.dut.ptut2021.models.database.game.Card;
 
 public class MyDatabaseInsert {
-    static CreateDatabase db = null;
-    static final String themeLettres = "Lettres";
-    static final String themeChiffres = "Chiffres";
+    private CreateDatabase db = null;
+    private final String themeLettres = "Lettres", themeChiffres = "Chiffres";
+    private static MyDatabaseInsert instance;
 
-    public static void ajoutDatabase(Context context) {
+    public static MyDatabaseInsert getInstance() {
+        if (instance == null) {
+            instance = new MyDatabaseInsert();
+        }
+        return instance;
+    }
+
+    public void ajoutDatabase(Context context) {
         if (db == null)
             db = CreateDatabase.getInstance(context);
 
@@ -27,14 +34,14 @@ public class MyDatabaseInsert {
         createCards(context);
     }
 
-    public static void createThemes() {
+    public void createThemes() {
         if (db.appDao().tabGameIsEmpty()) {
             db.appDao().insertTheme(new Theme(themeLettres, R.drawable.logo_theme_lettres));
             db.appDao().insertTheme(new Theme(themeChiffres, R.drawable.logo_theme_chiffres));
         }
     }
 
-    public static void createGames() {
+    public void createGames() {
         if (db.appDao().tabGameIsEmpty()) {
             db.appDao().insertGame(new Game("Memory", themeLettres, R.drawable.logo_memory_lettre));
             db.appDao().insertGame(new Game("Dessine", themeLettres, R.drawable.logo_drawonit_lettre));
@@ -46,7 +53,7 @@ public class MyDatabaseInsert {
         }
     }
 
-    public static void createSubGames() {
+    public void createSubGames() {
         if (db.appDao().tabSubGameIsEmpty()) {
 
             db.appDao().insertSubGame(new SubGame("Niveau 1", db.appDao().getGameId("Memory", themeLettres), R.drawable.memory_majuscule_majuscule));
@@ -61,7 +68,7 @@ public class MyDatabaseInsert {
         }
     }
 
-    public static void createWords() {
+    public void createWords() {
         db.appDao().insertWord(new Word("AVION", R.drawable.image_avion));
         db.appDao().insertWord(new Word("MAISON", R.drawable.image_maison));
         db.appDao().insertWord(new Word("POULE", R.drawable.image_poule));
@@ -85,7 +92,7 @@ public class MyDatabaseInsert {
         db.appDao().insertWord(new Word("ZÈBRE", R.drawable.image_zebre));
     }
 
-    public static void createCards(Context context) {
+    public void createCards(Context context) {
         db.gameDao().insertCard(new Card("1", "Chiffres", R.drawable.number_one));
         db.gameDao().insertCard(new Card("2", "Chiffres", R.drawable.number_two));
         db.gameDao().insertCard(new Card("3", "Chiffres", R.drawable.number_three));

@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -40,6 +40,7 @@ import fr.dut.ptut2021.models.database.log.GameLog;
 import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyMediaPlayer;
 import fr.dut.ptut2021.utils.MySharedPreferences;
+import fr.dut.ptut2021.utils.MyTextToSpeech;
 import fr.dut.ptut2021.utils.MyVibrator;
 
 
@@ -56,7 +57,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     private int subCat;
     private StateProgressBar stateProgressBar;
     private StateProgressBar stateProgressBarLock;
-    private boolean isWin=false;
+    private boolean isWin=false, haveWin = false; //TODO a changer
     private int nbAttempt = 0;
     private ArrayList<Integer> fonts;
     private static boolean difficultyIsChanged=false;
@@ -87,12 +88,12 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                     nbAttempt++;
                     new Handler().postDelayed(() -> {
                         if (idCard != idLastCardReturn && listMemoryCard.get(idLastCardReturn).getValue().toUpperCase(Locale.ROOT).equals(listMemoryCard.get(idCard).getValue().toUpperCase(Locale.ROOT)) ) {
-                            MyMediaPlayer.playSound(this,R.raw.correct_answer);
+                            MyMediaPlayer.getInstance().playSound(this,R.raw.correct_answer);
                             idLastCardReturn = -1;
                         } else {
                             listMemoryCard.get(idCard).setHidden(true);
                             listMemoryCard.get(idLastCardReturn).setHidden(true);
-                            MyMediaPlayer.playSound(this,R.raw.wrong_answer);
+                            MyMediaPlayer.getInstance().playSound(this,R.raw.wrong_answer);
                             returnableCards.add(idLastCardReturn);
                             memoryAdapter.setCard(returnableCards);
                             memoryAdapter.notifyDataSetChanged();
@@ -136,7 +137,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             changeDifficulty();
                 addGameLog(nbStar);
                 new Handler().postDelayed(() -> {
-                    GlobalUtils.startResultPage(Memory.this, nbStar);
+                    GlobalUtils.getInstance().startResultPage(Memory.this, nbStar);
                 }, 2000);
             return true;
         }
@@ -145,7 +146,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
 
     private void initDB(){
         db = CreateDatabase.getInstance(Memory.this);
-        String subGame = MySharedPreferences.getSubGameName(this);
+        String subGame = MySharedPreferences.getInstance().getSubGameName(this);
         switch(subGame){
             case "Niveau 1":
                 subCat=1;
@@ -201,16 +202,16 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         Log.e("memory","debut Création du memory");
 
 
-        category = MySharedPreferences.getThemeName(this);
-        userId = MySharedPreferences.getUserId(this);
+        category = MySharedPreferences.getInstance().getThemeName(this);
+        userId = MySharedPreferences.getInstance().getUserId(this);
         initDB();
         initFonts();
         initProgressBar();
         initCard(getNbCard());
 
-        if(MySharedPreferences.getSharedPreferencesBoolean(Memory.this, "Memory"+category+"niv"+subCat,false)) {
-            MySharedPreferences.setSharedPreferencesBoolean(Memory.this, "Memory"+category+"niv"+subCat, false);
-            MySharedPreferences.commit();
+        if(MySharedPreferences.getInstance().getSharedPreferencesBoolean(Memory.this, "Memory"+category+"niv"+subCat,false)) {
+            MySharedPreferences.getInstance().setSharedPreferencesBoolean(Memory.this, "Memory"+category+"niv"+subCat, false);
+            MySharedPreferences.getInstance().commit();
             final Dialog dialog = new Dialog(Memory.this);
             dialog.setContentView(R.layout.custom_alert_dialog);
             Button dialogButton = (Button) dialog.findViewById(R.id.buttonCustomAlertDialog);
@@ -226,11 +227,11 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                 changeNiv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        MySharedPreferences.setSharedPreferencesString(Memory.this, "subGameName", "Niveau "+(subCat + 1));
-                        MySharedPreferences.setSharedPreferencesInt(Memory.this, "subGameId", (subCat));
-                        MySharedPreferences.commit();
-                        MyVibrator.vibrate(Memory.this, 35);
-                        GlobalUtils.startGame(Memory.this, "SubMemory", true, false);
+                        MySharedPreferences.getInstance().setSharedPreferencesString(Memory.this, "subGameName", "Niveau "+(subCat + 1));
+                        MySharedPreferences.getInstance().setSharedPreferencesInt(Memory.this, "subGameId", (subCat));
+                        MySharedPreferences.getInstance().commit();
+                       MyVibrator.getInstance().vibrate(Memory.this, 35);
+                        GlobalUtils.getInstance().startGame(Memory.this, "SubMemory", true, false);
                     }
                 });
             }
@@ -239,7 +240,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             dialogButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MyVibrator.vibrate(Memory.this, 35);
+                   MyVibrator.getInstance().vibrate(Memory.this, 35);
                     dialog.dismiss();
                 }
             });
@@ -264,7 +265,6 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                 if(!isClicked) {
                     //v.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttoncolor));
                     returnCard(position, memoryAdapter);
-
                     isWin();
                 }
             }
@@ -407,8 +407,8 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
                 db.gameDao().increaseMemoryDataMaxDifficulty(userId,category,subCat);
                 db.gameDao().resetAllMemoryDataStreak(userId, category, subCat);
                 db.gameDao().resetAllMemoryDataCardUsed(userId, category, subCat);
-                MySharedPreferences.setSharedPreferencesBoolean(Memory.this, "Memory"+category+"niv"+subCat, true);
-                MySharedPreferences.commit();
+                MySharedPreferences.getInstance().setSharedPreferencesBoolean(Memory.this, "Memory"+category+"niv"+subCat, true);
+                MySharedPreferences.getInstance().commit();
                 return true;
             }
         }
@@ -536,7 +536,13 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     }
 
     private void addGameLog(int stars) {
-        GameLog gameLog = new GameLog(MySharedPreferences.getGameId(this), -1, userId, stars, difficulty);
+        GameLog gameLog = new GameLog(
+                MySharedPreferences.getInstance().getGameId(this),
+                MySharedPreferences.getInstance().getSubGameId(this),
+                userId,
+                stars,
+                difficulty
+        );
         db.gameLogDao().insertGameLog(gameLog);
     }
 
@@ -550,17 +556,24 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
               db.gameDao().updateMemoryData(memoData);
               db.gameDao().resetAllMemoryDataStreak(userId, category, subCat);
               db.gameDao().resetAllMemoryDataCardUsed(userId, category, subCat);
-              GlobalUtils.startGame(this,"SubMemory",true,true);
+              GlobalUtils.getInstance().startGame(this,"SubMemory",true,true);
             }else{
-                MyVibrator.vibrate(this, 60);
-                GlobalUtils.toast(this,"Fini la difficulté "+(stateNumber-1)+" avant de pouvoir jouer à cette difficulté ",false);
+               MyVibrator.getInstance().vibrate(this, 60);
+                GlobalUtils.getInstance().toast(this,"Fini la difficulté "+(stateNumber-1)+" avant de pouvoir jouer à cette difficulté ",false);
             }
         }
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        GlobalUtils.stopAllSound(Memory.this);
+    protected void onPause() {
+        GlobalUtils.getInstance().stopAllSound();
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        GlobalUtils.getInstance().stopAllSound();
+        if(!haveWin)
+            super.onBackPressed();
     }
 }

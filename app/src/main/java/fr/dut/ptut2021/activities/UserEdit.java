@@ -34,6 +34,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
@@ -44,30 +46,45 @@ import fr.dut.ptut2021.utils.MyVibrator;
 public class UserEdit extends AppCompatActivity implements View.OnClickListener {
 
     private TextView title;
+    private String userName;
+    private int userId, cpt = 0;
     private ImageView userAvatar;
     private CreateDatabase db = null;
     private Button valid, cancel, delete, inport;
     private TextInputEditText textField_userName;
-    private String userName, imageLocation = null, imageTmp;
-    private int userId, userImageType = 0;
-    private boolean isAddUser = false, tabUserIsEmpty = false;
+    private boolean isAddUser = false, tabUserIsEmpty = false, shortcut = false;
     private static final int CAMERA_REQUEST = 20, MY_CAMERA_PERMISSION_CODE = 200;
     private static final int GALLERY_REQUEST = 30, MY_STORAGE_PERMISSION_CODE = 300;
+<<<<<<< HEAD
 
     private int cpt = 0;
     private final int[] tableauImage = {R.drawable.profil1,R.drawable.profil2,R.drawable.profil3,R.drawable.profil4,R.drawable.profil5,R.drawable.profil6,R.drawable.profil7,R.drawable.profil8};
+=======
+    private List<String> tabImage = new ArrayList<>();
+    private List<Integer> tabImageType = new ArrayList<>();
+>>>>>>> 900f2a1837bdf9b39f3d4fb562bd082e46eea644
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_edit);
 
-        imageLocation = String.valueOf(tableauImage[0]);
-
+        addingAvatar();
         getDb();
         initializeLayout();
         checkIfAddOrUpdateUser();
         addOnClickListener();
+    }
+
+    private void addingAvatar() {
+        tabImage.add(String.valueOf(R.drawable.user_image_a));
+        tabImageType.add(0);
+        tabImage.add(String.valueOf(R.drawable.user_image_b));
+        tabImageType.add(0);
+        tabImage.add(String.valueOf(R.drawable.user_image_c));
+        tabImageType.add(0);
+        tabImage.add(String.valueOf(R.drawable.user_image_d));
+        tabImageType.add(0);
     }
 
     private void getDb() {
@@ -92,10 +109,13 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
             isAddUser = bundle.getBoolean("addUser", false);
             if (!isAddUser) {
                 getUserAttribute(bundle);
-                findCurrentImageUser();
+                setImageAvatar();
                 fillInFields();
                 delete.setVisibility(View.VISIBLE);
                 title.setText("Modification du profil de " + bundle.getString("userName", ""));
+            } else if (db.appDao().getAllUsers().isEmpty()) {
+                title.setText("Créer votre première session");
+                userAvatar.setImageResource(R.drawable.user_image_a);
             } else {
                 title.setText("Créer votre session");
                 userAvatar.setImageResource(R.drawable.profil1);
@@ -103,25 +123,46 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
+    private void findImageActual(String imageName){
+        for (int i = 0; i < tabImage.size(); i++){
+            if(tabImage.get(i).equals(imageName))
+                cpt = i;
+        }
+    }
+
     private void getUserAttribute(Bundle bundle) {
-        userName = bundle.getString("userName", "");
         userId = bundle.getInt("userId", 0);
+<<<<<<< HEAD
         imageTmp = bundle.getString("userImage", String.valueOf(R.drawable.profil1));
         imageLocation = imageTmp;
         userImageType = bundle.getInt("userImageType", -1);
+=======
+        userName = bundle.getString("userName", "");
+        shortcut = bundle.getBoolean("shortcut", false);
+        String imageName = bundle.getString("userImage", null);
+        addImageTabIfNotExist(imageName, bundle.getInt("userImageType", 30));
+        findImageActual(imageName);
+>>>>>>> 900f2a1837bdf9b39f3d4fb562bd082e46eea644
     }
 
-    private void findCurrentImageUser() {
-        if(userImageType == 0){
-            for (int i = 0; i < tableauImage.length; i++) {
-                if (tableauImage[i] == Integer.parseInt(imageTmp)){
-                    cpt = i;
-                    userAvatar.setImageResource(tableauImage[cpt]);
-                }
-            }
+    public void addImageTabIfNotExist(String userImage, int userImageType){
+        boolean exist = false;
+        for (String s : tabImage){
+            if(s.equals(userImage))
+                exist = true;
+        }
+        if(!exist){
+            tabImage.add(userImage);
+            tabImageType.add(userImageType);
+        }
+    }
+
+    private void setImageAvatar() {
+        if (tabImageType.get(cpt) == 0) {
+            userAvatar.setImageResource(Integer.parseInt(tabImage.get(cpt)));
         } else {
             try {
-                File f = new File(imageTmp);
+                File f = new File(tabImage.get(cpt));
                 Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
                 userAvatar.setImageBitmap(b);
             } catch (FileNotFoundException e) {
@@ -143,24 +184,25 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void createUser() {
-        if(imageLocation.indexOf(".jpg")> 0){
-            userImageType = 30;
-        }else{
-            userImageType = 0;
-        }
         if (isAddUser && isDataCorrect()) {
-            db.appDao().insertUser(new User(textField_userName.getText().toString(), imageLocation, userImageType));
-            startUserMenuPage(false);
+            db.appDao().insertUser(new User(textField_userName.getText().toString(), tabImage.get(cpt), tabImageType.get(cpt)));
+            startUserMenu();
         } else if (!isAddUser && isDataCorrect()) {
             User user = db.appDao().getUserById(userId);
             user.setUserName(textField_userName.getText().toString());
-            user.setUserImage(imageLocation);
-            user.setUserImageType(userImageType);
+            user.setUserImage(tabImage.get(cpt));
+            user.setUserImageType(tabImageType.get(cpt));
             db.appDao().updateUser(user);
-            GlobalUtils.startPage(UserEdit.this, "UserResume", true, true);
-        } else if (!isDataCorrect()) {
+            startUserMenu();
+        } else if (!isDataCorrect())
             Toast.makeText(getApplicationContext(), "Veuillez saisir un prénom", Toast.LENGTH_SHORT).show();
-        }
+    }
+
+    public void startUserMenu() {
+        if (tabUserIsEmpty)
+            GlobalUtils.getInstance().startPage(UserEdit.this, "UserMenu", true, false);
+        else
+            finish();
     }
 
     private void showMesageDialog(String title, String message, boolean wantToDelete) {
@@ -175,7 +217,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                         file.delete(); //TODO (pas delete si on modifie l'image par une de l'ap)
                         deleteGameData();
                         db.appDao().deleteUserById(userId);
-                        startUserMenuPage(db.appDao().tabUserIsEmpty());
+                        finish();
                     } else
                         finish();
                 });
@@ -185,6 +227,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     }
 
     private boolean isDataCorrect() {
+<<<<<<< HEAD
         return !textField_userName.getText().toString().isEmpty() && imageLocation != null;
     }
 
@@ -254,6 +297,9 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
             default:
                 break;
         }
+=======
+        return !textField_userName.getText().toString().isEmpty();
+>>>>>>> 900f2a1837bdf9b39f3d4fb562bd082e46eea644
     }
 
     private void getPhotoFromGallery() {
@@ -280,13 +326,29 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         //TODO rajouter les fonctions de suppression des jeux à venir
     }
 
-    private void startUserMenuPage(boolean force) {
-        Intent intent = new Intent().setClass(getApplicationContext(), UserMenu.class);
-        if (force)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-        finish();
+    private String saveToInternalStorage(Bitmap bitmapImage) {
+        String name = db.appDao().getUserImageMaxInt();
+        int id = 0;
+        if (name != null && name.indexOf(".jpg") - 1 > 0)
+            id = Integer.parseInt(name.substring(name.indexOf(".jpg") - 1, name.indexOf(".jpg"))) + 1;
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        File mypath = new File(directory, "userimage" + id + ".jpg");
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mypath);
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 90, fos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return mypath.getAbsolutePath();
     }
 
     @Override
@@ -327,7 +389,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                     Cursor cursor = getContentResolver().query(data.getData(), filePathColumn, null, null, null);
                     cursor.moveToFirst();
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    imageLocation = cursor.getString(columnIndex);
+                    String imageLocation = cursor.getString(columnIndex);
                     cursor.close();
                     Bitmap bitmap = BitmapFactory.decodeFile(imageLocation);
                     if (bitmap.getWidth() < bitmap.getHeight())
@@ -337,8 +399,10 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                     if (bitmap.getWidth() > 150)
                         bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, false);
                     imageLocation = saveToInternalStorage(bitmap);
-                    userImageType = GALLERY_REQUEST;
-                    userAvatar.setImageBitmap(bitmap);
+                    tabImageType.add(GALLERY_REQUEST);
+                    tabImage.add(imageLocation);
+                    cpt = tabImage.size()-1;
+                    setImageAvatar();
                     break;
 
                 case CAMERA_REQUEST:
@@ -348,34 +412,92 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                     else if (photo.getWidth() > photo.getHeight())
                         photo = Bitmap.createBitmap(photo, (photo.getWidth() - photo.getHeight()) / 2, 0, photo.getHeight(), photo.getHeight());
                     imageLocation = saveToInternalStorage(photo);
-                    userImageType = CAMERA_REQUEST;
-                    userAvatar.setImageBitmap(photo);
+                    tabImageType.add(CAMERA_REQUEST);
+                    tabImage.add(imageLocation);
+                    cpt = tabImage.size()-1;
+                    setImageAvatar();
                     break;
             }
     }
 
-    private String saveToInternalStorage(Bitmap bitmapImage) {
-        String name = db.appDao().getUserImageMaxInt();
-        int id = 0;
-        if(name != null && name.indexOf(".jpg")-1 > 0)
-            id = Integer.parseInt(name.substring(name.indexOf(".jpg")-1, name.indexOf(".jpg"))) + 1;
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-        File mypath = new File(directory, "userimage" + id + ".jpg");
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public void onClick(View v) {
+       MyVibrator.getInstance().vibrate(UserEdit.this, 35);
+        switch (v.getId()) {
+            case R.id.userAvatar_editPage:
+                cpt = ++cpt % tabImage.size();
+                setImageAvatar();
+                break;
 
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(mypath);
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 80, fos);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            case R.id.buttonValider_userEditPage:
+                createUser();
+                break;
+
+            case R.id.buttonCancel_userEditPage:
+                if (tabUserIsEmpty)
+                    showMesageDialog("Voulez-vous quitter ?", "Vous n'avez aucune session, êtes vous sur de vouloir quitter ?", false);
+                else if (shortcut)
+                    finish();
+                else
+                    GlobalUtils.getInstance().startPage(UserEdit.this, "UserResume", true, true);
+                break;
+
+            case R.id.buttonDelete_userEditPage:
+                showMesageDialog("Suppression d'un utilisateur", "Voulez-vous vraiment supprimer \"" + userName + "\" ?", true);
+                break;
+
+            case R.id.buttonImport_userEditPage:
+                PopupMenu popupMenu = new PopupMenu(UserEdit.this, findViewById(R.id.userAvatar_editPage));
+                popupMenu.inflate(R.menu.menu_popup);
+                popupMenu.setOnMenuItemClickListener(item -> {
+                    switch (item.getItemId()) {
+                        case R.id.gallery_tel:
+                            getPhotoFromGallery();
+                            break;
+                        case R.id.camera:
+                            takePhoto();
+                            break;
+                    }
+                    return true;
+                });
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    popupMenu.setForceShowIcon(true);
+                } else {
+                    try {
+                        Field[] fields = popupMenu.getClass().getDeclaredFields();
+                        for (Field field : fields) {
+                            if ("mPopup".equals(field.getName())) {
+                                field.setAccessible(true);
+                                Object menuPopupHelper = field.get(popupMenu);
+                                Class<?> classPopupHelper = Class.forName(menuPopupHelper
+                                        .getClass().getName());
+                                Method setForceIcons = classPopupHelper.getMethod(
+                                        "setForceShowIcon", boolean.class);
+                                setForceIcons.invoke(menuPopupHelper, true);
+                                break;
+                            }
+                        }
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                }
+                popupMenu.show();
+                break;
+            default:
+                break;
         }
-        return mypath.getAbsolutePath();
+    }
+
+    @Override
+    public void onBackPressed() {
+        GlobalUtils.getInstance().startPage(UserEdit.this, "UserResume", true, true);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        if (shortcut)
+            overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
 }

@@ -10,7 +10,6 @@ import com.daimajia.androidanimations.library.YoYo;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
-
 import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyDatabaseInsert;
 import fr.dut.ptut2021.utils.MyTextToSpeech;
@@ -25,21 +24,19 @@ public class LoadingPage extends AppCompatActivity {
 
         textAnimation();
         CreateDatabase db = CreateDatabase.getInstance(getApplicationContext());
-        MyDatabaseInsert.ajoutDatabase(this);
-        MyTextToSpeech.initialiser(this);
+        MyDatabaseInsert.getInstance().ajoutDatabase(this);
+        MyTextToSpeech.getInstance().initialiser(this);
 
         new Handler().postDelayed(() -> {
             if (db.appDao().tabUserIsEmpty())
-                GlobalUtils.startEditPage(this);
+                GlobalUtils.getInstance().startEditPage(this);
             else
-                GlobalUtils.startPage(this, "UserMenu", true, false);
+                GlobalUtils.getInstance().startPage(this, "UserMenu", true, false);
         }, 1500);
     }
 
     //TODO Faire bing bing bing bing de la gauche et TADA !
     private void textAnimation() {
-
         YoYo.with(Techniques.Tada).duration(1000).playOn(findViewById(R.id.applicationName));
-
     }
 }

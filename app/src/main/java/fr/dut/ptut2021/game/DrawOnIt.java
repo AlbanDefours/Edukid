@@ -20,8 +20,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.mikephil.charting.utils.FSize;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +48,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
     private float largeur = 0, hauteur = 0, downx = 0, downy = 0, upx = 0, upy = 0, oldUpx = 0, oldUpy = 0;
     private Boolean canDraw = false, hasDraw = false, warning = false, error = false, next = false, isStart = false;
     private Boolean haveWin = false;
+
 
     private static final int NBESSAI = 3, NBGAME = 4;
 
@@ -110,8 +109,8 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
     }
 
     private void getSharedPref() {
-        userId = MySharedPreferences.getUserId(this);
-        themeName = MySharedPreferences.getThemeName(this);
+        userId = MySharedPreferences.getInstance().getUserId(this);
+        themeName = MySharedPreferences.getInstance().getThemeName(this);
     }
 
     private void updateGameData() {
@@ -384,15 +383,15 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                         updateGameData();
                         nextSymbol();
                         if(error){
-                            MyMediaPlayer.playSound(this, R.raw.wrong_answer);
+                            MyMediaPlayer.getInstance().playSound(this, R.raw.wrong_answer);
                         }else{
-                            MyMediaPlayer.playSound(this, R.raw.correct_answer);
+                            MyMediaPlayer.getInstance().playSound(this, R.raw.correct_answer);
                         }
                         numTrait = 0;
                         next = false;
                     }else if(!isStart){
-                        MyMediaPlayer.playSound(this, R.raw.wrong_answer);
-                        MyVibrator.vibrate(this, 60);
+                        MyMediaPlayer.getInstance().playSound(this, R.raw.wrong_answer);
+                       MyVibrator.getInstance().vibrate(this, 60);
                         reDraw();
                         numTrait = 0;
                         canDraw = false;
@@ -417,7 +416,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
     }
 
     private void addGameLogInDb(int stars) {
-        GameLog gameLog = new GameLog(MySharedPreferences.getGameId(this), -1, userId, stars, db.gameDao().getDOIDataMaxDif(userId, carte[numGame].getCardValue()));
+        GameLog gameLog = new GameLog(MySharedPreferences.getInstance().getGameId(this), -1, userId, stars, db.gameDao().getDOIDataMaxDif(userId, carte[numGame].getCardValue()));
         db.gameLogDao().insertGameLog(gameLog);
     }
 
@@ -483,11 +482,17 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        GlobalUtils.stopAllSound(DrawOnIt.this);
+    protected void onPause() {
+        GlobalUtils.getInstance().stopAllSound();
+        super.onPause();
     }
 
+    @Override
+    public void onBackPressed() {
+        GlobalUtils.getInstance().stopAllSound();
+        if(!haveWin)
+            super.onBackPressed();
+    }
 }
 
 
