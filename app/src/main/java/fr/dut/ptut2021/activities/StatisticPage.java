@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -36,7 +35,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -49,6 +47,7 @@ import fr.dut.ptut2021.models.database.app.Game;
 import fr.dut.ptut2021.models.database.app.SubGame;
 import fr.dut.ptut2021.models.database.app.User;
 import fr.dut.ptut2021.models.database.log.GameLog;
+import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyVibrator;
 
 public class StatisticPage extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener, View.OnTouchListener {
@@ -143,7 +142,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     }
 
     private void displayUserTitle() {
-        userTitle.setText(currentUser.getUserName());
+        userTitle.setText(GlobalUtils.getInstance().cutString(currentUser.getUserName(), 15));
         verifyUserPageLocation();
     }
 
@@ -528,14 +527,14 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
             case R.id.arrow_nextPage:
                 if (userPage < userList.size() - 1) {
-                    MyVibrator.vibrate(StatisticPage.this, 35);
+                   MyVibrator.getInstance().vibrate(StatisticPage.this, 35);
                     userPage++;
                 }
                 displayNewUserPage();
                 break;
             case R.id.arrow_previousPage:
                 if (0 < userPage) {
-                    MyVibrator.vibrate(StatisticPage.this, 35);
+                   MyVibrator.getInstance().vibrate(StatisticPage.this, 35);
                     userPage--;
                 }
                 displayNewUserPage();

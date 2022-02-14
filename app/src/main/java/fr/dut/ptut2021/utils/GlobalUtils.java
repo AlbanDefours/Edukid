@@ -24,8 +24,16 @@ import fr.dut.ptut2021.game.PlayWithSound;
 import fr.dut.ptut2021.game.WordWithHole;
 
 public class GlobalUtils {
+    private static GlobalUtils instance;
 
-    public static void startGame(Context context, String gameName, boolean finish, boolean animation) {
+    public static GlobalUtils getInstance() {
+        if (instance == null) {
+            instance = new GlobalUtils();
+        }
+        return instance;
+    }
+
+    public void startGame(Context context, String gameName, boolean finish, boolean animation) {
         switch (gameName) {
             case "Ecoute":
                 context.startActivity(new Intent().setClass(context, PlayWithSound.class));
@@ -43,27 +51,29 @@ public class GlobalUtils {
                 context.startActivity(new Intent().setClass(context, WordWithHole.class));
                 break;
         }
+        stopAllSound();
         if (animation)
             ((Activity) context).overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         if (finish)
             ((Activity) context).finish();
     }
 
-    public static void startEditPage(Context context) {
+    public void startEditPage(Context context) {
         Intent intent = new Intent().setClass(context, UserEdit.class);
         intent.putExtra("addUser", true);
         context.startActivity(intent);
         ((Activity) context).finish();
     }
 
-    public static void startResultPage(Context context, int starsNb) {
+    public void startResultPage(Context context, int starsNb) {
         Intent intent = new Intent(context, ResultGamePage.class);
         intent.putExtra("starsNumber", starsNb);
         context.startActivity(intent);
+        stopAllSound();
         ((Activity) context).finish();
     }
 
-    public static boolean startPage(Context context, String className, boolean wantToFinish, boolean animation) {
+    public boolean startPage(Context context, String className, boolean wantToFinish, boolean animation) {
         switch (className) {
             case "GameMenu":
                 context.startActivity(new Intent().setClass(context, GameMenu.class));
@@ -100,22 +110,30 @@ public class GlobalUtils {
             ((Activity) context).overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         if (wantToFinish)
             ((Activity) context).finish();
+        stopAllSound();
         return true;
     }
 
-    public static void toast(Context context, String msg, boolean wantLong) {
+    public void toast(Context context, String msg, boolean wantLong) {
         Toast.makeText(context, msg, Boolean.compare(wantLong, false)).show();
     }
 
-    public static void verifyIfSoundIsOn(Context context) {
+    public void verifyIfSoundIsOn(Context context) {
         AudioManager am = (AudioManager) context.getSystemService(AUDIO_SERVICE);
         int volume_level = am.getStreamVolume(AudioManager.STREAM_MUSIC);
         if (volume_level == 0)
             toast(context, "Veuillez activer le son pour jouer !", true);
     }
 
-    public static void stopAllSound(Context context) {
-        MyTextToSpeech.stop(context);
-        MyMediaPlayer.stop();
+    public String cutString(String string, int size) {
+        if (string.length() > size)
+            string = string.substring(0, size-2) + "..";
+
+        return string;
+    }
+
+    public void stopAllSound() {
+        MyTextToSpeech.getInstance().stop();
+        MyMediaPlayer.getInstance().stop();
     }
 }

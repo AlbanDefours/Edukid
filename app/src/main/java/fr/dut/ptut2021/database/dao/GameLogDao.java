@@ -5,11 +5,11 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
+import java.util.List;
+
 import fr.dut.ptut2021.models.database.app.Game;
 import fr.dut.ptut2021.models.database.app.SubGame;
 import fr.dut.ptut2021.models.database.log.GameLog;
-
-import java.util.List;
 
 @Dao
 public interface GameLogDao {

@@ -35,9 +35,9 @@ public class ThemeMenu extends AppCompatActivity {
                 new RecyclerItemClickListener(getApplicationContext(), recyclerViewListTheme, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        MyVibrator.vibrate(ThemeMenu.this, 35);
+                       MyVibrator.getInstance().vibrate(ThemeMenu.this, 35);
                         saveUserNameSahredPref(position);
-                        GlobalUtils.startPage(ThemeMenu.this, "GameMenu", false, false);
+                        GlobalUtils.getInstance().startPage(ThemeMenu.this, "GameMenu", false, false);
                     }
 
                     @Override
@@ -59,7 +59,7 @@ public class ThemeMenu extends AppCompatActivity {
     }
 
     private void saveUserNameSahredPref(int position) {
-        MySharedPreferences.setSharedPreferencesString(this, "themeName", listTheme.get(position).getThemeName());
-        MySharedPreferences.commit();
+        MySharedPreferences.getInstance().setSharedPreferencesString(this, "themeName", listTheme.get(position).getThemeName());
+        MySharedPreferences.getInstance().commit();
     }
 }

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -20,6 +21,7 @@ import fr.dut.ptut2021.utils.MyVibrator;
 
 public class UserResume extends AppCompatActivity {
 
+    private TextView title;
     private CreateDatabase db = null;
     private RecyclerView recyclerView;
     private List<User> listUser = null;
@@ -34,6 +36,7 @@ public class UserResume extends AppCompatActivity {
 
         getAllUser();
         initializeFindView();
+        title.setText("edition");
         hideAddUserButton();
         hideSettingsAdultImage();
         createRecyclerView();
@@ -42,7 +45,7 @@ public class UserResume extends AppCompatActivity {
                 new RecyclerItemClickListener(getApplicationContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        MyVibrator.vibrate(UserResume.this, 35);
+                       MyVibrator.getInstance().vibrate(UserResume.this, 35);
                         startEditUserPage(position);
                     }
 
@@ -70,6 +73,7 @@ public class UserResume extends AppCompatActivity {
         settings = findViewById(R.id.settings);
         recyclerView = findViewById(R.id.recyclerview_users);
         addUser = findViewById(R.id.addUser);
+        title = findViewById(R.id.title_userMenu);
     }
 
     private void hideSettingsAdultImage() {
@@ -89,7 +93,7 @@ public class UserResume extends AppCompatActivity {
     }
 
     private void startAddUserPage() {
-        MyVibrator.vibrate(UserResume.this, 35);
+       MyVibrator.getInstance().vibrate(UserResume.this, 35);
         Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
         intent.putExtra("addUser", true);
         startActivity(intent);
