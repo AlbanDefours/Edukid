@@ -1,5 +1,8 @@
 package fr.dut.ptut2021.models;
 
+import android.util.Log;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
@@ -35,7 +38,7 @@ public class Symbol {
 
 
 
-    private int findIdOfNearestPoint(Point point){
+    public int findIdOfNearestPoint(Point point){
         int idNearestPoint;
         if(points.isEmpty()){
             return -1;
@@ -61,28 +64,39 @@ public class Symbol {
         return idNearestPoint;
     }
 
-    private int findIdOfNearestPointExept(Point point, int exception){
-        int idNearestPoint, idSecondNearestPoint = 0;
+    public int findIdOfNearestPointExept(Point point, int exception){
+        int idSecondNearestPoint = 0;
         if(points.isEmpty() || points.size() == 1){
             return -1;
         }else {
             double dist = Math.sqrt(Math.pow(point.getX() - points.get(0).getX(), 2) + Math.pow(point.getY() - points.get(0).getY(), 2));
-            idNearestPoint = 0;
 
-
-            //System.out.println("dist_" + dist);
             for (int i = 0; i < points.size(); i++) {
-                //System.out.println(Math.sqrt(Math.pow(point.getX() - points.get(i).getX(), 2) + Math.pow(point.getY() - points.get(i).getY(), 2)));
-                idSecondNearestPoint = idNearestPoint;
-                if (Math.sqrt(Math.pow(point.getX() - points.get(i).getX(), 2) + Math.pow(point.getY() - points.get(i).getY(), 2)) <= dist) {
-                    idNearestPoint = i;
+                if (Math.sqrt(Math.pow(point.getX() - points.get(i).getX(), 2) + Math.pow(point.getY() - points.get(i).getY(), 2)) <= dist && i <= exception) {
+                    idSecondNearestPoint = i;
                     dist = Math.sqrt(Math.pow(point.getX() - points.get(i).getX(), 2) + Math.pow(point.getY() - points.get(i).getY(), 2));
                 }
             }
         }
 
+        return idSecondNearestPoint;
+    }
 
-        //System.out.println(idNearestPoint);
+    //surcharge avec deux exception
+    public int findIdOfNearestPointExept(Point point, int exception, int secondException){
+        int idSecondNearestPoint = 0;
+        if(points.isEmpty() || points.size() == 1){
+            return -1;
+        }else {
+            double dist = Math.sqrt(Math.pow(point.getX() - points.get(0).getX(), 2) + Math.pow(point.getY() - points.get(0).getY(), 2));
+
+            for (int i = 0; i < points.size(); i++) {
+                if (Math.sqrt(Math.pow(point.getX() - points.get(i).getX(), 2) + Math.pow(point.getY() - points.get(i).getY(), 2)) <= dist && i <= exception && i <= secondException) {
+                    idSecondNearestPoint = i;
+                    dist = Math.sqrt(Math.pow(point.getX() - points.get(i).getX(), 2) + Math.pow(point.getY() - points.get(i).getY(), 2));
+                }
+            }
+        }
 
         return idSecondNearestPoint;
     }
@@ -125,46 +139,38 @@ public class Symbol {
     }
 
     public boolean isInSymbol(Point point){
-        int idNearestPoint = findIdOfNearestPoint(point);
-        int idOfSecondNearestPoint = findIdOfNearestPointExept(point, idNearestPoint);
+        ArrayList<Integer> idOfNearestPoints = new ArrayList<>();
+        idOfNearestPoints.add(findIdOfNearestPoint(point));
+        idOfNearestPoints.add(findIdOfNearestPointExept(point, idOfNearestPoints.get(0)));
+        idOfNearestPoints.add(findIdOfNearestPointExept(point, idOfNearestPoints.get(0), idOfNearestPoints.get(1)));
 
         if(lastId == -1){
-            lastId = idNearestPoint;
-        }else if(lastId != idNearestPoint - 1 && lastId != idNearestPoint && lastId != idOfSecondNearestPoint - 1 && lastId != idOfSecondNearestPoint){
+            lastId = idOfNearestPoints.get(0);
+        }else if(lastId != idOfNearestPoints.get(0) - 1 && lastId != idOfNearestPoints.get(0) && lastId != idOfNearestPoints.get(1) - 1 && lastId != idOfNearestPoints.get(1)){
             return false;
         }
 
-        if(idNearestPoint == points.size()/2){
+        if(idOfNearestPoints.get(0) == points.size()/2){
             isPastByTheMiddle = true;
         }
 
-        lastId = idNearestPoint;
+        lastId = idOfNearestPoints.get(0);
 
-        if(idNearestPoint == -1){
+        if(idOfNearestPoints.get(0) == -1){
             return false;
         }
 
-        if(idNearestPoint >= 1) {
-            if(isInArea(point, points.get(idNearestPoint - 1), points.get(idNearestPoint))){
-                return true;
+        for(Integer id : idOfNearestPoints) {
+            if (id >= 1) {
+                if (isInArea(point, points.get(id - 1), points.get(id))) {
+                    return true;
+                }
             }
-        }
 
-        if(idOfSecondNearestPoint >= 1){
-            if(isInArea(point, points.get(idOfSecondNearestPoint - 1), points.get(idOfSecondNearestPoint))){
-                return true;
-            }
-        }
-
-        if(idNearestPoint + 1 < points.size()){
-            if(isInArea(point, points.get(idNearestPoint), points.get(idNearestPoint + 1))){
-                return true;
-            }
-        }
-
-        if(idOfSecondNearestPoint + 1 < points.size()){
-            if(isInArea(point, points.get(idOfSecondNearestPoint), points.get(idOfSecondNearestPoint + 1))){
-                return true;
+            if (id + 1 < points.size()) {
+                if (isInArea(point, points.get(id), points.get(id + 1))) {
+                    return true;
+                }
             }
         }
 
@@ -205,46 +211,38 @@ public class Symbol {
 
     //surchage pour avoir la tolerance customisé
     public boolean isInSymbol(Point point, float tol){
-        int idNearestPoint = findIdOfNearestPoint(point);
-        int idOfSecondNearestPoint = findIdOfNearestPointExept(point, idNearestPoint);
+        ArrayList<Integer> idOfNearestPoints = new ArrayList<>();
+        idOfNearestPoints.add(findIdOfNearestPoint(point));
+        idOfNearestPoints.add(findIdOfNearestPointExept(point, idOfNearestPoints.get(0)));
+        idOfNearestPoints.add(findIdOfNearestPointExept(point, idOfNearestPoints.get(0), idOfNearestPoints.get(1)));
 
         if(lastIdCustom == -1){
-            lastIdCustom = idNearestPoint;
-        }else if(lastIdCustom != idNearestPoint - 1 && lastIdCustom != idNearestPoint && lastIdCustom != idOfSecondNearestPoint - 1 && lastIdCustom != idOfSecondNearestPoint){
+            lastIdCustom = idOfNearestPoints.get(0);
+        }else if(lastIdCustom != idOfNearestPoints.get(0) - 1 && lastIdCustom != idOfNearestPoints.get(0) && lastIdCustom != idOfNearestPoints.get(1) - 1 && lastIdCustom != idOfNearestPoints.get(1)){
             return false;
         }
 
-        lastIdCustom = idNearestPoint;
+        lastIdCustom = idOfNearestPoints.get(0);
 
-        if(idNearestPoint == points.size()/2){
+        if(idOfNearestPoints.get(0) == points.size()/2){
             isPastByTheMiddle = true;
         }
 
-        if(idNearestPoint == -1){
+        if(idOfNearestPoints.get(0) == -1){
             return false;
         }
 
-        if(idNearestPoint >= 1) {
-            if(isInArea(point, points.get(idNearestPoint - 1), points.get(idNearestPoint),tol)){
-                return true;
+        for(Integer id : idOfNearestPoints) {
+            if (id >= 1) {
+                if (isInArea(point, points.get(id - 1), points.get(id), tol)) {
+                    return true;
+                }
             }
-        }
 
-        if(idOfSecondNearestPoint >= 1){
-            if(isInArea(point, points.get(idOfSecondNearestPoint - 1), points.get(idOfSecondNearestPoint),tol)){
-                return true;
-            }
-        }
-
-        if(idNearestPoint + 1 < points.size()){
-            if(isInArea(point, points.get(idNearestPoint), points.get(idNearestPoint + 1), tol)){
-                return true;
-            }
-        }
-
-        if(idOfSecondNearestPoint + 1 < points.size()){
-            if(isInArea(point, points.get(idOfSecondNearestPoint), points.get(idOfSecondNearestPoint + 1), tol)){
-                return true;
+            if (id + 1 < points.size()) {
+                if (isInArea(point, points.get(id), points.get(id + 1), tol)) {
+                    return true;
+                }
             }
         }
 

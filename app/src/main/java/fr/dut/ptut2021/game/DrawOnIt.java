@@ -51,7 +51,7 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
     private Boolean canDraw = false, hasDraw = false, warning = false, error = false, next = false, isStart = false;
     private Boolean haveWin = false;
 
-    private static final int NBESSAI = 3, NBGAME = 4;
+    private static final int NBESSAI = 3, NBGAME = 9;
 
     private int numEssai = 0, numGame = 0, numTrait = 0;
     private float nbErreur = 0;
@@ -289,6 +289,13 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                 }else{
                     paint.setColor(Color.GREEN);
                 }
+                /*
+                paint.setColor(Color.RED);
+                canvas.drawPoint((float) DataSymbol.getPts().get(s.findIdOfNearestPoint(new Point(upx, upy))).getX(), (float) DataSymbol.getPts().get(s.findIdOfNearestPoint(new Point(upx, upy))).getY(), paint);
+                paint.setColor(Color.YELLOW);
+                canvas.drawPoint((float) DataSymbol.getPts().get(s.findIdOfNearestPointExept(new Point(upx, upy), s.findIdOfNearestPoint(new Point(upx, upy)))).getX(), (float) DataSymbol.getPts().get(s.findIdOfNearestPointExept(new Point(upx, upy), s.findIdOfNearestPoint(new Point(upx, upy)))).getY(), paint);
+                paint.setColor(Color.GREEN);
+                */
                 break;
             case MotionEvent.ACTION_UP:
                 Log.e("debug", "ACTION_UP");
