@@ -52,9 +52,11 @@ public class MyTextToSpeech {
         });
     }
 
-    public void stop(Context context) {
+    public void stop() {
         if (textToSpeech != null) {
-            speachText(context, "");
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+            textToSpeech = null;
         }
     }
 }

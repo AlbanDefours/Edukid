@@ -51,7 +51,7 @@ public class GlobalUtils {
                 context.startActivity(new Intent().setClass(context, WordWithHole.class));
                 break;
         }
-        stopAllSound(context);
+        stopAllSound();
         if (animation)
             ((Activity) context).overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         if (finish)
@@ -69,7 +69,7 @@ public class GlobalUtils {
         Intent intent = new Intent(context, ResultGamePage.class);
         intent.putExtra("starsNumber", starsNb);
         context.startActivity(intent);
-        stopAllSound(context);
+        stopAllSound();
         ((Activity) context).finish();
     }
 
@@ -110,7 +110,7 @@ public class GlobalUtils {
             ((Activity) context).overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         if (wantToFinish)
             ((Activity) context).finish();
-        stopAllSound(context);
+        stopAllSound();
         return true;
     }
 
@@ -132,8 +132,8 @@ public class GlobalUtils {
         return string;
     }
 
-    public void stopAllSound(Context context) {
-        MyTextToSpeech.getInstance().stop(context);
+    public void stopAllSound() {
+        MyTextToSpeech.getInstance().stop();
         MyMediaPlayer.getInstance().stop();
     }
 }

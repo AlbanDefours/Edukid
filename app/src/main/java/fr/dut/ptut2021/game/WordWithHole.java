@@ -429,13 +429,14 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        MyTextToSpeech.getInstance().stop(WordWithHole.this);
+    protected void onPause() {
+        GlobalUtils.getInstance().stopAllSound();
+        super.onPause();
     }
 
     @Override
     public void onBackPressed() {
+        GlobalUtils.getInstance().stopAllSound();
         if(!haveWin)
             super.onBackPressed();
     }

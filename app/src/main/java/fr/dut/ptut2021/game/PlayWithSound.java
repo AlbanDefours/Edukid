@@ -42,7 +42,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     private String themeName;
     private String[] alphabetTab, syllableTab;
     private final Button[] listButton = new Button[3];
-    private final int MAX_GAME_PLAYED = 5;
+    private final int MAX_GAME_PLAYED = 1;
     private int userId, gameId, gamePlayed = 1, nbTry = 0, answerFalse = 0, nbrStars = 0, answerFalseWord = 0, difficulty = 1;
     private Random random = new Random();
     private String articleTheme;
@@ -69,6 +69,7 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         userId = MySharedPreferences.getInstance().getUserId(this);
         themeName = MySharedPreferences.getInstance().getThemeName(this);
         gameId = MySharedPreferences.getInstance().getGameId(this);
+        articleTheme = themeName.equals("Chiffres") ? "le " : "la ";
     }
 
     private void initDatabase() {
@@ -126,10 +127,6 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
             Collections.shuffle(listAllData.get(dif-1).get(1));
             Collections.shuffle(listAllData.get(dif-1).get(2));
 
-            Log.e("APPLOG", "List Dif " + dif + " (-1): " + listAllData.get(dif-1).get(0));
-            Log.e("APPLOG", "List Dif " + dif + " (0): " + listAllData.get(dif-1).get(1));
-            Log.e("APPLOG", "List Dif " + dif + " (1): " + listAllData.get(dif-1).get(2));
-
             if (listChooseResult.size() <= MAX_GAME_PLAYED) {
                 fillListChooseResult(listAllData, dif);
                 difficulty = dif;
@@ -168,7 +165,6 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
         }
         if (help || sum <= limit) {
             delay = true;
-            articleTheme = themeName.equals("Chiffres") ? "le " : "la ";
             String s = themeName.equals("Chiffres") ? "un " : "une ";
             MyTextToSpeech.getInstance().speachText(PlayWithSound.this, "Dans cet exercice tu vas entendre " + s + themeName.toLowerCase() + " et tu dois " + articleTheme + " retrouver");
             new Handler().postDelayed(() -> {
@@ -355,13 +351,14 @@ public class PlayWithSound extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
-    protected void onDestroy() {
-        MyTextToSpeech.getInstance().stop(PlayWithSound.this);
-        super.onDestroy();
+    protected void onPause() {
+        GlobalUtils.getInstance().stopAllSound();
+        super.onPause();
     }
 
     @Override
     public void onBackPressed() {
+        GlobalUtils.getInstance().stopAllSound();
         if(!haveWin)
             super.onBackPressed();
     }

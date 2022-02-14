@@ -20,8 +20,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.mikephil.charting.utils.FSize;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +30,6 @@ import fr.dut.ptut2021.models.DataSymbol;
 import fr.dut.ptut2021.models.Point;
 import fr.dut.ptut2021.models.Symbol;
 import fr.dut.ptut2021.models.database.game.Card;
-import fr.dut.ptut2021.utils.MyMediaPlayer;
-import fr.dut.ptut2021.utils.MyTextToSpeech;
 import fr.dut.ptut2021.models.database.game.DrawOnItData;
 import fr.dut.ptut2021.models.database.log.GameLog;
 import fr.dut.ptut2021.utils.GlobalUtils;
@@ -486,13 +482,14 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        MyTextToSpeech.getInstance().stop(DrawOnIt.this);
+    protected void onPause() {
+        GlobalUtils.getInstance().stopAllSound();
+        super.onPause();
     }
 
     @Override
     public void onBackPressed() {
+        GlobalUtils.getInstance().stopAllSound();
         if(!haveWin)
             super.onBackPressed();
     }

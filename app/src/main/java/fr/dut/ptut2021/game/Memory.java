@@ -559,13 +559,14 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        MyTextToSpeech.getInstance().stop(Memory.this);
+    protected void onPause() {
+        GlobalUtils.getInstance().stopAllSound();
+        super.onPause();
     }
 
     @Override
     public void onBackPressed() {
+        GlobalUtils.getInstance().stopAllSound();
         if(!haveWin)
             super.onBackPressed();
     }

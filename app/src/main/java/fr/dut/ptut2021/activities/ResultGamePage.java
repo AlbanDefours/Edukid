@@ -3,6 +3,7 @@ package fr.dut.ptut2021.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,7 +39,7 @@ public class ResultGamePage extends AppCompatActivity {
 
         exit.setOnClickListener(v -> {
             stopAllHandler();
-           MyVibrator.getInstance().vibrate(this, 35);
+            MyVibrator.getInstance().vibrate(this, 35);
             finish();
         });
 
@@ -50,7 +51,7 @@ public class ResultGamePage extends AppCompatActivity {
         });
     }
 
-    private void stopAllHandler(){
+    private void stopAllHandler() {
         handlerStars.removeCallbacksAndMessages(null);
         handlerTitle.removeCallbacksAndMessages(null);
         MyMediaPlayer.getInstance().stop();
@@ -99,7 +100,7 @@ public class ResultGamePage extends AppCompatActivity {
         for (int i = 0; i < 3; i++) {
             int finalI = i;
             handlerStars.postDelayed(() -> {
-                if(finalI < nbStars)
+                if (finalI < nbStars)
                     tabStars[finalI].setImageResource(R.drawable.icon_star);
                 YoYo.with(Techniques.Swing).duration(800).playOn(tabStars[finalI]);
             }, 800L * i);
@@ -112,8 +113,14 @@ public class ResultGamePage extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onPause() {
         stopAllHandler();
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        GlobalUtils.getInstance().stopAllSound();
+        super.onBackPressed();
     }
 }
