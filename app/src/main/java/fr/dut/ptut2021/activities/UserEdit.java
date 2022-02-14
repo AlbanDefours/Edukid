@@ -55,7 +55,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private static final int GALLERY_REQUEST = 30, MY_STORAGE_PERMISSION_CODE = 300;
 
     private int cpt = 0;
-    private final int[] tableauImage = {R.drawable.user_image_a, R.drawable.user_image_b, R.drawable.user_image_c, R.drawable.user_image_d};
+    private final int[] tableauImage = {R.drawable.profil1,R.drawable.profil2,R.drawable.profil3,R.drawable.profil4,R.drawable.profil5,R.drawable.profil6,R.drawable.profil7,R.drawable.profil8};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +98,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                 title.setText("Modification du profil de " + bundle.getString("userName", ""));
             } else {
                 title.setText("Créer votre session");
-                userAvatar.setImageResource(R.drawable.user_image_a);
+                userAvatar.setImageResource(R.drawable.profil1);
             }
         }
     }
@@ -106,7 +106,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private void getUserAttribute(Bundle bundle) {
         userName = bundle.getString("userName", "");
         userId = bundle.getInt("userId", 0);
-        imageTmp = bundle.getString("userImage", String.valueOf(R.drawable.user_image_a));
+        imageTmp = bundle.getString("userImage", String.valueOf(R.drawable.profil1));
         imageLocation = imageTmp;
         userImageType = bundle.getInt("userImageType", -1);
     }
@@ -194,7 +194,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         MyVibrator.vibrate(UserEdit.this, 35);
         switch (v.getId()) {
             case R.id.userAvatar_editPage:
-                cpt = ++cpt % 4;
+                cpt = ++cpt % tableauImage.length;
                 imageLocation = String.valueOf(tableauImage[cpt]);
                 userAvatar.setImageResource(tableauImage[cpt]);
                 break;
