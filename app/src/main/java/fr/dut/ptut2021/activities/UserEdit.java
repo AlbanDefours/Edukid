@@ -55,14 +55,8 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private boolean isAddUser = false, tabUserIsEmpty = false, shortcut = false;
     private static final int CAMERA_REQUEST = 20, MY_CAMERA_PERMISSION_CODE = 200;
     private static final int GALLERY_REQUEST = 30, MY_STORAGE_PERMISSION_CODE = 300;
-<<<<<<< HEAD
-
-    private int cpt = 0;
-    private final int[] tableauImage = {R.drawable.profil1,R.drawable.profil2,R.drawable.profil3,R.drawable.profil4,R.drawable.profil5,R.drawable.profil6,R.drawable.profil7,R.drawable.profil8};
-=======
     private List<String> tabImage = new ArrayList<>();
     private List<Integer> tabImageType = new ArrayList<>();
->>>>>>> 900f2a1837bdf9b39f3d4fb562bd082e46eea644
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,14 +71,17 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void addingAvatar() {
-        tabImage.add(String.valueOf(R.drawable.user_image_a));
-        tabImageType.add(0);
-        tabImage.add(String.valueOf(R.drawable.user_image_b));
-        tabImageType.add(0);
-        tabImage.add(String.valueOf(R.drawable.user_image_c));
-        tabImageType.add(0);
-        tabImage.add(String.valueOf(R.drawable.user_image_d));
-        tabImageType.add(0);
+        for(int i = 1; i <= 8; i++)
+            tabImageType.add(0);
+
+        tabImage.add(String.valueOf(R.drawable.profil1));
+        tabImage.add(String.valueOf(R.drawable.profil2));
+        tabImage.add(String.valueOf(R.drawable.profil3));
+        tabImage.add(String.valueOf(R.drawable.profil4));
+        tabImage.add(String.valueOf(R.drawable.profil5));
+        tabImage.add(String.valueOf(R.drawable.profil6));
+        tabImage.add(String.valueOf(R.drawable.profil7));
+        tabImage.add(String.valueOf(R.drawable.profil8));
     }
 
     private void getDb() {
@@ -115,7 +112,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                 title.setText("Modification du profil de " + bundle.getString("userName", ""));
             } else if (db.appDao().getAllUsers().isEmpty()) {
                 title.setText("Créer votre première session");
-                userAvatar.setImageResource(R.drawable.user_image_a);
+                userAvatar.setImageResource(R.drawable.profil1);
             } else {
                 title.setText("Créer votre session");
                 userAvatar.setImageResource(R.drawable.profil1);
@@ -132,17 +129,11 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
 
     private void getUserAttribute(Bundle bundle) {
         userId = bundle.getInt("userId", 0);
-<<<<<<< HEAD
-        imageTmp = bundle.getString("userImage", String.valueOf(R.drawable.profil1));
-        imageLocation = imageTmp;
-        userImageType = bundle.getInt("userImageType", -1);
-=======
         userName = bundle.getString("userName", "");
         shortcut = bundle.getBoolean("shortcut", false);
         String imageName = bundle.getString("userImage", null);
         addImageTabIfNotExist(imageName, bundle.getInt("userImageType", 30));
         findImageActual(imageName);
->>>>>>> 900f2a1837bdf9b39f3d4fb562bd082e46eea644
     }
 
     public void addImageTabIfNotExist(String userImage, int userImageType){
@@ -227,79 +218,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     }
 
     private boolean isDataCorrect() {
-<<<<<<< HEAD
-        return !textField_userName.getText().toString().isEmpty() && imageLocation != null;
-    }
-
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public void onClick(View v) {
-        MyVibrator.vibrate(UserEdit.this, 35);
-        switch (v.getId()) {
-            case R.id.userAvatar_editPage:
-                cpt = ++cpt % tableauImage.length;
-                imageLocation = String.valueOf(tableauImage[cpt]);
-                userAvatar.setImageResource(tableauImage[cpt]);
-                break;
-
-            case R.id.buttonValider_userEditPage:
-                createUser();
-                break;
-
-            case R.id.buttonCancel_userEditPage:
-                if (tabUserIsEmpty)
-                    showMesageDialog("Voulez-vous quitter ?", "Vous n'avez aucune session, êtes vous sur de vouloir quitter ?", false);
-                else
-                    GlobalUtils.startPage(UserEdit.this, "UserResume", true, true);
-                break;
-
-            case R.id.buttonDelete_userEditPage:
-                showMesageDialog("Suppression d'un utilisateur", "Voulez-vous vraiment supprimer \"" + userName + "\" ?", true);
-                break;
-
-            case R.id.buttonImport_userEditPage:
-                PopupMenu popupMenu = new PopupMenu(UserEdit.this, findViewById(R.id.userAvatar_editPage));
-                popupMenu.inflate(R.menu.menu_popup);
-                popupMenu.setOnMenuItemClickListener(item -> {
-                    switch (item.getItemId()) {
-                        case R.id.gallery_tel:
-                            getPhotoFromGallery();
-                            break;
-                        case R.id.camera:
-                            takePhoto();
-                            break;
-                    }
-                    return true;
-                });
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    popupMenu.setForceShowIcon(true);
-                } else {
-                    try {
-                        Field[] fields = popupMenu.getClass().getDeclaredFields();
-                        for (Field field : fields) {
-                            if ("mPopup".equals(field.getName())) {
-                                field.setAccessible(true);
-                                Object menuPopupHelper = field.get(popupMenu);
-                                Class<?> classPopupHelper = Class.forName(menuPopupHelper
-                                        .getClass().getName());
-                                Method setForceIcons = classPopupHelper.getMethod(
-                                        "setForceShowIcon", boolean.class);
-                                setForceIcons.invoke(menuPopupHelper, true);
-                                break;
-                            }
-                        }
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                    }
-                }
-                popupMenu.show();
-                break;
-            default:
-                break;
-        }
-=======
         return !textField_userName.getText().toString().isEmpty();
->>>>>>> 900f2a1837bdf9b39f3d4fb562bd082e46eea644
     }
 
     private void getPhotoFromGallery() {
@@ -423,7 +342,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
-       MyVibrator.getInstance().vibrate(UserEdit.this, 35);
+        MyVibrator.getInstance().vibrate(UserEdit.this, 35);
         switch (v.getId()) {
             case R.id.userAvatar_editPage:
                 cpt = ++cpt % tabImage.size();
