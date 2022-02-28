@@ -50,7 +50,7 @@
         android:id="@+id/userAvatar_editPage"
         android:layout_width="170dp"
         android:layout_height="170dp"
-        android:src="@drawable/user_image_b"
+        android:src="@drawable/profil1"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

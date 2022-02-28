@@ -116,11 +116,11 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             isWin = true;
             MemoryData memoData = db.gameDao().getMemoryData(userId, category, subCat);
             int nbStar;
-            if (nbAttempt <= Math.ceil(0.75*(getNbCard()*2))) {
+            if (nbAttempt <= Math.ceil(0.75*(getNbCard()*2)+getNbCard()/10)) {
                 nbStar = 3;
                 memoData.setWinStreak(db.gameDao().getMemoryData(userId, category, subCat).getWinStreak() + 1);
                 memoData.setLoseStreak(0);
-            } else if (nbAttempt <= Math.ceil((getNbCard()*2))) {
+            } else if (nbAttempt <= Math.ceil((getNbCard()*2)+getNbCard()/10)) {
                 nbStar = 2;
                 memoData.setWinStreak(0);
                 memoData.setLoseStreak(0);
