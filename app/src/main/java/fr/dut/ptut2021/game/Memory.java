@@ -116,11 +116,11 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
             isWin = true;
             MemoryData memoData = db.gameDao().getMemoryData(userId, category, subCat);
             int nbStar;
-            if (nbAttempt <= Math.ceil(0.75*(getNbCard()*2))) {
+            if (nbAttempt <= Math.ceil(0.75*(getNbCard()*2)+getNbCard()/10)) {
                 nbStar = 3;
                 memoData.setWinStreak(db.gameDao().getMemoryData(userId, category, subCat).getWinStreak() + 1);
                 memoData.setLoseStreak(0);
-            } else if (nbAttempt <= Math.ceil((getNbCard()*2))) {
+            } else if (nbAttempt <= Math.ceil((getNbCard()*2)+getNbCard()/10)) {
                 nbStar = 2;
                 memoData.setWinStreak(0);
                 memoData.setLoseStreak(0);
@@ -397,11 +397,11 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         if(difficulty==difficultyMax) {
             Log.e("memory","La difficulté est analysé");
             Log.e("memory","Nombre de carte en dessous de 3 : "+NbCardUsedLessThan(3));
-            int value=0;
+            int value=3;
             if(category.equals("Lettres")){
                 value=2;
             }
-            if (db.gameDao().getMemoryData(userId, category, subCat).getWinStreak() >= 1 && NbCardUsedLessThan(value) == 0 && difficulty + 1 <= 5) {
+            if (db.gameDao().getMemoryData(userId, category, subCat).getWinStreak() >= 3 && NbCardUsedLessThan(value) == 0 && difficulty + 1 <= 5) {
                 Log.e("memory", "Monte au niveau " + (difficulty + 1));
                 db.gameDao().increaseMemoryDataDifficulty(userId, category, subCat);
                 db.gameDao().increaseMemoryDataMaxDifficulty(userId,category,subCat);
