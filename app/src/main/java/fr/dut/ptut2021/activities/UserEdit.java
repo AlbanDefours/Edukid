@@ -71,7 +71,7 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void addingAvatar() {
-        for(int i = 1; i <= 8; i++)
+        for (int i = 1; i <= 8; i++)
             tabImageType.add(0);
 
         tabImage.add(String.valueOf(R.drawable.profil1));
@@ -120,9 +120,9 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
-    private void findImageActual(String imageName){
-        for (int i = 0; i < tabImage.size(); i++){
-            if(tabImage.get(i).equals(imageName))
+    private void findImageActual(String imageName) {
+        for (int i = 0; i < tabImage.size(); i++) {
+            if (tabImage.get(i).equals(imageName))
                 cpt = i;
         }
     }
@@ -136,13 +136,13 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         findImageActual(imageName);
     }
 
-    public void addImageTabIfNotExist(String userImage, int userImageType){
+    public void addImageTabIfNotExist(String userImage, int userImageType) {
         boolean exist = false;
-        for (String s : tabImage){
-            if(s.equals(userImage))
+        for (String s : tabImage) {
+            if (s.equals(userImage))
                 exist = true;
         }
-        if(!exist){
+        if (!exist) {
             tabImage.add(userImage);
             tabImageType.add(userImageType);
         }
@@ -304,24 +304,22 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
         if (resultCode == Activity.RESULT_OK)
             switch (requestCode) {
                 case GALLERY_REQUEST:
-                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                    Cursor cursor = getContentResolver().query(data.getData(), filePathColumn, null, null, null);
-                    cursor.moveToFirst();
-                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    String imageLocation = cursor.getString(columnIndex);
-                    cursor.close();
-                    Bitmap bitmap = BitmapFactory.decodeFile(imageLocation);
-                    if (bitmap.getWidth() < bitmap.getHeight())
-                        bitmap = Bitmap.createBitmap(bitmap, 0, (bitmap.getHeight() - bitmap.getWidth()) / 2, bitmap.getWidth(), bitmap.getWidth());
-                    else if (bitmap.getWidth() > bitmap.getHeight())
-                        bitmap = Bitmap.createBitmap(bitmap, (bitmap.getWidth() - bitmap.getHeight()) / 2, 0, bitmap.getHeight(), bitmap.getHeight());
-                    if (bitmap.getWidth() > 150)
-                        bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, false);
-                    imageLocation = saveToInternalStorage(bitmap);
-                    tabImageType.add(GALLERY_REQUEST);
-                    tabImage.add(imageLocation);
-                    cpt = tabImage.size()-1;
-                    setImageAvatar();
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
+                        if (bitmap.getWidth() < bitmap.getHeight())
+                            bitmap = Bitmap.createBitmap(bitmap, 0, (bitmap.getHeight() - bitmap.getWidth()) / 2, bitmap.getWidth(), bitmap.getWidth());
+                        else if (bitmap.getWidth() > bitmap.getHeight())
+                            bitmap = Bitmap.createBitmap(bitmap, (bitmap.getWidth() - bitmap.getHeight()) / 2, 0, bitmap.getHeight(), bitmap.getHeight());
+                        if (bitmap.getWidth() > 250)
+                            bitmap = Bitmap.createScaledBitmap(bitmap, 250, 250, false);
+
+                        tabImageType.add(GALLERY_REQUEST);
+                        tabImage.add(saveToInternalStorage(bitmap));
+                        cpt = tabImage.size() - 1;
+                        setImageAvatar();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     break;
 
                 case CAMERA_REQUEST:
@@ -330,10 +328,11 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                         photo = Bitmap.createBitmap(photo, 0, (photo.getHeight() - photo.getWidth()) / 2, photo.getWidth(), photo.getWidth());
                     else if (photo.getWidth() > photo.getHeight())
                         photo = Bitmap.createBitmap(photo, (photo.getWidth() - photo.getHeight()) / 2, 0, photo.getHeight(), photo.getHeight());
-                    imageLocation = saveToInternalStorage(photo);
+                    if (photo.getWidth() > 250)
+                        photo = Bitmap.createScaledBitmap(photo, 250, 250, false);
                     tabImageType.add(CAMERA_REQUEST);
-                    tabImage.add(imageLocation);
-                    cpt = tabImage.size()-1;
+                    tabImage.add(saveToInternalStorage(photo));
+                    cpt = tabImage.size() - 1;
                     setImageAvatar();
                     break;
             }

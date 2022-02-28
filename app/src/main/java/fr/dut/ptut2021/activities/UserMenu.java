@@ -45,20 +45,20 @@ public class UserMenu extends AppCompatActivity {
                 new RecyclerItemClickListener(getApplicationContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                       MyVibrator.getInstance().vibrate(UserMenu.this, 35);
+                        MyVibrator.getInstance().vibrate(UserMenu.this, 35);
                         saveUserNameSahredPref(position);
                         GlobalUtils.getInstance().startPage(UserMenu.this, "ThemeMenu", false, false);
                     }
 
                     @Override
                     public void onLongItemClick(View view, int position) {
-                       MyVibrator.getInstance().vibrate(UserMenu.this, 35);
+                        MyVibrator.getInstance().vibrate(UserMenu.this, 35);
                         Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
                         intent.putExtra("userName", listUser.get(position).getUserName());
                         intent.putExtra("userId", listUser.get(position).getUserId());
                         intent.putExtra("userImage", listUser.get(position).getUserImage());
                         intent.putExtra("userImageType", listUser.get(position).getUserImageType());
-                        intent.putExtra("shortcut",true);
+                        intent.putExtra("shortcut", true);
                         startActivity(intent);
                         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                     }
@@ -66,12 +66,12 @@ public class UserMenu extends AppCompatActivity {
         );
 
         settings.setOnClickListener(view -> {
-           MyVibrator.getInstance().vibrate(UserMenu.this, 35);
+            MyVibrator.getInstance().vibrate(UserMenu.this, 35);
             GlobalUtils.getInstance().startPage(UserMenu.this, "UserResume", false, false);
         });
 
         adultProfile.setOnClickListener(view -> {
-           MyVibrator.getInstance().vibrate(UserMenu.this, 35);
+            MyVibrator.getInstance().vibrate(UserMenu.this, 35);
             GlobalUtils.getInstance().startPage(UserMenu.this, "StatisticPage", false, false);
         });
     }
@@ -89,8 +89,8 @@ public class UserMenu extends AppCompatActivity {
         new AlertDialog.Builder(UserMenu.this)
                 .setTitle("Quitter")
                 .setMessage("Voulez-vous quitter l'application ?")
-                .setPositiveButton(android.R.string.yes, (dialog, which) -> UserMenu.super.onBackPressed())
-                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton("Oui", (dialog, id) -> UserMenu.super.onBackPressed())
+                .setNegativeButton("Non", null)
                 .show();
     }
 
