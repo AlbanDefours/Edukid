@@ -205,9 +205,8 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
                     dialog.dismiss();
                     if (wantToDelete) {
                         File file = new File(db.appDao().getUserById(userId).getUserImage());
-                        file.delete(); //TODO (pas delete si on modifie l'image par une de l'ap)
-                        deleteGameData();
-                        db.appDao().deleteUserById(userId);
+                        file.delete();
+                        deleteUserData();
                         finish();
                     } else
                         finish();
@@ -240,9 +239,13 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
     }
 
-    private void deleteGameData() {
+    private void deleteUserData() {
+        db.appDao().deleteUserById(userId);
+        db.gameLogDao().deleteGameLogDataByUser(userId);
         db.gameDao().deleteWWHDataByUser(userId);
-        //TODO rajouter les fonctions de suppression des jeux à venir
+        db.gameDao().deletePWSDataByUser(userId);
+        db.gameDao().deleteDOIDataByUser(userId);
+        db.gameDao().deleteMemoryDataByUser(userId);
     }
 
     private String saveToInternalStorage(Bitmap bitmapImage) {
