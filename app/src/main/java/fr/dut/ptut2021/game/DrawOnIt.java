@@ -328,17 +328,17 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                             nbErreur++;
 
                             Log.e("axel", "Beacoup depassé");
-                            Toast.makeText(getApplicationContext(), "Beacoup depassé", Toast.LENGTH_SHORT);
+                            Toast.makeText(getApplicationContext(), "Beacoup depassé", Toast.LENGTH_SHORT).show();
 
                             //reDraw();
 
                         } else if (warning) {
                             nbErreur += 0.5;
                             Log.e("axel", "Un peu depassé");
-                            Toast.makeText(getApplicationContext(), "Un peu depassé", Toast.LENGTH_SHORT);
+                            Toast.makeText(getApplicationContext(), "Un peu depassé", Toast.LENGTH_SHORT).show();
                             next = true;
                         } else {
-                            Toast.makeText(getApplicationContext(), "Bravo !", Toast.LENGTH_SHORT);
+                            Toast.makeText(getApplicationContext(), "Bravo !", Toast.LENGTH_SHORT).show();
                             next = true;
                         }
 
@@ -363,14 +363,14 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
 
                     if (numEssai >= NBESSAI) { //Manche terminé
                         Log.e("axel", "Symbol suivant : plus d'essai | nb de game " + numGame);
-                        Toast.makeText(getApplicationContext(), "Symbol suivant : plus d'essai", Toast.LENGTH_SHORT);
+                        Toast.makeText(getApplicationContext(), "Symbol suivant : plus d'essai", Toast.LENGTH_SHORT).show();
 
                         next = true;
                     }
                     if (numGame >= NBGAME - 1 && next) { //Partie terminé
                         haveWin = true;
                         hasDraw = true;
-                        Toast.makeText(getApplicationContext(), "Jeu terminé !!!", Toast.LENGTH_SHORT);
+                        Toast.makeText(getApplicationContext(), "Jeu terminé !!!", Toast.LENGTH_SHORT).show();
                         Log.e("axel", "jeu terminé !!!");
 
                         Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);

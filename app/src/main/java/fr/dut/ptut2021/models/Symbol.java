@@ -14,7 +14,6 @@ public class Symbol {
     private int lastIdCustom = -1;
     private boolean isPastByTheMiddle = false;
 
-    //private Point[] cinq = { new Point(773,561), new Point(280,614), new Point(468,877), new Point(597,872), new Point(758,971), new Point(761,1225), new Point(606,1358), new Point(344,1305) };
 
     public Symbol(){
 
@@ -72,7 +71,7 @@ public class Symbol {
             double dist = Math.sqrt(Math.pow(point.getX() - points.get(0).getX(), 2) + Math.pow(point.getY() - points.get(0).getY(), 2));
 
             for (int i = 0; i < points.size(); i++) {
-                if (Math.sqrt(Math.pow(point.getX() - points.get(i).getX(), 2) + Math.pow(point.getY() - points.get(i).getY(), 2)) <= dist && i <= exception) {
+                if (Math.sqrt(Math.pow(point.getX() - points.get(i).getX(), 2) + Math.pow(point.getY() - points.get(i).getY(), 2)) <= dist && i != exception) {
                     idSecondNearestPoint = i;
                     dist = Math.sqrt(Math.pow(point.getX() - points.get(i).getX(), 2) + Math.pow(point.getY() - points.get(i).getY(), 2));
                 }
@@ -91,7 +90,7 @@ public class Symbol {
             double dist = Math.sqrt(Math.pow(point.getX() - points.get(0).getX(), 2) + Math.pow(point.getY() - points.get(0).getY(), 2));
 
             for (int i = 0; i < points.size(); i++) {
-                if (Math.sqrt(Math.pow(point.getX() - points.get(i).getX(), 2) + Math.pow(point.getY() - points.get(i).getY(), 2)) <= dist && i <= exception && i <= secondException) {
+                if (Math.sqrt(Math.pow(point.getX() - points.get(i).getX(), 2) + Math.pow(point.getY() - points.get(i).getY(), 2)) <= dist && i != exception && i != secondException) {
                     idSecondNearestPoint = i;
                     dist = Math.sqrt(Math.pow(point.getX() - points.get(i).getX(), 2) + Math.pow(point.getY() - points.get(i).getY(), 2));
                 }
@@ -143,6 +142,10 @@ public class Symbol {
         idOfNearestPoints.add(findIdOfNearestPoint(point));
         idOfNearestPoints.add(findIdOfNearestPointExept(point, idOfNearestPoints.get(0)));
         idOfNearestPoints.add(findIdOfNearestPointExept(point, idOfNearestPoints.get(0), idOfNearestPoints.get(1)));
+
+        Log.e("pts", "" + idOfNearestPoints.get(0));
+        Log.e("pts", "" + idOfNearestPoints.get(1));
+        Log.e("pts", "" + idOfNearestPoints.get(2));
 
         if(lastId == -1){
             lastId = idOfNearestPoints.get(0);
