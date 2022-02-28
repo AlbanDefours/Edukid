@@ -190,6 +190,8 @@ public interface GameDao {
     @Query("UPDATE MemoryData SET winStreak = 0, loseStreak = 0 WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory")
     void resetAllMemoryDataStreak(int userId, String category, int subCategory);
 
+    @Query("DELETE FROM DrawOnItData WHERE userId = :userId")
+    void deleteMemoryDataByUser(int userId);
 
 //Card
     @Insert(onConflict = OnConflictStrategy.IGNORE)

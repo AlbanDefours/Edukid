@@ -70,4 +70,7 @@ public interface GameLogDao {
         return getAllGameLogByUserId(userId).isEmpty();
     }
 
+    @Query("DELETE FROM GameLog WHERE userId = :userId")
+    void deleteGameLogDataByUser(int userId);
+
 }
