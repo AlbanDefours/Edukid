@@ -7,10 +7,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.makeramen.roundedimageview.RoundedImageView;
+
 import fr.dut.ptut2021.R;
 
 public class MyViewHolderSubGame extends RecyclerView.ViewHolder {
-    ImageView image, lock;
+    RoundedImageView image, lock;
     TextView name;
 
     public MyViewHolderSubGame(@NonNull View itemView) {

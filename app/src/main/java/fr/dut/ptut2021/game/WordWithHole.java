@@ -47,7 +47,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     private String[] alphabetTab, syllableTab;
     private final int MAX_GAME_PLAYED = 4;
     private int userId, gameId, gamePlayed = 1, nbTry = 0, nbWrongAnswer = 0, difficulty = 1;
-    private boolean delay = false;
+    private boolean delay = false, haveWin = false;
     private Random random = new Random();
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -56,6 +56,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_with_hole);
 
+        GlobalUtils.getInstance().verifyIfSoundIsOn(this);
         db = CreateDatabase.getInstance(WordWithHole.this);
         getSharedPref();
 
@@ -70,8 +71,8 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getSharedPref() {
-        userId = MySharedPreferences.getUserId(this);
-        gameId = MySharedPreferences.getGameId(this);
+        userId = MySharedPreferences.getInstance().getUserId(this);
+        gameId = MySharedPreferences.getInstance().getGameId(this);
     }
 
     private void fillDatabase() {
@@ -239,7 +240,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         }
         if (help || sum <= limit) {
             delay = true;
-            MyTextToSpeech.speachText(this, "Trouve la lettre ou la syllabe manquante.");
+            MyTextToSpeech.getInstance().speachText(this, "Trouve la lettre ou la syllabe manquante.");
             new Handler().postDelayed(() -> {
                 delay = false;
             }, 2000);
@@ -247,7 +248,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void readWord() {
-        MyTextToSpeech.speachText(this, mapChooseData.get(goodAnswer).getWord());
+        MyTextToSpeech.getInstance().speachText(this, mapChooseData.get(goodAnswer).getWord());
     }
 
     private void textAnimation(boolean goodAnswer) {
@@ -264,9 +265,9 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
 
     private void playSound(boolean isGoodAnswer) {
         if (isGoodAnswer)
-            MyMediaPlayer.playSound(this, R.raw.correct_answer);
+            MyMediaPlayer.getInstance().playSound(this, R.raw.correct_answer);
         else
-            MyMediaPlayer.playSound(this, R.raw.wrong_answer);
+            MyMediaPlayer.getInstance().playSound(this, R.raw.wrong_answer);
     }
 
     private String concatWrongAnswer(int indAnswer) {
@@ -349,7 +350,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
             } else {
                 int stars = starsNumber();
                 addGameLogInDb(stars);
-                GlobalUtils.startResultPage(WordWithHole.this, stars);
+                GlobalUtils.getInstance().startResultPage(WordWithHole.this, stars);
             }
         }, 3000);
     }
@@ -386,8 +387,10 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     private void verifyAnswer(Button answer, int numAnswer) {
-        MyVibrator.vibrate(WordWithHole.this, 35);
+       MyVibrator.getInstance().vibrate(WordWithHole.this, 35);
         if (answer.getText() == goodAnswer) {
+            if (gamePlayed+1 == MAX_GAME_PLAYED)
+                haveWin = true;
             answer.setBackgroundColor(Color.GREEN);
             replay();
         } else {
@@ -426,8 +429,15 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        GlobalUtils.stopAllSound(WordWithHole.this);
+    protected void onPause() {
+        GlobalUtils.getInstance().stopAllSound();
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        GlobalUtils.getInstance().stopAllSound();
+        if(!haveWin)
+            super.onBackPressed();
     }
 }

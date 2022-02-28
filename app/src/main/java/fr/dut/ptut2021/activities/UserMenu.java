@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +25,7 @@ import fr.dut.ptut2021.utils.MyVibrator;
 
 public class UserMenu extends AppCompatActivity {
 
+    private TextView title;
     private UserAdapter adapter;
     private CreateDatabase db = null;
     private RecyclerView recyclerView;
@@ -35,31 +38,41 @@ public class UserMenu extends AppCompatActivity {
         setContentView(R.layout.activity_user_menu);
 
         initializeFindView();
+        title.setText("profiles");
         hideAddUserImage();
 
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(getApplicationContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        MyVibrator.vibrate(UserMenu.this, 35);
+                        MyVibrator.getInstance().vibrate(UserMenu.this, 35);
                         saveUserNameSahredPref(position);
-                        GlobalUtils.startPage(UserMenu.this, "ThemeMenu", false, false);
+                        GlobalUtils.getInstance().startPage(UserMenu.this, "ThemeMenu", false, false);
                     }
 
                     @Override
                     public void onLongItemClick(View view, int position) {
+                        MyVibrator.getInstance().vibrate(UserMenu.this, 35);
+                        Intent intent = new Intent().setClass(getApplicationContext(), UserEdit.class);
+                        intent.putExtra("userName", listUser.get(position).getUserName());
+                        intent.putExtra("userId", listUser.get(position).getUserId());
+                        intent.putExtra("userImage", listUser.get(position).getUserImage());
+                        intent.putExtra("userImageType", listUser.get(position).getUserImageType());
+                        intent.putExtra("shortcut", true);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                     }
                 })
         );
 
         settings.setOnClickListener(view -> {
-            MyVibrator.vibrate(UserMenu.this, 35);
-            GlobalUtils.startPage(UserMenu.this, "UserResume", false, false);
+            MyVibrator.getInstance().vibrate(UserMenu.this, 35);
+            GlobalUtils.getInstance().startPage(UserMenu.this, "UserResume", false, false);
         });
 
         adultProfile.setOnClickListener(view -> {
-            MyVibrator.vibrate(UserMenu.this, 35);
-            GlobalUtils.startPage(UserMenu.this, "StatisticPage", false, false);
+            MyVibrator.getInstance().vibrate(UserMenu.this, 35);
+            GlobalUtils.getInstance().startPage(UserMenu.this, "StatisticPage", false, false);
         });
     }
 
@@ -69,6 +82,16 @@ public class UserMenu extends AppCompatActivity {
         createAndGetDatabase();
         createRecyclerView();
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(UserMenu.this)
+                .setTitle("Quitter")
+                .setMessage("Voulez-vous quitter l'application ?")
+                .setPositiveButton("Oui", (dialog, id) -> UserMenu.super.onBackPressed())
+                .setNegativeButton("Non", null)
+                .show();
     }
 
     private void createAndGetDatabase() {
@@ -81,6 +104,7 @@ public class UserMenu extends AppCompatActivity {
         settings = findViewById(R.id.settings);
         addUser = findViewById(R.id.addUser);
         recyclerView = findViewById(R.id.recyclerview_users);
+        title = findViewById(R.id.title_userMenu);
     }
 
     private void hideAddUserImage() {
@@ -117,9 +141,9 @@ public class UserMenu extends AppCompatActivity {
     }
 
     private void saveUserNameSahredPref(int position) {
-        MySharedPreferences.setSharedPreferencesString(UserMenu.this, "userName", listUser.get(position).getUserName());
-        MySharedPreferences.setSharedPreferencesInt(UserMenu.this, "userId", listUser.get(position).getUserId());
-        MySharedPreferences.setSharedPreferencesString(UserMenu.this, "userImage", listUser.get(position).getUserImage());
-        MySharedPreferences.commit();
+        MySharedPreferences.getInstance().setSharedPreferencesString(UserMenu.this, "userName", listUser.get(position).getUserName());
+        MySharedPreferences.getInstance().setSharedPreferencesInt(UserMenu.this, "userId", listUser.get(position).getUserId());
+        MySharedPreferences.getInstance().setSharedPreferencesString(UserMenu.this, "userImage", listUser.get(position).getUserImage());
+        MySharedPreferences.getInstance().commit();
     }
 }

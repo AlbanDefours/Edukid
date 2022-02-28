@@ -2,17 +2,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center">
 
-    <ImageView
+    <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/subGameImage"
         android:layout_width="85dp"
         android:layout_height="85dp"
         android:layout_marginTop="20dp"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        app:riv_corner_radius="5dp"/>
 
-    <ImageView
+    <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/subGameImageLock"
         android:layout_width="85dp"
         android:layout_height="85dp"
@@ -20,7 +22,8 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:visibility="invisible"
-        android:src="@drawable/logo_lock"/>
+        android:src="@drawable/logo_lock"
+        app:riv_corner_radius="5dp"/>
 
     <TextView
         android:id="@+id/subGameName"

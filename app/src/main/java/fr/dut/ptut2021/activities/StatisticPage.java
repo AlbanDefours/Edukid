@@ -29,13 +29,13 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -45,8 +45,10 @@ import java.util.TreeMap;
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
 import fr.dut.ptut2021.models.database.app.Game;
+import fr.dut.ptut2021.models.database.app.SubGame;
 import fr.dut.ptut2021.models.database.app.User;
 import fr.dut.ptut2021.models.database.log.GameLog;
+import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyVibrator;
 
 public class StatisticPage extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener, View.OnTouchListener {
@@ -56,14 +58,14 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     private TextView userTitle, barChartTitle, leftStatTitle, rightStatTitle, leftStatText, rightStatText, spinnerStatText;
     private Button generalButton, lettresButton, chiffresButton;
     private ImageView arrowNext, arrowPrevious, leftStatIcon, rightStatIcon, spinnerStatIcon;
-    private Spinner gameSpinner, difficultySpinner;
+    private Spinner gameSpinner, difficultySpinner, subGameSpinner;
     private List<User> userList;
     private List<Game> gameList;
     private int userPage = 0, currentGameId;
     private String themeName = "General";
     private long startWeekTime;
     private final long DAY_MILLIS = 24 * 3600 * 1000;
-    private boolean spinnerRefresh = false;
+    private boolean spinnerRefresh = false, subGameExist = false;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -96,6 +98,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
         gameSpinner = findViewById(R.id.spinner_game_stats);
         difficultySpinner = findViewById(R.id.spinner_difficulty_stats);
+        subGameSpinner = findViewById(R.id.spinner_subgame_stats);
         spinnerStatIcon = findViewById(R.id.image_spinner_stats);
         spinnerStatText = findViewById(R.id.text_spinner_stats);
     }
@@ -111,6 +114,8 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         gameSpinner.setOnTouchListener(this);
         difficultySpinner.setOnItemSelectedListener(this);
         difficultySpinner.setOnTouchListener(this);
+        subGameSpinner.setOnItemSelectedListener(this);
+        subGameSpinner.setOnTouchListener(this);
     }
 
     private void createDbAndImportUsers() {
@@ -138,7 +143,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     }
 
     private void displayUserTitle() {
-        userTitle.setText(currentUser.getUserName());
+        userTitle.setText(GlobalUtils.getInstance().cutString(currentUser.getUserName(), 15));
         verifyUserPageLocation();
     }
 
@@ -365,32 +370,34 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     }
 
     private void setSpinnerResources() {
-        if (!themeName.equals("General"))
+        if (themeName.equals("General")) {
             hideSpinners();
+        } else {
+            List<Game> gamePlayedList = db.gameLogDao().getAllGamePlayed(currentUser.getUserId(), themeName);
+            if (gamePlayedList.isEmpty())
+                hideSpinners();
+            else {
+                String[] gameNameTab = new String[gamePlayedList.size()];
+                for (int i = 0; i < gamePlayedList.size(); i++)
+                    gameNameTab[i] = gamePlayedList.get(i).getGameName();
 
-        List<Game> gamePlayedList = db.gameLogDao().getAllGamePlayedByUserIdAndTheme(currentUser.getUserId(), themeName);
-        if (gamePlayedList.isEmpty())
-            hideSpinners();
-        else {
-            String[] gameNameTab = new String[gamePlayedList.size()];
-            for (int i = 0; i < gamePlayedList.size(); i++)
-                gameNameTab[i] = gamePlayedList.get(i).getGameName();
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                        this,
+                        android.R.layout.simple_spinner_item,
+                        gameNameTab);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                gameSpinner.setAdapter(adapter);
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                    this,
-                    android.R.layout.simple_spinner_item,
-                    gameNameTab);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            gameSpinner.setAdapter(adapter);
-
-            updateSpinnerDifficulty();
-            updateGameAverage();
-            displaySpinners();
+                currentGameId = db.appDao().getGameId(gameSpinner.getSelectedItem().toString(), themeName);
+                subGameExist = updateSubGameSpinner();
+                updateSpinnerDifficulty();
+                updateGameAverage();
+                displaySpinners();
+            }
         }
     }
 
     private void updateSpinnerDifficulty() {
-        currentGameId = db.appDao().getGameId(gameSpinner.getSelectedItem().toString(), themeName);
         int maxDifficulty = db.gameLogDao().getGameLogMaxDifByGame(currentUser.getUserId(), currentGameId);
         String[] difficultyTab = new String[maxDifficulty];
 
@@ -402,28 +409,74 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
                 android.R.layout.simple_spinner_item,
                 difficultyTab);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        difficultySpinner.setAdapter(adapter);
+
+        if (subGameExist)
+            difficultySpinner.setAdapter(adapter);
+        else
+            subGameSpinner.setAdapter(adapter);
+    }
+
+    public boolean updateSubGameSpinner() {
+        if (db.appDao().getAllGameNameWithSubGame().contains(gameSpinner.getSelectedItem().toString())) {
+            subGameSpinner.setVisibility(View.VISIBLE);
+            difficultySpinner.setVisibility(View.VISIBLE);
+
+            List<SubGame> subGamePlayedList = db.gameLogDao().getAllSubGamePlayed(
+                    currentUser.getUserId(),
+                    db.appDao().getGameId(gameSpinner.getSelectedItem().toString(),
+                    themeName));
+
+            if (!subGamePlayedList.isEmpty()) {
+                String[] subGameNameTab = new String[subGamePlayedList.size()];
+                for (int i = 0; i < subGamePlayedList.size(); i++)
+                    subGameNameTab[i] = subGamePlayedList.get(i).getSubGameName();
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                        this,
+                        android.R.layout.simple_spinner_item,
+                        subGameNameTab);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                subGameSpinner.setAdapter(adapter);
+                return true;
+            }
+        }
+        else {
+            difficultySpinner.setVisibility(View.GONE);
+        }
+        return false;
     }
 
     @SuppressLint("SetTextI18n")
     private void updateGameAverage() {
-        spinnerStatText.setText(db.gameLogDao().getGameAvgByGameIdAndDifficulty(
-                currentUser.getUserId(),
-                currentGameId,
-                difficultySpinner.getSelectedItemPosition()+1
-        ).toString());
+        String val;
+        if (subGameExist) {
+            val = db.gameLogDao().getGameAvgBySubGameIdAndDifficulty(
+                    currentUser.getUserId(),
+                    currentGameId,
+                    db.appDao().getSubGameByNameAndGame(currentGameId, subGameSpinner.getSelectedItem().toString()).getSubGameId(),
+                    difficultySpinner.getSelectedItemPosition() + 1
+            ).toString();
+        } else {
+            val = db.gameLogDao().getGameAvgByGameIdAndDifficulty(
+                    currentUser.getUserId(),
+                    currentGameId,
+                    difficultySpinner.getSelectedItemPosition() + 1
+            ).toString();
+        }
+        spinnerStatText.setText(val);
     }
 
     private void hideSpinners() {
         gameSpinner.setVisibility(View.GONE);
         difficultySpinner.setVisibility(View.GONE);
+        subGameSpinner.setVisibility(View.GONE);
         spinnerStatText.setVisibility(View.GONE);
         spinnerStatIcon.setVisibility(View.GONE);
     }
 
     private void displaySpinners() {
         gameSpinner.setVisibility(View.VISIBLE);
-        difficultySpinner.setVisibility(View.VISIBLE);
+        subGameSpinner.setVisibility(View.VISIBLE);
         spinnerStatText.setVisibility(View.VISIBLE);
         spinnerStatIcon.setVisibility(View.VISIBLE);
     }
@@ -474,14 +527,14 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
             case R.id.arrow_nextPage:
                 if (userPage < userList.size() - 1) {
-                    MyVibrator.vibrate(StatisticPage.this, 35);
+                   MyVibrator.getInstance().vibrate(StatisticPage.this, 35);
                     userPage++;
                 }
                 displayNewUserPage();
                 break;
             case R.id.arrow_previousPage:
                 if (0 < userPage) {
-                    MyVibrator.vibrate(StatisticPage.this, 35);
+                   MyVibrator.getInstance().vibrate(StatisticPage.this, 35);
                     userPage--;
                 }
                 displayNewUserPage();
@@ -498,6 +551,8 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         if (spinnerRefresh) {
             switch (parent.getId()) {
                 case R.id.spinner_game_stats:
+                    currentGameId = db.appDao().getGameId(gameSpinner.getSelectedItem().toString(), themeName);
+                    subGameExist = updateSubGameSpinner();
                     updateSpinnerDifficulty();
                     updateGameAverage();
                     break;

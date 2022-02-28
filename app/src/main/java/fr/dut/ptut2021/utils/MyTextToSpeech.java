@@ -10,10 +10,18 @@ import java.util.Locale;
 import fr.dut.ptut2021.game.PlayWithSound;
 
 public class MyTextToSpeech {
-    static TextToSpeech textToSpeech;
-    static Voice voice = null;
+    private Voice voice = null;
+    private TextToSpeech textToSpeech;
+    private static MyTextToSpeech instance;
 
-    public static void speachText(Context context, String text) {
+    public static MyTextToSpeech getInstance() {
+        if (instance == null) {
+            instance = new MyTextToSpeech();
+        }
+        return instance;
+    }
+
+    public void speachText(Context context, String text) {
         if (text.contains("Y") || text.contains("y") && context.getClass() == PlayWithSound.class)
             text = "Trouve la lettre igrec";
         String finalText = text;
@@ -30,7 +38,7 @@ public class MyTextToSpeech {
         });
     }
 
-    public static void initialiser(Context context) {
+    public void initialiser(Context context) {
         textToSpeech = new TextToSpeech(context, status -> {
             if (status != TextToSpeech.ERROR) {
                 textToSpeech.setLanguage(Locale.FRANCE);
@@ -44,9 +52,11 @@ public class MyTextToSpeech {
         });
     }
 
-    public static void stop(Context context) {
+    public void stop() {
         if (textToSpeech != null) {
-            speachText(context, "");
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+            textToSpeech = null;
         }
     }
 }

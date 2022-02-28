@@ -3,6 +3,7 @@ package fr.dut.ptut2021.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,22 +39,22 @@ public class ResultGamePage extends AppCompatActivity {
 
         exit.setOnClickListener(v -> {
             stopAllHandler();
-            MyVibrator.vibrate(this, 35);
+            MyVibrator.getInstance().vibrate(this, 35);
             finish();
         });
 
         replay.setOnClickListener(v -> {
             stopAllHandler();
-            MyVibrator.vibrate(this, 35);
-            GlobalUtils.startGame(this, gameName, false, false);
+            MyVibrator.getInstance().vibrate(this, 35);
+            GlobalUtils.getInstance().startGame(this, gameName, false, false);
             finish();
         });
     }
 
-    private void stopAllHandler(){
+    private void stopAllHandler() {
         handlerStars.removeCallbacksAndMessages(null);
         handlerTitle.removeCallbacksAndMessages(null);
-        MyMediaPlayer.stop();
+        MyMediaPlayer.getInstance().stop();
     }
 
     private void getNbStars() {
@@ -68,8 +69,8 @@ public class ResultGamePage extends AppCompatActivity {
     }
 
     private void getGameThemeName() {
-        themeName = MySharedPreferences.getThemeName(this);
-        gameName = MySharedPreferences.getGameName(this);
+        themeName = MySharedPreferences.getInstance().getThemeName(this);
+        gameName = MySharedPreferences.getInstance().getGameName(this);
         if (gameName.equals("Memory"))
             gameName = "SubMemory";
     }
@@ -86,33 +87,40 @@ public class ResultGamePage extends AppCompatActivity {
         ImageView[] tabStars = {star1, star2, star3};
         switch (nbStars) {
             case 1:
-                MyMediaPlayer.playSound(this, R.raw.one_star);
+                MyMediaPlayer.getInstance().playSound(this, R.raw.one_star);
                 break;
             case 2:
-                MyMediaPlayer.playSound(this, R.raw.two_stars);
+                MyMediaPlayer.getInstance().playSound(this, R.raw.two_stars);
                 break;
             case 3:
-                MyMediaPlayer.playSound(this, R.raw.three_stars);
+                MyMediaPlayer.getInstance().playSound(this, R.raw.three_stars);
                 break;
         }
 
-        for (int i = 0; i < nbStars; i++) {
+        for (int i = 0; i < 3; i++) {
             int finalI = i;
             handlerStars.postDelayed(() -> {
-                tabStars[finalI].setImageResource(R.drawable.icon_star);
+                if (finalI < nbStars)
+                    tabStars[finalI].setImageResource(R.drawable.icon_star);
                 YoYo.with(Techniques.Swing).duration(800).playOn(tabStars[finalI]);
             }, 800L * i);
         }
 
         handlerTitle.postDelayed(() -> {
             YoYo.with(Techniques.Tada).duration(1000).repeat(2).playOn(findViewById(R.id.text_felicitation));
-            MyMediaPlayer.playSound(this, R.raw.kids_cheering);
+            MyMediaPlayer.getInstance().playSound(this, R.raw.kids_cheering);
         }, 800L * nbStars + 200);
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onPause() {
         stopAllHandler();
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        GlobalUtils.getInstance().stopAllSound();
+        super.onBackPressed();
     }
 }

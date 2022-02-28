@@ -86,8 +86,11 @@ public interface AppDao {
     @Query("SELECT * FROM SubGame WHERE subGameId = :subGameId")
     SubGame getSubGameById(int subGameId);
 
-    @Query("SELECT * FROM SubGame WHERE subGameName = :subGameName")
-    SubGame getSubGameByName(String subGameName);
+    @Query("SELECT * FROM SubGame WHERE gameId = :gameId AND subGameName LIKE :subGameName")
+    SubGame getSubGameByNameAndGame(int gameId, String subGameName);
+
+    @Query("SELECT g.gameName FROM Game AS g NATURAL JOIN SubGame AS s WHERE g.gameId = s.gameId AND s.subGameId != -1")
+    List<String> getAllGameNameWithSubGame();
 
     @Update
     void updateSubGame(SubGame subGame);

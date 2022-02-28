@@ -7,11 +7,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.makeramen.roundedimageview.RoundedImageView;
+
 import fr.dut.ptut2021.R;
 
 public class MyViewHolderUser extends RecyclerView.ViewHolder {
 
-    ImageView avatar, settingIcon;
+    RoundedImageView avatar, settingIcon;
     TextView name;
     boolean isInSetting;
 

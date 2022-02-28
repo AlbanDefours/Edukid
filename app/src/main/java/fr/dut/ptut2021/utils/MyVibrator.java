@@ -6,9 +6,17 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 
 public class MyVibrator {
-    static Vibrator vibe;
+    private Vibrator vibe;
+    private static MyVibrator instance;
 
-    public static void vibrate(Context context, int duration) {
+    public static MyVibrator getInstance() {
+        if (instance == null) {
+            instance = new MyVibrator();
+        }
+        return instance;
+    }
+
+    public void vibrate(Context context, int duration) {
         if(vibe == null)
             vibe = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
