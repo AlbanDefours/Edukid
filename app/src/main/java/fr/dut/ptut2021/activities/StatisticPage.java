@@ -448,17 +448,12 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     @SuppressLint("SetTextI18n")
     private void updateGameAverage() {
-        String val = "";
-        Log.e("APPLOG", "subgame : " + subGameExist);
-        Log.e("APPLOG", "userId : " + currentUser.getUserId());
-        Log.e("APPLOG", "gameId : " + currentGameId);
-        int difficulty = difficultySpinner.getSelectedItemPosition() + 1;
-        Log.e("APPLOG", "difficulty : " + difficulty);
+        String val;
         if (subGameExist) {
             val = db.gameLogDao().getGameAvgBySubGameIdAndDifficulty(
                     currentUser.getUserId(),
                     currentGameId,
-                    db.appDao().getSubGameByName(subGameSpinner.getSelectedItem().toString()).getSubGameId(),
+                    db.appDao().getSubGameByNameAndGame(currentGameId, subGameSpinner.getSelectedItem().toString()).getSubGameId(),
                     difficultySpinner.getSelectedItemPosition() + 1
             ).toString();
         } else {
