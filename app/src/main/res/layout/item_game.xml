@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center">
 
-    <ImageView
+    <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/gameImage"
         android:layout_width="85dp"
         android:layout_height="85dp"
-        android:layout_marginTop="20dp"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="20dp"
+        app:riv_corner_radius="5dp" />
 
-    <ImageView
+    <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/gameImageLock"
         android:layout_width="85dp"
         android:layout_height="85dp"
-        android:layout_marginTop="20dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/logo_lock"
         android:visibility="invisible"
-        android:src="@drawable/logo_lock"/>
+        app:riv_corner_radius="5dp" />
 
     <TextView
         android:id="@+id/gameName"
@@ -29,8 +32,8 @@
         android:layout_below="@+id/gameImage"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="20dp"
-        android:textSize="21sp"
         android:textAlignment="center"
-        android:textColor="@color/black"/>
+        android:textColor="@color/black"
+        android:textSize="21sp" />
 
 </RelativeLayout>

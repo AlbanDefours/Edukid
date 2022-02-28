@@ -26,6 +26,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,8 +49,8 @@ public class UserEdit extends AppCompatActivity implements View.OnClickListener 
     private TextView title;
     private String userName;
     private int userId, cpt = 0;
-    private ImageView userAvatar;
     private CreateDatabase db = null;
+    private RoundedImageView userAvatar;
     private Button valid, cancel, delete, inport;
     private TextInputEditText textField_userName;
     private boolean isAddUser = false, tabUserIsEmpty = false, shortcut = false;
