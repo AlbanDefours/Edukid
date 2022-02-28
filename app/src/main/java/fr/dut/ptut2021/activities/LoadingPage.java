@@ -35,7 +35,6 @@ public class LoadingPage extends AppCompatActivity {
         }, 1500);
     }
 
-    //TODO Faire bing bing bing bing de la gauche et TADA !
     private void textAnimation() {
         YoYo.with(Techniques.Tada).duration(1000).playOn(findViewById(R.id.applicationName));
     }

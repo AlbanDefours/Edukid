@@ -57,7 +57,7 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
     private int subCat;
     private StateProgressBar stateProgressBar;
     private StateProgressBar stateProgressBarLock;
-    private boolean isWin=false, haveWin = false; //TODO a changer
+    private boolean isWin=false, haveWin = false;
     private int nbAttempt = 0;
     private ArrayList<Integer> fonts;
     private static boolean difficultyIsChanged=false;
@@ -546,7 +546,6 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         db.gameLogDao().insertGameLog(gameLog);
     }
 
-//TODO faire les bouton sur la progresse Bar avec max diffulté déjà atteinte
     @Override
     public void onStateItemClick(StateProgressBar stateProgressBar, StateItem stateItem, int stateNumber, boolean isCurrentState) {
         if(stateProgressBar == this.stateProgressBar){

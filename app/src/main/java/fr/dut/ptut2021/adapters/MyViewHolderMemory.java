@@ -61,13 +61,11 @@ public class MyViewHolderMemory extends RecyclerView.ViewHolder {
 
             @Override
             public void onAnimationStart(Animation animation) {
-                // TODO Auto-generated method stub
 
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-                // TODO Auto-generated method stub
 
             }
 

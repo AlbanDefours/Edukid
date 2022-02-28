@@ -22,7 +22,6 @@ import fr.dut.ptut2021.models.database.game.WordWithHoleData;
 
 @Dao
 public interface GameDao {
-    //TODO supprimer toutes les données quand on supprime un utilisateur
 
 //WordWithHoleData
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -223,7 +222,6 @@ public interface GameDao {
     @Query("SELECT * FROM MemoryDataCardCrossRef WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory AND cardValue LIKE :cardValue")
     MemoryDataCardCrossRef getMemoryDataCard(int userId, String category, int subCategory, String cardValue);
 
-    //TODO Y a des trucs à changer pour used
     @Query("SELECT used FROM MemoryDataCardCrossRef WHERE userId = :userId AND category LIKE :category AND subCategory = :subCategory AND cardValue LIKE :cardValue")
     int getMemoryDataCardUsed(int userId, String category, int subCategory, String cardValue);
 
