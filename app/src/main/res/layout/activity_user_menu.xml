@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/magimt"
-        android:text="profiles"
+        android:text="profils"
         android:textAlignment="center"
         android:textColor="#00BCD4"
         android:textSize="45sp"
@@ -22,14 +22,17 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_users"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:overScrollMode="never"
-        android:paddingTop="110dp"
+        android:paddingTop="50dp"
+        android:paddingBottom="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/title_userMenu" />
+
 
     <ImageView
         android:id="@+id/adultProfile"
