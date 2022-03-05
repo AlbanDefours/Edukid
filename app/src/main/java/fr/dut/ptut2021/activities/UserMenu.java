@@ -38,7 +38,7 @@ public class UserMenu extends AppCompatActivity {
         setContentView(R.layout.activity_user_menu);
 
         initializeFindView();
-        title.setText("profiles");
+        title.setText("profils");
         hideAddUserImage();
 
         recyclerView.addOnItemTouchListener(
