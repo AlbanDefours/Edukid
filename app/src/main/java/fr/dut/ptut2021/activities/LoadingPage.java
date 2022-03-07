@@ -10,10 +10,10 @@ import com.daimajia.androidanimations.library.YoYo;
 
 import fr.dut.ptut2021.R;
 import fr.dut.ptut2021.database.CreateDatabase;
+import fr.dut.ptut2021.game.PlayWithSound;
 import fr.dut.ptut2021.utils.GlobalUtils;
 import fr.dut.ptut2021.utils.MyDatabaseInsert;
 import fr.dut.ptut2021.utils.MyTextToSpeech;
-
 
 public class LoadingPage extends AppCompatActivity {
 

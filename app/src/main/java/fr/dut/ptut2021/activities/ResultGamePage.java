@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,9 +21,10 @@ import fr.dut.ptut2021.utils.MyVibrator;
 public class ResultGamePage extends AppCompatActivity {
 
     private int starsNb = 0;
+    private TextView encouragementText;
     private String gameName, themeName;
-    private ImageView star1, star2, star3, exit, replay;
     private Handler handlerStars, handlerTitle;
+    private ImageView star1, star2, star3, exit, replay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,18 +83,22 @@ public class ResultGamePage extends AppCompatActivity {
         star3 = findViewById(R.id.icon_star3);
         exit = findViewById(R.id.exitButton_ResultPage);
         replay = findViewById(R.id.retryButton_ResultPage);
+        encouragementText = findViewById(R.id.text_felicitation);
     }
 
     private void starsNumber(int nbStars) {
         ImageView[] tabStars = {star1, star2, star3};
         switch (nbStars) {
             case 1:
+                encouragementText.setText("Bien joué  !");
                 MyMediaPlayer.getInstance().playSound(this, R.raw.one_star);
                 break;
             case 2:
+                encouragementText.setText("Bravo !");
                 MyMediaPlayer.getInstance().playSound(this, R.raw.two_stars);
                 break;
             case 3:
+                encouragementText.setText("Félicitations !");
                 MyMediaPlayer.getInstance().playSound(this, R.raw.three_stars);
                 break;
         }
