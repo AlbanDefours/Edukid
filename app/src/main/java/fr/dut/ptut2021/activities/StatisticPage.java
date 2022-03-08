@@ -30,6 +30,7 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -137,7 +138,6 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     private void displayNewCategoryPage() {
         createBarChart(getGameFrequencyData());
-        //createLineChart(getGameAvgStarsData());
         setStatsText();
         setSpinnerResources();
     }
@@ -242,56 +242,6 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         return mapData;
     }
 
-/*
-    public void createLineChart(Map<Integer, Float> mapData) {
-        LineChart lineChart = findViewById(R.id.line_chart);
-        List<Entry> data = new ArrayList<>();
-
-        for (Map.Entry<Integer, Float> val : mapData.entrySet())
-            data.add(new Entry(val.getKey(), val.getValue()));
-
-        LineDataSet lineDataSet = new LineDataSet(data, "Data");
-        lineDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
-        lineDataSet.setValueTextColor(Color.BLACK);
-        lineDataSet.setLineWidth(3);
-        lineDataSet.setCircleRadius(5);
-        lineDataSet.setDrawValues(false);
-
-        String[] list = {"10", "20", "30", "40", "50", "60"};
-
-        XAxis axis = lineChart.getXAxis();
-        axis.setTypeface(Typeface.MONOSPACE);
-        axis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        axis.setTextSize(15f);
-        axis.setAxisMinimum(1);
-        axis.setGranularity(1);
-        axis.setAxisMaximum(6);
-        axis.setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getAxisLabel(float value, AxisBase axis) {
-                return list[Math.round(value) - 1];
-            }
-        });
-
-        AxisBase axisBase = lineChart.getAxis(YAxis.AxisDependency.LEFT);
-        axisBase.setGranularity(1f);
-        axisBase.setTextSize(15f);
-        axisBase.setAxisMinimum(0f);
-        axisBase.setAxisMaximum(3f);
-        axisBase.setTypeface(Typeface.MONOSPACE);
-        lineChart.getAxis(YAxis.AxisDependency.RIGHT).setEnabled(false);
-
-        LineData lineData = new LineData(lineDataSet);
-        lineChart.setData(lineData);
-
-        lineChart.getDescription().setEnabled(false);
-        lineChart.animateY(500);
-        lineChart.setTouchEnabled(false);
-        lineChart.setNoDataText("Tu n'as encore jamais joué !");
-        lineChart.getLegend().setEnabled(false);
-        lineChart.setExtraOffsets(0, 0, 0, 5);
-    }
-*/
 
     private Map<Integer, Float> getGameAvgStarsData() {
         Map<Integer, Float> mapData = new TreeMap<>();
@@ -390,6 +340,11 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
                 currentGameId = db.appDao().getGameId(gameSpinner.getSelectedItem().toString(), themeName);
                 subGameExist = updateSubGameSpinner();
+
+                Log.e("APPLOG", "themeName : " + themeName);
+                Log.e("APPLOG", "currentGameId : " + currentGameId);
+                Log.e("APPLOG", "subGameExist : " + subGameExist);
+
                 updateSpinnerDifficulty();
                 updateGameAverage();
                 displaySpinners();
@@ -449,19 +404,20 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
     @SuppressLint("SetTextI18n")
     private void updateGameAverage() {
         String val;
+        NumberFormat nf = new DecimalFormat("0.#");
         if (subGameExist) {
-            val = db.gameLogDao().getGameAvgBySubGameIdAndDifficulty(
+            val = nf.format(db.gameLogDao().getGameAvgBySubGameIdAndDifficulty(
                     currentUser.getUserId(),
                     currentGameId,
                     db.appDao().getSubGameByNameAndGame(currentGameId, subGameSpinner.getSelectedItem().toString()).getSubGameId(),
                     difficultySpinner.getSelectedItemPosition() + 1
-            ).toString();
+            ));
         } else {
-            val = db.gameLogDao().getGameAvgByGameIdAndDifficulty(
+            val = nf.format(db.gameLogDao().getGameAvgByGameIdAndDifficulty(
                     currentUser.getUserId(),
                     currentGameId,
                     difficultySpinner.getSelectedItemPosition() + 1
-            ).toString();
+            ));
         }
         spinnerStatText.setText(val);
     }
