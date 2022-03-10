@@ -407,12 +407,22 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         String val;
         NumberFormat nf = new DecimalFormat("0.#");
         if (subGameExist) {
-            val = nf.format(db.gameLogDao().getGameAvgBySubGameIdAndDifficulty(
+            Float f = db.gameLogDao().getGameAvgBySubGameIdAndDifficulty(
                     currentUser.getUserId(),
                     currentGameId,
                     db.appDao().getSubGameByNameAndGame(currentGameId, subGameSpinner.getSelectedItem().toString()).getSubGameId(),
                     difficultySpinner.getSelectedItemPosition() + 1
-            ));
+            );
+            if (f != null) {
+                val = nf.format(db.gameLogDao().getGameAvgBySubGameIdAndDifficulty(
+                        currentUser.getUserId(),
+                        currentGameId,
+                        db.appDao().getSubGameByNameAndGame(currentGameId, subGameSpinner.getSelectedItem().toString()).getSubGameId(),
+                        difficultySpinner.getSelectedItemPosition() + 1
+                ));
+            } else {
+                val = "3.0";
+            }
         } else {
             val = nf.format(db.gameLogDao().getGameAvgByGameIdAndDifficulty(
                     currentUser.getUserId(),
