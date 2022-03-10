@@ -18,9 +18,9 @@
         android:id="@+id/title_StatisticPage"
         android:layout_width="258dp"
         android:layout_height="wrap_content"
+        android:lines="1"
         android:textAlignment="center"
         android:textSize="30sp"
-        android:lines="1"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout_button"
         app:layout_constraintEnd_toStartOf="@+id/arrow_nextPage"
         app:layout_constraintStart_toEndOf="@+id/arrow_previousPage"
@@ -99,10 +99,10 @@
 
             <View
                 android:layout_width="fill_parent"
-                android:layout_marginStart="50dp"
-                android:layout_marginEnd="50dp"
                 android:layout_height="1dp"
+                android:layout_marginStart="50dp"
                 android:layout_marginTop="25dp"
+                android:layout_marginEnd="50dp"
                 android:background="@color/colorPrimary" />
 
             <LinearLayout
@@ -135,8 +135,8 @@
                         android:id="@+id/image_left_stat1"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
-                        android:src="@drawable/ic_square"
                         android:layout_marginTop="8dp"
+                        android:src="@drawable/ic_square"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/title_left_stat1" />
@@ -174,8 +174,8 @@
                         android:id="@+id/image_right_stat1"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
-                        android:src="@drawable/ic_square"
                         android:layout_marginTop="8dp"
+                        android:src="@drawable/ic_square"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/title_right_stat1" />
@@ -196,17 +196,29 @@
 
             <View
                 android:layout_width="fill_parent"
-                android:layout_marginStart="50dp"
-                android:layout_marginEnd="50dp"
                 android:layout_height="1dp"
+                android:layout_marginStart="50dp"
                 android:layout_marginTop="20dp"
+                android:layout_marginEnd="50dp"
                 android:background="@color/colorPrimary" />
+
+            <TextView
+                android:id="@+id/title_average"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Moyenne d'étoiles des jeux"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
                 android:id="@+id/linearLayout_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="15dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -222,29 +234,29 @@
                         android:layout_height="wrap_content"
                         android:textAlignment="center"
                         android:textSize="30sp"
-                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="@+id/spinner_difficulty_stats"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="@+id/spinner_difficulty_stats" />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <Spinner
                         android:id="@+id/spinner_subgame_stats"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAlignment="center"
                         android:layout_marginTop="15dp"
+                        android:textAlignment="center"
                         android:textSize="30sp"
-                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/spinner_game_stats"
-                        app:layout_constraintEnd_toEndOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <Spinner
                         android:id="@+id/spinner_difficulty_stats"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:layout_marginTop="15dp"
                         android:textAlignment="center"
                         android:textSize="30sp"
-                        android:layout_gravity="center"
                         app:layout_constraintTop_toTopOf="@+id/linearLayout_spinner" />
 
                 </LinearLayout>
@@ -259,8 +271,8 @@
                         android:id="@+id/image_spinner_stats"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
-                        android:src="@drawable/icon_star"
                         android:layout_marginStart="10dp"
+                        android:src="@drawable/icon_star"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -269,9 +281,9 @@
                         android:id="@+id/text_spinner_stats"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
                         android:text="@string/emptyText"
                         android:textSize="30sp"
-                        android:layout_marginStart="10dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/image_spinner_stats"
                         app:layout_constraintTop_toTopOf="parent" />

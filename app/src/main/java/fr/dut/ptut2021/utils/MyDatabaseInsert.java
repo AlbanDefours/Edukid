@@ -44,7 +44,7 @@ public class MyDatabaseInsert {
     public void createGames() {
         if (db.appDao().tabGameIsEmpty()) {
             db.appDao().insertGame(new Game("Memory", themeLettres, R.drawable.logo_memory_lettre));
-            db.appDao().insertGame(new Game("Dessine", themeLettres, R.drawable.logo_drawonit_lettre));
+            //db.appDao().insertGame(new Game("Dessine", themeLettres, R.drawable.logo_drawonit_lettre));
             db.appDao().insertGame(new Game("Mot à trou", themeLettres, R.drawable.logo_wordwithhole_lettre));
             db.appDao().insertGame(new Game("Ecoute", themeLettres, R.drawable.logo_playwithsound_lettre));
             db.appDao().insertGame(new Game("Memory", themeChiffres, R.drawable.logo_memory));

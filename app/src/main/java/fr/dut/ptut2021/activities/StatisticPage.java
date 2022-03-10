@@ -55,7 +55,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
 
     private CreateDatabase db = null;
     private User currentUser;
-    private TextView userTitle, barChartTitle, leftStatTitle, rightStatTitle, leftStatText, rightStatText, spinnerStatText;
+    private TextView userTitle, barChartTitle, leftStatTitle, rightStatTitle, leftStatText, rightStatText, spinnerStatText, title_average;
     private Button generalButton, lettresButton, chiffresButton;
     private ImageView arrowNext, arrowPrevious, leftStatIcon, rightStatIcon, spinnerStatIcon;
     private Spinner gameSpinner, difficultySpinner, subGameSpinner;
@@ -101,6 +101,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         subGameSpinner = findViewById(R.id.spinner_subgame_stats);
         spinnerStatIcon = findViewById(R.id.image_spinner_stats);
         spinnerStatText = findViewById(R.id.text_spinner_stats);
+        title_average = findViewById(R.id.title_average);
     }
 
     private void initOnClickViews() {
@@ -472,6 +473,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         subGameSpinner.setVisibility(View.GONE);
         spinnerStatText.setVisibility(View.GONE);
         spinnerStatIcon.setVisibility(View.GONE);
+        title_average.setVisibility(View.GONE);
     }
 
     private void displaySpinners() {
@@ -479,6 +481,7 @@ public class StatisticPage extends AppCompatActivity implements View.OnClickList
         subGameSpinner.setVisibility(View.VISIBLE);
         spinnerStatText.setVisibility(View.VISIBLE);
         spinnerStatIcon.setVisibility(View.VISIBLE);
+        title_average.setVisibility(View.VISIBLE);
     }
     
     @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
