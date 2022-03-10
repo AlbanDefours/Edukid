@@ -98,7 +98,6 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         initListAnswer();
         setLayoutContent();
         readInstruction(false);
-        readWord();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -240,7 +239,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         }
         if (help || sum <= limit) {
             delay = true;
-            MyTextToSpeech.getInstance().speachText(this, "Trouve la lettre ou la syllabe manquante.");
+            MyTextToSpeech.getInstance().speachText(this, "Trouve la lettre ou la syllabe manquante." + mapChooseData.get(goodAnswer).getWord());
             new Handler().postDelayed(() -> {
                 delay = false;
             }, 2000);
