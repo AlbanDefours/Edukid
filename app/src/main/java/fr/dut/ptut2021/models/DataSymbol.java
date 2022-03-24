@@ -175,14 +175,9 @@ public final class DataSymbol {
                 break;
         }
 
-
-        //densitydpi 480
-        //p.setX(((p.getX() * 1080) / 480) * width);
-        //p.setY(((p.getY() * 2032) / 480) * height);
-
         for(Point p : pts){
-            p.setX(((p.getX() * 1080.0) / 1080.0) * width);
-            p.setY(((p.getY() * 2032.0) / 2032.0) * height);
+            p.setX(p.getX() * width);
+            p.setY(p.getY() * height);
         }
 
     }

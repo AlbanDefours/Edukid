@@ -179,25 +179,9 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         p = new android.graphics.Point();
         currentDisplay.getRealSize(p);
 
-        /*
-        int c = 4;
-        image.setImageResource(listCard.get(c - 1).getDrawableImage()); //carte[0]
-        DataSymbol.initPts(c, dm.xdpi, dm.ydpi); //Integer.parseInt(carte[0].getCardValue())
-        s = new Symbol(DataSymbol.getPts(), tolerance);
-        */
-
         image.setImageResource(carte[0].getDrawableImage()); //carte[0]
         DataSymbol.initPts(Integer.parseInt(carte[0].getCardValue()),largeur, hauteur); //(Integer.parseInt(carte[0].getCardValue()), dm.widthPixels, dm.heightPixels)
         s = new Symbol(DataSymbol.getPts(), tolerance);
-
-
-        //Log.e("bit", "" + bitmap.getScaledHeight(canvas));
-        //Log.e("bit", "" + bitmap.getScaledHeight(dm));
-
-        //System.out.println(bitmap.getScaledHeight(canvas));
-        //System.out.println(bitmap.getScaledHeight(dm));
-
-
 
         bitmap = Bitmap.createBitmap((int) largeur, (int) hauteur, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
@@ -207,24 +191,6 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
         paint.setAntiAlias(true);
         paint.setStrokeCap(Paint.Cap.ROUND);
         imageVide.setImageBitmap(bitmap);
-
-        // ---------------------debug---------------------
-        //paint.setStrokeWidth(15);
-        //canvas.drawPoints(getFloats(), paint); // dessine tout les point compris dans la zone qui est calculé par l'algo
-        //canvas.drawPoints(getPointsToDraw(), paint); // dessine les points enregistré pour le symbole selectionner
-
-        /*
-        paint.setStrokeWidth(15);
-        paint.setStyle(Paint.Style.STROKE);
-        canvas.drawCircle((float) s.getFirstPoint().getX(),(float) s.getFirstPoint().getY(), s.getTolerance(), paint);
-
-        paint.setColor(Color.RED);
-        canvas.drawCircle((float) s.getLastPoint().getX(),(float) s.getLastPoint().getY(), s.getTolerance(), paint);
-
-        paint.setColor(Color.GREEN);
-        paint.setStrokeWidth(0.15f*largeur);
-        paint.setStyle(Paint.Style.FILL);
-        */
 
         bitmapFleche = BitmapFactory.decodeResource(getResources(), R.drawable.fleche);
         bitmapFleche = Bitmap.createScaledBitmap(bitmapFleche, 100, 70, false);
@@ -291,33 +257,14 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                 }else{
                     paint.setColor(Color.GREEN);
                 }
-                /*
-                paint.setColor(Color.RED);
-                canvas.drawPoint((float) DataSymbol.getPts().get(s.findIdOfNearestPoint(new Point(upx, upy))).getX(), (float) DataSymbol.getPts().get(s.findIdOfNearestPoint(new Point(upx, upy))).getY(), paint);
-                paint.setColor(Color.YELLOW);
-                canvas.drawPoint((float) DataSymbol.getPts().get(s.findIdOfNearestPointExept(new Point(upx, upy), s.findIdOfNearestPoint(new Point(upx, upy)))).getX(), (float) DataSymbol.getPts().get(s.findIdOfNearestPointExept(new Point(upx, upy), s.findIdOfNearestPoint(new Point(upx, upy)))).getY(), paint);
-                paint.setColor(Color.GREEN);
-                */
                 break;
             case MotionEvent.ACTION_UP:
                 Log.e("debug", "ACTION_UP");
                 if(canDraw) {
 
-                    //if (s.getDistanceBetweenTwoPoints(s.getLastPoint(), new Point(event.getX(), event.getY())) > s.getTolerance() || s.getLastId() != s.getPoints().size() - 1 || !s.isPastByTheMiddle()) {
-
-                    /*
-                    System.out.println("----------------------------------------");
-                    System.out.println(Integer.parseInt(carte[numGame].getCardValue()));
-                    System.out.println(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(numTrait));
-                    System.out.println(s.getDistanceBetweenTwoPoints(s.getPoints().get(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(numTrait)), new Point(event.getX(), event.getY())) > s.getTolerance());
-                    System.out.println("----------------------------------------");
-                    */
-
                     if (s.getDistanceBetweenTwoPoints(s.getPoints().get(DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(numTrait)), new Point(event.getX(), event.getY())) > s.getTolerance() || s.getLastId() != DataSymbol.getNbTrait().get(Integer.parseInt(carte[numGame].getCardValue())).get(numTrait) || !s.isPastByTheMiddle()) {
                         numEssai++;
                         nbErreur++;
-
-                        //Toast.makeText(getApplicationContext(), "Passe par tous les points", Toast.LENGTH_SHORT).show();
 
                         Log.e("axel", "pas arriver au dernier point");
 
@@ -329,18 +276,10 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
                             numEssai++;
                             nbErreur++;
 
-                            Log.e("axel", "Beacoup depassé");
-                            //Toast.makeText(getApplicationContext(), "Beacoup depassé", Toast.LENGTH_SHORT).show();
-
-                            //reDraw();
-
                         } else if (warning) {
                             nbErreur += 0.5;
-                            Log.e("axel", "Un peu depassé");
-                            //Toast.makeText(getApplicationContext(), "Un peu depassé", Toast.LENGTH_SHORT).show();
                             next = true;
                         } else {
-                            //Toast.makeText(getApplicationContext(), "Bravo !", Toast.LENGTH_SHORT).show();
                             next = true;
                         }
 
@@ -365,14 +304,11 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
 
                     if (numEssai >= NBESSAI) { //Manche terminé
                         Log.e("axel", "Symbol suivant : plus d'essai | nb de game " + numGame);
-                        //Toast.makeText(getApplicationContext(), "Symbol suivant : plus d'essai", Toast.LENGTH_SHORT).show();
-
                         next = true;
                     }
                     if (numGame >= NBGAME - 1 && next) { //Partie terminé
                         haveWin = true;
                         hasDraw = true;
-                        //Toast.makeText(getApplicationContext(), "Jeu terminé !!!", Toast.LENGTH_SHORT).show();
                         Log.e("axel", "jeu terminé !!!");
 
                         Intent intent = new Intent(getApplicationContext(), ResultGamePage.class);
@@ -504,37 +440,3 @@ public class DrawOnIt extends AppCompatActivity implements View.OnTouchListener 
             super.onBackPressed();
     }
 }
-
-
-/*
-for(int i = 0; i < s.getPoints().size(); i+=2){
-            tailleFleche = s.getDistanceBetweenTwoPoints(s.getPoints().get(i), s.getPoints().get(i+1)) * 10/100;
-            paint.setColor(Color.RED);
-            canvas.drawLine((float) s.getPoints().get(i).getX(), (float) s.getPoints().get(i).getY(), (float) s.getPoints().get(i + 1).getX(), (float) s.getPoints().get(i + 1).getY(), paint);
-            deltaX = (float) (s.getPoints().get(i + 1).getX() - s.getPoints().get(i).getX());
-            deltaY = (float) (s.getPoints().get(i + 1).getY() - s.getPoints().get(i).getY());
-
-            m = deltaY / deltaX;
-            b = (float) ((-m * s.getPoints().get(i+1).getX()) + s.getPoints().get(i+1).getY());
-
-            x1_1 = (float)( (-2*b*m) - Math.sqrt((Math.pow(2*b*m, 2))-(4 * (1+(m*m)) * (tailleFleche*tailleFleche) - (b*b)))/(2*(1+(m*m))));
-            x1_2 = (float)( (-2*b*m) + Math.sqrt((Math.pow(2*b*m, 2))-(4 * (1+(m*m)) * (tailleFleche*tailleFleche) - (b*b)))/(2*(1+(m*m))));
-
-            p = new Point(s.getPoints().get(i+1).getX() + x1_1, ((s.getPoints().get(i+1).getX() + x1_1) * m) + b);
-
-            m2 = -1/m;
-            b2 = (float) ((-m2 * p.getX()) + p.getY());
-
-            x2_1 = (float)( (-2*b2*m2) - Math.sqrt((Math.pow(2*b2*m2, 2))-(4 * (1+(m2*m2)) * (tailleFleche*tailleFleche) - (b2*b2)))/(2*(1+(m2*m2))));
-            x2_2 = (float)( (-2*b2*m2) + Math.sqrt((Math.pow(2*b2*m2, 2))-(4 * (1+(m2*m2)) * (tailleFleche*tailleFleche) - (b2*b2)))/(2*(1+(m2*m2))));
-
-            p2 = new Point(p.getX() + x2_1, ((p.getX() + x2_1) * m2) + b2);
-
-
-            paint.setColor(Color.BLUE);
-            canvas.drawPoint((float) p.getX(),(float) p.getY(), paint);
-            paint.setColor(Color.RED);
-            canvas.drawPoint((float) p2.getX(),(float) p2.getY(), paint);
-            Log.e("point", "px " + p.getX() + ", py " + p.getY() + ", p2x " + p2.getX() + ", p2y " + p2.getY());
-            canvas.drawLine((float) s.getPoints().get(i + 1).getX(), (float) s.getPoints().get(i + 1).getY(), (float) p2.getX(), (float) p2.getY(), paint);
-        }*/
