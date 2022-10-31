@@ -397,11 +397,11 @@ public class Memory extends AppCompatActivity implements OnStateItemClickListene
         if(difficulty==difficultyMax) {
             Log.e("memory","La difficulté est analysé");
             Log.e("memory","Nombre de carte en dessous de 3 : "+NbCardUsedLessThan(3));
-            int value=3;
+            int value=2;
             if(category.equals("Lettres")){
-                value=2;
+                value=1;
             }
-            if (db.gameDao().getMemoryData(userId, category, subCat).getWinStreak() >= 3 && NbCardUsedLessThan(value) == 0 && difficulty + 1 <= 5) {
+            if (db.gameDao().getMemoryData(userId, category, subCat).getWinStreak() >= 1 && NbCardUsedLessThan(value) < listMemoryCard.size()*0.75 && difficulty + 1 <= 5) {
                 Log.e("memory", "Monte au niveau " + (difficulty + 1));
                 db.gameDao().increaseMemoryDataDifficulty(userId, category, subCat);
                 db.gameDao().increaseMemoryDataMaxDifficulty(userId,category,subCat);

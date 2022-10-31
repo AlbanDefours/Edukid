@@ -90,6 +90,20 @@ public class MyDatabaseInsert {
         db.appDao().insertWord(new Word("TÉLÉPHONE", R.drawable.image_telephone));
         db.appDao().insertWord(new Word("VOITURE", R.drawable.image_voiture));
         db.appDao().insertWord(new Word("ZÈBRE", R.drawable.image_zebre));
+        db.appDao().insertWord(new Word("NOUNOURS", R.drawable.image_nounours));
+        db.appDao().insertWord(new Word("ABRICOT", R.drawable.image_abricot));
+        db.appDao().insertWord(new Word("ANANAS", R.drawable.image_ananas));
+        db.appDao().insertWord(new Word("AUBERGINE", R.drawable.image_aubergine));
+        db.appDao().insertWord(new Word("BALANÇOIRE", R.drawable.image_balancoire));
+        db.appDao().insertWord(new Word("CAMION", R.drawable.image_camion));
+        db.appDao().insertWord(new Word("CERISE", R.drawable.image_cerise));
+        db.appDao().insertWord(new Word("CITRON", R.drawable.image_citron));
+        db.appDao().insertWord(new Word("LAPIN", R.drawable.image_lapin));
+        db.appDao().insertWord(new Word("MOTO", R.drawable.image_moto));
+        db.appDao().insertWord(new Word("PASTÈQUE", R.drawable.image_pasteque));
+        db.appDao().insertWord(new Word("POUBELLE", R.drawable.image_poubelle));
+        db.appDao().insertWord(new Word("POUPÉE", R.drawable.image_poupee));
+        db.appDao().insertWord(new Word("ROUTE", R.drawable.image_route));
     }
 
     public void createCards(Context context) {

@@ -48,13 +48,13 @@ public class SubGameMenu extends AppCompatActivity {
                     @Override
                     public void onItemClick(View view, int position) {
                         saveGameName(position);
-                        if (!isLock(position)) {
+                        //if (!isLock(position)) {
                            MyVibrator.getInstance().vibrate(SubGameMenu.this, 35);
                             GlobalUtils.getInstance().startGame(SubGameMenu.this, "SubMemory", false, false);
-                        } else {
+                        /*} else {
                            MyVibrator.getInstance().vibrate(SubGameMenu.this, 60);
                             GlobalUtils.getInstance().toast(SubGameMenu.this,"Atteint la difficulté 4 du "+subGameList.get(position-1).getSubGameName(),false);
-                        }
+                        }*/
                     }
 
                     @Override
