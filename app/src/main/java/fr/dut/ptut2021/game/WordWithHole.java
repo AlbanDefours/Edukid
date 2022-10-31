@@ -63,6 +63,7 @@ public class WordWithHole extends AppCompatActivity implements View.OnClickListe
         fillDatabase();
         initLayoutContent();
         initGame();
+        readWord();
 
         answer1.setOnClickListener(this);
         answer2.setOnClickListener(this);
